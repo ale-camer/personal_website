@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Work in progress...</title>
+    <style>
+        body {
+            background: url('{{ url_for('static', filename='images/background.jpg') }}') no-repeat center center fixed; 
+            background-size: cover;
+        }
+    </style>
+</head>
+
+<body>
+    {% block content %}{% endblock %}
+    <nav class="navbar">
+
+        <a href="{{ url_for('index') }}" class="navbar-title-link">
+            <h2 class="navbar-title">Home</h2>
+        </a>
+
+        <ul class="navbar-list">
+            <li class="dropdown">
+                <a href="{{ url_for('mi_cv') }}">Mi CV</a>
+                <ul class="dropdown-menu">
+                    <li><a href="#">Work Experience</a></li>
+                    <li><a href="#">Education</a></li>
+                    <li><a href="#">Technologies</a></li>
+                    <li><a href="#">Languages</a></li>
+                </ul>
+            </li>
+            <li class="dropdown">
+                <a href="#">Projects</a>
+                <ul class="dropdown-menu">
+                    <li><a href="#">Data Science</a></li>
+                    <li><a href="#">Data Analysis</a></li>
+                    <li><a href="#">Finance</a></li>
+                    <li><a href="#">Visualization</a></li>
+                </ul>
+            </li>
+        </ul>
+
+        <div class="navbar-footer">
+            <a class="image-footer" href="https://github.com/ale-camer" target="_blank"><img
+                    src="{{ url_for('static', filename='images/gh.png') }}"></a>
+            <a class="image-footer" href="https://www.linkedin.com/in/alejandro-camerlengo-1ab3981b/"
+                target="_blank"><img src="{{ url_for('static', filename='images/li.png') }}"></a>
+        </div>
+
+    </nav>
+</body>
+</html>

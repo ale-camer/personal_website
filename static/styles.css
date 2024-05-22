@@ -1,0 +1,101 @@
+/* BODY */
+
+body {
+    margin: 0px;
+    padding: 0px;
+}
+
+/* NAVEGATION BAR */
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 15%;
+    background-color: hsl(206, 84%, 76%);
+    overflow-y: auto; /* agrega barra de desplazamiento cuando es necesario */
+    padding: 30px 0px;
+}
+
+/* NAVIGATION BAR TITLE */
+
+.navbar-title-link {
+    text-decoration: none;
+}
+
+.navbar .navbar-title {
+    color: #fff;
+    text-align: center;
+    margin-top: 0px;
+}
+
+/* NAVIGATION BAR LIST */
+
+.navbar .navbar-list {
+    background-color: hsl(202, 81%, 55%);
+    padding: 0px;
+    margin: 0px;
+}
+
+.navbar .navbar-list a {
+    color: white;
+    text-decoration: none;
+    text-align: left;
+    padding: 10px;
+    display: block;
+}
+
+.navbar .navbar-list a:hover {
+    background-color: white; 
+    color: hsl(202, 81%, 55%);
+}
+
+.navbar .navbar-list .dropdown .dropdown-menu {
+    display: none; /* agrupa bloques */
+    padding: 10px;
+}
+
+.navbar .navbar-list .dropdown:hover .dropdown-menu {
+    display: block; /* permite que se vean horizontalmente y quita vinietas */
+}
+
+/* NAVIGATION BAR FOOTER */
+
+.navbar .navbar-footer {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+}
+
+.navbar .navbar-footer .image-footer img {
+    display: block;
+    width: 40px;
+    height: 40px;
+    margin: 0px 10px;
+    border-radius: 50%;
+}
+
+.navbar .navbar-footer .image-footer img:hover {
+    border: 0.05px outset hsl(202, 81%, 55%);
+    background: hsl(202, 81%, 55%);
+}
+
+/* MAIN CONTENT */
+
+.main-content {
+    margin-left: 15%;
+    padding: 40px;
+    display: flex; 
+    flex-direction: column; /* hace que los elementos se posicionen uno arriba del otro */
+    justify-content: center; /* centra horizontalmente los elementos hijos */
+    height: 100vh; /* garantiza que se abarque toda la altura de la ventana visible */
+}
+
+.main-content h1, p {
+    text-align: center; 
+    color: white;
+    margin: 10px 0px;
+}
