@@ -27,10 +27,11 @@
             <li class="dropdown">
                 <a href="{{ url_for('mi_cv') }}">Mi CV</a>
                 <ul class="dropdown-menu">
-                    <li><a href="#">Work Experience</a></li>
-                    <li><a href="#">Education</a></li>
-                    <li><a href="#">Technologies</a></li>
-                    <li><a href="#">Languages</a></li>
+                    <li><a href="{{ url_for('mi_cv') }}#profile">Profile</a></li>
+                    <li><a href="{{ url_for('mi_cv') }}#work-experience">Work Experience</a></li>
+                    <li><a href="{{ url_for('mi_cv') }}#education">Education</a></li>
+                    <li><a href="{{ url_for('mi_cv') }}#technologies">Technologies</a></li>
+                    <li><a href="{{ url_for('mi_cv') }}#languages">Languages</a></li>
                 </ul>
             </li>
             <li class="dropdown">
