@@ -54,13 +54,45 @@ body {
     color: #fff; /* Letras en blanco */
 }
 
+/* .navbar .navbar-list a.dropdown-toggle {
+    cursor: pointer; 
+}
+
 .navbar .navbar-list .dropdown .dropdown-menu {
     display: none;
     padding: 10px;
 }
 
-.navbar .navbar-list .dropdown:hover .dropdown-menu {
+.navbar .navbar-list .dropdown-toggle:focus + .dropdown-menu,
+.navbar .navbar-list .dropdown-menu:hover {
     display: block;
+} */
+
+.navbar .navbar-list a.dropdown-toggle {
+    cursor: pointer; /* Cambia el cursor a pointer */
+    position: relative; /* Necesario para el enfoque */
+}
+
+.navbar .navbar-list .dropdown .dropdown-menu {
+    display: none;
+    padding: 10px;
+}
+
+/* Mostrar el submenú cuando el enlace tiene el foco */
+.navbar .navbar-list .dropdown .dropdown-toggle:focus + .dropdown-menu,
+.navbar .navbar-list .dropdown .dropdown-toggle:focus-within + .dropdown-menu {
+    display: block;
+}
+
+/* Mostrar el submenú cuando se pasa el cursor sobre el submenú */
+.navbar .navbar-list .dropdown .dropdown-menu:hover,
+.navbar .navbar-list .dropdown .dropdown-menu:focus-within {
+    display: block;
+}
+
+/* Ocultar el submenú cuando se hace clic fuera */
+body {
+    outline: none;
 }
 
 .navbar .navbar-footer {
@@ -206,4 +238,22 @@ body {
 .expert {
     width: 100%;
     background-color: #2ecc71;
+}
+
+/* PROJECTS */
+
+.projects {
+    background: rgba(0, 0, 0, 0.7); /* Fondo semitransparente */
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    width: 60%;
+    color: white;
+}
+
+.projects p {
+    text-align: left;
+    margin: 0;
+    color: white;
 }
