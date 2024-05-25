@@ -1,9 +1,74 @@
-<!-- NO SE ENCUENTRA EN FUNCIONES -->
-
 {% extends 'base.html' %}
 
 {% block content %}
 
-<h1 class="keyphrase_extraction">CHUPAME LA PIJA</h1>
+<div class="keyphrase-extraction-container">
+    <h1 class="keyphrase-extraction-title">Keyphrase Extraction</h1>
+
+    <div class="introduction">
+        <h2>Introduction</h2>
+        <p>Keyphrase Extraction is a powerful tool that helps you identify and extract important terms and phrases from your text. These keyphrases summarize the main content of your text, making it easier to understand and manage. Whether you're analyzing documents, optimizing search engine results, or summarizing content, Keyphrase Extraction can simplify your workflow.</p>
+    </div>
+
+    <div class="functionality">
+        <h2>Functionality</h2>
+        <p>To extract keyphrases from your text, simply upload a text file and specify the number of N-grams and results per N-gram. The tool will then analyze your text, extract the most significant keyphrases, and display them for you. You can adjust the parameters to tailor the results to your specific needs.</p>
+    </div>
+    
+    <div class="instructions">
+        <h2>Instructions</h2>
+        <p style="text-align: left; margin-bottom: 50px;">Please upload a text file (.txt) containing the text you want to process. If your text is in another format, such as Word (.docx), you can copy and paste it into a text file before uploading.</p>
+    </div>
+
+    <div class="upload-form">
+        <form class="keyphrase-extraction-form" action="/keyphrase_extraction_process" method="post" enctype="multipart/form-data">
+            <label for="file">Upload your text file (only .txt files allowed):</label><br>
+            <input type="file" id="file" name="file" accept=".txt" required><br><br>
+
+            <label for="num_tables">Number of N-grams:</label>
+            <input type="number" id="num_tables" name="num_tables" min="1" max="10" value="5" required><br><br>
+
+            <label for="num_rows">Results per N-gram:</label>
+            <input type="number" id="num_rows" name="num_rows" min="1" max="10" value="5" required><br><br>
+
+            <input type="submit" value="Extract Keyphrases">
+        </form>
+    </div>
+</div>
+
+<div class="keyphrase-extraction-container">
+    {% if results %}
+    <div class="results-container">
+        {% for ngram_value, data in results.items() %}
+        <div class="ngram-container">
+            <h2>{{ ngram_value }}</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Keywords</th>
+                        <th># Appearances</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in data.values %}
+                    <tr>
+                        <td>{{ row[0] }}</td>
+                        <td style="text-align: center;">{{ row[1] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% if not loop.last %}
+        <hr>
+        {% endif %}
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="results-container" style="display: none;"></div>
+    {% endif %}
+</div>
+
+<script src="{{ url_for('static', filename='keyphrase_extraction.js') }}"></script>
 
 {% endblock %}

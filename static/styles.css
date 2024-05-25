@@ -54,20 +54,6 @@ body {
     color: #fff; /* Letras en blanco */
 }
 
-/* .navbar .navbar-list a.dropdown-toggle {
-    cursor: pointer; 
-}
-
-.navbar .navbar-list .dropdown .dropdown-menu {
-    display: none;
-    padding: 10px;
-}
-
-.navbar .navbar-list .dropdown-toggle:focus + .dropdown-menu,
-.navbar .navbar-list .dropdown-menu:hover {
-    display: block;
-} */
-
 .navbar .navbar-list a.dropdown-toggle {
     cursor: pointer; /* Cambia el cursor a pointer */
     position: relative; /* Necesario para el enfoque */
@@ -240,20 +226,82 @@ body {
     background-color: #2ecc71;
 }
 
-/* PROJECTS */
+/* KEYPHRASE EXTRACTION */
 
-.projects {
+.keyphrase-extraction-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 40px auto;
+    width: 60%;
     background: rgba(0, 0, 0, 0.7); /* Fondo semitransparente */
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin: 20px auto;
-    width: 60%;
     color: white;
 }
 
-.projects p {
-    text-align: left;
-    margin: 0;
+.keyphrase-extraction-title {
+    margin-bottom: 20px;
+}
+
+.keyphrase-extraction-form {
+    width: 100%;
+}
+
+.keyphrase-extraction-form label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.keyphrase-extraction-form input[type="file"],
+.keyphrase-extraction-form input[type="number"] {
+    display: block;
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.keyphrase-extraction-form input[type="submit"] {
+    background-color: #3498db;
     color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.keyphrase-extraction-form input[type="submit"]:hover {
+    background-color: #2980b9;
+}
+
+.results-container {
+    margin-top: 20px;
+}
+
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.results-table th,
+.results-table td {
+    border: 1px solid #fff;
+    padding: 8px;
+}
+
+.results-table th {
+    background-color: #3498db;
+}
+
+.results-table tbody tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.results-table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.2);
 }
