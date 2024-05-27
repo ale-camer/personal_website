@@ -6,12 +6,6 @@ import pandas as pd
 
 app = Flask(__name__)
 
-UPLOAD_FOLDER = 'uploads'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
-
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -43,12 +37,8 @@ def seasonality_prediction():
         periodicity = int(request.form['periodicity'])
 
         if file:
-            filename = file.filename
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(filepath)
-
-            # Leer el archivo Excel
-            df = pd.read_excel(filepath)
+            # Leer el archivo Excel directamente desde la solicitud
+            df = pd.read_excel(file)
             
             # Asegurarse de que el DataFrame tiene una columna de valores de serie temporal
             if 'value' in df.columns:
