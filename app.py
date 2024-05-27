@@ -32,29 +32,43 @@ def keyphrase_extraction_process():
 
 @app.route('/seasonality_prediction', methods=['GET', 'POST'])
 def seasonality_prediction():
+    existing_plots = []  # Lista para almacenar los nombres de los archivos de imagen existentes
     if request.method == 'POST':
         file = request.files['file']
         periodicity = int(request.form['periodicity'])
 
         if file:
-            # Leer el archivo Excel directamente desde la solicitud
             df = pd.read_excel(file)
-            
-            # Asegurarse de que el DataFrame tiene una columna de valores de serie temporal
-            if 'value' in df.columns:
-                serie = df['value']
-
-                # Aplicar la función de forecasting
+            if len(df.columns) == 1:
+                serie = df[df.columns]
                 forecasted_values = forecasting(serie, periodicity=periodicity)
-                
-                # Generar y guardar los gráficos
                 generate_plots(serie, forecasted_values, periodicity)
-
-                # Pasar los resultados a la plantilla
-                return render_template('seasonality_prediction.html', forecast=forecasted_values, enumerate=enumerate)
+                
+                # Obtener la lista de nombres de archivos de imagen existentes
+                for filename in ['original_data.png', 'all_periods_data.png', 'historic_and_prediction_data.png']:
+                    if os.path.exists(os.path.join('static', 'temp_images', filename)):
+                        existing_plots.append(filename)
+                
+                return render_template('seasonality_prediction.html', forecast=forecasted_values, existing_plots=existing_plots, enumerate=enumerate)
             else:
-                return "El archivo Excel no tiene una columna llamada 'value'."
+                return "The Excel file has more than one column"
     return render_template('seasonality_prediction.html')
+
+def remove_old_plots():
+    temp_images_path = 'static/temp_images'
+    files_to_remove = ['original_data.png', 'all_periods_data.png', 'historic_and_prediction_data.png']
+    
+    for file in files_to_remove:
+        file_path = os.path.join(temp_images_path, file)
+        if os.path.exists(file_path):
+            try:
+                os.remove(file_path)
+                print(f"Deleted file: {file_path}")
+            except Exception as e:
+                print(f"Error deleting file {file_path}: {e}")
+        else:
+            print(f"File does not exist: {file_path}")
+remove_old_plots()
 
 if __name__ == '__main__':
     app.run(debug=True)

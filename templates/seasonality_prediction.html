@@ -19,9 +19,8 @@
         </form>
     </div>
 
-
+    {% if forecast %}
     <div class="keyphrase-extraction-container">
-        {% if forecast %}
         <h2>Predictions</h2>
         <table class="prediction-table">
             <thead>
@@ -39,16 +38,25 @@
                 {% endfor %}
             </tbody>
         </table>
-        {% endif %}
     </div>
+    {% endif %}
 
+    {% if existing_plots %}
     <div class="keyphrase-extraction-container">
-        <h2>Generated Plots</h2>
+        <h2>Plots</h2>
         <div class="plot-container">
-            <img src="{{ url_for('static', filename='temp_images/original_data.png') }}" alt="Original Data">
-            <img src="{{ url_for('static', filename='temp_images/all_periods_data.png') }}" alt="All Periods Data">
-            <img src="{{ url_for('static', filename='temp_images/historic_and_prediction_data.png') }}" alt="Historic and Prediction Data">
+            {% if 'original_data.png' in existing_plots %}
+            <img src="{{ url_for('static', filename='temp_images/original_data.png') }}">
+            {% endif %}
+            {% if 'all_periods_data.png' in existing_plots %}
+            <img src="{{ url_for('static', filename='temp_images/all_periods_data.png') }}">
+            {% endif %}
+            {% if 'historic_and_prediction_data.png' in existing_plots %}
+            <img src="{{ url_for('static', filename='temp_images/historic_and_prediction_data.png') }}">
+            {% endif %}
         </div>
     </div>
+    {% endif %}
+
 </div>
 {% endblock %}
