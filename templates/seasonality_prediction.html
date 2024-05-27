@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+
+    <div class="keyphrase-extraction-container">
+        <h1>Seasonality Prediction</h1>
+        <form action="{{ url_for('seasonality_prediction') }}" method="post" enctype="multipart/form-data"
+            class="file-upload-form">
+            <div class="form-group">
+                <label for="file">Upload Excel File:</label>
+                <input type="file" name="file" id="file" accept=".xlsx,.xls">
+            </div>
+            <div class="form-group">
+                <label for="periodicity">Periodicity:</label>
+                <input type="number" name="periodicity" id="periodicity" min="1" value="1">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+
+
+    <div class="keyphrase-extraction-container">
+        {% if forecast %}
+        <h2>Predictions</h2>
+        <table class="prediction-table">
+            <thead>
+                <tr>
+                    <th>Period</th>
+                    <th>Forecast</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i, value in enumerate(forecast) %}
+                <tr>
+                    <td>{{ i + 1 }}</td>
+                    <td>{{ value }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+
+    <div class="keyphrase-extraction-container">
+        <h2>Generated Plots</h2>
+        <div class="plot-container">
+            <img src="{{ url_for('static', filename='temp_images/original_data.png') }}" alt="Original Data">
+            <img src="{{ url_for('static', filename='temp_images/all_periods_data.png') }}" alt="All Periods Data">
+            <img src="{{ url_for('static', filename='temp_images/historic_and_prediction_data.png') }}" alt="Historic and Prediction Data">
+        </div>
+    </div>
+</div>
+{% endblock %}
