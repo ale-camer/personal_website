@@ -64,21 +64,8 @@ body {
     padding: 10px;
 }
 
-/* Mostrar el submenú cuando el enlace tiene el foco */
-.navbar .navbar-list .dropdown .dropdown-toggle:focus + .dropdown-menu,
-.navbar .navbar-list .dropdown .dropdown-toggle:focus-within + .dropdown-menu {
+.navbar .navbar-list .dropdown.open .dropdown-menu {
     display: block;
-}
-
-/* Mostrar el submenú cuando se pasa el cursor sobre el submenú */
-.navbar .navbar-list .dropdown .dropdown-menu:hover,
-.navbar .navbar-list .dropdown .dropdown-menu:focus-within {
-    display: block;
-}
-
-/* Ocultar el submenú cuando se hace clic fuera */
-body {
-    outline: none;
 }
 
 .navbar .navbar-footer {
@@ -370,4 +357,17 @@ body {
     max-width: 100%;
     height: auto;
     margin: 10px 0;
+}
+
+.keyphrase-extraction-container .seasonality-prediction-error-h3,
+.keyphrase-extraction-container .seasonality-prediction-error-ul,
+.keyphrase-extraction-container .seasonality-prediction-error-p {
+    text-align: left;
+    width: 100%;
+    margin-left: 0;
+    padding-left: 0;
+}
+
+.keyphrase-extraction-container .seasonality-prediction-error-ul {
+    list-style-position: inside;
 }

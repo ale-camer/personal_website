@@ -4,19 +4,40 @@
 <div class="container">
 
     <div class="keyphrase-extraction-container">
-        <h1>Seasonality Prediction</h1>
-        <form action="{{ url_for('seasonality_prediction') }}" method="post" enctype="multipart/form-data"
-            class="file-upload-form">
-            <div class="form-group">
-                <label for="file">Upload Excel File:</label>
-                <input type="file" name="file" id="file" accept=".xlsx,.xls">
-            </div>
-            <div class="form-group">
-                <label for="periodicity">Periodicity:</label>
-                <input type="number" name="periodicity" id="periodicity" min="1" value="1">
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
+        <h1 class="keyphrase-extraction-title">Seasonality Prediction</h1>
+
+        <div class="introduction">
+            <h2>Introduction</h2>
+            <p>This tool helps you forecast future values of a time series based on its seasonal patterns. Is
+                convenient for users who need to make data-driven decisions based on seasonal trends. It's especially
+                useful for businesses wanting to forecast sales, inventory, or other key metrics that follow regular
+                patterns.</p>
+        </div>
+
+        <div class="functionality">
+            <h2>Functionality</h2>
+            <p>To use it, you need to upload an Excel file with just one column of numeric data and a header. You also
+                need to choose a periodicity (e.g., 4 for quarterly data), which should be a divisor of the number of
+                data points you have (excluding the header). The tool will then generate a table with the predictions
+                of the next cycle and create three visualizations: a graph of the original time series, a comparison 
+                of the prediction and actual values for the last cycle, and a graph showing the original series along 
+                with the future predictions.</p>
+        </div>
+
+        <div>
+            <form action="{{ url_for('seasonality_prediction') }}" method="post" enctype="multipart/form-data"
+                class="file-upload-form">
+                <div class="form-group">
+                    <label for="file">Upload Excel File:</label>
+                    <input type="file" name="file" id="file" accept=".xlsx,.xls">
+                </div>
+                <div class="form-group">
+                    <label for="periodicity">Periodicity:</label>
+                    <input type="number" name="periodicity" id="periodicity" min="1" value="1">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
     </div>
 
     {% if forecast %}

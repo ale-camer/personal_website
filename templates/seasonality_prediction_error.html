@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+
+    <div class="keyphrase-extraction-container">
+        <h1>Seasonality Prediction</h1>
+        <form action="{{ url_for('seasonality_prediction') }}" method="post" enctype="multipart/form-data"
+            class="file-upload-form">
+            <div class="form-group">
+                <label for="file">Upload Excel File:</label>
+                <input type="file" name="file" id="file" accept=".xlsx,.xls">
+            </div>
+            <div class="form-group">
+                <label for="periodicity">Periodicity:</label>
+                <input type="number" name="periodicity" id="periodicity" min="1" value="1">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+
+    <div class="keyphrase-extraction-container">
+        <h1 class="seasonality-prediction-error-h1">There was an error.</h1>
+        <h3 class="seasonality-prediction-error-h3">Check:</h3>
+        <ul class="seasonality-prediction-error-ul">
+            <li>That the uploaded excel has a header,</li>
+            <li>That it only has data in the first column</li>
+            <li>And that the periodicity is a multiple of the lenght of the serie.</li>
+        </ul>
+        <p class="seasonality-prediction-error-p">In the context of forecasting based on seasonality, it is crucial that
+            the length of the series is a multiple of its periodicity. This rule ensures that the time series can be
+            evenly divided into complete periods, which is essential for accurately calculating the seasonal components
+            and making predictions.</p>
+        <p class="seasonality-prediction-error-p">For example, imagine you have quarterly sales data for a company, and
+            you want to use this data to forecast future sales. The periodicity for quarterly data is 4 (since there are
+            4 quarters in a year).</p>
+        <p class="seasonality-prediction-error-p">Valid Case: If you have sales data for 8 quarters (2 full years), the
+            length of the series is 8. Therefore, the remainder of the division between 8 and 4 is zero, which means
+            that the series can be evenly divided into full periods (2 years of quarterly data). This allows the
+            function to accurately capture the seasonal pattern and make predictions.</p>
+        <p class="seasonality-prediction-error-p">Invalid Case: If you have sales data for 7 quarters, the length of the
+            series is 7. Here, the remainder of the division between 7 and 4 is 3. This means the series cannot be
+            evenly divided into full periods, as it leaves a remainder. This incomplete period can distort the seasonal
+            index calculations, leading to inaccurate forecasts.</p>
+        <p class="seasonality-prediction-error-p">Therefore, ensuring that the length of the series is a multiple of its
+            periodicity guarantees that the seasonal patterns are consistent and complete, which is fundamental for
+            making reliable predictions based on seasonality.</p>
+    </div>
+
+</div>
+{% endblock %}
