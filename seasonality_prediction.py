@@ -61,34 +61,46 @@ def forecasting(serie, periodicity=4):
 
     return forecast
 
-def generate_plots(serie, prediction_next_period, periodicity=4):
-    plt.figure(figsize=(10,5))
+def generate_plots(serie, prediction_last_period, prediction_next_period, periodicity=4):
 
     # Plot original data
-    sns.lineplot(np.concatenate([serie.values, serie[-periodicity:].values]).ravel())
+    plt.figure(figsize=(10,5))
+    sns.lineplot(np.concatenate([serie.values, serie[-periodicity:].values]).ravel(), color='red')
     plt.xticks([])
-    plt.ylabel("Value".title(), fontsize=15)
-    plt.title("Data Provided".title(), fontsize=20)
+    plt.ylabel("value".title(), fontsize=15)
+    plt.title("data provided".title(), fontsize=20)
     plt.savefig('static/temp_images/original_data.png')
     plt.close()
 
-    # Plot all periods data
+    # Plot last cycle
     plt.figure(figsize=(10,5))
-    sns.lineplot(np.concatenate([serie.values.ravel(), prediction_next_period]), color='green', label='Prediction'.title())
-    sns.lineplot(np.concatenate([serie.values, serie[-periodicity:].values]).ravel(), color='red', label='Real'.title())
+
+    plt.subplot(1,2,1)
+    sns.lineplot(np.concatenate([serie.iloc[:-4,:].values.ravel(), prediction_last_period]), color='green', label='prediction'.title())
+    sns.lineplot(serie.values.ravel(), color='red', label='real'.title())
+    plt.xticks([])
+    plt.ylabel("value".title(), fontsize=15)
+    plt.title("all periods".title(), fontsize=18)
+
+    plt.subplot(1,2,2)
+    sns.lineplot(prediction_last_period, color='green', label='prediction'.title())
+    sns.lineplot(serie.iloc[-4:,:].values.ravel(), color='red', label='real'.title())
     plt.xticks([])
     plt.ylabel("Value".title(), fontsize=15)
-    plt.title("All Periods Data".title(), fontsize=18)
+    plt.title("last period".title(), fontsize=18)
+    plt.suptitle("last period prediction".title(),fontsize=20)
+    plt.tight_layout()
+
     plt.savefig('static/temp_images/all_periods_data.png')
     plt.close()
 
-    # Plot current period data
+    # Plot next cycle
     plt.figure(figsize=(10,5))
-    sns.lineplot(x=range(len(serie), len(serie) + len(prediction_next_period)), y=prediction_next_period, color='red')
-    sns.lineplot(x=range(len(serie)), y=serie.values.ravel(), color='blue')
+    sns.lineplot(x=range(len(serie) - 1, len(serie) + len(prediction_next_period)), y=np.concatenate([serie.iloc[-1].values,prediction_next_period]), color='green', label='prediction'.title())
+    sns.lineplot(x=range(len(serie)), y=serie.values.ravel(), color='red', label='real'.title())
     plt.xticks([])
-    plt.ylabel("Value".title(), fontsize=15)
-    plt.title("Historic and Prediction Data".title(), fontsize=20)
+    plt.ylabel("value".title(), fontsize=15)
+    plt.title("data provided and next period prediction".title(), fontsize=20)
     plt.savefig('static/temp_images/historic_and_prediction_data.png')
     plt.close()
 

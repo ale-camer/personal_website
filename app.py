@@ -58,15 +58,16 @@ def seasonality_prediction():
                 df = pd.read_excel(file)
                 if len(df.columns) == 1:
                     serie = df[df.columns]
-                    forecasted_values = forecasting(serie, periodicity=periodicity)
-                    generate_plots(serie, forecasted_values, periodicity)
+                    forecasted_values_last_period = forecasting(serie.iloc[:-periodicity,:], periodicity=periodicity)
+                    forecasted_values_next_period = forecasting(serie, periodicity=periodicity)
+                    generate_plots(serie, forecasted_values_last_period, forecasted_values_next_period, periodicity)
                     
                     # Obtener la lista de nombres de archivos de imagen existentes
                     for filename in ['original_data.png', 'all_periods_data.png', 'historic_and_prediction_data.png']:
                         if os.path.exists(os.path.join('static', 'temp_images', filename)):
                             existing_plots.append(filename)
                     
-                    return render_template('seasonality_prediction.html', forecast=forecasted_values, existing_plots=existing_plots, enumerate=enumerate)
+                    return render_template('seasonality_prediction.html', forecast=forecasted_values_next_period, existing_plots=existing_plots, enumerate=enumerate)
                 else:
                     return "The Excel file has more than one column"
         return render_template('seasonality_prediction.html')
