@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, send_file
 from keyphrase_extraction import procesar_archivo
 from seasonality_prediction import forecasting, generate_plots
-import os
+import os, requests
 import pandas as pd
+from world_bank import indicators, get_country_data_for_indicator
 
 app = Flask(__name__)
 
@@ -73,6 +74,46 @@ def seasonality_prediction():
         return render_template('seasonality_prediction.html')
     except: 
         return render_template('seasonality_prediction_error.html')
+
+@app.route('/world_bank')
+def world_bank():
+    return render_template('world_bank.html', indicators=indicators)
+
+@app.route('/fetch_data')
+def fetch_data():
+    indicator_id = request.args.get('indicator')
+    data = get_country_data_for_indicator(indicator_id)
+
+    if not data:
+        return jsonify([])
+
+    df = pd.DataFrame([
+        (entry['country']['value'], entry['date'], entry['value'])
+        for entry in data[1] if entry['value'] is not None
+    ], columns=['COUNTRY', 'DATE', 'VALUE'])
+
+    df.drop_duplicates(inplace=True)
+    return df.to_dict(orient='records')
+
+@app.route('/download_csv')
+def download_csv():
+    indicator = request.args.get('indicator')
+    indicator_id = indicators[indicator]
+    data = get_country_data_for_indicator(indicator_id)
+
+    if not data:
+        return "No data available", 404
+
+    df = pd.DataFrame([
+        (entry['country']['value'], entry['date'], entry['value'])
+        for entry in data[1] if entry['value'] is not None
+    ], columns=['COUNTRY', 'DATE', 'VALUE'])
+
+    df.drop_duplicates(inplace=True)
+    csv_path = '/tmp/indicator_data.csv'
+    df.to_csv(csv_path, index=False)
+
+    return send_file(csv_path, as_attachment=True, download_name=f'{indicator}.csv')
 
 if __name__ == '__main__':
     app.run(debug=True)
