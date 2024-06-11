@@ -80,6 +80,39 @@ for i in range(len(data[1])):
         data[1][i]['value']))
 df=pd.DataFrame(df,columns=['COUNTRY','DATE','VALUE']).dropna().drop_duplicates()
 
+countries=sorted(df['COUNTRY'].unique())
+years=sorted(df['YEAR'].unique())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #%% PREPROCESSING DATA
 

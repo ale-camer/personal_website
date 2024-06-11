@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, send_file
+from flask import Flask, render_template, request, redirect, url_for, send_file, jsonify
 from keyphrase_extraction import procesar_archivo
 from seasonality_prediction import forecasting, generate_plots
 import os, requests
@@ -79,41 +79,95 @@ def seasonality_prediction():
 def world_bank():
     return render_template('world_bank.html', indicators=indicators)
 
-@app.route('/fetch_data')
-def fetch_data():
+@app.route('/fetch_options')
+def fetch_options():
     indicator_id = request.args.get('indicator')
+    type = request.args.get('type')
     data = get_country_data_for_indicator(indicator_id)
 
     if not data:
         return jsonify([])
 
+    if type == 'country':
+        options = sorted({entry['country']['value'] for entry in data[1] if entry['value'] is not None})
+    elif type == 'year':
+        options = sorted({entry['date'] for entry in data[1] if entry['value'] is not None})
+    else:
+        options = []
+
+    return jsonify(options)
+
+@app.route('/fetch_data')
+def fetch_data():
+    indicator_id = request.args.get('indicator')
+    type = request.args.get('type')
+    option = request.args.get('option')
+    data = get_country_data_for_indicator(indicator_id)
+
+    if not data:
+        return jsonify([])
+
+    if type == 'country':
+        filtered_data = [entry for entry in data[1] if entry['country']['value'] == option and entry['value'] is not None]
+    elif type == 'year':
+        filtered_data = [entry for entry in data[1] if entry['date'] == option and entry['value'] is not None]
+    else:
+        filtered_data = []
+
     df = pd.DataFrame([
         (entry['country']['value'], entry['date'], entry['value'])
-        for entry in data[1] if entry['value'] is not None
+        for entry in filtered_data
     ], columns=['COUNTRY', 'DATE', 'VALUE'])
 
+    # Ordenar por 'COUNTRY' de forma ascendente y por 'DATE' de forma descendente
+    df = df.sort_values(by=['COUNTRY', 'DATE'], ascending=[True, False])
+
     df.drop_duplicates(inplace=True)
+
     return df.to_dict(orient='records')
 
 @app.route('/download_csv')
 def download_csv():
     indicator = request.args.get('indicator')
+    type = request.args.get('type')
+    option = request.args.get('option')
     indicator_id = indicators[indicator]
     data = get_country_data_for_indicator(indicator_id)
 
     if not data:
         return "No data available", 404
 
+    # Aplicar los mismos filtros que en fetch_data
+    if type == 'country':
+        filtered_data = [entry for entry in data[1] if entry['country']['value'] == option and entry['value'] is not None]
+    elif type == 'year':
+        filtered_data = [entry for entry in data[1] if entry['date'] == option and entry['value'] is not None]
+    else:
+        filtered_data = []
+
     df = pd.DataFrame([
         (entry['country']['value'], entry['date'], entry['value'])
-        for entry in data[1] if entry['value'] is not None
+        for entry in filtered_data
     ], columns=['COUNTRY', 'DATE', 'VALUE'])
 
+    # Aplicar formato de miles y ordenar
+    df['VALUE'] = df['VALUE'].apply(lambda x: f"{x:,.2f}")
+    df = df.sort_values(by=['COUNTRY', 'DATE'], ascending=[True, False])
+
     df.drop_duplicates(inplace=True)
-    csv_path = '/tmp/indicator_data.csv'
+
+    # Ruta relativa para guardar el archivo CSV dentro de la carpeta 'downloads' en tu proyecto Flask
+    csv_path = os.path.join(app.root_path, 'downloads', f'{indicator}.csv')
+    
+    # Asegurarse de que el directorio existe
+    os.makedirs(os.path.dirname(csv_path), exist_ok=True)
+    
+    # Guardar el archivo CSV
     df.to_csv(csv_path, index=False)
 
+    # Devolver el archivo CSV como una descarga
     return send_file(csv_path, as_attachment=True, download_name=f'{indicator}.csv')
+
 
 if __name__ == '__main__':
     app.run(debug=True)

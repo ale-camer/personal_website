@@ -3,17 +3,45 @@
 {% block content %}
 <div class="container">
     <div class="keyphrase-extraction-container">
-        <label for="indicators">Select an indicator:</label>
-        <div class="dropdown-world-bank-topics">
-            <button class="dropbtn-world-bank-topics" id="dropdownButton">For example, GDP per Capital.</button>
-            <div class="dropdown-content-world-bank-topics" id="dropdownMenu">
-                {% for key in indicators|sort %}
-                <a href="#" onclick="selectIndicator('{{ key }}', '{{ indicators[key] }}')">{{ key }}</a>
-                {% endfor %}
+        <div class="dropdown-group">
+            <label for="indicators">Select an indicator:</label>
+            <div class="dropdown-world-bank-topics">
+                <button class="dropbtn-world-bank-topics" id="dropdownButton">For example, GDP per Capita</button>
+                <div class="dropdown-content-world-bank-topics" id="dropdownMenu">
+                    {% for key in indicators|sort %}
+                    <a href="#" onclick="selectIndicator('{{ key }}', '{{ indicators[key] }}')">{{ key }}</a>
+                    {% endfor %}
+                </div>
             </div>
         </div>
+        
+        <div class="dropdown-group">
+            <label for="type">Select type:</label>
+            <div class="dropdown-world-bank-topics">
+                <button class="dropbtn-world-bank-topics" id="typeButton">Select Type</button>
+                <div class="dropdown-content-world-bank-topics" id="typeMenu">
+                    <a href="#" onclick="selectType('country')">Country</a>
+                    <a href="#" onclick="selectType('year')">Year</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="dropdown-group">
+            <label for="options">Select an option:</label>
+            <div class="dropdown-world-bank-topics">
+                <button class="dropbtn-world-bank-topics" id="optionsButton">Select an Option</button>
+                <div class="dropdown-content-world-bank-topics" id="optionsMenu">
+                    <!-- Options will be inserted here by JavaScript -->
+                </div>
+            </div>
+        </div>
+        <div class="button-group">
+            <button class="show-results" onclick="showResults()">Show Results</button>
+            <button class="download-csv" onclick="downloadCSV()">Download CSV</button>
+        </div>
     </div>
-    <div class="results-container-world-bank">
+
+    <div class="results-container-world-bank" style="display: none;">
         <h3>Results</h3>
         <table class="results-table-world-bank-topics">
             <thead>
@@ -27,18 +55,63 @@
                 <!-- Result rows will be inserted here by JavaScript -->
             </tbody>
         </table>
-        <button onclick="downloadCSV()">Download CSV</button>
     </div>    
 </div>
 
 <script>
+    let selectedIndicator = null;
+    let selectedType = null;
+    let selectedOption = null;
+
     function selectIndicator(key, value) {
+        selectedIndicator = value;
         document.getElementById('dropdownButton').innerText = key;
-        fetchData(value);
+        document.getElementById('typeButton').innerText = 'Select Type';
+        document.getElementById('optionsButton').innerText = 'Select an Option';
+        fetchOptions();
+        closeDropdown('dropdownMenu');
     }
 
-    function fetchData(indicatorId) {
-        fetch(`/fetch_data?indicator=${indicatorId}`)
+    function selectType(type) {
+        selectedType = type;
+        document.getElementById('typeButton').innerText = type === 'country' ? 'Country' : 'Year';
+        document.getElementById('optionsButton').innerText = 'Select an Option';
+        fetchOptions();
+        closeDropdown('typeMenu');
+    }
+
+    function fetchOptions() {
+        if (selectedIndicator && selectedType) {
+            fetch(`/fetch_options?indicator=${selectedIndicator}&type=${selectedType}`)
+                .then(response => response.json())
+                .then(data => {
+                    const optionsMenu = document.getElementById('optionsMenu');
+                    optionsMenu.innerHTML = '';
+                    data.forEach(option => {
+                        const optionElement = document.createElement('a');
+                        optionElement.href = '#';
+                        optionElement.innerText = option;
+                        optionElement.onclick = () => selectOption(option);
+                        optionsMenu.appendChild(optionElement);
+                    });
+                });
+        }
+    }
+
+    function selectOption(option) {
+        selectedOption = option;
+        document.getElementById('optionsButton').innerText = option;
+        closeDropdown('optionsMenu');
+    }
+
+    function showResults() {
+        if (selectedIndicator && selectedType && selectedOption) {
+            fetchData(selectedIndicator, selectedType, selectedOption);
+        }
+    }
+
+    function fetchData(indicator, type, option) {
+        fetch(`/fetch_data?indicator=${indicator}&type=${type}&option=${option}`)
             .then(response => response.json())
             .then(data => {
                 displayResults(data);
@@ -47,26 +120,52 @@
 
     function displayResults(data) {
     const resultsTableBody = document.querySelector('.results-container-world-bank .results-table-world-bank-topics tbody');
-    
-    // Limpiar el contenido anterior de la tabla
     resultsTableBody.innerHTML = '';
-
-    // Iterar sobre los datos y agregar filas a la tabla
     data.forEach(row => {
         const newRow = resultsTableBody.insertRow();
         newRow.insertCell(0).innerText = row['COUNTRY'];
         newRow.insertCell(1).innerText = row['DATE'];
-        newRow.insertCell(2).innerText = row['VALUE'];
+        // Convertir a número y luego formatear el valor con separadores de miles y dos decimales
+        const value = parseFloat(row['VALUE']);
+        const formattedValue = value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const valueCell = newRow.insertCell(2);
+        valueCell.innerText = formattedValue;
+        valueCell.classList.add('value-column');  // Agregar clase para alinear a la derecha
     });
-
-    // Mostrar el contenedor de resultados
     const resultsContainer = document.querySelector('.results-container-world-bank');
     resultsContainer.style.display = 'block';
     }
+1
 
-    function downloadCSV() {
-        const indicator = document.getElementById('dropdownButton').innerText;
-        window.location.href = `/download_csv?indicator=${indicator}`;
+
+    function closeDropdown(menuId) {
+        document.getElementById(menuId).style.display = 'none';
     }
+
+    document.addEventListener('click', function(event) {
+    const dropdownButtons = document.querySelectorAll('.dropbtn-world-bank-topics');
+    if (!event.target.matches('.dropbtn-world-bank-topics')) {
+        const dropdowns = document.getElementsByClassName('dropdown-content-world-bank-topics');
+        for (let i = 0; i < dropdowns.length; i++) {
+            let openDropdown = dropdowns[i];
+            if (openDropdown.style.display === 'block') {
+                openDropdown.style.display = 'none';
+            }
+        }
+    }
+    // Agrega este bloque para abrir nuevamente los menús desplegables
+    else {
+        dropdownButtons.forEach(button => {
+            if (event.target === button) {
+                const dropdownContent = event.target.nextElementSibling;
+                if (dropdownContent.style.display === 'none') {
+                    dropdownContent.style.display = 'block';
+                } else {
+                    dropdownContent.style.display = 'none';
+                }
+            }
+        });
+    }
+});
 </script>
 {% endblock %}

@@ -392,7 +392,7 @@ body {
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     transition: background-color 0.3s ease;
-    width: 500px; /* Más ancho */
+    width: 650px; /* Más ancho */
     text-align: left; /* Alinear texto a la izquierda */
 }
 
@@ -401,7 +401,7 @@ body {
     display: none;
     position: absolute;
     background-color: #fff; /* Fondo blanco */
-    min-width: 500px; /* Coincide con el ancho del botón */
+    min-width: 650px; /* Coincide con el ancho del botón */
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     z-index: 1;
     border-radius: 5px;
@@ -433,6 +433,28 @@ body {
     background-color: white;
 }
 
+/* Agrupación de los labels y menús desplegables */
+.dropdown-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* Mantener el estilo del contenedor de la clave */
+.keyphrase-extraction-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 40px auto;
+    width: 60%;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    color: white;
+}
+
 .results-container-world-bank {
     display: flex;
     flex-direction: column;
@@ -445,10 +467,12 @@ body {
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     color: white;
+    text-align: center; /* Centrar el texto */
 }
 
 .results-container-world-bank h3 {
-    margin-bottom: 20px;
+    margin: 30px 0px;
+    font-size: 50px;
 }
 
 .results-container-world-bank .results-table-world-bank-topics {
@@ -465,35 +489,61 @@ body {
 .results-container-world-bank .results-table-world-bank-topics td {
     border: 1px solid #fff;
     padding: 8px;
-    text-align: left;
+    /* text-align: center; */
+}
+
+.results-container-world-bank .results-table-world-bank-topics tbody td.value-column {
+    text-align: right;
 }
 
 .results-container-world-bank .results-table-world-bank-topics th {
     background-color: #3498db;
     color: #fff;
     font-weight: bold;
-    text-align: center;
-    padding: 10px;
-    text-transform: uppercase;
-}
-
-.results-container-world-bank .results-table-world-bank-topics td {
-    background: rgba(255, 255, 255, 0.1);
+    text-align: center; /* Centrar los títulos */
 }
 
 .results-container-world-bank .results-table-world-bank-topics tbody tr:nth-child(even) {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.2); /* Filas pares con fondo semitransparente */
 }
 
 .results-container-world-bank .results-table-world-bank-topics tbody tr:hover {
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(255, 255, 255, 0.3); /* Fondo semitransparente al pasar el mouse */
 }
 
-.results-container-world-bank .results-table-world-bank-topics tbody tr:hover td {
-    color: #000;
+.keyphrase-extraction-container .download-csv {
+    background-color: #3498db;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-.results-container-world-bank .results-table-world-bank-topics th,
-.results-container-world-bank .results-table-world-bank-topics td {
-    font-family: 'Open Sans', sans-serif;
+.keyphrase-extraction-container .download-csv:hover {
+    background-color: #2980b9;
+}
+
+/* Estilo del botón "Show Results" */
+.show-results {
+    background-color: #3498db;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.show-results:hover {
+    background-color: #2980b9;
+}
+
+/* Estilo del contenedor del grupo de botones */
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 10px; /* Espacio entre los botones */
+    margin-top: 20px;
 }
