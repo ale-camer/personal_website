@@ -18,7 +18,7 @@
         <div class="dropdown-group">
             <label for="type">Select type:</label>
             <div class="dropdown-world-bank-topics">
-                <button class="dropbtn-world-bank-topics" id="typeButton">Select Type</button>
+                <button class="dropbtn-world-bank-topics" id="typeButton">Year or Country</button>
                 <div class="dropdown-content-world-bank-topics" id="typeMenu">
                     <a href="#" onclick="selectType('country')">Country</a>
                     <a href="#" onclick="selectType('year')">Year</a>
@@ -29,7 +29,7 @@
         <div class="dropdown-group">
             <label for="options">Select an option:</label>
             <div class="dropdown-world-bank-topics">
-                <button class="dropbtn-world-bank-topics" id="optionsButton">Select an Option</button>
+                <button class="dropbtn-world-bank-topics" id="optionsButton">Year or Country</button>
                 <div class="dropdown-content-world-bank-topics" id="optionsMenu">
                     <!-- Options will be inserted here by JavaScript -->
                 </div>
@@ -37,7 +37,7 @@
         </div>
         <div class="button-group">
             <button class="show-results" onclick="showResults()">Show Results</button>
-            <button class="download-csv" onclick="downloadCSV()">Download CSV</button>
+            <button class="download-csv">Download CSV</button>
         </div>
     </div>
 
@@ -46,9 +46,19 @@
         <table class="results-table-world-bank-topics">
             <thead>
                 <tr>
-                    <th>Country</th>
-                    <th>Date</th>
-                    <th>Value</th>
+                    <th id="countryHeader" class="sortable">
+                        Country 
+                        <span class="sort-icon">&#8597;</span> <!-- Unicode para flecha de ordenamiento vertical -->
+                    </th>
+                    <th id="dateHeader" class="sortable">
+                        Date 
+                        <span class="sort-icon">&#8597;</span> <!-- Unicode para flecha de ordenamiento vertical -->
+                    </th>
+                    <th id="valueHeader" class="sortable">
+                        Value 
+                        <span class="sort-icon">&#8597;</span> <!-- Unicode para flecha de ordenamiento vertical -->
+                    </th>
+                    
                 </tr>
             </thead>
             <tbody>
@@ -104,11 +114,13 @@
         closeDropdown('optionsMenu');
     }
 
+    // Función para mostrar los resultados y guardar el archivo CSV
     function showResults() {
         if (selectedIndicator && selectedType && selectedOption) {
             fetchData(selectedIndicator, selectedType, selectedOption);
         }
     }
+
 
     function fetchData(indicator, type, option) {
         fetch(`/fetch_data?indicator=${indicator}&type=${type}&option=${option}`)
@@ -135,7 +147,7 @@
     const resultsContainer = document.querySelector('.results-container-world-bank');
     resultsContainer.style.display = 'block';
     }
-1
+
 
 
     function closeDropdown(menuId) {
@@ -166,6 +178,85 @@
             }
         });
     }
-});
+    });
+
+    // Función para ordenar la tabla
+    function sortTable(columnIndex, ascending) {
+        const sortedData = [...currentData].sort((a, b) => {
+            let aValue = Object.values(a)[columnIndex];
+            let bValue = Object.values(b)[columnIndex];
+            
+            if (columnIndex === 2) { // Si es la columna de valores, comparar como números
+                aValue = parseFloat(aValue);
+                bValue = parseFloat(bValue);
+            }
+            
+            if (aValue < bValue) return ascending ? -1 : 1;
+            if (aValue > bValue) return ascending ? 1 : -1;
+            return 0;
+        });
+        displayResults(sortedData);
+    }
+
+    // Agregar manejadores de eventos para los encabezados de la tabla
+    document.querySelectorAll('.results-table-world-bank-topics th').forEach((header, index) => {
+        header.addEventListener('click', () => {
+            const ascending = !header.classList.contains('asc');
+            document.querySelectorAll('.results-table-world-bank-topics th').forEach(th => th.classList.remove('asc', 'desc'));
+            header.classList.toggle('asc', ascending);
+            header.classList.toggle('desc', !ascending);
+            sortTable(index, ascending);
+        });
+    });
+
+    // Función para ordenar la tabla
+    function sortTable(columnIndex, ascending) {
+        const rows = document.querySelectorAll('.results-container-world-bank .results-table-world-bank-topics tbody tr');
+        const sortedRows = Array.from(rows).sort((a, b) => {
+            const aValue = a.cells[columnIndex].innerText;
+            const bValue = b.cells[columnIndex].innerText;
+
+            // Convertir los valores a números solo si es la columna 'Value'
+            if (columnIndex === 2) {
+                const aNumValue = parseFloat(aValue.replace(/[^0-9.]/g, '')); // Elimina todos los caracteres que no sean dígitos o puntos
+                const bNumValue = parseFloat(bValue.replace(/[^0-9.]/g, ''));
+
+                return ascending ? aNumValue - bNumValue : bNumValue - aNumValue; // Ordenar como números
+            }
+
+            // Si no es la columna 'Value', ordenar como cadenas
+            return ascending ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+        });
+
+        const tableBody = document.querySelector('.results-container-world-bank .results-table-world-bank-topics tbody');
+        sortedRows.forEach(row => tableBody.appendChild(row));
+    }
+
+
+    // Agregar manejadores de eventos para los encabezados de la tabla
+    document.querySelectorAll('.sortable').forEach(header => {
+        let ascending = true; // Variable para controlar el orden ascendente/descendente
+
+        header.addEventListener('click', () => {
+            const icon = header.querySelector('.sort-icon');
+            if (ascending) {
+                icon.innerHTML = '&#8593;'; // Unicode para flecha hacia arriba
+            } else {
+                icon.innerHTML = '&#8595;'; // Unicode para flecha hacia abajo
+            }
+
+            ascending = !ascending; // Cambia el estado de la variable para el próximo clic
+            const columnIndex = Array.from(header.parentNode.children).indexOf(header); // Obtiene el índice de la columna
+
+            // Remueve las clases de ordenamiento de todos los encabezados
+            document.querySelectorAll('.results-container-world-bank .results-table-world-bank-topics th').forEach(th => th.classList.remove('asc', 'desc'));
+            header.classList.toggle('asc', ascending);
+            header.classList.toggle('desc', !ascending);
+
+            sortTable(columnIndex, ascending);
+        });
+    });
+
+
 </script>
 {% endblock %}

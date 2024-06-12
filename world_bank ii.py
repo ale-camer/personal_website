@@ -71,17 +71,17 @@ def get_country_data_for_indicator(indicator_id):
 
 data = get_country_data_for_indicator(indicators[key])
 
-df=[]
-for i in range(len(data[1])):
+# df=[]
+# for i in range(len(data[1])):
     
-    df.append((
-        data[1][i]['country']['value'],
-        data[1][i]['date'],
-        data[1][i]['value']))
-df=pd.DataFrame(df,columns=['COUNTRY','DATE','VALUE']).dropna().drop_duplicates()
+#     df.append((
+#         data[1][i]['country']['value'],
+#         data[1][i]['date'],
+#         data[1][i]['value']))
+# df=pd.DataFrame(df,columns=['COUNTRY','DATE','VALUE']).dropna().drop_duplicates()
 
-countries=sorted(df['COUNTRY'].unique())
-years=sorted(df['YEAR'].unique())
+# countries=sorted(df['COUNTRY'].unique())
+# years=sorted(df['YEAR'].unique())
 
 
 
@@ -116,71 +116,71 @@ years=sorted(df['YEAR'].unique())
 
 #%% PREPROCESSING DATA
 
-"""
-hay que ver los datos que hay por tema. es probable que
-algunos temas no valga la pena tenerlos.
-"""
+# """
+# hay que ver los datos que hay por tema. es probable que
+# algunos temas no valga la pena tenerlos.
+# """
 
-df=[]
-for key in tqdm(list(data.keys())):
-    try:
-        for i in range(len(data[key][1])):
+# df=[]
+# for key in tqdm(list(data.keys())):
+#     try:
+#         for i in range(len(data[key][1])):
             
-                df.append((
-                    key,
-                    data[key][1][i]['country']['value'],
-                    data[key][1][i]['date'],
-                    data[key][1][i]['value']))
-    except: pass
-df=pd.DataFrame(df,columns=['TOPIC','COUNTRY','DATE','VALUE']).dropna().drop_duplicates()
-topics=df['TOPIC'].value_counts()[df['TOPIC'].value_counts()>200].index
-df=df[df['TOPIC'].isin(topics)]
+#                 df.append((
+#                     key,
+#                     data[key][1][i]['country']['value'],
+#                     data[key][1][i]['date'],
+#                     data[key][1][i]['value']))
+#     except: pass
+# df=pd.DataFrame(df,columns=['TOPIC','COUNTRY','DATE','VALUE']).dropna().drop_duplicates()
+# topics=df['TOPIC'].value_counts()[df['TOPIC'].value_counts()>200].index
+# df=df[df['TOPIC'].isin(topics)]
 
-#%%
+# #%%
 
-import pandas as pd
-import geopandas as gpd
-import folium
-from branca.colormap import linear
-import pycountry
+# import pandas as pd
+# import geopandas as gpd
+# import folium
+# from branca.colormap import linear
+# import pycountry
 
-def convert_country_name_to_english(country_name):
-    try:
-        country = pycountry.countries.get(name=country_name)
-        if country:
-            return country.name
-        else:
-            return country_name
-    except:
-        return country_name
+# def convert_country_name_to_english(country_name):
+#     try:
+#         country = pycountry.countries.get(name=country_name)
+#         if country:
+#             return country.name
+#         else:
+#             return country_name
+#     except:
+#         return country_name
 
-df_ = df[df['TOPIC'] == 'Children in employment, total (% of children ages 7-14)']
-df_['DATE'] = pd.to_datetime(df_['DATE'])
-df_['VALUE'] = round(df_['VALUE'], 2)
-df_ = df_.loc[df_.groupby('COUNTRY')['DATE'].idxmax()]
-df_['COUNTRY'] = df_['COUNTRY'].apply(convert_country_name_to_english)
+# df_ = df[df['TOPIC'] == 'Children in employment, total (% of children ages 7-14)']
+# df_['DATE'] = pd.to_datetime(df_['DATE'])
+# df_['VALUE'] = round(df_['VALUE'], 2)
+# df_ = df_.loc[df_.groupby('COUNTRY')['DATE'].idxmax()]
+# df_['COUNTRY'] = df_['COUNTRY'].apply(convert_country_name_to_english)
 
-world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
-world = world.merge(df_, how='left', left_on='name', right_on='COUNTRY')
+# world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+# world = world.merge(df_, how='left', left_on='name', right_on='COUNTRY')
 
-m = folium.Map(location=[20, 0], zoom_start=2)
-colormap = linear.YlOrRd_09.scale(df_['VALUE'].min(), df_['VALUE'].max())
-colormap.caption = 'Value by Country'
-for _, row in world.iterrows():
-    if pd.notna(row['VALUE']):
-        geo_json = folium.GeoJson(
-            row['geometry'],
-            style_function=lambda x, value=row['VALUE']: {
-                'fillColor': colormap(value),
-                'color': 'black',
-                'weight': 0.5,
-                'fillOpacity': value / df_['VALUE'].max()
-            }
-        )
-        geo_json.add_child(folium.Tooltip(f"{row['name']} ({row['DATE'].year}): {row['VALUE']}%"))
-        geo_json.add_to(m)
-colormap.add_to(m)
-m.save('heatmap_mundial.html')
+# m = folium.Map(location=[20, 0], zoom_start=2)
+# colormap = linear.YlOrRd_09.scale(df_['VALUE'].min(), df_['VALUE'].max())
+# colormap.caption = 'Value by Country'
+# for _, row in world.iterrows():
+#     if pd.notna(row['VALUE']):
+#         geo_json = folium.GeoJson(
+#             row['geometry'],
+#             style_function=lambda x, value=row['VALUE']: {
+#                 'fillColor': colormap(value),
+#                 'color': 'black',
+#                 'weight': 0.5,
+#                 'fillOpacity': value / df_['VALUE'].max()
+#             }
+#         )
+#         geo_json.add_child(folium.Tooltip(f"{row['name']} ({row['DATE'].year}): {row['VALUE']}%"))
+#         geo_json.add_to(m)
+# colormap.add_to(m)
+# m.save('heatmap_mundial.html')
 
 
 

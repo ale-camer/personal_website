@@ -46,6 +46,56 @@ indicators = {
     'Labor force participation rate, total (% of total population ages 15-64) (modeled ILO estimate)': 'SL.TLF.ACTI.ZS'
 }
 
+strings_to_exclude = [
+    'Africa Eastern and Southern',
+    'Africa Western and Central',
+    'Arab World',
+    'Caribbean small states',
+    'Central Europe and the Baltics',
+    'Early-demographic dividend',
+    'East Asia & Pacific',
+    'East Asia & Pacific (IDA & IBRD countries)',
+    'East Asia & Pacific (excluding high income)',
+    'Euro area',
+    'Europe & Central Asia',
+    'Europe & Central Asia (IDA & IBRD countries)',
+    'Europe & Central Asia (excluding high income)',
+    'European Union',
+    'Fragile and conflict affected situations',
+    'Heavily indebted poor countries (HIPC)',
+    'High income',
+    'IBRD only',
+    'IDA & IBRD total',
+    'IDA blend',
+    'IDA only',
+    'IDA total',
+    'Late-demographic dividend',
+    'Latin America & Caribbean',
+    'Latin America & Caribbean (excluding high income)',
+    'Latin America & the Caribbean (IDA & IBRD countries)',
+    'Least developed countries: UN classification',
+    'Low & middle income',
+    'Low income',
+    'Lower middle income',
+    'Middle East & North Africa',
+    'Middle East & North Africa (IDA & IBRD countries)',
+    'Middle East & North Africa (excluding high income)',
+    'Middle income',
+    'OECD members',
+    'Other small states',
+    'Pacific island small states',
+    'Post-demographic dividend',
+    'Pre-demographic dividend',
+    'Small states',
+    'South Asia (IDA & IBRD)',
+    'Sub-Saharan Africa',
+    'Sub-Saharan Africa (IDA & IBRD countries)',
+    'Sub-Saharan Africa (excluding high income)',
+    'Upper middle income',
+    'World',
+    'South Asia'
+]
+
 def get_country_data_for_indicator(indicator_id):
     url = f'https://api.worldbank.org/v2/country/all/indicator/{indicator_id}'
     params = {
@@ -55,7 +105,16 @@ def get_country_data_for_indicator(indicator_id):
     }
     response = requests.get(url, params=params)
     if response.status_code == 200:
-        return response.json()
+        data = response.json()
+        if isinstance(data, list) and len(data) > 1 and 'country' in data[1][0]:
+            filtered_data = [
+                entry for entry in data[1]
+                if entry['country']['value'] not in strings_to_exclude and entry['value'] is not None
+            ]
+            return filtered_data
+        else:
+            print(f'\nError {indicator_id}: Unexpected data structure')
+            return None
     else:
         print(f'\nError {indicator_id}: {response.status_code}')
         return None

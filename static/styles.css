@@ -379,6 +379,7 @@ body {
     position: relative;
     display: inline-block;
     margin: 20px 0;
+    width: 55%;
 }
 
 /* Estilo del botón del menú desplegable */
@@ -392,8 +393,11 @@ body {
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     transition: background-color 0.3s ease;
-    width: 650px; /* Más ancho */
-    text-align: left; /* Alinear texto a la izquierda */
+    width: 200%; /* Más ancho */
+    text-align: center; /* Alinear texto a la izquierda */
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 /* Estilo del contenido del menú desplegable (oculto por defecto) */
@@ -401,11 +405,15 @@ body {
     display: none;
     position: absolute;
     background-color: #fff; /* Fondo blanco */
-    min-width: 650px; /* Coincide con el ancho del botón */
+    min-width: 200%; /* Coincide con el ancho del botón */
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     z-index: 1;
     border-radius: 5px;
     padding: 5px 0;
+    left: 50%;
+    transform: translateX(-50%);
+    max-height: 500px; /* Altura máxima para el contenido del menú */
+    overflow-y: auto; /* Hacer el contenido desplazable verticalmente */
 }
 
 /* Estilo de los enlaces del menú desplegable */
@@ -546,4 +554,21 @@ body {
     justify-content: center;
     gap: 10px; /* Espacio entre los botones */
     margin-top: 20px;
+}
+
+.sortable {
+    cursor: pointer;
+}
+
+/* Estilo para los iconos de ordenamiento */
+.sort-icon {
+    margin-left: 5px; /* Añade un espacio entre el texto y el icono */
+    font-size: 12px; /* Tamaño del icono */
+    cursor: pointer; /* Cambia el cursor a una mano */
+    transition: transform 0.3s; /* Agrega una transición suave al icono */
+}
+
+/* Estilo para los iconos cuando se pasa el mouse sobre ellos */
+.sort-icon:hover {
+    transform: scale(1.2); /* Aumenta ligeramente el tamaño al pasar el mouse */
 }
