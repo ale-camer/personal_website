@@ -126,6 +126,38 @@ def fetch_data():
 
     return df.to_dict(orient='records')
 
+@app.route('/download_csv')
+def download_csv():
+    indicator_id = request.args.get('indicator')
+    type = request.args.get('type')
+    option = request.args.get('option')
+    data = get_country_data_for_indicator(indicator_id)
+
+    if not data:
+        return "No data available"
+
+    if type == 'country':
+        filtered_data = [entry for entry in data if entry['country']['value'] == option]
+    elif type == 'year':
+        filtered_data = [entry for entry in data if entry['date'] == option]
+    else:
+        filtered_data = []
+
+    df = pd.DataFrame([
+        (entry['country']['value'], entry['date'], entry['value'])
+        for entry in filtered_data
+    ], columns=['COUNTRY', 'DATE', 'VALUE'])
+
+    # Ordenar por 'COUNTRY' de forma ascendente y por 'DATE' de forma descendente
+    df = df.sort_values(by=['COUNTRY', 'DATE'], ascending=[True, False])
+
+    # Crear el archivo CSV
+    csv_path = 'data.csv'
+    df.to_csv(csv_path, index=False)
+
+    # Enviar el archivo CSV al cliente
+    return send_file(csv_path, mimetype='text/csv', as_attachment=True, download_name='data.csv')
+
 if __name__ == '__main__':
     app.run(debug=True)
   

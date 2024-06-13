@@ -37,7 +37,7 @@
         </div>
         <div class="button-group">
             <button class="show-results" onclick="showResults()">Show Results</button>
-            <button class="download-csv">Download CSV</button>
+            <button class="download-csv" onclick="downloadCSV()">Download CSV</button>
         </div>
     </div>
 
@@ -257,6 +257,12 @@
         });
     });
 
-
+    // Función para descargar el CSV
+    function downloadCSV() {
+        if (selectedIndicator && selectedType && selectedOption) {
+            const url = `/download_csv?indicator=${selectedIndicator}&type=${selectedType}&option=${selectedOption}`;
+            window.location.href = url;
+        }
+    }
 </script>
 {% endblock %}
