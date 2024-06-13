@@ -3,7 +3,7 @@ from keyphrase_extraction import procesar_archivo
 from seasonality_prediction import forecasting, generate_plots
 import os, requests
 import pandas as pd
-from world_bank import indicators, get_country_data_for_indicator, strings_to_exclude
+from world_bank import indicators, get_country_data_for_indicator, strings_to_exclude, plot_time_series, plot_heatmap
 
 app = Flask(__name__)
 
@@ -157,6 +157,39 @@ def download_csv():
 
     # Enviar el archivo CSV al cliente
     return send_file(csv_path, mimetype='text/csv', as_attachment=True, download_name='data.csv')
+
+@app.route('/interactive_graph', methods=['POST'])
+def interactive_graph():
+    indicator = request.form['indicator']
+    type = request.form['type']
+    option = request.form['option']
+    
+    # Obtener los datos del país o año seleccionado
+    data = get_country_data_for_indicator(indicator)
+    
+    # Filtrar según el tipo seleccionado (country o year)
+    if type == 'country':
+        filtered_data = [entry for entry in data if entry['country']['value'] == option]
+    elif type == 'year':
+        filtered_data = [entry for entry in data if entry['date'] == option]
+    else:
+        return "Invalid type"
+    
+    df = pd.DataFrame([
+        (entry['country']['value'], entry['date'], entry['value'])
+        for entry in filtered_data
+    ], columns=['COUNTRY', 'DATE', 'VALUE'])
+    
+    # Ordenar por 'COUNTRY' de forma ascendente y por 'DATE' de forma descendente
+    df = df.sort_values(by=['COUNTRY', 'DATE'], ascending=[True, False])
+    
+    # Ejecutar la función de gráfico adecuada
+    if type == 'country':
+        plot_time_series(df, title=option)
+    elif type == 'year':
+        plot_heatmap(df)
+    
+    return "Interactive graph generated."
 
 if __name__ == '__main__':
     app.run(debug=True)

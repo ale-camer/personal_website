@@ -120,131 +120,149 @@ strings_to_exclude = [
 
 data = get_country_data_for_indicator(indicators[key])
 
-# df=[]
-# for i in range(len(data[1])):
-    
-#     df.append((
-#         data[1][i]['country']['value'],
-#         data[1][i]['date'],
-#         data[1][i]['value']))
-# df=pd.DataFrame(df,columns=['COUNTRY','DATE','VALUE']).dropna().drop_duplicates()
-
-# countries=sorted(df['COUNTRY'].unique())
-# years=sorted(df['YEAR'].unique())
-
-#%%
-   
-filtered_data = [entry for entry in data[1] if entry['country']['value'] not in strings_to_exclude and entry['value'] is not None]
-
-df = pd.DataFrame([
-    (entry['country']['value'], entry['date'], entry['value'])
-    for entry in filtered_data
-], columns=['COUNTRY', 'DATE', 'VALUE'])
-
-print(df['COUNTRY'].unique())
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 #%% PREPROCESSING DATA
 
-# """
-# hay que ver los datos que hay por tema. es probable que
-# algunos temas no valga la pena tenerlos.
-# """
+"""
+hay que ver los datos que hay por tema. es probable que
+algunos temas no valga la pena tenerlos.
+"""
 
-# df=[]
+df=[]
 # for key in tqdm(list(data.keys())):
 #     try:
-#         for i in range(len(data[key][1])):
-            
-#                 df.append((
-#                     key,
-#                     data[key][1][i]['country']['value'],
-#                     data[key][1][i]['date'],
-#                     data[key][1][i]['value']))
-#     except: pass
-# df=pd.DataFrame(df,columns=['TOPIC','COUNTRY','DATE','VALUE']).dropna().drop_duplicates()
-# topics=df['TOPIC'].value_counts()[df['TOPIC'].value_counts()>200].index
-# df=df[df['TOPIC'].isin(topics)]
+for i in tqdm(range(len(data[1]))):
 
-# #%%
+    df.append((
+        key,
+        data[1][i]['country']['value'],
+        data[1][i]['date'],
+        data[1][i]['value']))
+    # except: pass
+df=pd.DataFrame(df,columns=['TOPIC','COUNTRY','DATE','VALUE']).dropna().drop_duplicates()
+topics=df['TOPIC'].value_counts()[df['TOPIC'].value_counts()>200].index
+df=df[df['TOPIC'].isin(topics)]
+df['DATE'] = pd.to_datetime(df['DATE'])
+df['VALUE'] = round(df['VALUE'], 2)
+
+#%%
 
 # import pandas as pd
-# import geopandas as gpd
-# import folium
-# from branca.colormap import linear
-# import pycountry
 
-# def convert_country_name_to_english(country_name):
-#     try:
-#         country = pycountry.countries.get(name=country_name)
-#         if country:
-#             return country.name
-#         else:
-#             return country_name
-#     except:
-#         return country_name
 
-# df_ = df[df['TOPIC'] == 'Children in employment, total (% of children ages 7-14)']
-# df_['DATE'] = pd.to_datetime(df_['DATE'])
-# df_['VALUE'] = round(df_['VALUE'], 2)
-# df_ = df_.loc[df_.groupby('COUNTRY')['DATE'].idxmax()]
-# df_['COUNTRY'] = df_['COUNTRY'].apply(convert_country_name_to_english)
+df_ = df.loc[df.groupby('COUNTRY')['DATE'].idxmax()]
+df_=df_[~df_['COUNTRY'].isin(strings_to_exclude)]
 
-# world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
-# world = world.merge(df_, how='left', left_on='name', right_on='COUNTRY')
+import pandas as pd
+import geopandas as gpd
+import folium
+from branca.colormap import linear
+import warnings
+warnings.filterwarnings("ignore")
 
-# m = folium.Map(location=[20, 0], zoom_start=2)
-# colormap = linear.YlOrRd_09.scale(df_['VALUE'].min(), df_['VALUE'].max())
-# colormap.caption = 'Value by Country'
-# for _, row in world.iterrows():
-#     if pd.notna(row['VALUE']):
-#         geo_json = folium.GeoJson(
-#             row['geometry'],
-#             style_function=lambda x, value=row['VALUE']: {
-#                 'fillColor': colormap(value),
-#                 'color': 'black',
-#                 'weight': 0.5,
-#                 'fillOpacity': value / df_['VALUE'].max()
-#             }
-#         )
-#         geo_json.add_child(folium.Tooltip(f"{row['name']} ({row['DATE'].year}): {row['VALUE']}%"))
-#         geo_json.add_to(m)
-# colormap.add_to(m)
-# m.save('heatmap_mundial.html')
+world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+world = world.merge(df_, how='left', left_on='name', right_on='COUNTRY')
+
+m = folium.Map(location=[20, 0], zoom_start=2)
+colormap = linear.YlOrRd_09.scale(df_['VALUE'].min(), df_['VALUE'].max())
+colormap.caption = 'Value by Country'
+for _, row in world.iterrows():
+    if pd.notna(row['VALUE']):
+        geo_json = folium.GeoJson(
+            row['geometry'],
+            style_function=lambda x, value=row['VALUE']: {
+                'fillColor': colormap(value),
+                'color': 'black',
+                'weight': 0.5,
+                'fillOpacity': value / df_['VALUE'].max()
+            }
+        )
+        geo_json.add_child(folium.Tooltip(f"{row['name']} ({row['DATE'].year}): {row['VALUE']}"))
+        geo_json.add_to(m)
+colormap.add_to(m)
+m.save('C:/Users/ale_c/OneDrive/Desktop/heatmap_mundial.html')
+
+#%%
+
+df_ = df[df['COUNTRY']=='Argentina']
+df_['DATE'] = pd.to_datetime(df_['DATE'])
+df_['DATE'] = df_['DATE'].dt.year
 
 
 
+def plot_time_series(df,title='',template='plotly'):
+    
+    import plotly.graph_objects as go
+    import pandas as pd
+    import webbrowser
+    import os
+    
+    df_['DATE'] = pd.to_datetime(df_['DATE'])
+    df_['DATE'] = df_['DATE'].dt.year
+    
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=df['DATE'], y=df['VALUE'], mode='lines+markers', name='Data'))
+
+    fig.update_layout(
+        title=title,
+        xaxis_title='Year',
+        yaxis_title='Value',
+        template=template
+    )
+    
+    temp_html_path = 'temp_interactive_time_series.html'
+    fig.write_html(temp_html_path)
+    webbrowser.open('file://' + os.path.realpath(temp_html_path))
+
+plot_interactive_time_series(df=df_,title='',template='xgridoff')
+
+#%%
+
+df_ = df.loc[df.groupby('COUNTRY')['DATE'].idxmax()]
+df_=df_[~df_['COUNTRY'].isin(strings_to_exclude)]
 
 
 
+def plot_heatmap(df):
+    
+    import pandas as pd
+    import geopandas as gpd
+    import folium
+    from branca.colormap import linear
+    import warnings
+    import webbrowser
+    import os
 
+    warnings.filterwarnings("ignore")
+    
+    df_ = df.loc[df.groupby('COUNTRY')['DATE'].idxmax()]
 
+    world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+    world = world.merge(df, how='left', left_on='name', right_on='COUNTRY')
 
+    m = folium.Map(location=[20, 0], zoom_start=2)
+    colormap = linear.YlOrRd_09.scale(df['VALUE'].min(), df['VALUE'].max())
+    colormap.caption = 'Value by Country'
+    for _, row in world.iterrows():
+        if pd.notna(row['VALUE']):
+            formatted_value = '{:,}'.format(row['VALUE'])
+            geo_json = folium.GeoJson(
+                row['geometry'],
+                style_function=lambda x, value=row['VALUE']: {
+                    'fillColor': colormap(value),
+                    'color': 'black',
+                    'weight': 0.5,
+                    'fillOpacity': value / df['VALUE'].max()
+                }
+            )
+            geo_json.add_child(folium.Tooltip(f"{row['name']} ({row['DATE'].year}): {formatted_value}"))
+            geo_json.add_to(m)
+    
+    colormap.add_to(m)
+    m.save('heatmap.html')
+    webbrowser.open('file://' + os.path.realpath('heatmap.html'))
 
-
-
-
-
-
-
+plot_world_heatmap(df=df_)
 
 
 

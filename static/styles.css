@@ -519,7 +519,9 @@ body {
     background-color: rgba(255, 255, 255, 0.3); /* Fondo semitransparente al pasar el mouse */
 }
 
-.keyphrase-extraction-container .download-csv {
+.keyphrase-extraction-container .download-csv,
+.keyphrase-extraction-container .show-results,
+.keyphrase-extraction-container .interactive-graph {
     background-color: #3498db;
     color: #fff;
     padding: 10px 20px;
@@ -529,12 +531,14 @@ body {
     transition: background-color 0.3s ease;
 }
 
-.keyphrase-extraction-container .download-csv:hover {
-    background-color: #2980b9;
+.keyphrase-extraction-container .download-csv:hover,
+.keyphrase-extraction-container .show-results:hover,
+.keyphrase-extraction-container .interactive-graph:hover {
+        background-color: #2980b9;
 }
 
 /* Estilo del botón "Show Results" */
-.show-results {
+/* .show-results {
     background-color: #3498db;
     color: #fff;
     padding: 10px 20px;
@@ -542,11 +546,11 @@ body {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-}
+} */
 
-.show-results:hover {
+/* .show-results:hover {
     background-color: #2980b9;
-}
+} */
 
 /* Estilo del contenedor del grupo de botones */
 .button-group {

@@ -1,4 +1,9 @@
-import requests
+import requests, folium, warnings, os, webbrowser
+import pandas as pd
+import geopandas as gpd
+from branca.colormap import linear
+import plotly.graph_objects as go
+warnings.filterwarnings("ignore")
 
 indicators = {
     'Agricultural land (% of land area)': 'AG.LND.AGRI.ZS',
@@ -118,3 +123,52 @@ def get_country_data_for_indicator(indicator_id):
     else:
         print(f'\nError {indicator_id}: {response.status_code}')
         return None
+
+def plot_time_series(df,title='',template='plotly'):
+    
+    df['DATE'] = pd.to_datetime(df['DATE'])
+    df['DATE'] = df['DATE'].dt.year
+    
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=df['DATE'], y=df['VALUE'], mode='lines+markers', name='Data'))
+
+    fig.update_layout(
+        title=title,
+        xaxis_title='Year',
+        yaxis_title='Value',
+        template=template
+    )
+    
+    temp_html_path = 'time_series.html'
+    fig.write_html(temp_html_path)
+    webbrowser.open('file://' + os.path.realpath(temp_html_path))
+
+def plot_heatmap(df):
+    
+    df = df.loc[df.groupby('COUNTRY')['DATE'].idxmax()]
+    df['DATE'] = pd.to_datetime(df['DATE'])
+
+    world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+    world = world.merge(df, how='left', left_on='name', right_on='COUNTRY')
+
+    m = folium.Map(location=[20, 0], zoom_start=2)
+    colormap = linear.YlOrRd_09.scale(df['VALUE'].min(), df['VALUE'].max())
+    colormap.caption = 'Value by Country'
+    for _, row in world.iterrows():
+        if pd.notna(row['VALUE']):
+            formatted_value = '{:,}'.format(round(row['VALUE'],2))
+            geo_json = folium.GeoJson(
+                row['geometry'],
+                style_function=lambda x, value=row['VALUE']: {
+                    'fillColor': colormap(value),
+                    'color': 'black',
+                    'weight': 0.5,
+                    'fillOpacity': value / df['VALUE'].max()
+                }
+            )
+            geo_json.add_child(folium.Tooltip(f"{row['name']} ({row['DATE'].year}): {formatted_value}"))
+            geo_json.add_to(m)
+    
+    colormap.add_to(m)
+    m.save('heatmap.html')
+    webbrowser.open('file://' + os.path.realpath('heatmap.html'))
