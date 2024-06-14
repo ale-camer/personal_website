@@ -12,13 +12,12 @@ indicators = {
     'Land area (sq. km)': 'AG.LND.TOTL.K2',
     'Rural land area (sq. km)': 'AG.LND.TOTL.RU.K2',
     'Surface area (sq. km)': 'AG.SRF.TOTL.K2',
-    'Primary completion rate, total (% of relevant age group)': 'SE.PRM.CMPT.ZS',
+    'Primary completion rate (% of relevant age group)': 'SE.PRM.CMPT.ZS',
     'Net migration': 'SM.POP.NETM',
-    'Expense (% of GDP)': 'GC.XPN.TOTL.GD.ZS',
     'GDP (current US$)': 'NY.GDP.MKTP.CD',
     'GDP per capita (current US$)': 'NY.GDP.PCAP.CD',
     'Children out of school (% of primary school age)': 'SE.PRM.UNER.ZS',
-    'Unemployment, total (% of total labor force) (modeled ILO estimate)': 'SL.UEM.TOTL.ZS',
+    'Unemployment (% of total labor force) (modeled ILO estimate)': 'SL.UEM.TOTL.ZS',
     'Access to electricity (% of population)': 'EG.ELC.ACCS.ZS',
     'Renewable electricity output (% of total electricity output)': 'EG.ELC.RNEW.ZS',
     'Alternative and nuclear energy (% of total energy use)': 'EG.USE.COMM.CL.ZS',
@@ -26,29 +25,19 @@ indicators = {
     'Domestic credit to private sector by banks (% of GDP)': 'FD.AST.PRVT.GD.ZS',
     'Domestic credit to private sector (% of GDP)': 'GFDD.DI.14',
     'Suicide mortality rate (per 100,000 population)': 'SH.STA.SUIC.P5',
-    'Life expectancy at birth, total (years)': 'SP.DYN.LE00.IN',
-    'Population, total': 'SP.POP.TOTL',
-    'Employees (%)': '9.0.Employee.All',
-    'Employers (%)': '9.0.Employer.All',
-    'Self-Employed (%)': '9.0.SelfEmp.All',
-    'Unemployed (%)': '9.0.Unemp.All',
-    'Unpaid Workers (%)': '9.0.Unpaid.All',
-    'Coverage: Mobile Phone': '2.0.cov.Cel',
-    'Coverage: Electricity': '2.0.cov.Ele',
-    'Coverage: Mathematics Proficiency Level 2': '2.0.cov.Math.pl_2.all',
-    'Coverage: Sanitation': '2.0.cov.San',
-    'Coverage: Water': '2.0.cov.Wat',
+    'Life expectancy at birth (years)': 'SP.DYN.LE00.IN',
+    'Population': 'SP.POP.TOTL',
     'International tourism, number of arrivals': 'ST.INT.ARVL',
     'High-technology exports (current US$)': 'TX.VAL.TECH.CD',
     'High-technology exports (% of manufactured exports)': 'TX.VAL.TECH.MF.ZS',
-    'Human Capital Index (HCI) (scale 0-1)': 'HD.HCI.OVRL',
+    'Human Capital Index': 'HD.HCI.OVRL',
     'Military expenditure (% of GDP)': 'MS.MIL.XPND.GD.ZS',
     'Research and development expenditure (% of GDP)': 'GB.XPD.RSDV.GD.ZS',
-    'Trademark applications, total': 'IP.TMK.TOTL',
+    'Trademark applications': 'IP.TMK.TOTL',
     'Researchers in R&D (per million people)': 'SP.POP.SCIE.RD.P6',
     'Technicians in R&D (per million people)': 'SP.POP.TECH.RD.P6',
-    'Children in employment, total (% of children ages 7-14)': 'SL.TLF.0714.ZS',
-    'Labor force participation rate, total (% of total population ages 15-64) (modeled ILO estimate)': 'SL.TLF.ACTI.ZS'
+    'Children in employment (% of children ages 7-14)': 'SL.TLF.0714.ZS',
+    'Labor force participation rate (% of total population ages 15-64)': 'SL.TLF.ACTI.ZS'
 }
 
 strings_to_exclude = [
@@ -98,7 +87,8 @@ strings_to_exclude = [
     'Sub-Saharan Africa (excluding high income)',
     'Upper middle income',
     'World',
-    'South Asia'
+    'South Asia',
+    'North America'
 ]
 
 def get_country_data_for_indicator(indicator_id):
@@ -144,19 +134,30 @@ def plot_time_series(df,title='',template='plotly'):
     webbrowser.open('file://' + os.path.realpath(temp_html_path))
 
 def plot_heatmap(df):
-    
+    # Filtrar el DataFrame para obtener las últimas fechas por país
     df = df.loc[df.groupby('COUNTRY')['DATE'].idxmax()]
     df['DATE'] = pd.to_datetime(df['DATE'])
-
+    
+    # Cargar el shapefile del mundo
     world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
-    world = world.merge(df, how='left', left_on='name', right_on='COUNTRY')
-
+    
+    # Asegurarse de que los nombres de los países estén en inglés
+    world = world[['iso_a3', 'geometry', 'name']]
+    
+    # Realizar el merge con los datos del DataFrame
+    world = world.merge(df, how='left', left_on='iso_a3', right_on='ISO_CODE')
+    
+    # Crear el mapa base
     m = folium.Map(location=[20, 0], zoom_start=2)
+    
+    # Crear y agregar el colormap
     colormap = linear.YlOrRd_09.scale(df['VALUE'].min(), df['VALUE'].max())
     colormap.caption = 'Value by Country'
+    
+    # Agregar los polígonos de los países al mapa
     for _, row in world.iterrows():
         if pd.notna(row['VALUE']):
-            formatted_value = '{:,}'.format(round(row['VALUE'],2))
+            formatted_value = '{:,}'.format(round(row['VALUE'], 2))
             geo_json = folium.GeoJson(
                 row['geometry'],
                 style_function=lambda x, value=row['VALUE']: {
@@ -170,5 +171,7 @@ def plot_heatmap(df):
             geo_json.add_to(m)
     
     colormap.add_to(m)
+    
+    # Guardar el mapa como un archivo HTML y abrirlo en el navegador web
     m.save('heatmap.html')
     webbrowser.open('file://' + os.path.realpath('heatmap.html'))

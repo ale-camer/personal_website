@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, send_file, jsonify
-from keyphrase_extraction import procesar_archivo
-from seasonality_prediction import forecasting, generate_plots
 import os, requests
 import pandas as pd
+
+from keyphrase_extraction import procesar_archivo
+from seasonality_prediction import forecasting, generate_plots
 from world_bank import indicators, get_country_data_for_indicator, strings_to_exclude, plot_time_series, plot_heatmap
 
 app = Flask(__name__)
@@ -176,9 +177,9 @@ def interactive_graph():
         return "Invalid type"
     
     df = pd.DataFrame([
-        (entry['country']['value'], entry['date'], entry['value'])
+        (entry['countryiso3code'], entry['country']['value'], entry['date'], entry['value'])
         for entry in filtered_data
-    ], columns=['COUNTRY', 'DATE', 'VALUE'])
+    ], columns=['ISO_CODE', 'COUNTRY', 'DATE', 'VALUE'])
     
     # Ordenar por 'COUNTRY' de forma ascendente y por 'DATE' de forma descendente
     df = df.sort_values(by=['COUNTRY', 'DATE'], ascending=[True, False])
