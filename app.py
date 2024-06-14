@@ -22,7 +22,25 @@ def remove_old_plots():
                 print(f"Error deleting file {file_path}: {e}")
         else:
             print(f"File does not exist: {file_path}")
+
+def remove_old_downloads():
+    downloads_folder = 'downloads'
+    
+    if os.path.exists(downloads_folder):
+        for filename in os.listdir(downloads_folder):
+            file_path = os.path.join(downloads_folder, filename)
+            try:
+                if os.path.isfile(file_path):
+                    os.remove(file_path)
+                    print(f"Deleted file: {file_path}")
+            except Exception as e:
+                print(f"Error deleting file {file_path}: {e}")
+    else:
+        print(f"Folder does not exist: {downloads_folder}")
+
+# Llamar a las funciones para eliminar archivos viejos
 remove_old_plots()
+remove_old_downloads()
 
 @app.route('/')
 def index():
@@ -153,7 +171,10 @@ def download_csv():
     df = df.sort_values(by=['COUNTRY', 'DATE'], ascending=[True, False])
 
     # Crear el archivo CSV
-    csv_path = 'data.csv'
+    downloads_folder = 'downloads'
+    if not os.path.exists(downloads_folder):
+        os.makedirs(downloads_folder)
+    csv_path = os.path.join(downloads_folder, 'data.csv')
     df.to_csv(csv_path, index=False)
 
     # Enviar el archivo CSV al cliente

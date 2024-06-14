@@ -129,7 +129,10 @@ def plot_time_series(df,title='',template='plotly'):
         template=template
     )
     
-    temp_html_path = 'time_series.html'
+    downloads_folder = 'downloads'
+    if not os.path.exists(downloads_folder):
+        os.makedirs(downloads_folder)
+    temp_html_path = os.path.join(downloads_folder, 'time_series.html')
     fig.write_html(temp_html_path)
     webbrowser.open('file://' + os.path.realpath(temp_html_path))
 
@@ -172,6 +175,9 @@ def plot_heatmap(df):
     
     colormap.add_to(m)
     
-    # Guardar el mapa como un archivo HTML y abrirlo en el navegador web
-    m.save('heatmap.html')
-    webbrowser.open('file://' + os.path.realpath('heatmap.html'))
+    downloads_folder = 'downloads'
+    if not os.path.exists(downloads_folder):
+        os.makedirs(downloads_folder)
+    temp_html_path = os.path.join(downloads_folder, 'heatmap.html')
+    m.save(temp_html_path)
+    webbrowser.open('file://' + os.path.realpath(temp_html_path))
