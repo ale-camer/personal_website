@@ -1,10 +1,14 @@
+# Import necessary libraries
 import requests, folium, warnings, os, webbrowser
 import pandas as pd
 import geopandas as gpd
 from branca.colormap import linear
 import plotly.graph_objects as go
+
+# Ignore warnings to keep the output clean
 warnings.filterwarnings("ignore")
 
+# Dictionary mapping indicator names to their corresponding World Bank codes
 indicators = {
     'Agricultural land (% of land area)': 'AG.LND.AGRI.ZS',
     'Arable land (% of land area)': 'AG.LND.ARBL.ZS',
@@ -40,6 +44,7 @@ indicators = {
     'Labor force participation rate (% of total population ages 15-64)': 'SL.TLF.ACTI.ZS'
 }
 
+# List of strings representing regions or groupings to exclude from data visualization
 strings_to_exclude = [
     'Africa Eastern and Southern',
     'Africa Western and Central',
@@ -91,6 +96,7 @@ strings_to_exclude = [
     'North America'
 ]
 
+# Function to fetch country-level data for a given indicator ID from the World Bank API
 def get_country_data_for_indicator(indicator_id):
     url = f'https://api.worldbank.org/v2/country/all/indicator/{indicator_id}'
     params = {
@@ -101,6 +107,7 @@ def get_country_data_for_indicator(indicator_id):
     response = requests.get(url, params=params)
     if response.status_code == 200:
         data = response.json()
+        # Check if the response is in the expected format and filter out excluded countries and None values
         if isinstance(data, list) and len(data) > 1 and 'country' in data[1][0]:
             filtered_data = [
                 entry for entry in data[1]
@@ -114,11 +121,13 @@ def get_country_data_for_indicator(indicator_id):
         print(f'\nError {indicator_id}: {response.status_code}')
         return None
 
-def plot_time_series(df,title='',template='plotly'):
-    
+# Function to plot time series data using Plotly, saving as an interactive HTML file
+def plot_time_series(df, title='', template='plotly'):
+    # Convert DATE column to datetime format and extract year
     df['DATE'] = pd.to_datetime(df['DATE'])
     df['DATE'] = df['DATE'].dt.year
     
+    # Create a Plotly figure with time series data, customize axes and add title
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=df['DATE'], y=df['VALUE'], mode='lines+markers', name='Data'))
 
@@ -129,6 +138,7 @@ def plot_time_series(df,title='',template='plotly'):
         template=template
     )
     
+    # Save the interactive Plotly figure as an HTML file and open it in the default web browser
     downloads_folder = 'downloads'
     if not os.path.exists(downloads_folder):
         os.makedirs(downloads_folder)
@@ -136,28 +146,29 @@ def plot_time_series(df,title='',template='plotly'):
     fig.write_html(temp_html_path)
     webbrowser.open('file://' + os.path.realpath(temp_html_path))
 
+# Function to plot a heatmap using Folium and GeoPandas, saving as an interactive HTML file
 def plot_heatmap(df):
-    # Filtrar el DataFrame para obtener las últimas fechas por país
+    # Filter the DataFrame to include only the latest data per country
     df = df.loc[df.groupby('COUNTRY')['DATE'].idxmax()]
     df['DATE'] = pd.to_datetime(df['DATE'])
     
-    # Cargar el shapefile del mundo
+    # Load the world shapefile from GeoPandas
     world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
     
-    # Asegurarse de que los nombres de los países estén en inglés
+    # Ensure country names are in English
     world = world[['iso_a3', 'geometry', 'name']]
     
-    # Realizar el merge con los datos del DataFrame
+    # Merge the world shapefile with the DataFrame's data
     world = world.merge(df, how='left', left_on='iso_a3', right_on='ISO_CODE')
     
-    # Crear el mapa base
+    # Create a base Folium map
     m = folium.Map(location=[20, 0], zoom_start=2)
     
-    # Crear y agregar el colormap
+    # Create and add the colormap
     colormap = linear.YlOrRd_09.scale(df['VALUE'].min(), df['VALUE'].max())
     colormap.caption = 'Value by Country'
     
-    # Agregar los polígonos de los países al mapa
+    # Add country polygons to the map with color based on data values
     for _, row in world.iterrows():
         if pd.notna(row['VALUE']):
             formatted_value = '{:,}'.format(round(row['VALUE'], 2))
@@ -175,6 +186,7 @@ def plot_heatmap(df):
     
     colormap.add_to(m)
     
+    # Save the interactive Folium map as an HTML file and open it in the default web browser
     downloads_folder = 'downloads'
     if not os.path.exists(downloads_folder):
         os.makedirs(downloads_folder)

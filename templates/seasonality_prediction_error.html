@@ -3,14 +3,17 @@
 {% block content %}
 <div class="container">
 
+    <!-- Seasonality Prediction Form Container -->
     <div class="keyphrase-extraction-container">
         <h1>Seasonality Prediction</h1>
         <form action="{{ url_for('seasonality_prediction') }}" method="post" enctype="multipart/form-data"
             class="file-upload-form">
+            <!-- Form Group for File Upload -->
             <div class="form-group">
                 <label for="file">Upload Excel File:</label>
                 <input type="file" name="file" id="file" accept=".xlsx,.xls">
             </div>
+            <!-- Form Group for Periodicity Input -->
             <div class="form-group">
                 <label for="periodicity">Periodicity:</label>
                 <input type="number" name="periodicity" id="periodicity" min="1" value="1">
@@ -19,13 +22,14 @@
         </form>
     </div>
 
+    <!-- Error Message Container -->
     <div class="keyphrase-extraction-container">
         <h1 class="seasonality-prediction-error-h1">There was an error.</h1>
         <h3 class="seasonality-prediction-error-h3">Check:</h3>
         <ul class="seasonality-prediction-error-ul">
             <li>That the uploaded excel has a header,</li>
             <li>That it only has data in the first column</li>
-            <li>And that the periodicity is a multiple of the lenght of the serie.</li>
+            <li>And that the periodicity is a multiple of the length of the series.</li>
         </ul>
         <p class="seasonality-prediction-error-p">In the context of forecasting based on seasonality, it is crucial that
             the length of the series is a multiple of its periodicity. This rule ensures that the time series can be

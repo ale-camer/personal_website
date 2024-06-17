@@ -3,17 +3,20 @@
 {% block content %}
 <div class="container">
 
+    <!-- Seasonality Prediction Keyphrase Extraction Container -->
     <div class="keyphrase-extraction-container">
         <h1 class="keyphrase-extraction-title">Seasonality Prediction</h1>
 
+        <!-- Introduction Section -->
         <div class="introduction">
             <h2>Introduction</h2>
-            <p>This tool helps you forecast future values of a time series based on its seasonal patterns. Is
+            <p>This tool helps you forecast future values of a time series based on its seasonal patterns. It is
                 convenient for users who need to make data-driven decisions based on seasonal trends. It's especially
                 useful for businesses wanting to forecast sales, inventory, or other key metrics that follow regular
                 patterns.</p>
         </div>
 
+        <!-- Functionality Section -->
         <div class="functionality">
             <h2>Functionality</h2>
             <p>To use it, you need to upload an Excel file with just one column of numeric data and a header. You also
@@ -24,6 +27,7 @@
                 with the future predictions.</p>
         </div>
 
+        <!-- Form for uploading Excel file and setting periodicity -->
         <div>
             <form action="{{ url_for('seasonality_prediction') }}" method="post" enctype="multipart/form-data"
                 class="file-upload-form">
@@ -40,6 +44,7 @@
         </div>
     </div>
 
+    <!-- Display forecast if available -->
     {% if forecast %}
     <div class="keyphrase-extraction-container">
         <h2>Next Period Predictions</h2>
@@ -62,6 +67,7 @@
     </div>
     {% endif %}
 
+    <!-- Display plots if available -->
     {% if existing_plots %}
     <div class="keyphrase-extraction-container">
         <h2>Plots</h2>

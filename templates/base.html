@@ -17,12 +17,15 @@
 
 <body>
     {% block content %}{% endblock %}
+    <!-- Navigation Bar Section -->
     <nav class="navbar">
 
+        <!-- Home Link -->
         <a href="{{ url_for('index') }}" class="navbar-title-link">
             <h2 class="navbar-title">Home</h2>
         </a>
 
+        <!-- Dropdown Menu - Mi CV -->
         <ul class="navbar-list">
             <li class="dropdown">
                 <a id="cv-toggle" class="dropdown-toggle" tabindex="0" role="button" aria-expanded="false" aria-controls="cv-menu">Mi CV</a>
@@ -34,6 +37,8 @@
                     <li><a href="{{ url_for('mi_cv') }}#languages">Languages</a></li>
                 </ul>
             </li>
+
+            <!-- Dropdown Menu - Projects -->
             <li class="dropdown">
                 <a id="projects-toggle" class="dropdown-toggle" tabindex="0" role="button" aria-expanded="false" aria-controls="projects-menu">Projects</a>
                 <ul class="dropdown-menu" id="projects-menu">
@@ -45,6 +50,7 @@
             </li>
         </ul>
 
+        <!-- Social Media Icons -->
         <div class="navbar-footer">
             <a class="image-footer" href="https://github.com/ale-camer" target="_blank"><img
                     src="{{ url_for('static', filename='images/gh.png') }}"></a>
@@ -54,6 +60,7 @@
 
     </nav>
 
+    <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ url_for('static', filename='js/base.js') }}"></script>
 </body>

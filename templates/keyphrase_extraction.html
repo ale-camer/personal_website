@@ -3,6 +3,7 @@
 {% block content %}
 
 <div class="keyphrase-extraction-container">
+    <!-- Title and Introduction Section -->
     <h1 class="keyphrase-extraction-title">Keyphrase Extraction</h1>
 
     <div class="introduction">
@@ -10,18 +11,21 @@
         <p>Keyphrase Extraction is a powerful tool that helps you identify and extract important terms and phrases from your text. These keyphrases summarize the main content of your text, making it easier to understand and manage. Whether you're analyzing documents, optimizing search engine results, or summarizing content, Keyphrase Extraction can simplify your workflow.</p>
     </div>
 
+    <!-- Functionality Section -->
     <div class="functionality">
         <h2>Functionality</h2>
         <p>To extract keyphrases from your text, simply upload a text file and specify the number of N-grams and results per N-gram. The tool will then analyze your text, extract the most significant keyphrases, and display them for you. You can adjust the parameters to tailor the results to your specific needs.</p>
     </div>
-</div>    
+</div>
 
 <div class="keyphrase-extraction-container">
+    <!-- Instructions Section -->
     <div class="instructions">
         <h2>Instructions</h2>
         <p style="text-align: left; margin-bottom: 50px;">Please upload a text file (.txt) containing the text you want to process. If your text is in another format, such as Word (.docx), you can copy and paste it into a text file before uploading.</p>
     </div>
 
+    <!-- Upload Form Section -->
     <div class="upload-form">
         <form class="keyphrase-extraction-form" action="/keyphrase_extraction_process" method="post" enctype="multipart/form-data">
             <label for="file">Upload your text file (only .txt files allowed):</label><br>
@@ -39,6 +43,7 @@
 </div>
 
 <div class="keyphrase-extraction-container">
+    <!-- Results Section -->
     {% if results %}
     <div class="results-container">
         {% for ngram_value, data in results.items() %}
@@ -67,10 +72,12 @@
         {% endfor %}
     </div>
     {% else %}
+    <!-- Placeholder for Results if None -->
     <div class="results-container" style="display: none;"></div>
     {% endif %}
 </div>
 
+<!-- JavaScript File for Enhancing UI -->
 <script src="{{ url_for('static', filename='js/keyphrase_extraction.js') }}"></script>
 
 {% endblock %}

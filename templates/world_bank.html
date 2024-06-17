@@ -2,8 +2,11 @@
 
 {% block content %}
 <div class="container">
+    <!-- World Bank Keyphrase Extraction Container -->
     <div class="keyphrase-extraction-container">
         <h1 class="keyphrase-extraction-title">World Bank</h1>
+        
+        <!-- Introduction Section -->
         <div class="introduction">
             <h2>Introduction</h2>
             <p>This tool allows users to access key country indicators data obtained from the World Bank. It features
@@ -13,6 +16,7 @@
                 select a specific country or year based on the choice made in the "Select type" menu.</p>
         </div>
 
+        <!-- Functionality Section -->
         <div class="functionality">
             <h2>Functionality</h2>
             <p>Once selections are made, there are three buttons available. To view the data based on the chosen
@@ -22,7 +26,9 @@
         </div>
     </div>
 
+    <!-- Dropdown Menus and Buttons for World Bank Data Selection -->
     <div class="keyphrase-extraction-container">
+        <!-- Dropdown for selecting an indicator -->
         <div class="dropdown-group">
             <label for="indicators">Select an indicator:</label>
             <div class="dropdown-world-bank-topics">
@@ -35,6 +41,7 @@
             </div>
         </div>
 
+        <!-- Dropdown for selecting type (Country or Year) -->
         <div class="dropdown-group">
             <label for="type">Select type:</label>
             <div class="dropdown-world-bank-topics">
@@ -46,6 +53,7 @@
             </div>
         </div>
 
+        <!-- Dropdown for selecting a specific option based on the type -->
         <div class="dropdown-group">
             <label for="options">Select an option:</label>
             <div class="dropdown-world-bank-topics">
@@ -55,6 +63,8 @@
                 </div>
             </div>
         </div>
+
+        <!-- Buttons for showing results, downloading CSV, and generating interactive graph -->
         <div class="button-group">
             <button class="show-results" onclick="showResults()">Show Results</button>
             <button class="download-csv" onclick="downloadCSV()">Download CSV</button>
@@ -62,6 +72,7 @@
         </div>
     </div>
 
+    <!-- Container for displaying results -->
     <div class="results-container-world-bank" style="display: none;">
         <h3>Results</h3>
         <table class="results-table-world-bank-topics">
@@ -69,17 +80,16 @@
                 <tr>
                     <th id="countryHeader" class="sortable">
                         Country
-                        <span class="sort-icon">&#8597;</span> <!-- Unicode para flecha de ordenamiento vertical -->
+                        <span class="sort-icon">&#8597;</span> <!-- Unicode for vertical sorting arrow -->
                     </th>
                     <th id="dateHeader" class="sortable">
                         Date
-                        <span class="sort-icon">&#8597;</span> <!-- Unicode para flecha de ordenamiento vertical -->
+                        <span class="sort-icon">&#8597;</span> <!-- Unicode for vertical sorting arrow -->
                     </th>
                     <th id="valueHeader" class="sortable">
                         Value
-                        <span class="sort-icon">&#8597;</span> <!-- Unicode para flecha de ordenamiento vertical -->
+                        <span class="sort-icon">&#8597;</span> <!-- Unicode for vertical sorting arrow -->
                     </th>
-
                 </tr>
             </thead>
             <tbody>
@@ -89,5 +99,6 @@
     </div>
 </div>
 
+<!-- JavaScript for handling World Bank data interactions -->
 <script src="{{ url_for('static', filename='js/world_bank.js') }}"></script>
 {% endblock %}
