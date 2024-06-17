@@ -233,4 +233,4 @@ document.querySelector('.interactive-graph').addEventListener('click', function 
     } else {
         alert("Please make sure all selections are made.");
     }
-});
+}); 
