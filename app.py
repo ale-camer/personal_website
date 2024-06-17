@@ -2,9 +2,9 @@ from flask import Flask, render_template, request, redirect, url_for, send_file,
 import os, requests
 import pandas as pd
 
-from keyphrase_extraction import procesar_archivo
-from seasonality_prediction import forecasting, generate_plots
-from world_bank import indicators, get_country_data_for_indicator, strings_to_exclude, plot_time_series, plot_heatmap
+from modules.keyphrase_extraction import procesar_archivo
+from modules.seasonality_prediction import forecasting, generate_plots
+from modules.world_bank import indicators, get_country_data_for_indicator, strings_to_exclude, plot_time_series, plot_heatmap
 
 app = Flask(__name__)
 
