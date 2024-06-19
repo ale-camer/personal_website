@@ -534,23 +534,8 @@ body {
 .keyphrase-extraction-container .download-csv:hover,
 .keyphrase-extraction-container .show-results:hover,
 .keyphrase-extraction-container .interactive-graph:hover {
-        background-color: #2980b9;
-}
-
-/* Estilo del botón "Show Results" */
-/* .show-results {
-    background-color: #3498db;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-} */
-
-/* .show-results:hover {
     background-color: #2980b9;
-} */
+}
 
 /* Estilo del contenedor del grupo de botones */
 .button-group {
@@ -575,4 +560,29 @@ body {
 /* Estilo para los iconos cuando se pasa el mouse sobre ellos */
 .sort-icon:hover {
     transform: scale(1.2); /* Aumenta ligeramente el tamaño al pasar el mouse */
+}
+
+.language-container {
+    display: inline-block;
+    width: 140px;
+    text-align: right;
+    margin-right: 10px;
+}
+
+.select-language-container {
+    display: inline-block;
+    width: calc(100% - 160px);
+    vertical-align: center;
+    position: relative;
+    top: 0px;
+    left: 10px;
+}
+
+.upload-form .show-results {
+    margin-left: 25%;
+    margin-top: 10px;
+}
+
+#file {
+    margin-bottom: 0px;
 }

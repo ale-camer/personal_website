@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="keyphrase-extraction-container">
+    <!-- Title and Introduction Section -->
+    <h1 class="keyphrase-extraction-title">WhatsApp</h1>
+
+    <div class="introduction">
+        <h2>Introduction</h2>
+        <p>ADD INTRODUCTION</p> <!-- Placeholder for introduction text -->
+    </div>
+
+    <!-- Functionality Section -->
+    <div class="functionality">
+        <h2>Functionality</h2>
+        <p>ADD FUNCTIONALITY</p> <!-- Placeholder for functionality description -->
+    </div>
+</div>
+
+<div class="keyphrase-extraction-container">
+    <!-- Upload Form Section -->
+    <div class="upload-form">
+        <form class="keyphrase-extraction-form" action="/whatsapp" method="post" enctype="multipart/form-data">
+            <label for="file">Upload WhatsApp chat (only .txt files allowed):</label><br>
+            <input type="file" id="file" name="file" accept=".txt" required><br><br>
+
+            <!-- Container for the text "Select Language" -->
+            <div class="language-container">
+                <label for="language">Select Language:</label>
+            </div>
+
+            <!-- Language dropdown menu -->
+            <div class="select-language-container">
+                <select id="language" name="language">
+                    <option value="english">English</option>
+                    <!-- Add more options as needed -->
+                </select>
+            </div>
+            <br><br>
+            <button type="submit" class="show-results">Analyze Chat</button>
+        </form>
+    </div>
+</div>
+
+<!-- Display general plots if available -->
+{% if general_images %}
+<div class="keyphrase-extraction-container">
+    <h2>General Plots</h2>
+    <div class="plot-container">
+        {% for image in general_images %}
+        <img src="{{ url_for('static', filename='temp_images/' + image) }}">
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Display plots for each issuer if available -->
+{% if per_issuer_images %}
+{% for issuer, images in per_issuer_images.items() %}
+<div class="keyphrase-extraction-container">
+    <h2>Plots for {{ issuer }}</h2>
+    <div class="plot-container">
+        {% for image in images %}
+        <img src="{{ url_for('static', filename='temp_images/' + image) }}">
+        {% endfor %}
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+
+<script src="{{ url_for('static', filename='js/whatsapp.js') }}"></script>
+
+{% endblock %}

@@ -2,9 +2,11 @@ from flask import Flask, render_template, request, redirect, url_for, send_file,
 import os
 import pandas as pd
 
+# Importing functions from custom modules
 from modules.keyphrase_extraction import procesar_archivo
 from modules.seasonality_prediction import forecasting, generate_plots
 from modules.world_bank import indicators, get_country_data_for_indicator, strings_to_exclude, plot_time_series, plot_heatmap
+from modules.whatsapp import whatsapp_data_preprocessing, read_whatsapp_txt, graphs_time_unit, graphs_donuts, text_normalizer, sentiment_analysis, generate_wordcloud
 
 app = Flask(__name__)
 
@@ -37,7 +39,6 @@ remove_old_files('static/temp_images')
 remove_old_files('downloads')
 
 # Application routes
-
 @app.route('/')
 def index():
     """Route for the main page"""
@@ -218,6 +219,71 @@ def interactive_graph():
         plot_heatmap(df)
 
     return "Interactive graph generated."
+
+@app.route('/whatsapp', methods=['GET', 'POST'])
+def whatsapp():
+    """Route for the WhatsApp page"""
+    if request.method == 'POST':
+        file = request.files['file']
+        language = request.form.get('language', 'english')  # Default to English if not provided
+
+        if file:
+            filename = file.filename
+            file_path = os.path.join('static/temp_images', filename)
+            file.save(file_path)
+
+            data = read_whatsapp_txt(file_path)
+            data = whatsapp_data_preprocessing(data)
+            text = text_normalizer(data, language=language)
+
+            # Initialize lists to store image paths
+            general_image_paths = []
+            per_issuer_image_paths = {}
+
+            # Generate general graphs
+            title_name = 'overall'
+            graphs_time_unit(data, name=title_name)
+            graphs_donuts(data, name=title_name)
+            generate_wordcloud(text, name=title_name)
+            sentiment_analysis(data, name=title_name)
+
+            general_image_paths.extend([
+                f'graphs_time_unit_{title_name}.png',
+                f'graphs_donuts_{title_name}.png',
+                f'generate_wordcloud_{title_name}.png',
+                f'sentiment_analysis_{title_name}.png'
+            ])
+
+            # Process each issuer separately
+            for issuer in sorted(data['ISSUER'].unique()):
+                df = data[data['ISSUER'] == issuer]
+                text = text_normalizer(df, language=language)
+
+                # Graph titles
+                title_message = f"distribution of messages by time units of {issuer}".upper()
+                title_word = f"distribution of words by time units of {issuer}".upper()
+                title_cloud = f"wordcloud of {issuer}".upper()
+                title_sentiment = f"sentiment analysis of {issuer}".upper()
+
+                # Generate and save graphs for this issuer
+                graphs_time_unit(df, name=f'message_{issuer}', title=title_message)
+                graphs_time_unit(df, name=f'word_{issuer}', title=title_word, agg_func='sum', col='len_message', ylabel='# WORDS')
+                generate_wordcloud(text, name=issuer, title=title_cloud)
+                sentiment_analysis(df, name=issuer, title=title_sentiment)
+
+                # Store image paths for this issuer
+                per_issuer_image_paths[issuer] = [
+                    f'graphs_time_unit_message_{issuer}.png',
+                    f'graphs_time_unit_word_{issuer}.png',
+                    f'generate_wordcloud_{issuer}.png',
+                    f'sentiment_analysis_{issuer}.png'
+                ]
+
+            return render_template('whatsapp.html', 
+                                   general_images=general_image_paths, 
+                                   per_issuer_images=per_issuer_image_paths)
+
+    return render_template('whatsapp.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

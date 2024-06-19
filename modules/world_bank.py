@@ -98,6 +98,23 @@ strings_to_exclude = [
 
 # Function to fetch country-level data for a given indicator ID from the World Bank API
 def get_country_data_for_indicator(indicator_id):
+    """
+    Fetches country-level data for a specified indicator from the World Bank API.
+    
+    Parameters:
+    indicator_id (str): The ID of the indicator to fetch data for.
+    
+    Returns:
+    list or None: A list of filtered data entries if the request is successful and data is in the expected format, 
+    or None if there is an error or unexpected data structure.
+    
+    This function constructs the API request URL using the provided indicator ID, specifies the desired parameters 
+    (data format as JSON, date range from 1960 to 2023, and a large page size to include all data), and sends 
+    the request to the World Bank API. If the response is successful (HTTP status code 200) and the data is in 
+    the expected format, it filters out entries for excluded countries and entries with None values for the indicator. 
+    If the response status code is not 200 or the data structure is not as expected, it prints an error message and 
+    returns None.
+    """
     url = f'https://api.worldbank.org/v2/country/all/indicator/{indicator_id}'
     params = {
         'format': 'json',
@@ -123,6 +140,19 @@ def get_country_data_for_indicator(indicator_id):
 
 # Function to plot time series data using Plotly, saving as an interactive HTML file
 def plot_time_series(df, title='', template='plotly'):
+    """
+    Plots time series data using Plotly and saves the plot as an interactive HTML file.
+    
+    Parameters:
+    df (pandas.DataFrame): The DataFrame containing the time series data with columns 'DATE' and 'VALUE'.
+    title (str, optional): The title of the plot. Default is an empty string.
+    template (str, optional): The Plotly template to use for the plot. Default is 'plotly'.
+    
+    This function converts the 'DATE' column in the DataFrame to datetime format and extracts the year. 
+    It then creates a Plotly figure with a time series plot (lines and markers) using the 'DATE' and 'VALUE' 
+    columns from the DataFrame. The plot is customized with a title and axis labels. The resulting plot is saved 
+    as an HTML file in the 'downloads' folder and opened in the default web browser.
+    """
     # Convert DATE column to datetime format and extract year
     df['DATE'] = pd.to_datetime(df['DATE'])
     df['DATE'] = df['DATE'].dt.year
@@ -148,6 +178,18 @@ def plot_time_series(df, title='', template='plotly'):
 
 # Function to plot a heatmap using Folium and GeoPandas, saving as an interactive HTML file
 def plot_heatmap(df):
+    """
+    Plots a heatmap using Folium and GeoPandas, and saves the map as an interactive HTML file.
+    
+    Parameters:
+    df (pandas.DataFrame): The DataFrame containing the data with columns 'COUNTRY', 'DATE', 'ISO_CODE', and 'VALUE'.
+    
+    This function filters the DataFrame to include only the latest data for each country. It loads the world shapefile 
+    from GeoPandas and ensures the country names are in English. The shapefile is merged with the DataFrame's data 
+    on country ISO codes. A base Folium map is created and country polygons are added with colors based on data values. 
+    A colormap is created and added to the map, which is then saved as an HTML file in the 'downloads' folder and 
+    opened in the default web browser.
+    """
     # Filter the DataFrame to include only the latest data per country
     df = df.loc[df.groupby('COUNTRY')['DATE'].idxmax()]
     df['DATE'] = pd.to_datetime(df['DATE'])
