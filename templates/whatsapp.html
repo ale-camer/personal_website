@@ -8,13 +8,20 @@
 
     <div class="introduction">
         <h2>Introduction</h2>
-        <p>ADD INTRODUCTION</p> <!-- Placeholder for introduction text -->
+        <p>Analyzing WhatsApp conversations can reveal important communication patterns and sentiments. A specialized
+            tool simplifies this process, starting with exporting the chat from WhatsApp by clicking on the three dots
+            in the conversation, selecting "More," and then "Export Chat." Once downloaded, the chat file can be
+            uploaded to the tool for analysis.</p> <!-- Placeholder for introduction text -->
     </div>
 
     <!-- Functionality Section -->
     <div class="functionality">
         <h2>Functionality</h2>
-        <p>ADD FUNCTIONALITY</p> <!-- Placeholder for functionality description -->
+        <p>The tool analyzes both individual and group chats, generating graphs that show conversation frequency by
+            hour, day, week, and month. It also displays participant activity, most mentioned words, and sentiment.
+            Users upload the chat file, select the language, and click "Analyze Chat." The tool provides an overview of
+            chat dynamics and a sentiment analysis graph that shows the average polarity, indicating the overall
+            emotional tone of the conversation.</p> <!-- Placeholder for functionality description -->
     </div>
 </div>
 
@@ -69,6 +76,29 @@
 {% endfor %}
 {% endif %}
 
-<script src="{{ url_for('static', filename='js/whatsapp.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // List of 50 popular languages (can be obtained from an external source)
+        var languages = [
+            'English', 'Spanish', 'French', 'German', 'Chinese', 'Japanese', 'Italian', 'Portuguese', 'Russian', 'Arabic',
+            'Hindi', 'Bengali', 'Urdu', 'Turkish', 'Indonesian', 'Dutch', 'Polish', 'Thai', 'Vietnamese', 'Korean',
+            'Persian', 'Malay', 'Swedish', 'Greek', 'Romanian', 'Hungarian', 'Czech', 'Danish', 'Finnish', 'Norwegian',
+            'Hebrew', 'Swahili', 'Slovak', 'Bulgarian', 'Croatian', 'Serbian', 'Ukrainian', 'Lithuanian', 'Latvian',
+            'Estonian', 'Slovenian', 'Icelandic', 'Maltese', 'Albanian', 'Macedonian', 'Georgian', 'Belarusian', 'Basque'
+        ];
 
+        // Sort languages alphabetically (ascending order)
+        languages.sort();
+
+        var selectLanguage = document.getElementById('language');
+
+        // Add options to the dropdown menu
+        languages.forEach(function (language) {
+            var option = document.createElement('option');
+            option.text = language;
+            option.value = language.toLowerCase(); // Lowercase value for form submission
+            selectLanguage.add(option);
+        });
+    });
+</script>
 {% endblock %}
