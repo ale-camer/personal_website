@@ -169,7 +169,7 @@ def plot_time_series(df, title='', template='plotly'):
     )
     
     # Save the interactive Plotly figure as an HTML file and open it in the default web browser
-    downloads_folder = 'downloads'
+    downloads_folder = 'static/temp_images/world_bank/'
     if not os.path.exists(downloads_folder):
         os.makedirs(downloads_folder)
     temp_html_path = os.path.join(downloads_folder, 'time_series.html')
@@ -229,7 +229,7 @@ def plot_heatmap(df):
     colormap.add_to(m)
     
     # Save the interactive Folium map as an HTML file and open it in the default web browser
-    downloads_folder = 'downloads'
+    downloads_folder = 'static/temp_images/world_bank/'
     if not os.path.exists(downloads_folder):
         os.makedirs(downloads_folder)
     temp_html_path = os.path.join(downloads_folder, 'heatmap.html')

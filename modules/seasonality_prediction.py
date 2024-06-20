@@ -1,5 +1,5 @@
 # Import necessary libraries
-import matplotlib
+import matplotlib, os
 matplotlib.use('Agg')  # Use 'Agg' backend to save plots without displaying them
 
 import numpy as np
@@ -79,13 +79,18 @@ def generate_plots(serie, prediction_last_period, prediction_next_period, period
     - Plots saved as PNG files in the 'static/temp_images' directory
     """
 
+    # Create directory if it doesn't exist
+    save_dir = 'static/temp_images/seasonality_prediction'
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+
     # Plot original data
     plt.figure(figsize=(10,5))
     sns.lineplot(np.concatenate([serie.values, serie[-periodicity:].values]).ravel(), color='red')
     plt.xticks([])
     plt.ylabel("Value".title(), fontsize=15)
     plt.title("Original Data".title(), fontsize=20)
-    plt.savefig('static/temp_images/original_data.png')
+    plt.savefig(os.path.join(save_dir, 'original_data.png'))
     plt.close()
 
     # Plot last cycle
@@ -107,7 +112,7 @@ def generate_plots(serie, prediction_last_period, prediction_next_period, period
     plt.suptitle("Last Period Prediction".title(),fontsize=20)
     plt.tight_layout()
 
-    plt.savefig('static/temp_images/all_periods_data.png')
+    plt.savefig(os.path.join(save_dir, 'all_periods_data.png'))
     plt.close()
 
     # Plot next cycle
@@ -116,6 +121,6 @@ def generate_plots(serie, prediction_last_period, prediction_next_period, period
     sns.lineplot(x=range(len(serie)), y=serie.values.ravel(), color='red', label='Real'.title())
     plt.xticks([])
     plt.ylabel("Value".title(), fontsize=15)
-    plt.title("Data and Next Period Prediction".title(), fontsize=20)
-    plt.savefig('static/temp_images/historic_and_prediction_data.png')
+    plt.title("original Data and Next Period Prediction".title(), fontsize=20)
+    plt.savefig(os.path.join(save_dir, 'historic_and_prediction_data.png'))
     plt.close()

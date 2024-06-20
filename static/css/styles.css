@@ -259,6 +259,12 @@ body {
     background-color: #2980b9;
 }
 
+.keyphrase-extraction-container .upload-form .keyphrase-extraction-form .keyphrase-extraction-button {
+    /* align-items: center; */
+    margin-left: 30%;
+    margin-top: 10px;
+}
+
 .results-container {
     margin-top: 20px;
 }

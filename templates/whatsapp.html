@@ -56,7 +56,7 @@
     <h2>General Plots</h2>
     <div class="plot-container">
         {% for image in general_images %}
-        <img src="{{ url_for('static', filename='temp_images/' + image) }}">
+        <img src="{{ url_for('static', filename='temp_images/whatsapp/' + image) }}">
         {% endfor %}
     </div>
 </div>
@@ -69,7 +69,7 @@
     <h2>Plots for {{ issuer }}</h2>
     <div class="plot-container">
         {% for image in images %}
-        <img src="{{ url_for('static', filename='temp_images/' + image) }}">
+        <img src="{{ url_for('static', filename='temp_images/whatsapp/' + image) }}">
         {% endfor %}
     </div>
 </div>

@@ -5,7 +5,8 @@ let selectedOption = null;
 let resultsShown = false;
 
 // Function to handle selection of an indicator
-function selectIndicator(key, value) {
+function selectIndicator(event, key, value) {
+    event.preventDefault(); // Prevent default action
     selectedIndicator = value;
     // Update UI elements with selected indicator information
     document.getElementById('dropdownButton').innerText = key;
@@ -18,7 +19,8 @@ function selectIndicator(key, value) {
 }
 
 // Function to handle selection of a type (country or year)
-function selectType(type) {
+function selectType(event, type) {
+    event.preventDefault(); // Prevent default action
     selectedType = type;
     // Update UI element with selected type information
     document.getElementById('typeButton').innerText = type === 'country' ? 'Country' : 'Year';
@@ -27,6 +29,16 @@ function selectType(type) {
     fetchOptions();
     // Close the dropdown menu after selection
     closeDropdown('typeMenu');
+}
+
+// Function to handle selection of an option
+function selectOption(event, option) {
+    event.preventDefault(); // Prevent default action
+    selectedOption = option;
+    // Update UI element with selected option information
+    document.getElementById('optionsButton').innerText = option;
+    // Close the options dropdown menu after selection
+    closeDropdown('optionsMenu');
 }
 
 // Function to fetch options based on selected indicator and type
@@ -43,20 +55,13 @@ function fetchOptions() {
                     const optionElement = document.createElement('a');
                     optionElement.href = '#';
                     optionElement.innerText = option;
-                    optionElement.onclick = () => selectOption(option);
+                    optionElement.onclick = () => selectOption(event, option); // Pass event and option
                     optionsMenu.appendChild(optionElement);
                 });
+                // Show the options menu
+                optionsMenu.style.display = 'block';
             });
     }
-}
-
-// Function to handle selection of an option
-function selectOption(option) {
-    selectedOption = option;
-    // Update UI element with selected option information
-    document.getElementById('optionsButton').innerText = option;
-    // Close the options dropdown menu after selection
-    closeDropdown('optionsMenu');
 }
 
 // Function to show results after selections are made
@@ -183,7 +188,7 @@ function downloadCSV() {
     }
 }
 
-// Event listener to handle interactive graph generation
+// Function to handle interactive graph generation
 document.querySelector('.interactive-graph').addEventListener('click', function () {
     if (!resultsShown) {
         alert("Please show results before viewing the interactive graph.");

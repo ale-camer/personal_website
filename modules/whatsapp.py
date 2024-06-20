@@ -1,4 +1,4 @@
-import re, nltk, random
+import re, nltk, random, os
 import numpy as np
 import pandas as pd
 from unidecode import unidecode
@@ -139,7 +139,14 @@ def graphs_time_unit(data, title="distribution of messages by time units".upper(
         plt.xticks(rotation=15)
         
     plt.suptitle(title, fontsize=20)
-    plt.savefig(f'static/temp_images/graphs_time_unit_{name}.png')
+
+    # Save the interactive Plotly figure as an HTML file and open it in the default web browser
+    downloads_folder = 'static/temp_images/whatsapp/'
+    if not os.path.exists(downloads_folder):
+        os.makedirs(downloads_folder)
+    temp_html_path = os.path.join(downloads_folder, f'time_unit_{name}.png')
+
+    plt.savefig(temp_html_path)       
     plt.close()
 
 def graphs_donuts(data, name=''): 
@@ -196,7 +203,14 @@ def graphs_donuts(data, name=''):
     
     # Adjust layout and save the plot
     plt.tight_layout()
-    plt.savefig(f'static/temp_images/graphs_donuts_{name}.png')
+
+    # Save the interactive Plotly figure as an HTML file and open it in the default web browser
+    downloads_folder = 'static/temp_images/whatsapp/'
+    if not os.path.exists(downloads_folder):
+        os.makedirs(downloads_folder)
+    temp_html_path = os.path.join(downloads_folder, f'donut_{name}.png')
+
+    plt.savefig(temp_html_path)      
     plt.close()
 
 def sentiment_analysis(data, title='Sentiment Analysis', xlabel='', x=None, name=''):
@@ -232,7 +246,14 @@ def sentiment_analysis(data, title='Sentiment Analysis', xlabel='', x=None, name
         plt.xticks(rotation=15)
         plt.ylim(-1, 1)
         plt.tight_layout()
-        plt.savefig(f'static/temp_images/sentiment_analysis_{name}.png')
+
+        # Save the interactive Plotly figure as an HTML file and open it in the default web browser
+        downloads_folder = 'static/temp_images/whatsapp/'
+        if not os.path.exists(downloads_folder):
+            os.makedirs(downloads_folder)
+        temp_html_path = os.path.join(downloads_folder, f'sentiment_analysis_{name}.png')
+
+        plt.savefig(temp_html_path)       
         plt.close()
 
 def generate_wordcloud(text, title='Word Cloud'.upper(), name=''):
@@ -253,5 +274,12 @@ def generate_wordcloud(text, title='Word Cloud'.upper(), name=''):
     plt.imshow(wordcloud, interpolation='bilinear')
     plt.axis('off')
     plt.title(title, fontsize=20)
-    plt.savefig(f'static/temp_images/generate_wordcloud_{name}.png')
+
+    # Save the interactive Plotly figure as an HTML file and open it in the default web browser
+    downloads_folder = 'static/temp_images/whatsapp/'
+    if not os.path.exists(downloads_folder):
+        os.makedirs(downloads_folder)
+    temp_html_path = os.path.join(downloads_folder, f'wordcloud_{name}.png')
+
+    plt.savefig(temp_html_path)
     plt.close()

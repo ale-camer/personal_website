@@ -17,7 +17,7 @@
 
     <!-- Job 1: Data Scientist at ABinBev -->
     <div class="job">
-        <h3>Data Scientist | ABinBev | Brewery | Global | 08-2023 - Present (10 mos)</h3>
+        <h3>Data Scientist | ABinBev | Brewery | Global | 08-2023 - Present (<span id="months-counter"></span> mos)</h3>
         <h4>Sectors</h4>
         <ul>
             <li>Fraud</li>
@@ -205,5 +205,25 @@
     </div>
 
 </div>
+
+<script>
+    // Calcular los meses desde agosto de 2023 hasta la fecha actual
+    function calculateMonths() {
+        // Fecha de inicio (agosto de 2023)
+        const startDate = new Date('2023-08-01');
+        
+        // Fecha actual
+        const currentDate = new Date();
+        
+        // Calcular la diferencia en meses
+        const monthsDiff = (currentDate.getFullYear() - startDate.getFullYear()) * 12 + (currentDate.getMonth() - startDate.getMonth()) + 1;
+        
+        // Actualizar el contador de meses en el HTML
+        document.getElementById('months-counter').innerText = monthsDiff;
+    }
+
+    // Llamar a la función para calcular los meses al cargar la página
+    calculateMonths();
+</script>
 
 {% endblock %}

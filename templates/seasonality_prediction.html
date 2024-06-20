@@ -39,7 +39,7 @@
                     <label for="periodicity">Periodicity:</label>
                     <input type="number" name="periodicity" id="periodicity" min="1" value="1">
                 </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary">Calculate Prediction</button>
             </form>
         </div>
     </div>
@@ -73,13 +73,13 @@
         <h2>Plots</h2>
         <div class="plot-container">
             {% if 'original_data.png' in existing_plots %}
-            <img src="{{ url_for('static', filename='temp_images/original_data.png') }}">
+            <img src="{{ url_for('static', filename='temp_images/seasonality_prediction/original_data.png') }}">
             {% endif %}
             {% if 'all_periods_data.png' in existing_plots %}
-            <img src="{{ url_for('static', filename='temp_images/all_periods_data.png') }}">
+            <img src="{{ url_for('static', filename='temp_images/seasonality_prediction/all_periods_data.png') }}">
             {% endif %}
             {% if 'historic_and_prediction_data.png' in existing_plots %}
-            <img src="{{ url_for('static', filename='temp_images/historic_and_prediction_data.png') }}">
+            <img src="{{ url_for('static', filename='temp_images/seasonality_prediction/historic_and_prediction_data.png') }}">
             {% endif %}
         </div>
     </div>

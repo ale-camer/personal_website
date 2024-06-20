@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, send_file, jsonify
-import os
+import os, shutil
 import pandas as pd
 
 # Importing functions from custom modules
@@ -10,33 +10,34 @@ from modules.whatsapp import whatsapp_data_preprocessing, read_whatsapp_txt, gra
 
 app = Flask(__name__)
 
-# Function to remove old files
+# Function to remove old files and folders
 def remove_old_files(folder, files_to_remove=None):
     """
-    Removes specific files in a folder or all files in a folder if not specified.
+    Removes specific files and folders in a folder or all files and folders if not specified.
     
-    :param folder: Folder from which files will be removed.
-    :param files_to_remove: List of filenames to remove. If None, all files will be removed.
+    :param folder: Folder from which files and folders will be removed.
+    :param files_to_remove: List of filenames to remove. If None, all files and folders will be removed.
     """
     if os.path.exists(folder):
         for filename in os.listdir(folder):
-            if files_to_remove and filename not in files_to_remove:
-                continue
             file_path = os.path.join(folder, filename)
-            if os.path.isfile(file_path):
-                try:
+            try:
+                if os.path.isfile(file_path):
+                    if files_to_remove and filename not in files_to_remove:
+                        continue
                     os.remove(file_path)
                     print(f"Deleted file: {file_path}")
-                except Exception as e:
-                    print(f"Error deleting file {file_path}: {e}")
-            else:
-                print(f"File does not exist: {file_path}")
+                elif os.path.isdir(file_path):
+                    shutil.rmtree(file_path)
+                    print(f"Deleted folder: {file_path}")
+            except Exception as e:
+                print(f"Error deleting {file_path}: {e}")
     else:
         print(f"Folder does not exist: {folder}")
-
+        
 # Call the function to remove old files in specific folders
 remove_old_files('static/temp_images')
-remove_old_files('downloads')
+remove_old_files('static/downloads')
 
 # Application routes
 @app.route('/')
@@ -86,7 +87,7 @@ def seasonality_prediction():
 
                     # Get the list of existing image file names
                     for filename in ['original_data.png', 'all_periods_data.png', 'historic_and_prediction_data.png']:
-                        if os.path.exists(os.path.join('static', 'temp_images', filename)):
+                        if os.path.exists(os.path.join('static', 'temp_images', 'seasonality_prediction', filename)):
                             existing_plots.append(filename)
 
                     return render_template('seasonality_prediction.html', forecast=forecasted_values_next_period, existing_plots=existing_plots, enumerate=enumerate)
@@ -177,7 +178,7 @@ def download_csv():
     df = df.sort_values(by=['COUNTRY', 'DATE'], ascending=[True, False])
 
     # Create the CSV file
-    downloads_folder = 'downloads'
+    downloads_folder = 'static/downloads/'
     if not os.path.exists(downloads_folder):
         os.makedirs(downloads_folder)
     csv_path = os.path.join(downloads_folder, 'data.csv')
@@ -248,9 +249,9 @@ def whatsapp():
             sentiment_analysis(data, name=title_name)
 
             general_image_paths.extend([
-                f'graphs_time_unit_{title_name}.png',
-                f'graphs_donuts_{title_name}.png',
-                f'generate_wordcloud_{title_name}.png',
+                f'time_unit_{title_name}.png',
+                f'donut_{title_name}.png',
+                f'wordcloud_{title_name}.png',
                 f'sentiment_analysis_{title_name}.png'
             ])
 
@@ -273,9 +274,9 @@ def whatsapp():
 
                 # Store image paths for this issuer
                 per_issuer_image_paths[issuer] = [
-                    f'graphs_time_unit_message_{issuer}.png',
-                    f'graphs_time_unit_word_{issuer}.png',
-                    f'generate_wordcloud_{issuer}.png',
+                    f'time_unit_message_{issuer}.png',
+                    f'time_unit_word_{issuer}.png',
+                    f'wordcloud_{issuer}.png',
                     f'sentiment_analysis_{issuer}.png'
                 ]
 

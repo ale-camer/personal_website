@@ -5,7 +5,7 @@
     <!-- World Bank Keyphrase Extraction Container -->
     <div class="keyphrase-extraction-container">
         <h1 class="keyphrase-extraction-title">World Bank</h1>
-        
+
         <!-- Introduction Section -->
         <div class="introduction">
             <h2>Introduction</h2>
@@ -35,7 +35,7 @@
                 <button class="dropbtn-world-bank-topics" id="dropdownButton">Choose an Indicator</button>
                 <div class="dropdown-content-world-bank-topics" id="dropdownMenu">
                     {% for key in indicators|sort %}
-                    <a href="#" onclick="selectIndicator('{{ key }}', '{{ indicators[key] }}')">{{ key }}</a>
+                    <a href="#" onclick="selectIndicator(event, '{{ key }}', '{{ indicators[key] }}')">{{ key }}</a>
                     {% endfor %}
                 </div>
             </div>
@@ -47,8 +47,8 @@
             <div class="dropdown-world-bank-topics">
                 <button class="dropbtn-world-bank-topics" id="typeButton">Choose Data Type</button>
                 <div class="dropdown-content-world-bank-topics" id="typeMenu">
-                    <a href="#" onclick="selectType('country')">Country</a>
-                    <a href="#" onclick="selectType('year')">Year</a>
+                    <a href="#" onclick="selectType(event, 'country')">Country</a>
+                    <a href="#" onclick="selectType(event, 'year')">Year</a>
                 </div>
             </div>
         </div>
@@ -64,13 +64,24 @@
             </div>
         </div>
 
+
         <!-- Buttons for showing results, downloading CSV, and generating interactive graph -->
         <div class="button-group">
             <button class="show-results" onclick="showResults()">Show Results</button>
             <button class="download-csv" onclick="downloadCSV()">Download CSV</button>
             <button class="interactive-graph">Interactive Graph</button>
         </div>
+        <p class="side-note">Note: it takes 3 seconds apporixmately to open the interactive graph since you clicked the
+            button.</p>
     </div>
+
+    <style>
+        .container .keyphrase-extraction-container .side-note {
+            font-size: 85%;
+            margin: 15px 0px 0px 0px;
+            text-align: left;
+        }
+    </style>
 
     <!-- Container for displaying results -->
     <div class="results-container-world-bank" style="display: none;">
