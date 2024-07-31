@@ -5,10 +5,14 @@ import pandas as pd
 # Importing functions from custom modules
 from modules.keyphrase_extraction import procesar_archivo
 from modules.seasonality_prediction import forecasting, generate_plots
-from modules.world_bank import indicators, get_country_data_for_indicator, strings_to_exclude, plot_time_series, plot_heatmap
-from modules.whatsapp import whatsapp_data_preprocessing, read_whatsapp_txt, graphs_time_unit, graphs_donuts, text_normalizer, sentiment_analysis, generate_wordcloud
+from modules.world_bank import indicators, get_country_data_for_indicator, plot_time_series, plot_heatmap
+from modules.whatsapp import read_whatsapp_txt, whatsapp_data_preprocessing
 
 app = Flask(__name__)
+
+# Directorio donde se almacenarán los archivos temporales
+UPLOAD_FOLDER = 'static/whatsapp'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Function to remove old files and folders
 def remove_old_files(folder, files_to_remove=None):
@@ -37,6 +41,8 @@ def remove_old_files(folder, files_to_remove=None):
         
 # Call the function to remove old files in specific folders
 remove_old_files('static/temp_images')
+remove_old_files('static/whatsapp')
+remove_old_files('static/world_bank')
 remove_old_files('static/downloads')
 
 # Application routes
@@ -58,14 +64,17 @@ def keyphrase_extraction():
 @app.route('/keyphrase_extraction_process', methods=['POST'])
 def keyphrase_extraction_process():
     """Processes the uploaded file for keyphrase extraction"""
-    file = request.files['file']
-    num_tables = int(request.form['num_tables'])
-    num_rows = int(request.form['num_rows'])
+    file = request.files.get('file')
+    num_tables = int(request.form.get('num_tables', 0))
+    num_rows = int(request.form.get('num_rows', 0))
 
     if file:
-        data = file.read().decode('utf-8')
-        results = procesar_archivo(data, num_tables=num_tables, num_rows=num_rows)
-        return render_template('keyphrase_extraction.html', results=results)
+        try:
+            data = file.read().decode('utf-8')
+            results = procesar_archivo(data, num_tables=num_tables, num_rows=num_rows)
+            return render_template('keyphrase_extraction.html', results=results)
+        except Exception as e:
+            print(f"Error processing file: {e}")
     return redirect(url_for('keyphrase_extraction'))
 
 @app.route('/seasonality_prediction', methods=['GET', 'POST'])
@@ -74,27 +83,32 @@ def seasonality_prediction():
     try:
         existing_plots = []  # List to store the names of existing image files
         if request.method == 'POST':
-            file = request.files['file']
-            periodicity = int(request.form['periodicity'])
+            file = request.files.get('file')
+            periodicity = int(request.form.get('periodicity', 0))
 
             if file:
-                df = pd.read_excel(file)
-                if len(df.columns) == 1:
-                    serie = df[df.columns]
-                    forecasted_values_last_period = forecasting(serie.iloc[:-periodicity, :], periodicity=periodicity)
-                    forecasted_values_next_period = forecasting(serie, periodicity=periodicity)
-                    generate_plots(serie, forecasted_values_last_period, forecasted_values_next_period, periodicity)
+                try:
+                    df = pd.read_excel(file)
+                    if len(df.columns) == 1:
+                        serie = df[df.columns[0]]
+                        forecasted_values_last_period = forecasting(serie.iloc[:-periodicity], periodicity=periodicity)
+                        forecasted_values_next_period = forecasting(serie, periodicity=periodicity)
+                        generate_plots(serie, forecasted_values_last_period, forecasted_values_next_period, periodicity)
 
-                    # Get the list of existing image file names
-                    for filename in ['original_data.png', 'all_periods_data.png', 'historic_and_prediction_data.png']:
-                        if os.path.exists(os.path.join('static', 'temp_images', 'seasonality_prediction', filename)):
-                            existing_plots.append(filename)
+                        # Get the list of existing image file names
+                        for filename in ['original_data.png', 'all_periods_data.png', 'historic_and_prediction_data.png']:
+                            if os.path.exists(os.path.join('static', 'temp_images', 'seasonality_prediction', filename)):
+                                existing_plots.append(filename)
 
-                    return render_template('seasonality_prediction.html', forecast=forecasted_values_next_period, existing_plots=existing_plots, enumerate=enumerate)
-                else:
-                    return "The Excel file has more than one column"
+                        return render_template('seasonality_prediction.html', forecast=forecasted_values_next_period, existing_plots=existing_plots, enumerate=enumerate)
+                    else:
+                        return "The Excel file has more than one column"
+                except Exception as e:
+                    print(f"Error processing file: {e}")
+                    return "Error processing file"
         return render_template('seasonality_prediction.html')
-    except:
+    except Exception as e:
+        print(f"Error: {e}")
         return render_template('seasonality_prediction_error.html')
 
 @app.route('/world_bank')
@@ -146,7 +160,6 @@ def fetch_data():
 
     # Sort by 'COUNTRY' in ascending order and by 'DATE' in descending order
     df = df.sort_values(by=['COUNTRY', 'DATE'], ascending=[True, False])
-
     df.drop_duplicates(inplace=True)
 
     return df.to_dict(orient='records')
@@ -179,8 +192,7 @@ def download_csv():
 
     # Create the CSV file
     downloads_folder = 'static/downloads/'
-    if not os.path.exists(downloads_folder):
-        os.makedirs(downloads_folder)
+    os.makedirs(downloads_folder, exist_ok=True)
     csv_path = os.path.join(downloads_folder, 'data.csv')
     df.to_csv(csv_path, index=False)
 
@@ -190,9 +202,9 @@ def download_csv():
 @app.route('/interactive_graph', methods=['POST'])
 def interactive_graph():
     """Generates an interactive graph based on the selected indicator, type, and option"""
-    indicator = request.form['indicator']
-    type = request.form['type']
-    option = request.form['option']
+    indicator = request.form.get('indicator')
+    type = request.form.get('type')
+    option = request.form.get('option')
 
     # Get data for the selected country or year
     data = get_country_data_for_indicator(indicator)
@@ -223,68 +235,30 @@ def interactive_graph():
 
 @app.route('/whatsapp', methods=['GET', 'POST'])
 def whatsapp():
-    """Route for the WhatsApp page"""
     if request.method == 'POST':
-        file = request.files['file']
-        language = request.form.get('language', 'english')  # Default to English if not provided
-
+        file = request.files.get('file')
         if file:
-            filename = file.filename
-            file_path = os.path.join('static/temp_images', filename)
-            file.save(file_path)
+            if not os.path.exists(app.config['UPLOAD_FOLDER']):
+                os.makedirs(app.config['UPLOAD_FOLDER'])
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+            file.save(filepath)
 
-            data = read_whatsapp_txt(file_path)
-            data = whatsapp_data_preprocessing(data)
-            text = text_normalizer(data, language=language)
+            # Leer y procesar el archivo con la función read_whatsapp_txt
+            file_content = read_whatsapp_txt(filepath)
+            file_content = whatsapp_data_preprocessing(file_content)
 
-            # Initialize lists to store image paths
-            general_image_paths = []
-            per_issuer_image_paths = {}
+            file_content.to_csv('static/whatsapp/data.csv', index=False)
+            print(file_content.iloc[0])
 
-            # Generate general graphs
-            title_name = 'overall'
-            graphs_time_unit(data, name=title_name)
-            graphs_donuts(data, name=title_name)
-            generate_wordcloud(text, name=title_name)
-            sentiment_analysis(data, name=title_name)
-
-            general_image_paths.extend([
-                f'time_unit_{title_name}.png',
-                f'donut_{title_name}.png',
-                f'wordcloud_{title_name}.png',
-                f'sentiment_analysis_{title_name}.png'
-            ])
-
-            # Process each issuer separately
-            for issuer in sorted(data['ISSUER'].unique()):
-                df = data[data['ISSUER'] == issuer]
-                text = text_normalizer(df, language=language)
-
-                # Graph titles
-                title_message = f"distribution of messages by time units of {issuer}".upper()
-                title_word = f"distribution of words by time units of {issuer}".upper()
-                title_cloud = f"wordcloud of {issuer}".upper()
-                title_sentiment = f"sentiment analysis of {issuer}".upper()
-
-                # Generate and save graphs for this issuer
-                graphs_time_unit(df, name=f'message_{issuer}', title=title_message)
-                graphs_time_unit(df, name=f'word_{issuer}', title=title_word, agg_func='sum', col='len_message', ylabel='# WORDS')
-                generate_wordcloud(text, name=issuer, title=title_cloud)
-                sentiment_analysis(df, name=issuer, title=title_sentiment)
-
-                # Store image paths for this issuer
-                per_issuer_image_paths[issuer] = [
-                    f'time_unit_message_{issuer}.png',
-                    f'time_unit_word_{issuer}.png',
-                    f'wordcloud_{issuer}.png',
-                    f'sentiment_analysis_{issuer}.png'
-                ]
-
-            return render_template('whatsapp.html', 
-                                   general_images=general_image_paths, 
-                                   per_issuer_images=per_issuer_image_paths)
+            # Set a flag to trigger Dash app in your Flask app
+            return redirect(url_for('dash_app'))
 
     return render_template('whatsapp.html')
+
+@app.route('/dash_app')
+def dash_app():
+    """Route to serve the Dash app"""
+    return redirect("http://localhost:8051/")  # URL where the Dash app is served
 
 if __name__ == '__main__':
     app.run(debug=True)
