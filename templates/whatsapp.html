@@ -39,15 +39,81 @@
 
             <!-- Language dropdown menu -->
             <div class="select-language-container">
-                <select id="language" name="language">
-                    <option value="english">English</option>
-                    <!-- Add more options as needed -->
-                </select>
+                <label for="language">Select Language:</label>
+                <select id="language" name="language"></select>
             </div>
+            <input type="hidden" id="selected_language" name="selected_language">
             <br><br>
             <button type="submit" class="show-results">Analyze Chat</button>
         </form>
     </div>
 </div>
+
+<style>
+    .language-container {
+        display: inline-block;
+        width: 140px;
+        text-align: right;
+        margin-right: 10px;
+    }
+
+    .select-language-container {
+        display: inline-block;
+        width: calc(100% - 160px);
+        vertical-align: center;
+        position: relative;
+        top: 0px;
+        left: 10px;
+    }
+
+    .upload-form .show-results {
+        margin-left: 25%;
+        margin-top: 10px;
+    }
+
+    #file {
+        margin-bottom: 0px;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const languages = [
+            { value: "english", text: "English" },
+            { value: "mandarin", text: "Mandarin" },
+            { value: "spanish", text: "Spanish" },
+            { value: "french", text: "French" },
+            { value: "arabic", text: "Arabic" },
+            { value: "bengali", text: "Bengali" },
+            { value: "portuguese", text: "Portuguese" },
+            { value: "russian", text: "Russian" },
+            { value: "japanese", text: "Japanese" },
+            { value: "punjabi", text: "Punjabi" },
+            { value: "german", text: "German" },
+            { value: "javanese", text: "Javanese" },
+            { value: "korean", text: "Korean" },
+            { value: "vietnamese", text: "Vietnamese" },
+            { value: "telugu", text: "Telugu" }
+        ];
+
+        const selectElement = document.getElementById('language');
+        const hiddenInput = document.getElementById('selected_language');
+
+        languages.forEach(function (language) {
+            const option = document.createElement('option');
+            option.value = language.value;
+            option.textContent = language.text;
+            selectElement.appendChild(option);
+        });
+
+        // Establece el valor seleccionado por defecto
+        selectElement.value = "english";  // Ajusta esto según el idioma predeterminado
+        hiddenInput.value = selectElement.value;
+
+        selectElement.addEventListener('change', function () {
+            hiddenInput.value = selectElement.value;
+        });
+    });
+</script>
 
 {% endblock %}

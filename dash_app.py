@@ -14,6 +14,8 @@ app = dash.Dash(__name__, server=server, suppress_callback_exceptions=True, exte
 
 # Variable global para el DataFrame
 data = pd.DataFrame()
+with open('static/whatsapp/language.txt', 'r') as file: language = file.read()
+print(language)
 
 def load_data():
     """Carga el archivo CSV si está disponible y muestra mensajes de depuración."""
@@ -104,7 +106,7 @@ def update_charts(selected_issuer):
 
         filtered_df = df.copy()
         # General charts
-        issuer_messages = text_normalizer(data)
+        issuer_messages = text_normalizer(data, language=language)
         sentiment_fig = sentiment_analysis(data)
         issuer_counts = data['ISSUER'].value_counts().reset_index()
         issuer_counts.columns = ['ISSUER', 'COUNT']
@@ -136,7 +138,7 @@ def update_charts(selected_issuer):
     else:
 
         filtered_df = df[df['ISSUER'] == selected_issuer]
-        issuer_messages = text_normalizer(data[data['ISSUER'] == selected_issuer])
+        issuer_messages = text_normalizer(data[data['ISSUER'] == selected_issuer], language=language)
         sentiment_fig = sentiment_analysis(data, selected_issuer)
         general_charts = ""
 

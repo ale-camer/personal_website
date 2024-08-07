@@ -549,30 +549,3 @@ body {
 .sort-icon:hover {
     transform: scale(1.2); 
 }
-
-/* WHATSAPP */
-
-.language-container {
-    display: inline-block;
-    width: 140px;
-    text-align: right;
-    margin-right: 10px;
-}
-
-.select-language-container {
-    display: inline-block;
-    width: calc(100% - 160px);
-    vertical-align: center;
-    position: relative;
-    top: 0px;
-    left: 10px;
-}
-
-.upload-form .show-results {
-    margin-left: 25%;
-    margin-top: 10px;
-}
-
-#file {
-    margin-bottom: 0px;
-}

@@ -237,6 +237,10 @@ def interactive_graph():
 def whatsapp():
     if request.method == 'POST':
         file = request.files.get('file')
+        language = request.form.get('selected_language')  # Captura el idioma
+        print('Selected language:', language)
+        
+
         if file:
             if not os.path.exists(app.config['UPLOAD_FOLDER']):
                 os.makedirs(app.config['UPLOAD_FOLDER'])
@@ -249,6 +253,7 @@ def whatsapp():
 
             file_content.to_csv('static/whatsapp/data.csv', index=False)
             print(file_content.iloc[0])
+            with open('static/whatsapp/language.txt', 'w') as file: file.write(language)
 
             # Set a flag to trigger Dash app in your Flask app
             return redirect(url_for('dash_app'))
