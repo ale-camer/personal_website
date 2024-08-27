@@ -9,7 +9,7 @@
     <title>Alejandro Camerlengo</title>
     <style>
         body {
-            background: url('{{ url_for('static', filename='images/background.jpg') }}') no-repeat center center fixed; 
+            background: url('{{ url_for('static', filename='images/background.jpg') }}') no-repeat center center fixed;
             background-size: cover;
         }
     </style>
@@ -28,19 +28,21 @@
         <!-- Dropdown Menu - Mi CV -->
         <ul class="navbar-list">
             <li class="dropdown">
-                <a id="cv-toggle" class="dropdown-toggle" tabindex="0" role="button" aria-expanded="false" aria-controls="cv-menu">Mi CV</a>
+                <a id="cv-toggle" class="dropdown-toggle" tabindex="0" role="button" aria-expanded="false"
+                    aria-controls="cv-menu" href="{{ url_for('mi_cv') }}">Mi CV</a>
                 <ul class="dropdown-menu" id="cv-menu">
-                    <li><a href="{{ url_for('mi_cv') }}#profile">Profile</a></li>
                     <li><a href="{{ url_for('mi_cv') }}#work-experience">Work Experience</a></li>
                     <li><a href="{{ url_for('mi_cv') }}#education">Education</a></li>
                     <li><a href="{{ url_for('mi_cv') }}#technologies">Technologies</a></li>
                     <li><a href="{{ url_for('mi_cv') }}#languages">Languages</a></li>
+                    <li><a href="{{ url_for('mi_cv') }}#interests">Interests</a></li>
                 </ul>
             </li>
 
             <!-- Dropdown Menu - Projects -->
             <li class="dropdown">
-                <a id="projects-toggle" class="dropdown-toggle" tabindex="0" role="button" aria-expanded="false" aria-controls="projects-menu">Projects</a>
+                <a id="projects-toggle" class="dropdown-toggle" tabindex="0" role="button" aria-expanded="false"
+                    aria-controls="projects-menu">Projects</a>
                 <ul class="dropdown-menu" id="projects-menu">
                     <li><a href="{{ url_for('keyphrase_extraction') }}">Keyphrase Extraction</a></li>
                     <li><a href="{{ url_for('seasonality_prediction') }}">Seasonality Prediction</a></li>
@@ -56,6 +58,8 @@
                     src="{{ url_for('static', filename='images/gh.png') }}"></a>
             <a class="image-footer" href="https://www.linkedin.com/in/alejandro-camerlengo-1ab3981b/"
                 target="_blank"><img src="{{ url_for('static', filename='images/li.png') }}"></a>
+            <a class="image-footer" href="mailto:alejandrocamerlengo@gmail.com"
+                target="_blank"><img src="{{ url_for('static', filename='images/email.png') }}" alt="Email"></a>
         </div>
 
     </nav>

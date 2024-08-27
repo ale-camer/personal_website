@@ -4,6 +4,7 @@ from dash.dependencies import Input, Output
 
 import os, shutil
 import pandas as pd
+from datetime import datetime
 
 import seaborn as sns
 import plotly.graph_objs as go
@@ -51,6 +52,36 @@ remove_old_files('static/whatsapp')
 remove_old_files('static/world_bank')
 remove_old_files('static/downloads')
 
+def delta_time():
+
+    today = datetime.now()
+    last_year = today.year - 1
+    last_august = datetime(year=last_year, month=8, day=1)
+    
+    if today < last_august:
+        last_august = datetime(year=last_year - 1, month=8, day=1)
+    
+    months = (today.year - last_august.year) * 12 + today.month - last_august.month + 1
+    
+    if months > 12:
+        
+        years = months // 12
+        months = months % 12
+        
+        if years > 1:
+            year_string = "years"
+        else:
+            year_string = "year"
+            
+        if months > 1:
+            month_string = "months"
+        else: 
+            month_string = "month"
+            
+        string = f"{years} {year_string} {months} {month_string}"
+    
+    return string
+
 # Application routes
 @app.route('/')
 def index():
@@ -60,7 +91,8 @@ def index():
 @app.route('/mi_cv')
 def mi_cv():
     """Route for the CV page"""
-    return render_template('mi_cv.html')
+    delta_time_string = delta_time()
+    return render_template('mi_cv.html', delta_time_string=delta_time_string)
 
 @app.route('/keyphrase_extraction')
 def keyphrase_extraction():
