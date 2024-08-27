@@ -2,12 +2,55 @@
 
 {% block content %}
 
-<div class="main-content">
-    <!-- Main Heading and Introduction Section -->
-    <h1>Welcome!</h1>
-    <p>Hello. I am Alejandro Camerlengo. Data Scientist and Financial Analyst. This is my personal webpage in which
-        you can find interesting projects that may be useful for you. All of them can be found in the sidebar
-        to the left. Have fun!</p>
+<div id="profile-container">
+    <div id="profile-image">
+        <img src="{{ url_for('static', filename='images/profile.jpg') }}">
+    </div>
+
+    <div class="main-content">
+        <H3>Data Scientist based in Argentina</H3>
+        <p>FURTHER EXPLANATION</p>
+    </div>
 </div>
+
+<div>
+    <p>Welcome. I hope that you find my webpage interesting. Here you will find: my CV, toy projects and potential links
+        of interest at the bottom of the navigation bar.</p><br>
+    <p>I have been working in my personal webpage in order to on the one hand show in a better way than in my GitHub
+        pago some of the things
+        in which I have been working on and on the other hand to start learning web development.</p><br>
+    <p>Therefore, I have been developing to different kind of projects: user-friendly and analitical projects. In the
+        first ones the user can play with them with their own or customized data and in the second ones you can find
+        some useful analysis and learnings of different topics such as finance, Argentina macroeconomics, math and data
+        science labour market</p>
+</div>
+
+<style>
+    #profile-container {
+        margin-left: 15%;
+        padding: 20px;
+        display: flex;
+        align-items: flex-start;
+        height: 100vh;
+        box-sizing: border-box;
+    }
+
+    #profile-image img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 20px 20px;
+    }
+
+    .main-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        margin: 0px;
+        padding: 20px 20px;
+        text-align: left;
+    }
+</style>
 
 {% endblock %}

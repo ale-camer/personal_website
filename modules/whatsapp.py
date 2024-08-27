@@ -47,45 +47,41 @@ def generate_wordcloud(text):
     img_base64 = base64.b64encode(img.getvalue()).decode('utf-8')
     return f"data:image/png;base64,{img_base64}"
 
-def whatsapp_data_preprocessing(data):
-    pattern = r".*\/.*\/.*,.*:.* - .*"
-    general_list = []
-    particular_list = []
+def preprocess_whatsapp_data(file):
+    chat_lines = file.read().decode('utf-8').splitlines()
+    message_pattern = r".*\/.*\/.*,.*:.* - .*"
+    processed_lines = []
+    pending_lines = []
     
-    for i in range(len(data)):
-        if re.match(pattern, data[i]):
-            if particular_list:
-                general_list[-1] = ' '.join(particular_list)
-                particular_list = []
-            general_list.append(data[i])
+    for i in range(len(chat_lines)):
+        if re.match(message_pattern, chat_lines[i]):
+            if pending_lines:
+                processed_lines[-1] = ' '.join(pending_lines)
+                pending_lines = []
+            processed_lines.append(chat_lines[i])
         else:
-            if not particular_list:
-                particular_list.append(data[i-1])
-            particular_list.append(data[i])
+            if not pending_lines:
+                pending_lines.append(chat_lines[i-1])
+            pending_lines.append(chat_lines[i])
     
-    general_list = pd.DataFrame(general_list, columns=['DATA'])
+    df_chat = pd.DataFrame(processed_lines, columns=['RAW_DATA'])
+    df_chat['DATE'] = df_chat['RAW_DATA'].apply(lambda x: x.split(',')[0])
+    df_chat['HOUR'] = df_chat['RAW_DATA'].apply(lambda x: x.split(',')[1].split('-')[0].strip())
+    df_chat['ISSUER'] = df_chat['RAW_DATA'].apply(lambda x: x.split('- ')[1].split(':')[0])
+    df_chat['MESSAGE'] = df_chat['RAW_DATA'].apply(lambda x: x.split(': ')[1] if ': ' in x else None)
     
-    general_list['DATE'] = general_list['DATA'].apply(lambda x: x.split(',')[0])
-    general_list['HOUR'] = general_list['DATA'].apply(lambda x: x.split(',')[1].split('-')[0].strip())
-    general_list['ISSUER'] = general_list['DATA'].apply(lambda x: x.split('- ')[1].split(':')[0])
-    general_list['MESSAGE'] = general_list['DATA'].apply(lambda x: x.split(': ')[1] if ': ' in x else 0)
+    df_chat = df_chat[df_chat['MESSAGE'].notna()]
+    df_chat['IS_MULTIMEDIA'] = df_chat['MESSAGE'].apply(lambda msg: 1 if 'Multimedia' in msg else 0)
+    df_chat = df_chat[df_chat['IS_MULTIMEDIA'] == 0].drop(['RAW_DATA', 'IS_MULTIMEDIA'], axis=1)
     
-    general_list = general_list[general_list['MESSAGE'] != 0]
-    general_list['MULTIMEDIA'] = general_list['MESSAGE'].apply(lambda a: 1 if 'Multimedia' in a else 0)
-    general_list = general_list.loc[general_list['MULTIMEDIA']==0,:].drop(['DATA','MULTIMEDIA'], axis=1)
+    df_chat['DATE'] = pd.to_datetime(df_chat['DATE'], dayfirst=True)
+    df_chat['dow'] = df_chat['DATE'].dt.dayofweek
+    df_chat['dom'] = df_chat['DATE'].dt.day
+    df_chat['month'] = df_chat['DATE'].dt.month
+    df_chat['HOUR'] = df_chat['HOUR'].apply(lambda hour: int(hour.split(':')[0]))
+    df_chat['len_message'] = df_chat['MESSAGE'].apply(lambda msg: len(msg.split()))
     
-    general_list['DATE'] = pd.to_datetime(general_list['DATE'], dayfirst=True)
-    general_list['dow'] = general_list['DATE'].dt.dayofweek
-    general_list['dom'] = general_list['DATE'].dt.day
-    general_list['HOUR'] = general_list['HOUR'].apply(lambda a: a.split(':')[0]).astype('int')
-    general_list['month'] = general_list['DATE'].dt.month
-    general_list['len_message'] = general_list['MESSAGE'].apply(lambda a: len(a.split()))
-    
-    return general_list
-
-def read_whatsapp_txt(file_path):
-    with open(file_path, 'r', encoding='utf-8') as file:
-        return file.readlines()
+    return df_chat
 
 def text_normalizer(data, language='english'):
     urlRegex = re.compile('http\S+')
