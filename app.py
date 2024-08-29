@@ -88,6 +88,26 @@ def index():
     """Route for the main page"""
     return render_template('index.html')
 
+@app.route('/linear_algebra')
+def linear_algebra():
+    return render_template('Intro_to_Linear_Algebra_for_Data_Science.html')
+
+@app.route('/vector_norms')
+def vector_norms():
+    return render_template('Vector_Norms_Applications_in_Data_Science.html')
+
+@app.route('/algorithmic_trading')
+def algorithmic_trading():
+    return render_template('Stock_Algorithmic_Trading_Strategy_Backtesting.html')
+
+@app.route('/ds_trends')
+def ds_trends():
+    return render_template('Data_Science_Trends.html')
+
+@app.route('/arg_macro')
+def arg_macro():
+    return render_template('Argentina_Macroeconomía_y_empleo.html')
+
 @app.route('/mi_cv')
 def mi_cv():
     """Route for the CV page"""
