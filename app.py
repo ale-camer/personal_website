@@ -90,23 +90,23 @@ def index():
 
 @app.route('/linear_algebra')
 def linear_algebra():
-    return render_template('Intro_to_Linear_Algebra_for_Data_Science.html')
+    return render_template('intro_to_linear_algebra_for_data_science.html')
 
 @app.route('/vector_norms')
 def vector_norms():
-    return render_template('Vector_Norms_Applications_in_Data_Science.html')
+    return render_template('vector_norms_applications_in_data_science.html')
 
 @app.route('/algorithmic_trading')
 def algorithmic_trading():
-    return render_template('Stock_Algorithmic_Trading_Strategy_Backtesting.html')
+    return render_template('stock_algorithmic_trading_strategy_backtesting.html')
 
 @app.route('/ds_trends')
 def ds_trends():
-    return render_template('Data_Science_Trends.html')
+    return render_template('trends_in_data_science_labour_market.html')
 
 @app.route('/arg_macro')
 def arg_macro():
-    return render_template('Argentina_Macroeconomía_y_empleo.html')
+    return render_template('argentina_macroeconomy_n_employment.html')
 
 @app.route('/mi_cv')
 def mi_cv():

@@ -9,24 +9,123 @@
 
     <div class="main-content">
         <H3>Data Scientist based in Argentina</H3>
-        <p>FURTHER EXPLANATION</p>
+        <p>
+            Passionate about data, constantly seeking to learn and improve in the art of working with it.
+        </p>
     </div>
 </div>
 
 <div id="intro-text">
-    <p>Welcome. I hope that you find my webpage interesting. Here you will find: my CV, toy projects and potential links
+    <p><strong>Welcome!</strong></p><br>
+    <p> I hope you find my webpage engaging and informative. Here, you can explore my CV, toy projects, and find links
         of interest at the bottom of the navigation bar.</p><br>
-    <p>I have been working in my personal webpage in order to on the one hand show in a better way than in my GitHub
-        pago some of the things
-        in which I have been working on and on the other hand to start learning web development.</p><br>
-    <p>Therefore, I have been developing to different kind of projects: user-friendly and analitical projects. In the
-        first ones the user can play with them with their own or customized data and in the second ones you can find
-        some useful analysis and learnings of different topics such as finance, Argentina macroeconomics, math and data
-        science labour market</p>
+    <p>I've been working on this personal website not only to present my work more effectively than on my GitHub page
+        but also to dive into web development. My aim is to showcase some of the projects I've been involved in,
+        offering a more interactive and user-friendly experience.</p><br>
+    <p>You'll discover two types of projects here: interactive tools that allow you to experiment with your own or
+        customized data, and descriptive projects where I share insights and analyses on various topics, including
+        finance, economics, mathematics, and the data science job market.</p>
 </div>
 
 <div id="projects-intro">
-    <p>REALIZE A BRIEF DESCRIPTION ABOUT THE PROJECTS WITH THE OPTION OF FURTHER EXPLANATION IF WANTED</p>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Project</th>
+                <th>Type of Project</th>
+                <th>Breif Explanation</th>
+                <th>What is it useful for?</th>
+                <th>How to use it?</th>
+                <th>What is/are the output/s?</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Keyphrase Extraction</td>
+                <td>User-Friendly</td>
+                <td>Helps identify and extract important terms and phrases from texts summarizing the main content</td>
+                <td>Analyzing documents, optimizing search engine results or summarizing content</td>
+                <td>Upload a text file, specify the number of N-grams (sequence of n elements) and results (rows) per
+                    N-gram and hit the "Extract Keyphrases" button</td>
+                <td>Tables with most repeated N-grams</td>
+            </tr>
+            <tr>
+                <td>Seasonality Prediction</td>
+                <td>User-Friendly</td>
+                <td>Forecast values of time series based on its seasonal patterns</td>
+                <td>Any time serie with seasonal pattern</td>
+                <td>Upload an Excel file with just one column of numeric data and a header, select the periodicty (e.g.,
+                    4 for quarterly data) and hit the "Calculate Prediction" button</td>
+                <td>Table with forecast for next cycle and graphs of: original time serie, comparing prediction of last
+                    cycle and real last cycle and time serie along with next cycle forecast</td>
+            </tr>
+            <tr>
+                <td>WhatsApp</td>
+                <td>User-Friendly</td>
+                <td>Generate a dashboard with key visualizations in order to analyze both individual and group chats
+                </td>
+                <td>Find communication patters and sentiments</td>
+                <td>Export WhatsApp chat by clicking on the three dots in the upper-right corner of the phone screen in
+                    the conversation, select "More" and then "Export Chat". After that upload the text file, select the
+                    language in which the conversation was held and hit the "Analyze Chat" button</td>
+                <td>Interactive dashboard</td>
+            </tr>
+            <tr>
+                <td>World Bank</td>
+                <td>User-Friendly</td>
+                <td>Deploy data collected by the World Bank</td>
+                <td>Visualize and analyze country-wise data</td>
+                <td>Select: indicator (e.g. GDP per Capita), data type and the year or country depending on the data
+                    type choosen and hit the "Show Results" button. After this, if you want the raw data hit the
+                    "Download CSV" button and/or if you want an interactive graph hit the "Interactive Graph" button
+                </td>
+                <td>Table with data requested, option to download the table in a CSV format and an interactive grapth
+                </td>
+            </tr>
+            <tr>
+                <td>Algorithmic Trading</td>
+                <td>Descriptive</td>
+                <td>Backtesting of buy-and-hold strategy of Fortune 500 companies by selecting them with clusterization
+                    techniques</td>
+                <td>Select stocks automatically for a stock fund that rebalanced regularly</td>
+                <td>Open and read it</td>
+                <td>None</td>
+            </tr>
+            <tr>
+                <td>Linear Algebra</td>
+                <td>Descriptive</td>
+                <td>Theorical explanation of linear algebra concepts use in data science</td>
+                <td>Learn the basics in the topic</td>
+                <td>Open and read it</td>
+                <td>None</td>
+            </tr>
+            <tr>
+                <td>Macro & Employment</td>
+                <td>Descriptive</td>
+                <td>Causes and consequences of economic policies in social indicators in Argentina (2011 - 2023)</td>
+                <td>Understand the consequences of economic policies in the GDP and therefore in the labour market</td>
+                <td>Open and read it. Can be translate it with google (click in the three dots in the upper-right side
+                    of your Google Chroem browser, select the option "Translate" and choose the language)</td>
+                <td>None</td>
+            </tr>
+            <tr>
+                <td>Trend in Data Science</td>
+                <td>Descriptive</td>
+                <td>Analysis of Data Science job postings from timesjobs.com and flexjobs.com in 2022</td>
+                <td>Visualize the priorities of the market</td>
+                <td>Open and read it</td>
+                <td>None</td>
+            </tr>
+            <tr>
+                <td>Vector Norms</td>
+                <td>Descriptive</td>
+                <td>Practical uses of a linear algebra tools in regular data science tasks</td>
+                <td>Learn how some math impact in data science tasks</td>
+                <td>Open and read it</td>
+                <td>None</td>
+            </tr>
+        </tbody>
+    </table>
 </div>
 
 <style>
@@ -52,21 +151,30 @@
         justify-content: flex-start;
         margin: 0px;
         padding: 20px 20px;
-        text-align: left;
-    }   
-    
+        text-align: center;
+    }
+
     #intro-text {
         margin: 15%;
         padding: 0px;
         box-sizing: border-box;
         color: white;
         margin-bottom: 50px;
+        margin-top: 175px;
+    }
+
+    #intro-text strong {
+        font-size: 25px;
     }
 
     #projects-intro {
-        margin: 15%;
+        margin: 16%;
         margin-top: 0px;
         color: white;
+    }
+
+    #projects-intro td {
+        text-align: center;
     }
 </style>
 

@@ -7,24 +7,11 @@
     <div class="keyphrase-extraction-container">
         <h1 class="keyphrase-extraction-title">Seasonality Prediction</h1>
 
-        <!-- Introduction Section -->
-        <div class="introduction">
-            <h2>Introduction</h2>
-            <p>This tool helps you forecast future values of a time series based on its seasonal patterns. It is
-                convenient for users who need to make data-driven decisions based on seasonal trends. It's especially
-                useful for businesses wanting to forecast sales, inventory, or other key metrics that follow regular
-                patterns.</p>
-        </div>
-
-        <!-- Functionality Section -->
-        <div class="functionality">
-            <h2>Functionality</h2>
-            <p>To use it, you need to upload an Excel file with just one column of numeric data and a header. You also
-                need to choose a periodicity (e.g., 4 for quarterly data), which should be a divisor of the number of
-                data points you have (excluding the header). The tool will then generate a table with the predictions
-                of the next cycle and create three visualizations: a graph of the original time series, a comparison 
-                of the prediction and actual values for the last cycle, and a graph showing the original series along 
-                with the future predictions.</p>
+        <!-- Instructions Section -->
+        <div class="instructions">
+            <h2>Instructions</h2>
+            <p style="text-align: left; margin-bottom: 50px;">The periodicity should be a divisor of the number of
+                data points you have (excluding the header).</p>
         </div>
 
         <!-- Form for uploading Excel file and setting periodicity -->
@@ -79,7 +66,8 @@
             <img src="{{ url_for('static', filename='temp_images/seasonality_prediction/all_periods_data.png') }}">
             {% endif %}
             {% if 'historic_and_prediction_data.png' in existing_plots %}
-            <img src="{{ url_for('static', filename='temp_images/seasonality_prediction/historic_and_prediction_data.png') }}">
+            <img
+                src="{{ url_for('static', filename='temp_images/seasonality_prediction/historic_and_prediction_data.png') }}">
             {% endif %}
         </div>
     </div>
