@@ -14626,7 +14626,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[109]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[1]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -14658,13 +14658,13 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[109]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[1]:</div>
 
 
 
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
 
-  <div id="df-efa0034a-b424-4233-8a67-46cb49af4bac" class="colab-df-container">
+  <div id="df-21bf23a4-a889-449c-80d8-24f5d062de25" class="colab-df-container">
     <div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
@@ -14773,7 +14773,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
     <div class="colab-df-buttons">
 
   <div class="colab-df-container">
-    <button class="colab-df-convert" onclick="convertToInteractive('df-efa0034a-b424-4233-8a67-46cb49af4bac')"
+    <button class="colab-df-convert" onclick="convertToInteractive('df-21bf23a4-a889-449c-80d8-24f5d062de25')"
             title="Convert this dataframe to an interactive table."
             style="display:none;">
 
@@ -14825,12 +14825,12 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
     <script>
       const buttonEl =
-        document.querySelector('#df-efa0034a-b424-4233-8a67-46cb49af4bac button.colab-df-convert');
+        document.querySelector('#df-21bf23a4-a889-449c-80d8-24f5d062de25 button.colab-df-convert');
       buttonEl.style.display =
         google.colab.kernel.accessAllowed ? 'block' : 'none';
 
       async function convertToInteractive(key) {
-        const element = document.querySelector('#df-efa0034a-b424-4233-8a67-46cb49af4bac');
+        const element = document.querySelector('#df-21bf23a4-a889-449c-80d8-24f5d062de25');
         const dataTable =
           await google.colab.kernel.invokeFunction('convertToInteractive',
                                                     [key], {});
@@ -14850,8 +14850,8 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
   </div>
 
 
-<div id="df-2e189486-a595-4eba-8dce-82b642cadf6d">
-  <button class="colab-df-quickchart" onclick="quickchart('df-2e189486-a595-4eba-8dce-82b642cadf6d')"
+<div id="df-0e987668-daa7-4b06-a14e-2de869175cc0">
+  <button class="colab-df-quickchart" onclick="quickchart('df-0e987668-daa7-4b06-a14e-2de869175cc0')"
             title="Suggest charts"
             style="display:none;">
 
@@ -14970,7 +14970,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
     }
     (() => {
       let quickchartButtonEl =
-        document.querySelector('#df-2e189486-a595-4eba-8dce-82b642cadf6d button');
+        document.querySelector('#df-0e987668-daa7-4b06-a14e-2de869175cc0 button');
       quickchartButtonEl.style.display =
         google.colab.kernel.accessAllowed ? 'block' : 'none';
     })();
@@ -15039,7 +15039,7 @@ $\lambda$ from 0.01 to 1.09. The results will be represented in 10 different plo
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[110]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[2]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
@@ -15197,10 +15197,11 @@ class="
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>The observations from the plots are as follows:</p>
 <ul>
-<li>ElasticNet displays an exponential distribution, indicating that the penalty should be as close to zero as possible for optimal performance.</li>
-<li>LASSO typically reaches its minimum error around a regularization parameter value of 0.2, and the error tends to increase geometrically as the regularization term increases.</li>
+<li>ElasticNet displays an logarithmic distribution, indicating that the penalty should be as close to zero as possible for optimal performance.</li>
+<li>LASSO typically reaches its minimum error around a regularization parameter value of 0.2, and the error tends to increase exponentially as the regularization term increases.</li>
 <li>Ridge achieves its minimum error around a regularization parameter value of 0.4 and exhibits a distribution similar to that of LASSO.</li>
 </ul>
+<p>Selecting the correct regularization parameter is crucial for each model to avoid over-penalization and achieve the best possible predictive performance. Therefore, depending on the model that we are choosing we have to use a different value for this purpose.</p>
 
 </div>
 </div>
@@ -15253,7 +15254,7 @@ class="
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[111]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[3]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="c1"># downloading data</span>
@@ -15279,7 +15280,7 @@ class="
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[112]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[4]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="n">data</span><span class="p">[</span><span class="s1">'MarketArrivals'</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
@@ -15300,13 +15301,13 @@ class="
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[112]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[4]:</div>
 
 
 
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
 
-  <div id="df-d4e4cc69-4e4f-431d-9f89-1b94a5c799b2" class="colab-df-container">
+  <div id="df-4225b6f1-d630-46dd-87fc-e02769684d2c" class="colab-df-container">
     <div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
@@ -15409,7 +15410,7 @@ class="
     <div class="colab-df-buttons">
 
   <div class="colab-df-container">
-    <button class="colab-df-convert" onclick="convertToInteractive('df-d4e4cc69-4e4f-431d-9f89-1b94a5c799b2')"
+    <button class="colab-df-convert" onclick="convertToInteractive('df-4225b6f1-d630-46dd-87fc-e02769684d2c')"
             title="Convert this dataframe to an interactive table."
             style="display:none;">
 
@@ -15461,12 +15462,12 @@ class="
 
     <script>
       const buttonEl =
-        document.querySelector('#df-d4e4cc69-4e4f-431d-9f89-1b94a5c799b2 button.colab-df-convert');
+        document.querySelector('#df-4225b6f1-d630-46dd-87fc-e02769684d2c button.colab-df-convert');
       buttonEl.style.display =
         google.colab.kernel.accessAllowed ? 'block' : 'none';
 
       async function convertToInteractive(key) {
-        const element = document.querySelector('#df-d4e4cc69-4e4f-431d-9f89-1b94a5c799b2');
+        const element = document.querySelector('#df-4225b6f1-d630-46dd-87fc-e02769684d2c');
         const dataTable =
           await google.colab.kernel.invokeFunction('convertToInteractive',
                                                     [key], {});
@@ -15486,8 +15487,8 @@ class="
   </div>
 
 
-<div id="df-c2443b09-4d69-48c9-820f-7f3e931e44fa">
-  <button class="colab-df-quickchart" onclick="quickchart('df-c2443b09-4d69-48c9-820f-7f3e931e44fa')"
+<div id="df-067e9273-a09b-4e9d-b79b-75ad95e121f7">
+  <button class="colab-df-quickchart" onclick="quickchart('df-067e9273-a09b-4e9d-b79b-75ad95e121f7')"
             title="Suggest charts"
             style="display:none;">
 
@@ -15606,7 +15607,7 @@ class="
     }
     (() => {
       let quickchartButtonEl =
-        document.querySelector('#df-c2443b09-4d69-48c9-820f-7f3e931e44fa button');
+        document.querySelector('#df-067e9273-a09b-4e9d-b79b-75ad95e121f7 button');
       quickchartButtonEl.style.display =
         google.colab.kernel.accessAllowed ? 'block' : 'none';
     })();
@@ -15629,7 +15630,7 @@ class="
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[113]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="n">data</span><span class="p">[</span><span class="s1">'Mall_Customers_Int'</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
@@ -15650,13 +15651,13 @@ class="
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[113]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[5]:</div>
 
 
 
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
 
-  <div id="df-f3100148-0a2b-40a8-956b-0d5601c9da3a" class="colab-df-container">
+  <div id="df-b3b235c5-4c48-48d9-a7e8-67f8b0a71e86" class="colab-df-container">
     <div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
@@ -15729,7 +15730,7 @@ class="
     <div class="colab-df-buttons">
 
   <div class="colab-df-container">
-    <button class="colab-df-convert" onclick="convertToInteractive('df-f3100148-0a2b-40a8-956b-0d5601c9da3a')"
+    <button class="colab-df-convert" onclick="convertToInteractive('df-b3b235c5-4c48-48d9-a7e8-67f8b0a71e86')"
             title="Convert this dataframe to an interactive table."
             style="display:none;">
 
@@ -15781,12 +15782,12 @@ class="
 
     <script>
       const buttonEl =
-        document.querySelector('#df-f3100148-0a2b-40a8-956b-0d5601c9da3a button.colab-df-convert');
+        document.querySelector('#df-b3b235c5-4c48-48d9-a7e8-67f8b0a71e86 button.colab-df-convert');
       buttonEl.style.display =
         google.colab.kernel.accessAllowed ? 'block' : 'none';
 
       async function convertToInteractive(key) {
-        const element = document.querySelector('#df-f3100148-0a2b-40a8-956b-0d5601c9da3a');
+        const element = document.querySelector('#df-b3b235c5-4c48-48d9-a7e8-67f8b0a71e86');
         const dataTable =
           await google.colab.kernel.invokeFunction('convertToInteractive',
                                                     [key], {});
@@ -15806,8 +15807,8 @@ class="
   </div>
 
 
-<div id="df-fb145879-8c73-4970-bd17-a6b6e20e67e8">
-  <button class="colab-df-quickchart" onclick="quickchart('df-fb145879-8c73-4970-bd17-a6b6e20e67e8')"
+<div id="df-c93e05fe-8ed6-461c-b124-207ddfee46bb">
+  <button class="colab-df-quickchart" onclick="quickchart('df-c93e05fe-8ed6-461c-b124-207ddfee46bb')"
             title="Suggest charts"
             style="display:none;">
 
@@ -15926,7 +15927,7 @@ class="
     }
     (() => {
       let quickchartButtonEl =
-        document.querySelector('#df-fb145879-8c73-4970-bd17-a6b6e20e67e8 button');
+        document.querySelector('#df-c93e05fe-8ed6-461c-b124-207ddfee46bb button');
       quickchartButtonEl.style.display =
         google.colab.kernel.accessAllowed ? 'block' : 'none';
     })();
@@ -15949,7 +15950,7 @@ class="
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[114]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="n">data</span><span class="p">[</span><span class="s1">'Life_Expectancy_Data'</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
@@ -15970,13 +15971,13 @@ class="
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[114]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[6]:</div>
 
 
 
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
 
-  <div id="df-89c2b237-6129-4faf-b50c-09137c806e83" class="colab-df-container">
+  <div id="df-2e8b658f-6120-4279-8829-d17f8f725a2b" class="colab-df-container">
     <div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
@@ -16146,7 +16147,7 @@ class="
     <div class="colab-df-buttons">
 
   <div class="colab-df-container">
-    <button class="colab-df-convert" onclick="convertToInteractive('df-89c2b237-6129-4faf-b50c-09137c806e83')"
+    <button class="colab-df-convert" onclick="convertToInteractive('df-2e8b658f-6120-4279-8829-d17f8f725a2b')"
             title="Convert this dataframe to an interactive table."
             style="display:none;">
 
@@ -16198,12 +16199,12 @@ class="
 
     <script>
       const buttonEl =
-        document.querySelector('#df-89c2b237-6129-4faf-b50c-09137c806e83 button.colab-df-convert');
+        document.querySelector('#df-2e8b658f-6120-4279-8829-d17f8f725a2b button.colab-df-convert');
       buttonEl.style.display =
         google.colab.kernel.accessAllowed ? 'block' : 'none';
 
       async function convertToInteractive(key) {
-        const element = document.querySelector('#df-89c2b237-6129-4faf-b50c-09137c806e83');
+        const element = document.querySelector('#df-2e8b658f-6120-4279-8829-d17f8f725a2b');
         const dataTable =
           await google.colab.kernel.invokeFunction('convertToInteractive',
                                                     [key], {});
@@ -16223,8 +16224,8 @@ class="
   </div>
 
 
-<div id="df-9f60b30f-e232-48e0-9d7a-e7819b36d486">
-  <button class="colab-df-quickchart" onclick="quickchart('df-9f60b30f-e232-48e0-9d7a-e7819b36d486')"
+<div id="df-dda6d497-d19f-4ac6-a0ef-4633c868ea7c">
+  <button class="colab-df-quickchart" onclick="quickchart('df-dda6d497-d19f-4ac6-a0ef-4633c868ea7c')"
             title="Suggest charts"
             style="display:none;">
 
@@ -16343,7 +16344,7 @@ class="
     }
     (() => {
       let quickchartButtonEl =
-        document.querySelector('#df-9f60b30f-e232-48e0-9d7a-e7819b36d486 button');
+        document.querySelector('#df-dda6d497-d19f-4ac6-a0ef-4633c868ea7c button');
       quickchartButtonEl.style.display =
         google.colab.kernel.accessAllowed ? 'block' : 'none';
     })();
@@ -16366,7 +16367,7 @@ class="
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[115]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[7]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="n">data</span><span class="p">[</span><span class="s1">'Carseats'</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
@@ -16387,13 +16388,13 @@ class="
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[115]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[7]:</div>
 
 
 
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
 
-  <div id="df-9643f358-0c2b-4717-8e3f-e985ff6c3cc7" class="colab-df-container">
+  <div id="df-0929860d-44ad-491b-9130-eaa29dc72e3d" class="colab-df-container">
     <div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
@@ -16502,7 +16503,7 @@ class="
     <div class="colab-df-buttons">
 
   <div class="colab-df-container">
-    <button class="colab-df-convert" onclick="convertToInteractive('df-9643f358-0c2b-4717-8e3f-e985ff6c3cc7')"
+    <button class="colab-df-convert" onclick="convertToInteractive('df-0929860d-44ad-491b-9130-eaa29dc72e3d')"
             title="Convert this dataframe to an interactive table."
             style="display:none;">
 
@@ -16554,12 +16555,12 @@ class="
 
     <script>
       const buttonEl =
-        document.querySelector('#df-9643f358-0c2b-4717-8e3f-e985ff6c3cc7 button.colab-df-convert');
+        document.querySelector('#df-0929860d-44ad-491b-9130-eaa29dc72e3d button.colab-df-convert');
       buttonEl.style.display =
         google.colab.kernel.accessAllowed ? 'block' : 'none';
 
       async function convertToInteractive(key) {
-        const element = document.querySelector('#df-9643f358-0c2b-4717-8e3f-e985ff6c3cc7');
+        const element = document.querySelector('#df-0929860d-44ad-491b-9130-eaa29dc72e3d');
         const dataTable =
           await google.colab.kernel.invokeFunction('convertToInteractive',
                                                     [key], {});
@@ -16579,8 +16580,8 @@ class="
   </div>
 
 
-<div id="df-2ae70f8f-f1ec-4ecf-9ebe-1c19cf169121">
-  <button class="colab-df-quickchart" onclick="quickchart('df-2ae70f8f-f1ec-4ecf-9ebe-1c19cf169121')"
+<div id="df-7a6a2a2f-5daa-4a1d-b07a-a59e53c92d40">
+  <button class="colab-df-quickchart" onclick="quickchart('df-7a6a2a2f-5daa-4a1d-b07a-a59e53c92d40')"
             title="Suggest charts"
             style="display:none;">
 
@@ -16699,7 +16700,7 @@ class="
     }
     (() => {
       let quickchartButtonEl =
-        document.querySelector('#df-2ae70f8f-f1ec-4ecf-9ebe-1c19cf169121 button');
+        document.querySelector('#df-7a6a2a2f-5daa-4a1d-b07a-a59e53c92d40 button');
       quickchartButtonEl.style.display =
         google.colab.kernel.accessAllowed ? 'block' : 'none';
     })();
@@ -16722,7 +16723,7 @@ class="
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[116]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[8]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="n">data</span><span class="p">[</span><span class="s1">'College'</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
@@ -16743,13 +16744,13 @@ class="
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[116]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[8]:</div>
 
 
 
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
 
-  <div id="df-be9b3ef0-e280-4b3a-b113-612da2abfeec" class="colab-df-container">
+  <div id="df-80657740-d8e0-4959-ab28-c8b9d64c6fe2" class="colab-df-container">
     <div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
@@ -16900,7 +16901,7 @@ class="
     <div class="colab-df-buttons">
 
   <div class="colab-df-container">
-    <button class="colab-df-convert" onclick="convertToInteractive('df-be9b3ef0-e280-4b3a-b113-612da2abfeec')"
+    <button class="colab-df-convert" onclick="convertToInteractive('df-80657740-d8e0-4959-ab28-c8b9d64c6fe2')"
             title="Convert this dataframe to an interactive table."
             style="display:none;">
 
@@ -16952,12 +16953,12 @@ class="
 
     <script>
       const buttonEl =
-        document.querySelector('#df-be9b3ef0-e280-4b3a-b113-612da2abfeec button.colab-df-convert');
+        document.querySelector('#df-80657740-d8e0-4959-ab28-c8b9d64c6fe2 button.colab-df-convert');
       buttonEl.style.display =
         google.colab.kernel.accessAllowed ? 'block' : 'none';
 
       async function convertToInteractive(key) {
-        const element = document.querySelector('#df-be9b3ef0-e280-4b3a-b113-612da2abfeec');
+        const element = document.querySelector('#df-80657740-d8e0-4959-ab28-c8b9d64c6fe2');
         const dataTable =
           await google.colab.kernel.invokeFunction('convertToInteractive',
                                                     [key], {});
@@ -16977,8 +16978,8 @@ class="
   </div>
 
 
-<div id="df-403daa11-ed57-4b62-9e62-c7a3ab7923ea">
-  <button class="colab-df-quickchart" onclick="quickchart('df-403daa11-ed57-4b62-9e62-c7a3ab7923ea')"
+<div id="df-4636873a-9976-40c7-926f-3503091721f1">
+  <button class="colab-df-quickchart" onclick="quickchart('df-4636873a-9976-40c7-926f-3503091721f1')"
             title="Suggest charts"
             style="display:none;">
 
@@ -17097,7 +17098,7 @@ class="
     }
     (() => {
       let quickchartButtonEl =
-        document.querySelector('#df-403daa11-ed57-4b62-9e62-c7a3ab7923ea button');
+        document.querySelector('#df-4636873a-9976-40c7-926f-3503091721f1 button');
       quickchartButtonEl.style.display =
         google.colab.kernel.accessAllowed ? 'block' : 'none';
     })();
@@ -17149,7 +17150,7 @@ class="
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[117]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[9]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="n">scaler</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="nb">min</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="nb">min</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
@@ -17186,7 +17187,7 @@ class="
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>100%|██████████| 5/5 [00:00&lt;00:00, 48.03it/s]
+<pre>100%|██████████| 5/5 [00:00&lt;00:00, 23.34it/s]
 </pre>
 </div>
 </div>
@@ -17200,7 +17201,7 @@ class="
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[118]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[10]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="n">data</span><span class="p">[</span><span class="s1">'MarketArrivals'</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
@@ -17221,13 +17222,13 @@ class="
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[118]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[10]:</div>
 
 
 
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
 
-  <div id="df-eb5e56a9-6145-416a-a7eb-20e07d2a0b95" class="colab-df-container">
+  <div id="df-f2d9b01b-6509-4ed9-b1f8-98a114129c3b" class="colab-df-container">
     <div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
@@ -17330,7 +17331,7 @@ class="
     <div class="colab-df-buttons">
 
   <div class="colab-df-container">
-    <button class="colab-df-convert" onclick="convertToInteractive('df-eb5e56a9-6145-416a-a7eb-20e07d2a0b95')"
+    <button class="colab-df-convert" onclick="convertToInteractive('df-f2d9b01b-6509-4ed9-b1f8-98a114129c3b')"
             title="Convert this dataframe to an interactive table."
             style="display:none;">
 
@@ -17382,12 +17383,12 @@ class="
 
     <script>
       const buttonEl =
-        document.querySelector('#df-eb5e56a9-6145-416a-a7eb-20e07d2a0b95 button.colab-df-convert');
+        document.querySelector('#df-f2d9b01b-6509-4ed9-b1f8-98a114129c3b button.colab-df-convert');
       buttonEl.style.display =
         google.colab.kernel.accessAllowed ? 'block' : 'none';
 
       async function convertToInteractive(key) {
-        const element = document.querySelector('#df-eb5e56a9-6145-416a-a7eb-20e07d2a0b95');
+        const element = document.querySelector('#df-f2d9b01b-6509-4ed9-b1f8-98a114129c3b');
         const dataTable =
           await google.colab.kernel.invokeFunction('convertToInteractive',
                                                     [key], {});
@@ -17407,8 +17408,8 @@ class="
   </div>
 
 
-<div id="df-629c12c2-108d-4dc5-8314-2132510c1999">
-  <button class="colab-df-quickchart" onclick="quickchart('df-629c12c2-108d-4dc5-8314-2132510c1999')"
+<div id="df-ecfe541e-3c32-4664-952d-fc31668e0760">
+  <button class="colab-df-quickchart" onclick="quickchart('df-ecfe541e-3c32-4664-952d-fc31668e0760')"
             title="Suggest charts"
             style="display:none;">
 
@@ -17527,7 +17528,7 @@ class="
     }
     (() => {
       let quickchartButtonEl =
-        document.querySelector('#df-629c12c2-108d-4dc5-8314-2132510c1999 button');
+        document.querySelector('#df-ecfe541e-3c32-4664-952d-fc31668e0760 button');
       quickchartButtonEl.style.display =
         google.colab.kernel.accessAllowed ? 'block' : 'none';
     })();
@@ -17550,7 +17551,7 @@ class="
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[119]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[11]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="n">data</span><span class="p">[</span><span class="s1">'Mall_Customers_Int'</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
@@ -17571,13 +17572,13 @@ class="
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[119]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[11]:</div>
 
 
 
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
 
-  <div id="df-f0b2c5df-9b47-43d6-b03c-138a6ba1ebcb" class="colab-df-container">
+  <div id="df-2c630d1e-2868-4b9a-8d34-2ae0cf45f2e6" class="colab-df-container">
     <div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
@@ -17650,7 +17651,7 @@ class="
     <div class="colab-df-buttons">
 
   <div class="colab-df-container">
-    <button class="colab-df-convert" onclick="convertToInteractive('df-f0b2c5df-9b47-43d6-b03c-138a6ba1ebcb')"
+    <button class="colab-df-convert" onclick="convertToInteractive('df-2c630d1e-2868-4b9a-8d34-2ae0cf45f2e6')"
             title="Convert this dataframe to an interactive table."
             style="display:none;">
 
@@ -17702,12 +17703,12 @@ class="
 
     <script>
       const buttonEl =
-        document.querySelector('#df-f0b2c5df-9b47-43d6-b03c-138a6ba1ebcb button.colab-df-convert');
+        document.querySelector('#df-2c630d1e-2868-4b9a-8d34-2ae0cf45f2e6 button.colab-df-convert');
       buttonEl.style.display =
         google.colab.kernel.accessAllowed ? 'block' : 'none';
 
       async function convertToInteractive(key) {
-        const element = document.querySelector('#df-f0b2c5df-9b47-43d6-b03c-138a6ba1ebcb');
+        const element = document.querySelector('#df-2c630d1e-2868-4b9a-8d34-2ae0cf45f2e6');
         const dataTable =
           await google.colab.kernel.invokeFunction('convertToInteractive',
                                                     [key], {});
@@ -17727,8 +17728,8 @@ class="
   </div>
 
 
-<div id="df-35e0d136-ddc5-4d1e-a55e-b66e44deb41f">
-  <button class="colab-df-quickchart" onclick="quickchart('df-35e0d136-ddc5-4d1e-a55e-b66e44deb41f')"
+<div id="df-7f208b65-0b9a-4d86-ac57-4b224f05be14">
+  <button class="colab-df-quickchart" onclick="quickchart('df-7f208b65-0b9a-4d86-ac57-4b224f05be14')"
             title="Suggest charts"
             style="display:none;">
 
@@ -17847,7 +17848,7 @@ class="
     }
     (() => {
       let quickchartButtonEl =
-        document.querySelector('#df-35e0d136-ddc5-4d1e-a55e-b66e44deb41f button');
+        document.querySelector('#df-7f208b65-0b9a-4d86-ac57-4b224f05be14 button');
       quickchartButtonEl.style.display =
         google.colab.kernel.accessAllowed ? 'block' : 'none';
     })();
@@ -17870,7 +17871,7 @@ class="
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[120]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[12]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="n">data</span><span class="p">[</span><span class="s1">'Life_Expectancy_Data'</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
@@ -17891,13 +17892,13 @@ class="
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[120]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[12]:</div>
 
 
 
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
 
-  <div id="df-421d5a9d-2d57-4da6-9281-74e019d1f09d" class="colab-df-container">
+  <div id="df-8ecb6dde-86f1-4900-8cd3-cbf09ce48fc5" class="colab-df-container">
     <div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
@@ -18067,7 +18068,7 @@ class="
     <div class="colab-df-buttons">
 
   <div class="colab-df-container">
-    <button class="colab-df-convert" onclick="convertToInteractive('df-421d5a9d-2d57-4da6-9281-74e019d1f09d')"
+    <button class="colab-df-convert" onclick="convertToInteractive('df-8ecb6dde-86f1-4900-8cd3-cbf09ce48fc5')"
             title="Convert this dataframe to an interactive table."
             style="display:none;">
 
@@ -18119,12 +18120,12 @@ class="
 
     <script>
       const buttonEl =
-        document.querySelector('#df-421d5a9d-2d57-4da6-9281-74e019d1f09d button.colab-df-convert');
+        document.querySelector('#df-8ecb6dde-86f1-4900-8cd3-cbf09ce48fc5 button.colab-df-convert');
       buttonEl.style.display =
         google.colab.kernel.accessAllowed ? 'block' : 'none';
 
       async function convertToInteractive(key) {
-        const element = document.querySelector('#df-421d5a9d-2d57-4da6-9281-74e019d1f09d');
+        const element = document.querySelector('#df-8ecb6dde-86f1-4900-8cd3-cbf09ce48fc5');
         const dataTable =
           await google.colab.kernel.invokeFunction('convertToInteractive',
                                                     [key], {});
@@ -18144,8 +18145,8 @@ class="
   </div>
 
 
-<div id="df-dbe1fd99-81d7-4de5-88d1-6f45b4fe57fe">
-  <button class="colab-df-quickchart" onclick="quickchart('df-dbe1fd99-81d7-4de5-88d1-6f45b4fe57fe')"
+<div id="df-49ce19c0-0085-42ac-ba9b-b945de0052ab">
+  <button class="colab-df-quickchart" onclick="quickchart('df-49ce19c0-0085-42ac-ba9b-b945de0052ab')"
             title="Suggest charts"
             style="display:none;">
 
@@ -18264,7 +18265,7 @@ class="
     }
     (() => {
       let quickchartButtonEl =
-        document.querySelector('#df-dbe1fd99-81d7-4de5-88d1-6f45b4fe57fe button');
+        document.querySelector('#df-49ce19c0-0085-42ac-ba9b-b945de0052ab button');
       quickchartButtonEl.style.display =
         google.colab.kernel.accessAllowed ? 'block' : 'none';
     })();
@@ -18287,7 +18288,7 @@ class="
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[121]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[13]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="n">data</span><span class="p">[</span><span class="s1">'Carseats'</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
@@ -18308,13 +18309,13 @@ class="
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[121]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[13]:</div>
 
 
 
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
 
-  <div id="df-dd4a7957-57c2-4a08-8e2a-736837e09c8f" class="colab-df-container">
+  <div id="df-1a4a01b8-6a39-45d7-9adf-7c1c24415f7e" class="colab-df-container">
     <div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
@@ -18423,7 +18424,7 @@ class="
     <div class="colab-df-buttons">
 
   <div class="colab-df-container">
-    <button class="colab-df-convert" onclick="convertToInteractive('df-dd4a7957-57c2-4a08-8e2a-736837e09c8f')"
+    <button class="colab-df-convert" onclick="convertToInteractive('df-1a4a01b8-6a39-45d7-9adf-7c1c24415f7e')"
             title="Convert this dataframe to an interactive table."
             style="display:none;">
 
@@ -18475,12 +18476,12 @@ class="
 
     <script>
       const buttonEl =
-        document.querySelector('#df-dd4a7957-57c2-4a08-8e2a-736837e09c8f button.colab-df-convert');
+        document.querySelector('#df-1a4a01b8-6a39-45d7-9adf-7c1c24415f7e button.colab-df-convert');
       buttonEl.style.display =
         google.colab.kernel.accessAllowed ? 'block' : 'none';
 
       async function convertToInteractive(key) {
-        const element = document.querySelector('#df-dd4a7957-57c2-4a08-8e2a-736837e09c8f');
+        const element = document.querySelector('#df-1a4a01b8-6a39-45d7-9adf-7c1c24415f7e');
         const dataTable =
           await google.colab.kernel.invokeFunction('convertToInteractive',
                                                     [key], {});
@@ -18500,8 +18501,8 @@ class="
   </div>
 
 
-<div id="df-1904f468-357a-43a0-8f53-55fbfd67e05c">
-  <button class="colab-df-quickchart" onclick="quickchart('df-1904f468-357a-43a0-8f53-55fbfd67e05c')"
+<div id="df-3807e588-8b60-430b-b210-6051052c9e3a">
+  <button class="colab-df-quickchart" onclick="quickchart('df-3807e588-8b60-430b-b210-6051052c9e3a')"
             title="Suggest charts"
             style="display:none;">
 
@@ -18620,7 +18621,7 @@ class="
     }
     (() => {
       let quickchartButtonEl =
-        document.querySelector('#df-1904f468-357a-43a0-8f53-55fbfd67e05c button');
+        document.querySelector('#df-3807e588-8b60-430b-b210-6051052c9e3a button');
       quickchartButtonEl.style.display =
         google.colab.kernel.accessAllowed ? 'block' : 'none';
     })();
@@ -18643,7 +18644,7 @@ class="
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[122]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[14]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="n">data</span><span class="p">[</span><span class="s1">'College'</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
@@ -18664,13 +18665,13 @@ class="
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[122]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[14]:</div>
 
 
 
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
 
-  <div id="df-0acdc413-b8ff-4b51-9c14-05015ecd6c6b" class="colab-df-container">
+  <div id="df-6f6e2b4e-8d5b-4e1d-94cf-324f34c1d480" class="colab-df-container">
     <div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
@@ -18821,7 +18822,7 @@ class="
     <div class="colab-df-buttons">
 
   <div class="colab-df-container">
-    <button class="colab-df-convert" onclick="convertToInteractive('df-0acdc413-b8ff-4b51-9c14-05015ecd6c6b')"
+    <button class="colab-df-convert" onclick="convertToInteractive('df-6f6e2b4e-8d5b-4e1d-94cf-324f34c1d480')"
             title="Convert this dataframe to an interactive table."
             style="display:none;">
 
@@ -18873,12 +18874,12 @@ class="
 
     <script>
       const buttonEl =
-        document.querySelector('#df-0acdc413-b8ff-4b51-9c14-05015ecd6c6b button.colab-df-convert');
+        document.querySelector('#df-6f6e2b4e-8d5b-4e1d-94cf-324f34c1d480 button.colab-df-convert');
       buttonEl.style.display =
         google.colab.kernel.accessAllowed ? 'block' : 'none';
 
       async function convertToInteractive(key) {
-        const element = document.querySelector('#df-0acdc413-b8ff-4b51-9c14-05015ecd6c6b');
+        const element = document.querySelector('#df-6f6e2b4e-8d5b-4e1d-94cf-324f34c1d480');
         const dataTable =
           await google.colab.kernel.invokeFunction('convertToInteractive',
                                                     [key], {});
@@ -18898,8 +18899,8 @@ class="
   </div>
 
 
-<div id="df-4cbf4bd1-4a62-432b-a1a7-41976480474c">
-  <button class="colab-df-quickchart" onclick="quickchart('df-4cbf4bd1-4a62-432b-a1a7-41976480474c')"
+<div id="df-59794f64-8f3f-4cc8-aa2e-46af6779c0fb">
+  <button class="colab-df-quickchart" onclick="quickchart('df-59794f64-8f3f-4cc8-aa2e-46af6779c0fb')"
             title="Suggest charts"
             style="display:none;">
 
@@ -19018,7 +19019,7 @@ class="
     }
     (() => {
       let quickchartButtonEl =
-        document.querySelector('#df-4cbf4bd1-4a62-432b-a1a7-41976480474c button');
+        document.querySelector('#df-59794f64-8f3f-4cc8-aa2e-46af6779c0fb button');
       quickchartButtonEl.style.display =
         google.colab.kernel.accessAllowed ? 'block' : 'none';
     })();
@@ -19063,87 +19064,17 @@ class="
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[125]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[15]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">prettytable</span> <span class="kn">import</span> <span class="n">PrettyTable</span>
 <span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
 
-<span class="k">def</span> <span class="nf">mean_squared_error</span><span class="p">(</span><span class="n">vector</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Compute the Mean Squared Error (MSE) of a vector.</span>
-
-<span class="sd">    Parameters:</span>
-<span class="sd">    - vector: Array-like of differences between true values and predicted values.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">    - Mean Squared Error of the vector.</span>
-<span class="sd">    """</span>
-    <span class="n">mse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">vector</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">mse</span>
-
-<span class="k">def</span> <span class="nf">coefficient_of_determination</span><span class="p">(</span><span class="n">true</span><span class="p">,</span> <span class="n">pred</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Compute the R-squared (coefficient of determination) score.</span>
-
-<span class="sd">    Parameters:</span>
-<span class="sd">    - true: Array-like of true values.</span>
-<span class="sd">    - pred: Array-like of predicted values.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">    - R-squared score.</span>
-<span class="sd">    """</span>
-    <span class="n">mean_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">true</span><span class="p">)</span>
-    <span class="n">ss_residual</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">true</span> <span class="o">-</span> <span class="n">pred</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
-    <span class="n">ss_total</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">true</span> <span class="o">-</span> <span class="n">mean_true</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
-    <span class="n">r2_score</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">ss_residual</span> <span class="o">/</span> <span class="n">ss_total</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">r2_score</span>
-
-<span class="k">def</span> <span class="nf">max_norm</span><span class="p">(</span><span class="n">vector</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Compute the maximum norm of a vector.</span>
-
-<span class="sd">    Parameters:</span>
-<span class="sd">    - vector: Array-like.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">    - Maximum value in the vector.</span>
-<span class="sd">    """</span>
-    <span class="n">max_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">vector</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">max_value</span>
-
-<span class="k">def</span> <span class="nf">p_norm</span><span class="p">(</span><span class="n">vector</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Compute the p-norm of a vector.</span>
-
-<span class="sd">    Parameters:</span>
-<span class="sd">    - vector: Array-like.</span>
-<span class="sd">    - p: The norm order (e.g., p=1 for MAE, p=2 for RMSE).</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">    - p-norm of the vector.</span>
-<span class="sd">    """</span>
-    <span class="n">norm_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">vector</span><span class="p">)</span> <span class="o">**</span> <span class="n">p</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">p</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">norm_value</span> <span class="o">/</span> <span class="mi">100</span>  <span class="c1"># Divided by 100 as per original code</span>
-
-<span class="k">def</span> <span class="nf">adjusted_r2</span><span class="p">(</span><span class="n">true</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Compute the Adjusted R-squared score.</span>
-
-<span class="sd">    Parameters:</span>
-<span class="sd">    - true: Array-like of true values.</span>
-<span class="sd">    - pred: Array-like of predicted values.</span>
-<span class="sd">    - k: Number of predictors (features) in the model.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">    - Adjusted R-squared score.</span>
-<span class="sd">    """</span>
-    <span class="n">mean_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">true</span><span class="p">)</span>
-    <span class="n">ss_residual</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">true</span> <span class="o">-</span> <span class="n">pred</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
-    <span class="n">ss_total</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">true</span> <span class="o">-</span> <span class="n">mean_true</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
-    <span class="n">r2_score</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">ss_residual</span> <span class="o">/</span> <span class="n">ss_total</span><span class="p">)</span>
-    <span class="n">adjusted_r2_score</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(((</span><span class="nb">len</span><span class="p">(</span><span class="n">true</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">true</span><span class="p">)</span> <span class="o">-</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">r2_score</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">adjusted_r2_score</span>
+<span class="n">max_norm</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">mean_squared_error</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">p_norm</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">**</span> <span class="n">p</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">p</span><span class="p">)</span>
+<span class="n">coefficient_of_determination</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">true</span><span class="p">,</span> <span class="n">pred</span><span class="p">:</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">true</span> <span class="o">-</span> <span class="n">pred</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">true</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">true</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">adjusted_r2</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">true</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(((</span><span class="nb">len</span><span class="p">(</span><span class="n">true</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">true</span><span class="p">)</span> <span class="o">-</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">true</span> <span class="o">-</span> <span class="n">pred</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">true</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">true</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)))))</span>
 
 <span class="n">error_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'label'</span><span class="p">,</span> <span class="s1">'max'</span><span class="p">,</span> <span class="s1">'mae'</span><span class="p">,</span> <span class="s1">'rmse'</span><span class="p">,</span> <span class="s1">'mape'</span><span class="p">,</span> <span class="s1">'mse'</span><span class="p">,</span> <span class="s1">'r2'</span><span class="p">,</span> <span class="s1">'r2adj'</span><span class="p">]</span>
 <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'quantity'</span><span class="p">,</span> <span class="s1">'Spending_Score'</span><span class="p">,</span> <span class="s1">'Life expectancy '</span><span class="p">,</span> <span class="s1">'Sales'</span><span class="p">,</span> <span class="s1">'Grad.Rate'</span><span class="p">]</span> <span class="c1"># variables to predict</span>
@@ -19155,13 +19086,13 @@ class="
         <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">)</span>
         <span class="n">preds</span> <span class="o">=</span> <span class="n">lr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span> <span class="c1"># modeling and predicting</span>
         <span class="c1"># calculating errors</span>
-        <span class="n">max_</span> <span class="o">=</span> <span class="n">max_norm</span><span class="p">(</span><span class="n">y_test</span> <span class="o">-</span> <span class="n">preds</span><span class="p">)</span>
-        <span class="n">mae</span> <span class="o">=</span> <span class="n">p_norm</span><span class="p">(</span><span class="n">y_test</span> <span class="o">-</span> <span class="n">preds</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">rmse</span> <span class="o">=</span> <span class="n">p_norm</span><span class="p">(</span><span class="n">y_test</span> <span class="o">-</span> <span class="n">preds</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="n">mape</span> <span class="o">=</span> <span class="n">p_norm</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">y_test</span> <span class="o">-</span> <span class="n">preds</span><span class="p">)</span> <span class="o">/</span> <span class="n">y_test</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">mse_</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_test</span> <span class="o">-</span> <span class="n">preds</span><span class="p">)</span>
-        <span class="n">r2_</span> <span class="o">=</span> <span class="n">coefficient_of_determination</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">preds</span><span class="p">)</span>
-        <span class="n">r2adj_</span> <span class="o">=</span> <span class="n">adjusted_r2</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">k</span><span class="p">)</span>
+        <span class="n">max_</span>   <span class="o">=</span> <span class="n">max_norm</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">y_test</span> <span class="o">-</span> <span class="n">preds</span><span class="p">)</span>
+        <span class="n">mae</span>    <span class="o">=</span> <span class="n">p_norm</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">y_test</span> <span class="o">-</span> <span class="n">preds</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">rmse</span>   <span class="o">=</span> <span class="n">p_norm</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">y_test</span> <span class="o">-</span> <span class="n">preds</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">mape</span>   <span class="o">=</span> <span class="n">p_norm</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">y_test</span> <span class="o">-</span> <span class="n">preds</span><span class="p">)</span> <span class="o">/</span> <span class="n">y_test</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">mse_</span>   <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">y_test</span> <span class="o">-</span> <span class="n">preds</span><span class="p">)</span>
+        <span class="n">r2_</span>    <span class="o">=</span> <span class="n">coefficient_of_determination</span><span class="p">(</span><span class="n">true</span> <span class="o">=</span> <span class="n">y_test</span><span class="p">,</span> <span class="n">pred</span> <span class="o">=</span> <span class="n">preds</span><span class="p">)</span>
+        <span class="n">r2adj_</span> <span class="o">=</span> <span class="n">adjusted_r2</span><span class="p">(</span><span class="n">true</span> <span class="o">=</span> <span class="n">y_test</span><span class="p">,</span> <span class="n">pred</span> <span class="o">=</span> <span class="n">preds</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">k</span><span class="p">)</span>
         <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">dataset</span><span class="p">,</span> <span class="n">max_</span><span class="p">,</span> <span class="n">mae</span><span class="p">,</span> <span class="n">rmse</span><span class="p">,</span> <span class="n">mape</span><span class="p">,</span> <span class="n">mse_</span><span class="p">,</span> <span class="n">r2_</span><span class="p">,</span> <span class="n">r2adj_</span><span class="p">))</span> <span class="c1"># storing errors</span>
     <span class="n">errors</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">errors</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="n">error_cols</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">'label'</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">((</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span> <span class="p">,</span><span class="mi">0</span><span class="p">))</span>
 
@@ -19203,37 +19134,37 @@ class="
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
 <pre>
 Run Number 1
-+----------------------+-----+-----+------+--------+-----+----+-------+
-|        label         | max | mae | rmse |  mape  | mse | r2 | r2adj |
-+----------------------+-----+-----+------+--------+-----+----+-------+
-|    MARKETARRIVALS    |  81 |  99 |  3   | 109004 |  1  | 3  |   2   |
-|  MALL_CUSTOMERS_INT  |  47 |  9  |  2   |   0    |  7  | 13 |   3   |
-| LIFE_EXPECTANCY_DATA |  26 |  19 |  1   |   49   |  1  | 83 |   82  |
-|       CARSEATS       |  30 |  7  |  1   |   20   |  1  | 57 |   50  |
-|       COLLEGE        |  52 |  14 |  2   |   44   |  2  | 45 |   39  |
-+----------------------+-----+-----+------+--------+-----+----+-------+
++----------------------+-----+------+------+----------+-----+----+-------+
+|        label         | max | mae  | rmse |   mape   | mse | r2 | r2adj |
++----------------------+-----+------+------+----------+-----+----+-------+
+|    MARKETARRIVALS    |  81 | 9950 | 342  | 13041020 |  1  | 2  |   2   |
+|  MALL_CUSTOMERS_INT  |  48 | 962  | 184  |    0     |  9  | -1 |  -13  |
+| LIFE_EXPECTANCY_DATA |  22 | 1989 | 142  |   4949   |  1  | 81 |   80  |
+|       CARSEATS       |  28 | 686  |  99  |   1817   |  1  | 60 |   54  |
+|       COLLEGE        |  22 | 1202 | 129  |   3751   |  1  | 56 |   51  |
++----------------------+-----+------+------+----------+-----+----+-------+
 
 Run Number 2
-+----------------------+-----+-----+------+-------+-----+----+-------+
-|        label         | max | mae | rmse |  mape | mse | r2 | r2adj |
-+----------------------+-----+-----+------+-------+-----+----+-------+
-|    MARKETARRIVALS    |  69 |  98 |  3   | 42322 |  1  | 2  |   2   |
-|  MALL_CUSTOMERS_INT  |  46 |  7  |  1   |   0   |  5  | 13 |   3   |
-| LIFE_EXPECTANCY_DATA |  25 |  20 |  1   |   71  |  1  | 84 |   83  |
-|       CARSEATS       |  29 |  7  |  1   |   23  |  1  | 48 |   41  |
-|       COLLEGE        |  40 |  13 |  1   |   26  |  1  | 49 |   43  |
-+----------------------+-----+-----+------+-------+-----+----+-------+
++----------------------+-----+------+------+----------+-----+----+-------+
+|        label         | max | mae  | rmse |   mape   | mse | r2 | r2adj |
++----------------------+-----+------+------+----------+-----+----+-------+
+|    MARKETARRIVALS    |  95 | 9944 | 358  | 11177133 |  1  | 3  |   2   |
+|  MALL_CUSTOMERS_INT  |  44 | 747  | 149  |   3322   |  6  | 1  |  -11  |
+| LIFE_EXPECTANCY_DATA |  28 | 2188 | 159  |   6577   |  1  | 79 |   78  |
+|       CARSEATS       |  29 | 704  | 100  |   1749   |  1  | 50 |   43  |
+|       COLLEGE        |  34 | 1566 | 163  |    0     |  2  | 39 |   31  |
++----------------------+-----+------+------+----------+-----+----+-------+
 
 Run Number 3
-+----------------------+-----+-----+------+-------+-----+----+-------+
-|        label         | max | mae | rmse |  mape | mse | r2 | r2adj |
-+----------------------+-----+-----+------+-------+-----+----+-------+
-|    MARKETARRIVALS    |  69 |  98 |  3   | 29115 |  1  | 4  |   3   |
-|  MALL_CUSTOMERS_INT  |  49 |  7  |  2   |   0   |  6  | 2  |  -10  |
-| LIFE_EXPECTANCY_DATA |  23 |  20 |  1   |   72  |  1  | 84 |   83  |
-|       CARSEATS       |  27 |  7  |  1   |   20  |  1  | 67 |   62  |
-|       COLLEGE        |  37 |  12 |  1   |   29  |  1  | 52 |   46  |
-+----------------------+-----+-----+------+-------+-----+----+-------+
++----------------------+-----+------+------+---------+-----+----+-------+
+|        label         | max | mae  | rmse |   mape  | mse | r2 | r2adj |
++----------------------+-----+------+------+---------+-----+----+-------+
+|    MARKETARRIVALS    |  82 | 9672 | 338  | 3983781 |  1  | 2  |   2   |
+|  MALL_CUSTOMERS_INT  |  43 | 846  | 164  |    0    |  7  | 2  |   -9  |
+| LIFE_EXPECTANCY_DATA |  24 | 1926 | 140  |    0    |  1  | 85 |   84  |
+|       CARSEATS       |  27 | 692  |  97  |   2084  |  1  | 53 |   46  |
+|       COLLEGE        |  46 | 1531 | 171  |    0    |  2  | 40 |   32  |
++----------------------+-----+------+------+---------+-----+----+-------+
 </pre>
 </div>
 </div>
@@ -19249,13 +19180,6 @@ Run Number 3
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Observations:</p>
-<ul>
-<li>the max norm is sensitive to outliers and unit measure. Therefore is good to measure model's consistency. This means that the model tend to predict similarly with similar data.</li>
-<li>the MAE, MSE and RMSE error measures are robust but they depend a lot of the unit of measure of different datasets. Among them only change the magnitude of the error. For example, MAE is always going to have the highest error.</li>
-<li>MAPE is very robust because let us compare different datasets and models but it's very sensitive to bad data preprocessing.</li>
-<li>Finally, r2 and adjusted r2 are very good to tell if the variables are good for the model. For example, with the life expectancy dataset we have a high value and always the smallest max value, a consistent MAPE, and the rests of the error measure (MAE, MSE and RMSE) shows consistency in all runs.</li>
-</ul>
 <p>Observations:</p>
 <ul>
 <li>The max norm is sensitive to outliers and the unit of measurement, making it useful for assessing model consistency. It indicates whether the model predicts similarly for similar data.</li>
@@ -19302,7 +19226,7 @@ Run Number 3
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[126]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[16]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
@@ -19332,19 +19256,19 @@ Run Number 3
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Dependent variable vector: [81 29 30 12 48 96 15 50 79 64]
-Explanatory variable vector: [83  8 50 62  6  8 87 76 67 96]
+<pre>Dependent variable vector: [72 12 71 63 47 22  4 49 94 50]
+Explanatory variable vector: [61 67 88 45 24  5 87 40 92 90]
 Explanatory variable matrix: 
- [[ 1 83]
- [ 1  8]
- [ 1 50]
- [ 1 62]
- [ 1  6]
- [ 1  8]
- [ 1 87]
- [ 1 76]
+ [[ 1 61]
  [ 1 67]
- [ 1 96]]
+ [ 1 88]
+ [ 1 45]
+ [ 1 24]
+ [ 1  5]
+ [ 1 87]
+ [ 1 40]
+ [ 1 92]
+ [ 1 90]]
 </pre>
 </div>
 </div>
@@ -19375,7 +19299,7 @@ Explanatory variable matrix:
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[127]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[17]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="n">num</span><span class="p">,</span> <span class="n">den</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y</span><span class="p">)),</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span>
@@ -19410,16 +19334,16 @@ Explanatory variable matrix:
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
 <pre>Coefficients calculated with vectors: 
- b0 = 53.2244 
- b1 = -0.052 
+ b0 = 34.3259 
+ b1 = 0.235 
 
 Coefficients calculated with matrix: 
- b0 = 53.2244 
- b1 = -0.052 
+ b0 = 34.3259 
+ b1 = 0.235 
 
 Coefficients calculated with scikit-learn algorith: 
- b0 = 53.2244 
- b1 = -0.052
+ b0 = 34.3259 
+ b1 = 0.235
 </pre>
 </div>
 </div>

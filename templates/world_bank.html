@@ -37,7 +37,7 @@
             <div class="dropdown-world-bank-topics">
                 <button class="dropbtn-world-bank-topics" id="dropdownButton">Choose an Indicator</button>
                 <div class="dropdown-content-world-bank-topics" id="dropdownMenu">
-                    {% for key in indicators|sort %}
+                    {% for key in indicators %}
                     <a href="#" onclick="selectIndicator(event, '{{ key }}', '{{ indicators[key] }}')">{{ key }}</a>
                     {% endfor %}
                 </div>
