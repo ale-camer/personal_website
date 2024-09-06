@@ -7,7 +7,9 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-def forecasting(serie, periodicity=4):
+def forecasting(
+        serie, 
+        periodicity : int = 4) -> list:
     """
     Function to predict a time series based on its seasonality.
 
@@ -18,6 +20,8 @@ def forecasting(serie, periodicity=4):
     Returns:
     - forecast: List of predicted values for the next cycle
     """
+    # assert isinstance(serie, pd.Series), "The 'serie' must be a Pandas Series"
+    assert isinstance(periodicity, int), "The 'periodicity' must be an integer"
 
     # Check if the length of the series is divisible by the periodicity
     if len(serie) % periodicity == 0:
@@ -32,13 +36,13 @@ def forecasting(serie, periodicity=4):
     seasonal_index = []
 
     # Calculate centered moving average (CMA)
-    serie_cma = serie.rolling(periodicity).mean().dropna().rolling(2).mean().dropna()
+    serie_cma = pd.Series(serie).rolling(periodicity).mean().dropna().rolling(2).mean().dropna()
 
     # Irregular seasonal component calculation
     if len(serie_cma) == periodicity:
-        irr_seas_comp = serie[int(periodicity/2):-int(periodicity/2)][-periodicity:].values / serie_cma.values
+        irr_seas_comp = serie[int(periodicity/2):-int(periodicity/2)][-periodicity:] / serie_cma
     else:
-        irr_seas_comp = serie[int(periodicity/2):-int(periodicity/2)][-periodicity*int((len(serie)/periodicity)-1):].values / serie_cma.values
+        irr_seas_comp = serie[int(periodicity/2):-int(periodicity/2)][-periodicity*int((len(serie)/periodicity)-1):] / serie_cma
     
     # Seasonal index calculation
     if (len(irr_seas_comp) == periodicity) or (len(irr_seas_comp) == periodicity+1): 
@@ -65,7 +69,11 @@ def forecasting(serie, periodicity=4):
 
     return forecast
 
-def generate_plots(serie, prediction_last_period, prediction_next_period, periodicity=4):
+def generate_plots(
+        serie : pd.Series, 
+        prediction_last_period : list, 
+        prediction_next_period : list, 
+        periodicity : int = 4) -> None:
     """
     Function to generate and save plots of the original data, last period prediction, and next period prediction.
 
@@ -78,13 +86,18 @@ def generate_plots(serie, prediction_last_period, prediction_next_period, period
     Returns:
     - Plots saved as PNG files in the 'static/temp_images' directory
     """
+    # assert isinstance(serie, pd.Series), "The 'serie' must be a Pandas Series"
+    # assert isinstance(prediction_last_period, list), "The 'prediction_last_period' must be a list"
+    # assert isinstance(prediction_next_period, list), "The 'prediction_next_period' must be a list"
+    assert isinstance(periodicity, int), "The 'periodicity' must be an integer"
 
     # Create directory if it doesn't exist
-    save_dir = 'static/temp_images/seasonality_prediction'
+    save_dir = 'static/seasonality_prediction'
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
-
+    
     # Plot original data
+    print(np.concatenate([serie.values, serie[-periodicity:].values]).ravel())
     plt.figure(figsize=(10,5))
     sns.lineplot(np.concatenate([serie.values, serie[-periodicity:].values]).ravel(), color='red')
     plt.xticks([])
@@ -93,11 +106,16 @@ def generate_plots(serie, prediction_last_period, prediction_next_period, period
     plt.savefig(os.path.join(save_dir, 'original_data.png'))
     plt.close()
 
-    # Plot last cycle
+    # Plot last cycle   
+    print(np.concatenate([serie.values[:-4,:].values.ravel(), prediction_last_period]))
+    print(serie.values.ravel())
+    print(prediction_last_period)
+    print(serie.values[-4:,:].values.ravel())
+    
     plt.figure(figsize=(10,5))
 
     plt.subplot(1,2,1)
-    sns.lineplot(np.concatenate([serie.iloc[:-4,:].values.ravel(), prediction_last_period]), color='green', label='Prediction'.title())
+    sns.lineplot(np.concatenate([serie.values[:-4,:].values.ravel(), prediction_last_period]), color='green', label='Prediction'.title())
     sns.lineplot(serie.values.ravel(), color='red', label='Real'.title())
     plt.xticks([])
     plt.ylabel("Value".title(), fontsize=15)
@@ -105,7 +123,7 @@ def generate_plots(serie, prediction_last_period, prediction_next_period, period
 
     plt.subplot(1,2,2)
     sns.lineplot(prediction_last_period, color='green', label='Prediction'.title())
-    sns.lineplot(serie.iloc[-4:,:].values.ravel(), color='red', label='Real'.title())
+    sns.lineplot(serie.values[-4:,:].values.ravel(), color='red', label='Real'.title())
     plt.xticks([])
     plt.ylabel("Value".title(), fontsize=15)
     plt.title("Last Period".title(), fontsize=18)
@@ -116,8 +134,12 @@ def generate_plots(serie, prediction_last_period, prediction_next_period, period
     plt.close()
 
     # Plot next cycle
+    print(range(len(serie) - 1, len(serie) + len(prediction_next_period)))
+    print(np.concatenate([serie.values[-1].values,prediction_next_period]))
+    print(range(len(serie)))
+    print(serie.values.ravel())
     plt.figure(figsize=(10,5))
-    sns.lineplot(x=range(len(serie) - 1, len(serie) + len(prediction_next_period)), y=np.concatenate([serie.iloc[-1].values,prediction_next_period]), color='green', label='Prediction'.title())
+    sns.lineplot(x=range(len(serie) - 1, len(serie) + len(prediction_next_period)), y=np.concatenate([serie.values[-1].values,prediction_next_period]), color='green', label='Prediction'.title())
     sns.lineplot(x=range(len(serie)), y=serie.values.ravel(), color='red', label='Real'.title())
     plt.xticks([])
     plt.ylabel("Value".title(), fontsize=15)

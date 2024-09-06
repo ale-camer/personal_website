@@ -1,27 +1,29 @@
+# web programming frameworks
 from flask import Flask, render_template, request, redirect, url_for, send_file, jsonify
 from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
 
+# data processing
 import os, shutil
+import numpy as np
 import pandas as pd
 from datetime import datetime
 
+# data plotting
 import seaborn as sns
 import plotly.graph_objs as go
 
-# Importing functions from custom modules
+# custom modules
 from modules.keyphrase_extraction import procesar_archivo
 from modules.seasonality_prediction import forecasting, generate_plots
 from modules.world_bank import indicators, get_country_data_for_indicator, plot_time_series, plot_heatmap
 from modules.whatsapp import preprocess_whatsapp_data, text_normalizer, sentiment_analysis, generate_wordcloud
 
-# Initialize Flask app
-app = Flask(__name__)
+# APPs
+app = Flask(__name__) # Initialize Flask app
+dash_app = Dash(__name__, server=app, url_base_pathname='/dashboard/') # Initialize Dash app
 
-# Initialize Dash app
-dash_app = Dash(__name__, server=app, url_base_pathname='/dashboard/')
-
-# Function to remove old files and folders
+# CLEANING FOLDERS
 def remove_old_files(folder, files_to_remove=None):
     """
     Removes specific files and folders in a folder or all files and folders if not specified.
@@ -45,22 +47,16 @@ def remove_old_files(folder, files_to_remove=None):
                 print(f"Error deleting {file_path}: {e}")
     else:
         print(f"Folder does not exist: {folder}")
-        
-# Call the function to remove old files in specific folders
-remove_old_files('static/temp_images')
-remove_old_files('static/whatsapp')
+remove_old_files('static/seasonality_prediction')
 remove_old_files('static/world_bank')
-remove_old_files('static/downloads')
 
 def delta_time():
-
+    """"Updates the time since the last job was started"""
     today = datetime.now()
     last_year = today.year - 1
     last_august = datetime(year=last_year, month=8, day=1)
     
-    if today < last_august:
-        last_august = datetime(year=last_year - 1, month=8, day=1)
-    
+    if today < last_august: last_august = datetime(year=last_year - 1, month=8, day=1)
     months = (today.year - last_august.year) * 12 + today.month - last_august.month + 1
     
     if months > 12:
@@ -68,21 +64,17 @@ def delta_time():
         years = months // 12
         months = months % 12
         
-        if years > 1:
-            year_string = "years"
-        else:
-            year_string = "year"
+        if years > 1: year_string = "years"
+        else: year_string = "year"
             
-        if months > 1:
-            month_string = "months"
-        else: 
-            month_string = "month"
+        if months > 1: month_string = "months"
+        else: month_string = "month"
             
         string = f"{years} {year_string} {months} {month_string}"
     
     return string
 
-# Application routes
+# STATIC PAGES
 @app.route('/')
 def index():
     """Route for the main page"""
@@ -104,9 +96,13 @@ def algorithmic_trading():
 def ds_trends():
     return render_template('trends_in_data_science_labour_market.html')
 
-@app.route('/arg_macro')
-def arg_macro():
-    return render_template('argentina_macroeconomy_n_employment.html')
+@app.route('/arg_macro_spanish')
+def arg_macro_spanish():
+    return render_template('macro_n_employment_spanish.html')
+
+@app.route('/arg_macro_english')
+def arg_macro_english():
+    return render_template('macro_n_employment_english.html')
 
 @app.route('/mi_cv')
 def mi_cv():
@@ -114,6 +110,7 @@ def mi_cv():
     delta_time_string = delta_time()
     return render_template('mi_cv.html', delta_time_string=delta_time_string)
 
+# KEYPHRASE EXTRACTION
 @app.route('/keyphrase_extraction')
 def keyphrase_extraction():
     """Route for the keyphrase extraction page"""
@@ -135,6 +132,7 @@ def keyphrase_extraction_process():
             print(f"Error processing file: {e}")
     return redirect(url_for('keyphrase_extraction'))
 
+# SEASONALITY PREDICTION
 @app.route('/seasonality_prediction', methods=['GET', 'POST'])
 def seasonality_prediction():
     """Route for seasonality prediction"""
@@ -142,20 +140,34 @@ def seasonality_prediction():
         existing_plots = []  # List to store the names of existing image files
         if request.method == 'POST':
             file = request.files.get('file')
-            periodicity = int(request.form.get('periodicity', 0))
+            periodicity = int(request.form.get('periodicity'))
 
             if file:
                 try:
                     df = pd.read_excel(file)
                     if len(df.columns) == 1:
                         serie = df[df.columns[0]]
-                        forecasted_values_last_period = forecasting(serie.iloc[:-periodicity], periodicity=periodicity)
+                        
+                        print(np.concatenate([serie.values, serie[-periodicity:].values]).ravel())
+
+                        forecasted_values_last_period = forecasting(serie.values[:-periodicity], periodicity=periodicity)
+                        
+                        # print(serie.values[:-4,:].values.ravel().tolist() + forecasted_values_last_period)
+                        # print(serie.values.ravel())
+                        # print(forecasted_values_last_period)
+                        # print(serie.values[-4:,:].values.ravel())
+                        
                         forecasted_values_next_period = forecasting(serie, periodicity=periodicity)
+                        # print(range(len(serie) - 1, len(serie) + len(forecasted_values_next_period)))
+                        # print(np.concatenate([serie.values[-1].values,forecasted_values_next_period]))
+                        # print(range(len(serie)))
+                        # print(serie.values.ravel())
+                        
                         generate_plots(serie, forecasted_values_last_period, forecasted_values_next_period, periodicity)
 
                         # Get the list of existing image file names
                         for filename in ['original_data.png', 'all_periods_data.png', 'historic_and_prediction_data.png']:
-                            if os.path.exists(os.path.join('static', 'temp_images', 'seasonality_prediction', filename)):
+                            if os.path.exists(os.path.join('static', 'seasonality_prediction', filename)):
                                 existing_plots.append(filename)
 
                         return render_template('seasonality_prediction.html', forecast=forecasted_values_next_period, existing_plots=existing_plots, enumerate=enumerate)
@@ -163,12 +175,13 @@ def seasonality_prediction():
                         return "The Excel file has more than one column"
                 except Exception as e:
                     print(f"Error processing file: {e}")
-                    return "Error processing file"
+                    return render_template('seasonality_prediction_error.html')
         return render_template('seasonality_prediction.html')
     except Exception as e:
         print(f"Error: {e}")
         return render_template('seasonality_prediction_error.html')
 
+# WORLD BANK
 @app.route('/world_bank')
 def world_bank():
     """Route for the World Bank page"""
@@ -249,7 +262,7 @@ def download_csv():
     df = df.sort_values(by=['COUNTRY', 'DATE'], ascending=[True, False])
 
     # Create the CSV file
-    downloads_folder = 'static/downloads/'
+    downloads_folder = os.path.join(os.path.expanduser('~'), 'Downloads')
     os.makedirs(downloads_folder, exist_ok=True)
     csv_path = os.path.join(downloads_folder, 'data.csv')
     df.to_csv(csv_path, index=False)
@@ -291,7 +304,7 @@ def interactive_graph():
 
     return "Interactive graph generated."
 
-# Define the layout of the Dash app
+# WHATSAPP
 dash_app.layout = html.Div([
     html.H1("Dashboard will be displayed after data upload.".capitalize()),
     html.P("Please upload a file to view the dashboard.".capitalize()),
@@ -335,7 +348,6 @@ def create_dash_layout(df, days_of_the_week, months):
         ])
     ])
 
-# Define mappings for days and months
 days_of_the_week = {0: 'Monday', 1: 'Tuesday', 2: 'Wednesday', 3: 'Thursday', 4: 'Friday',
                     5: 'Saturday', 6: 'Sunday'}
 months = {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June',
@@ -368,8 +380,7 @@ def whatsapp():
         
     return render_template("whatsapp.html")
 
-# Define the Dash callback
-@dash_app.callback(
+@dash_app.callback( # Dash callback
     [Output('general-charts', 'children'),
      Output('hour-chart', 'figure'),
      Output('dow-chart', 'figure'),
@@ -480,5 +491,6 @@ def update_charts(selected_issuer):
 
     return (general_charts, hour_chart, dow_chart, dom_chart, month_chart, sentiment_fig, wordcloud_img)
 
+# RUNNING SCRIPT
 if __name__ == '__main__':
     app.run(debug=True)

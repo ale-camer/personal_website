@@ -4,7 +4,11 @@ from tqdm import tqdm  # For displaying progress bars
 from unidecode import unidecode  # For removing accents from characters
 import re  # For regular expressions
 
-def top_ngrams(corpus, ngram_val=1, limit=5, rows_per_table=5):
+def top_ngrams(
+        corpus : list, 
+        ngram_val : int = 1,
+        limit : int = 5, 
+        rows_per_table : int = 5) -> pd.DataFrame:
     """
     Function to extract top n-grams from a corpus of text.
     
@@ -17,6 +21,8 @@ def top_ngrams(corpus, ngram_val=1, limit=5, rows_per_table=5):
     Returns:
     - DataFrame: DataFrame containing the top n-grams and their frequencies.
     """
+    assert isinstance(corpus, list), "The 'corpus' input must be a list"
+    assert isinstance(rows_per_table, int), "The 'rows_per_table' input must be an integer"
     assert isinstance(ngram_val, int), "The 'ngram_val' input must be an integer"
     assert isinstance(limit, int), "The 'limit' input must be an integer"
 
@@ -38,7 +44,10 @@ def top_ngrams(corpus, ngram_val=1, limit=5, rows_per_table=5):
     sorted_ngrams = sorted_ngrams[:rows_per_table]  # Limit the number of rows per table
     return pd.DataFrame(sorted_ngrams, columns=['Keywords', '# Appearances'])
 
-def text_normalizer(data, language='english', minWordLen=2):
+def text_normalizer(
+        data : str, 
+        language : str = 'english', 
+        minWordLen : int = 2) -> str:
     """
     Function to normalize text data by removing stopwords, URLs, non-alphanumeric characters,
     and accents, and converting text to lowercase.
@@ -51,6 +60,7 @@ def text_normalizer(data, language='english', minWordLen=2):
     Returns:
     - str: Normalized text data.
     """
+    assert isinstance(data, str), "The 'data' must be a string"
     assert isinstance(language, str), "The 'language' must be a string"
     assert isinstance(minWordLen, int), "The 'minWordLen' must be an integer"
         
@@ -67,7 +77,7 @@ def text_normalizer(data, language='english', minWordLen=2):
         convert = re.sub(r'[^a-zA-Z0-9\s]', rep, sent_text)
         return convert
      
-    urlRegex = re.compile('http\S+')
+    urlRegex = re.compile(r'http\S+')
     
     # Normalize the input text step by step
     data = ' '.join([word for word in data.lower().split() if word not in stopword_list])  # Remove stopwords
@@ -78,7 +88,10 @@ def text_normalizer(data, language='english', minWordLen=2):
 
     return data
 
-def procesar_archivo(data, num_tables=5, num_rows=5):
+def procesar_archivo(
+        data : str, 
+        num_tables : int = 5,
+        num_rows : int = 5) -> dict:
     """
     Function to process a text file or string by tokenizing sentences, normalizing them,
     and generating top n-grams for each n value specified.
@@ -91,6 +104,10 @@ def procesar_archivo(data, num_tables=5, num_rows=5):
     Returns:
     - dict: Dictionary containing n-gram tables for each n value.
     """
+    assert isinstance(data, str), "The 'data' must be a string"
+    assert isinstance(num_tables, int), "The 'num_tables' must be an integer"
+    assert isinstance(num_rows, int), "The 'num_rows' must be an integer"
+
     nltk.download('punkt', quiet=True)  # Download NLTK punkt tokenizer
     
     sentences = nltk.sent_tokenize(data)  # Tokenize text into sentences

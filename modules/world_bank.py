@@ -100,7 +100,8 @@ strings_to_exclude = [
 ]
 
 # Function to fetch country-level data for a given indicator ID from the World Bank API
-def get_country_data_for_indicator(indicator_id):
+def get_country_data_for_indicator(
+        indicator_id : str) -> list:
     """
     Fetches country-level data for a specified indicator from the World Bank API.
     
@@ -118,6 +119,8 @@ def get_country_data_for_indicator(indicator_id):
     If the response status code is not 200 or the data structure is not as expected, it prints an error message and 
     returns None.
     """
+    assert isinstance(indicator_id, str), "The 'indicator_id' must be a string"
+
     url = f'https://api.worldbank.org/v2/country/all/indicator/{indicator_id}'
     params = {
         'format': 'json',
@@ -142,7 +145,10 @@ def get_country_data_for_indicator(indicator_id):
         return None
 
 # Function to plot time series data using Plotly, saving as an interactive HTML file
-def plot_time_series(df, title='', template='plotly'):
+def plot_time_series(
+        df : pd.DataFrame, 
+        title : str = '', 
+        template : str = 'plotly') -> None:
     """
     Plots time series data using Plotly and saves the plot as an interactive HTML file.
     
@@ -156,6 +162,10 @@ def plot_time_series(df, title='', template='plotly'):
     columns from the DataFrame. The plot is customized with a title and axis labels. The resulting plot is saved 
     as an HTML file in the 'downloads' folder and opened in the default web browser.
     """
+    assert isinstance(df, pd.DataFrame), "The 'df' must be a Pandas DataFrame"
+    assert isinstance(title, str), "The 'title' must be a string"
+    assert isinstance(template, str), "The 'template' must be a string"
+
     # Convert DATE column to datetime format and extract year
     df['DATE'] = pd.to_datetime(df['DATE'])
     df['DATE'] = df['DATE'].dt.year
@@ -172,7 +182,7 @@ def plot_time_series(df, title='', template='plotly'):
     )
     
     # Save the interactive Plotly figure as an HTML file and open it in the default web browser
-    downloads_folder = 'static/temp_images/world_bank/'
+    downloads_folder = 'static/world_bank/'
     if not os.path.exists(downloads_folder):
         os.makedirs(downloads_folder)
     temp_html_path = os.path.join(downloads_folder, 'time_series.html')
@@ -180,7 +190,7 @@ def plot_time_series(df, title='', template='plotly'):
     webbrowser.open('file://' + os.path.realpath(temp_html_path))
 
 # Function to plot a heatmap using Folium and GeoPandas, saving as an interactive HTML file
-def plot_heatmap(df):
+def plot_heatmap(df : pd.DataFrame) -> None:
     """
     Plots a heatmap using Folium and GeoPandas, and saves the map as an interactive HTML file.
     
@@ -193,6 +203,8 @@ def plot_heatmap(df):
     A colormap is created and added to the map, which is then saved as an HTML file in the 'downloads' folder and 
     opened in the default web browser.
     """
+    assert isinstance(df, pd.DataFrame), "The 'df' must be a Pandas DataFrame"
+
     # Filter the DataFrame to include only the latest data per country
     df = df.loc[df.groupby('COUNTRY')['DATE'].idxmax()]
     df['DATE'] = pd.to_datetime(df['DATE'])
@@ -232,7 +244,7 @@ def plot_heatmap(df):
     colormap.add_to(m)
     
     # Save the interactive Folium map as an HTML file and open it in the default web browser
-    downloads_folder = 'static/temp_images/world_bank/'
+    downloads_folder = 'static/world_bank/'
     if not os.path.exists(downloads_folder):
         os.makedirs(downloads_folder)
     temp_html_path = os.path.join(downloads_folder, 'heatmap.html')
