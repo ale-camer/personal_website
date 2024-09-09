@@ -4,8 +4,8 @@
 <div class="container">
 
     <!-- Seasonality Prediction Keyphrase Extraction Container -->
-    <div class="keyphrase-extraction-container">
-        <h1 class="keyphrase-extraction-title">Seasonality Prediction</h1>
+    <div class="project-container">
+        <h1 class="project-title">Seasonality Prediction</h1>
 
         <!-- Instructions Section -->
         <div class="instructions">
@@ -33,7 +33,7 @@
 
     <!-- Display forecast if available -->
     {% if forecast %}
-    <div class="keyphrase-extraction-container">
+    <div class="project-container">
         <h2>Next Period Predictions</h2>
         <table class="prediction-table">
             <thead>
@@ -56,7 +56,7 @@
 
     <!-- Display plots if available -->
     {% if existing_plots %}
-    <div class="keyphrase-extraction-container">
+    <div class="project-container">
         <h2>Plots</h2>
         <div class="plot-container">
             {% if 'original_data.png' in existing_plots %}
@@ -66,12 +66,90 @@
             <img src="{{ url_for('static', filename='seasonality_prediction/all_periods_data.png') }}">
             {% endif %}
             {% if 'historic_and_prediction_data.png' in existing_plots %}
-            <img
-                src="{{ url_for('static', filename='seasonality_prediction/historic_and_prediction_data.png') }}">
+            <img src="{{ url_for('static', filename='seasonality_prediction/historic_and_prediction_data.png') }}">
             {% endif %}
         </div>
     </div>
     {% endif %}
 
 </div>
+
+<style>
+    .file-upload-form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 40px auto;
+        width: 60%;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        color: white;
+    }
+
+    .file-upload-form .form-group {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .file-upload-form label {
+        display: block;
+        margin-bottom: 10px;
+        color: #fff;
+    }
+
+    .file-upload-form input[type="file"],
+    .file-upload-form input[type="number"] {
+        display: block;
+        width: 100%;
+        margin-bottom: 20px;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        background-color: #fff;
+        color: #000;
+    }
+
+    .file-upload-form .btn-primary {
+        background-color: #3498db;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .prediction-table {
+        text-align: center;
+        padding: 10px;
+    }
+
+    .plot-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .plot-container img {
+        max-width: 100%;
+        height: auto;
+        margin: 10px 0;
+    }
+
+    .seasonality-prediction-error-h3,
+    .seasonality-prediction-error-ul,
+    .seasonality-prediction-error-p {
+        text-align: left;
+        width: 100%;
+        margin-left: 0;
+        padding-left: 0;
+    }
+
+    .seasonality-prediction-error-ul {
+        list-style-position: inside;
+    }
+</style>
 {% endblock %}

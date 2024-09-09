@@ -2,9 +2,9 @@
 
 {% block content %}
 
-<div class="keyphrase-extraction-container">
+<div class="project-container">
     <!-- Title -->
-    <h1 class="keyphrase-extraction-title">Keyphrase Extraction</h1>
+    <h1 class="project-title">Keyphrase Extraction</h1>
 
     <!-- Instructions Section -->
     <div class="instructions">
@@ -16,8 +16,7 @@
 
     <!-- Upload Form Section -->
     <div class="upload-form">
-        <form class="keyphrase-extraction-form" action="/keyphrase_extraction_process" method="post"
-            enctype="multipart/form-data">
+        <form class="project-form" action="/keyphrase_extraction_process" method="post" enctype="multipart/form-data">
             <label for="file">Upload your text file (only .txt files allowed):</label><br>
             <input type="file" id="file" name="file" accept=".txt" required><br><br>
 
@@ -27,15 +26,15 @@
             <label for="num_rows">Results per N-gram:</label>
             <input type="number" id="num_rows" name="num_rows" min="1" max="10" value="5" required><br><br>
 
-            <input type="submit" value="Extract Keyphrases" class="keyphrase-extraction-button">
+            <input type="submit" value="Extract Keyphrases" class="project-button">
         </form>
     </div>
 </div>
 
 {% if results %}
-<div class="keyphrase-extraction-container">
+<div class="project-container">
     <!-- Results Section -->
-    <div class="results-container">
+    <div class="keyphrase-results-container">
         {% for ngram_value, data in results.items() %}
         <div class="ngram-container">
             <h2>{{ ngram_value }}</h2>
@@ -63,24 +62,59 @@
     </div>
     {% else %}
     <!-- Placeholder for Results if None -->
-    <div class="results-container" style="display: none;"></div>
+    <div class="keyphrase-results-container" style="display: none;"></div>
 </div>
 {% endif %}
+
+<style>
+    .keyphrase-results-container {
+        margin-top: 20px;
+    }
+
+    .keyphrase-results-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+    .keyphrase-results-table th,
+    .keyphrase-results-table td {
+        border: 1px solid #fff;
+        padding: 8px;
+    }
+
+    .keyphrase-results-table th {
+        background-color: #3498db;
+    }
+
+    .keyphrase-results-table tbody tr:nth-child(even) {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .keyphrase-results-table tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .keyphrase-button {
+        margin-left: 30%;
+        margin-top: 10px;
+    }
+</style>
 
 <!-- JavaScript File for Enhancing UI -->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-    // When the DOM content is fully loaded, execute the following code
+        // When the DOM content is fully loaded, execute the following code
 
-    // Set the value of element with id 'file' to an empty string
-    document.getElementById("file").value = "";
+        // Set the value of element with id 'file' to an empty string
+        document.getElementById("file").value = "";
 
-    // Set the value of element with id 'num_tables' to "5"
-    document.getElementById("num_tables").value = "5";
+        // Set the value of element with id 'num_tables' to "5"
+        document.getElementById("num_tables").value = "5";
 
-    // Set the value of element with id 'num_rows' to "5"
-    document.getElementById("num_rows").value = "5";
-});
+        // Set the value of element with id 'num_rows' to "5"
+        document.getElementById("num_rows").value = "5";
+    });
 </script>
 
 {% endblock %}
