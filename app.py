@@ -144,26 +144,24 @@ def seasonality_prediction():
 
             if file:
                 try:
-                    df = pd.read_excel(file)
-                    if len(df.columns) == 1:
-                        serie = df[df.columns[0]]
-                        
-                        print(np.concatenate([serie.values, serie[-periodicity:].values]).ravel())
+                    serie = pd.read_excel(file)
+                    if serie.shape[1] == 1:
 
-                        forecasted_values_last_period = forecasting(serie.values[:-periodicity], periodicity=periodicity)
+                        col_name = serie.columns[0]
                         
-                        # print(serie.values[:-4,:].values.ravel().tolist() + forecasted_values_last_period)
-                        # print(serie.values.ravel())
-                        # print(forecasted_values_last_period)
-                        # print(serie.values[-4:,:].values.ravel())
+                        forecasted_values_last_period = forecasting(
+                            serie[col_name].iloc[:-periodicity], 
+                            periodicity=periodicity)          
                         
-                        forecasted_values_next_period = forecasting(serie, periodicity=periodicity)
-                        # print(range(len(serie) - 1, len(serie) + len(forecasted_values_next_period)))
-                        # print(np.concatenate([serie.values[-1].values,forecasted_values_next_period]))
-                        # print(range(len(serie)))
-                        # print(serie.values.ravel())
+                        forecasted_values_next_period = forecasting(
+                            serie[col_name], 
+                            periodicity=periodicity)
                         
-                        generate_plots(serie, forecasted_values_last_period, forecasted_values_next_period, periodicity)
+                        generate_plots(
+                            serie[col_name],
+                            forecasted_values_last_period, 
+                            forecasted_values_next_period, 
+                            periodicity)
 
                         # Get the list of existing image file names
                         for filename in ['original_data.png', 'all_periods_data.png', 'historic_and_prediction_data.png']:

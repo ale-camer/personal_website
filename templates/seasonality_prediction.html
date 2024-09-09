@@ -60,14 +60,14 @@
         <h2>Plots</h2>
         <div class="plot-container">
             {% if 'original_data.png' in existing_plots %}
-            <img src="{{ url_for('static', filename='temp_images/seasonality_prediction/original_data.png') }}">
+            <img src="{{ url_for('static', filename='seasonality_prediction/original_data.png') }}">
             {% endif %}
             {% if 'all_periods_data.png' in existing_plots %}
-            <img src="{{ url_for('static', filename='temp_images/seasonality_prediction/all_periods_data.png') }}">
+            <img src="{{ url_for('static', filename='seasonality_prediction/all_periods_data.png') }}">
             {% endif %}
             {% if 'historic_and_prediction_data.png' in existing_plots %}
             <img
-                src="{{ url_for('static', filename='temp_images/seasonality_prediction/historic_and_prediction_data.png') }}">
+                src="{{ url_for('static', filename='seasonality_prediction/historic_and_prediction_data.png') }}">
             {% endif %}
         </div>
     </div>
