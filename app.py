@@ -168,7 +168,10 @@ def seasonality_prediction():
                             if os.path.exists(os.path.join('static', 'seasonality_prediction', filename)):
                                 existing_plots.append(filename)
 
-                        return render_template('seasonality_prediction.html', forecast=forecasted_values_next_period, existing_plots=existing_plots, enumerate=enumerate)
+                        return render_template('seasonality_prediction.html', 
+                                               forecast=forecasted_values_next_period, 
+                                               existing_plots=existing_plots, 
+                                               enumerate=enumerate)
                     else:
                         return "The Excel file has more than one column"
                 except Exception as e:
@@ -230,6 +233,7 @@ def fetch_data():
     # Sort by 'COUNTRY' in ascending order and by 'DATE' in descending order
     df = df.sort_values(by=['COUNTRY', 'DATE'], ascending=[True, False])
     df.drop_duplicates(inplace=True)
+    print(df.head())
 
     return df.to_dict(orient='records')
 
@@ -329,7 +333,7 @@ def create_dash_layout(df, days_of_the_week, months):
             html.P("No data available.")
         ])
     return html.Div([
-        html.H1("Choose an issuer in the dropdown menu".capitalize()),
+        html.H1("choose an issuer".capitalize()),
         dcc.Dropdown(
             id='issuer-dropdown',
             options=[{'label': issuer, 'value': issuer} for issuer in df['ISSUER'].unique()],
@@ -409,10 +413,15 @@ def update_charts(selected_issuer):
 
     # Inicializar filtered_df como un DataFrame vacío
     filtered_df = pd.DataFrame()
+    # print(selected_issuer, type(selected_issuer))
     
     if selected_issuer == "GENERAL":
     
+        # if df.empty:
+        #     return (html.P("No data available for 'GENERAL'."), {}, {}, {}, {}, {}, '')
+        print(df.shape)
         filtered_df = df.copy()
+        
         # General charts
         issuer_messages = text_normalizer(file_content, language=language)
         sentiment_fig = sentiment_analysis(file_content)

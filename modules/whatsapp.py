@@ -25,7 +25,7 @@ def sentiment_analysis(
     - plotly.graph_objects.Figure: A Plotly figure with a violin plot showing sentiment polarity.
     """
     assert isinstance(data, pd.DataFrame), "The 'data' must be a Pandas DataFrame"
-    assert isinstance(selected_issuer, str), "The 'selected_issuer' must be a string"
+    # assert isinstance(selected_issuer, str), "The 'selected_issuer' must be a string"
 
     if selected_issuer and selected_issuer != "GENERAL":
         filtered_data = data[data['ISSUER'] == selected_issuer]
