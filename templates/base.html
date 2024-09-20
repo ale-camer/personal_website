@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.png') }}">
     <title>Alejandro Camerlengo</title>
     <style>
         body {
@@ -21,7 +22,7 @@
     <nav class="navbar">
 
         <!-- Home Link -->
-        <a href="{{ url_for('index') }}" class="navbar-title-link">
+        <a href="{{ url_for('index') }}" class="navbar-title-link" title="Get back to Home Page">
             <h2 class="navbar-title">Home</h2>
         </a>
 
@@ -29,7 +30,7 @@
         <ul class="navbar-list">
             <li class="dropdown">
                 <a id="cv-toggle" class="dropdown-toggle" tabindex="0" role="button" aria-expanded="false"
-                    aria-controls="cv-menu" href="{{ url_for('mi_cv') }}">Mi CV</a>
+                    aria-controls="cv-menu" href="{{ url_for('mi_cv') }}" title="Explore Mi CV">Mi CV</a>
                 <ul class="dropdown-menu" id="cv-menu">
                     <li><a href="{{ url_for('mi_cv') }}#work-experience">Work Experience</a></li>
                     <li><a href="{{ url_for('mi_cv') }}#technologies">Technologies</a></li>
@@ -42,7 +43,7 @@
             <!-- Dropdown Menu - Projects -->
             <li class="dropdown">
                 <a id="projects-toggle" class="dropdown-toggle" tabindex="0" role="button" aria-expanded="false"
-                    aria-controls="projects-menu">Projects</a>
+                    aria-controls="projects-menu" title="Explore Mi Projects">Projects</a>
                 <ul class="dropdown-menu" id="projects-menu">
                     <li><a href="{{ url_for('keyphrase_extraction') }}">Keyphrase Extraction</a></li>
                     <li><a href="{{ url_for('seasonality_prediction') }}">Seasonality Prediction</a></li>
@@ -62,12 +63,13 @@
 
         <!-- Social Media Icons -->
         <div class="navbar-footer">
-            <a class="image-footer" href="https://github.com/ale-camer/personal_website" target="_blank"><img
-                    src="{{ url_for('static', filename='images/gh.png') }}"></a>
-            <a class="image-footer" href="https://www.linkedin.com/in/alejandro-camerlengo-1ab3981b/"
-                target="_blank"><img src="{{ url_for('static', filename='images/li.png') }}"></a>
-            <a class="image-footer" href="mailto:alejandrocamerlengo@gmail.com" target="_blank"><img
-                    src="{{ url_for('static', filename='images/email.png') }}" alt="Email"></a>
+            <a class="image-footer" href="https://github.com/ale-camer/personal_website" target="_blank"
+                title="Project Code"><img src="{{ url_for('static', filename='images/gh.png') }}" alt="GitHub"></a>
+            <a class="image-footer" href="https://www.linkedin.com/in/alejandro-camerlengo-1ab3981b/" target="_blank" ,
+                title="Personal Profile"><img src="{{ url_for('static', filename='images/li.png') }}" alt="LinkedIn"></a>
+            <a class="image-footer" href="mailto:alejandrocamerlengo@gmail.com" target="_blank"
+                title="Send me an email"><img src="{{ url_for('static', filename='images/email.png') }}"
+                    alt="Email"></a>
         </div>
 
     </nav>
