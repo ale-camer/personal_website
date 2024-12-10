@@ -1,11 +1,18 @@
+"""
+ESTE SCRIPT HAY QUE MODULARIZARLO
+"""
+
+# running web
+import webbrowser, threading, time, urllib.request
+
 # web programming frameworks
-from flask import Flask, render_template, request, redirect, url_for, send_file, jsonify
+from flask import Flask, render_template, request, redirect, url_for, send_file, jsonify, flash
 from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
 
 # data processing
 import os, shutil
-import numpy as np
+# import numpy as np
 import pandas as pd
 from datetime import datetime
 
@@ -74,7 +81,9 @@ def delta_time():
     
     return string
 
+# =============================================================================
 # STATIC PAGES
+# =============================================================================
 @app.route('/')
 def index():
     """Route for the main page"""
@@ -110,11 +119,13 @@ def mi_cv():
     delta_time_string = delta_time()
     return render_template('mi_cv.html', delta_time_string=delta_time_string)
 
+# =============================================================================
 # KEYPHRASE EXTRACTION
+# =============================================================================
 @app.route('/keyphrase_extraction')
 def keyphrase_extraction():
     """Route for the keyphrase extraction page"""
-    return render_template('keyphrase_extraction.html')
+    return render_template('keyphrase_extraction.html', message=message)
 
 @app.route('/keyphrase_extraction_process', methods=['POST'])
 def keyphrase_extraction_process():
@@ -128,11 +139,12 @@ def keyphrase_extraction_process():
             data = file.read().decode('utf-8')
             results = procesar_archivo(data, num_tables=num_tables, num_rows=num_rows)
             return render_template('keyphrase_extraction.html', results=results)
-        except Exception as e:
-            print(f"Error processing file: {e}")
+        except Exception as e: print(e)
     return redirect(url_for('keyphrase_extraction'))
 
+# =============================================================================
 # SEASONALITY PREDICTION
+# =============================================================================
 @app.route('/seasonality_prediction', methods=['GET', 'POST'])
 def seasonality_prediction():
     """Route for seasonality prediction"""
@@ -182,7 +194,9 @@ def seasonality_prediction():
         print(f"Error: {e}")
         return render_template('seasonality_prediction_error.html')
 
+# =============================================================================
 # WORLD BANK
+# =============================================================================
 @app.route('/world_bank')
 def world_bank():
     """Route for the World Bank page"""
@@ -306,7 +320,9 @@ def interactive_graph():
 
     return "Interactive graph generated."
 
+# =============================================================================
 # WHATSAPP
+# =============================================================================
 dash_app.layout = html.Div([
     html.H1("Dashboard will be displayed after data upload.".capitalize()),
     html.P("Please upload a file to view the dashboard.".capitalize()),
@@ -498,6 +514,20 @@ def update_charts(selected_issuer):
 
     return (general_charts, hour_chart, dow_chart, dom_chart, month_chart, sentiment_fig, wordcloud_img)
 
+# =============================================================================
 # RUNNING SCRIPT
+# =============================================================================
+def run_app():
+    app.run(debug=False)
+    
 if __name__ == '__main__':
-    app.run(debug=True)
+    
+    threading.Thread(target=run_app).start()
+    for _ in range(5):
+        try:
+            response = urllib.request.urlopen("http://127.0.0.1:5000")
+            if response.status == 200:
+                break
+        except:
+            time.sleep(1)
+    webbrowser.open_new("http://127.0.0.1:5000")
