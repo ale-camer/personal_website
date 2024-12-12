@@ -88,7 +88,12 @@ function fetchData(indicator, type, option) {
 
 // Function to display results in the results table
 function displayResults(data) {
-    const resultsTableBody = document.querySelector('.results-container-world-bank .results-table-world-bank-topics tbody');
+    const resultsTableBody = document.getElementById("world_bank_table_body");
+
+    if (resultsTableBody == null) {
+        alert("Algo está mal");
+    }
+
     resultsTableBody.innerHTML = ''; // Clear existing table rows
     // Iterate through fetched data and populate the table rows
     data.forEach(row => {
@@ -102,7 +107,9 @@ function displayResults(data) {
         valueCell.innerText = formattedValue;
         valueCell.classList.add('value-column'); // Add class for right alignment
     });
-    const resultsContainer = document.querySelector('.results-container-world-bank');
+
+    // Show the results container (it was hidden by default)
+    const resultsContainer = document.querySelector('.world-bank-results-container');
     resultsContainer.style.display = 'block'; // Show the results container
 }
 
@@ -136,7 +143,7 @@ document.addEventListener('click', function (event) {
 
 // Function to sort the results table by clicking on table headers
 function sortTable(columnIndex, ascending) {
-    const rows = document.querySelectorAll('.results-container-world-bank .results-table-world-bank-topics tbody tr');
+    const rows = document.querySelectorAll('.world-bank-results-table-topics tbody tr');
     const sortedRows = Array.from(rows).sort((a, b) => {
         const aValue = a.cells[columnIndex].innerText;
         const bValue = b.cells[columnIndex].innerText;
@@ -150,9 +157,12 @@ function sortTable(columnIndex, ascending) {
         return ascending ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
     });
 
-    // Update table with sorted rows
-    const tableBody = document.querySelector('.results-container-world-bank .results-table-world-bank-topics tbody');
-    sortedRows.forEach(row => tableBody.appendChild(row));
+    // Get the table body element
+    const tableBody = document.querySelector('.world-bank-results-table-topics tbody');
+    if (tableBody && tableBody.rows.length > 0) {
+        // Only proceed if there are rows in the tbody
+        sortedRows.forEach(row => tableBody.appendChild(row));
+    }
 }
 
 // Event listeners to sort the table when table headers are clicked
@@ -165,7 +175,7 @@ document.querySelectorAll('.sortable').forEach(header => {
         ascending = !ascending; // Toggle ascending/descending order
         const columnIndex = Array.from(header.parentNode.children).indexOf(header); // Get column index
         // Remove sort classes from all headers and apply to current header
-        document.querySelectorAll('.results-container-world-bank .results-table-world-bank-topics th').forEach(th => th.classList.remove('asc', 'desc'));
+        document.querySelectorAll('.world-bank-results-table-topics th').forEach(th => th.classList.remove('asc', 'desc'));
         header.classList.toggle('asc', ascending);
         header.classList.toggle('desc', !ascending);
         // Sort table based on clicked header column
@@ -206,15 +216,15 @@ document.querySelector('.interactive-graph').addEventListener('click', function 
             },
             body: `indicator=${encodeURIComponent(indicator)}&type=${encodeURIComponent(type)}&option=${encodeURIComponent(option)}`
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            console.log('Interactive graph generated.');
-        })
-        .catch(error => {
-            console.error('There was a problem with the interactive graph request:', error);
-        });
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                console.log('Interactive graph generated.');
+            })
+            .catch(error => {
+                console.error('There was a problem with the interactive graph request:', error);
+            });
     } else {
         alert("Please make sure all selections are made.");
     }

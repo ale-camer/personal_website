@@ -6,7 +6,7 @@ ESTE SCRIPT HAY QUE MODULARIZARLO
 import webbrowser, threading, time, urllib.request
 
 # web programming frameworks
-from flask import Flask, render_template, request, redirect, url_for, send_file, jsonify, flash
+from flask import Flask, render_template, request, redirect, url_for, send_file, jsonify
 from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
 
@@ -125,7 +125,7 @@ def mi_cv():
 @app.route('/keyphrase_extraction')
 def keyphrase_extraction():
     """Route for the keyphrase extraction page"""
-    return render_template('keyphrase_extraction.html', message=message)
+    return render_template('keyphrase_extraction.html')
 
 @app.route('/keyphrase_extraction_process', methods=['POST'])
 def keyphrase_extraction_process():
@@ -517,17 +517,5 @@ def update_charts(selected_issuer):
 # =============================================================================
 # RUNNING SCRIPT
 # =============================================================================
-def run_app():
-    app.run(debug=False)
-    
 if __name__ == '__main__':
-    
-    threading.Thread(target=run_app).start()
-    for _ in range(5):
-        try:
-            response = urllib.request.urlopen("http://127.0.0.1:5000")
-            if response.status == 200:
-                break
-        except:
-            time.sleep(1)
-    webbrowser.open_new("http://127.0.0.1:5000")
+    app.run(debug=True)

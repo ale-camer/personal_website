@@ -9,9 +9,10 @@
 <div class="project-container">
     <!-- Upload Form Section -->
     <div class="upload-form">
-        <form class="project-form" action="/whatsapp" method="post" enctype="multipart/form-data">
+        <form id="project-form" class="project-form" action="/whatsapp" method="post" enctype="multipart/form-data">
             <label for="file">Upload WhatsApp chat (only .txt files allowed):</label><br>
-            <input type="file" id="file" name="file" accept=".txt" required><br><br>
+            <input type="file" id="file" name="file" accept=".txt"><br>
+            <span id="fileError" style="color: red;"></span><br>
 
             <!-- Container for the text "Select Language" -->
             <div class="language-container">
@@ -44,11 +45,20 @@
         position: relative;
         top: 0px;
         left: 10px;
+        padding: 0px;
     }
 
     .upload-form .show-results {
-        margin-left: 25%;
-        margin-top: 10px;
+        position: absolute;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #3498db;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
     }
 
     #file {
@@ -93,6 +103,26 @@
         selectElement.addEventListener('change', function () {
             hiddenInput.value = selectElement.value;
         });
+    });
+
+    const form = document.getElementById('project-form');
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const fileInput = document.getElementById('file');
+        const fileError = document.getElementById('fileError');
+
+        fileError.textContent = '';
+        let isValid = true;
+
+        if (!fileInput.files.length) {
+            fileError.textContent = 'Please select a file.';
+            isValid = false;
+        }
+
+        if (isValid) {
+            this.submit();
+        }
     });
 </script>
 

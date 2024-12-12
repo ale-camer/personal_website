@@ -16,17 +16,19 @@
 
     <!-- Upload Form Section -->
     <div class="upload-form">
-        <form class="project-form" action="/keyphrase_extraction_process" method="post" enctype="multipart/form-data">
+        <form class="project-form" action="/keyphrase_extraction_process" method="post" enctype="multipart/form-data"
+            id="inputForm">
             <label for="file">Upload your text file (only .txt files allowed):</label><br>
-            <input type="file" id="file" name="file" accept=".txt" required><br><br>
+            <input type="file" id="file" name="file" accept=".txt"> 
+            <span id="fileError" style="color: red;"></span>
 
             <label for="num_tables">Number of N-grams:</label>
-            <input type="number" id="num_tables" name="num_tables" min="1" max="10" value="5" required><br><br>
+            <input type="number" id="num_tables" name="num_tables" min="1" max="10" value="5" required>
 
             <label for="num_rows">Results per N-gram:</label>
             <input type="number" id="num_rows" name="num_rows" min="1" max="10" value="5" required><br><br>
 
-            <input type="submit" value="Extract Keyphrases" class="project-button">
+            <button type="submit" class="project-button">Extract Keyphrases</button>
         </form>
     </div>
 </div>
@@ -99,14 +101,42 @@
         margin-left: 30%;
         margin-top: 10px;
     }
+
+    .project-form .project-button {
+        position: absolute;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #3498db;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
 </style>
 
 <!-- JavaScript File for Enhancing UI -->
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        document.getElementById("file").value = "";
-        document.getElementById("num_tables").value = "5";
-        document.getElementById("num_rows").value = "5";
+    const form = document.getElementById('inputForm');
+
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const fileInput = document.getElementById('file');
+        const fileError = document.getElementById('fileError');
+
+        fileError.textContent = '';
+        let isValid = true;
+
+        if (!fileInput.files.length) {
+            fileError.textContent = 'Please select a file.';
+            isValid = false;
+        }
+
+        if (isValid) {
+            this.submit();
+        }
     });
 </script>
 

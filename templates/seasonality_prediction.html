@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
 <div class="container">
 
     <!-- Seasonality Prediction Keyphrase Extraction Container -->
@@ -17,14 +18,16 @@
         <!-- Form for uploading Excel file and setting periodicity -->
         <div>
             <form action="{{ url_for('seasonality_prediction') }}" method="post" enctype="multipart/form-data"
-                class="file-upload-form">
+                class="file-upload-form" id="predictionForm">
                 <div class="form-group">
                     <label for="file">Upload Excel File:</label>
                     <input type="file" name="file" id="file" accept=".xlsx,.xls">
+                    <span id="fileError" style="color: red;"></span>
                 </div>
                 <div class="form-group">
                     <label for="periodicity">Periodicity:</label>
                     <input type="number" name="periodicity" id="periodicity" min="1" value="1">
+                    <span id="periodicityError" style="color: red;"></span>
                 </div>
                 <button type="submit" class="btn btn-primary">Calculate Prediction</button>
             </form>
@@ -152,4 +155,44 @@
         list-style-position: inside;
     }
 </style>
+
+<script>
+    const form = document.getElementById('predictionForm');
+
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const fileInput = document.getElementById('file');
+        const periodicityInput = document.getElementById('periodicity');
+        const fileError = document.getElementById('fileError');
+        const periodicityError = document.getElementById('periodicityError');
+
+        fileError.textContent = ''; // Limpia los mensajes de error
+        periodicityError.textContent = '';
+
+
+        let isValid = true;
+
+        if (!fileInput.files.length) {
+            fileError.textContent = 'Please select a file.';
+            isValid = false;
+        } else {
+            const allowedExtensions = /(\.xlsx|\.xls)$/i;
+            if (!allowedExtensions.exec(fileInput.value)) {
+                fileError.textContent = 'Please select a valid Excel file (.xlsx or .xls).';
+                isValid = false;
+            }
+        }
+
+        if (periodicityInput.value === "" || periodicityInput.value <= 0) {
+            periodicityError.textContent = 'Please enter a valid periodicity (greater than 0).';
+            isValid = false;
+        }
+
+        if (isValid) {
+            this.submit();
+        }
+    });
+</script>
+
 {% endblock %}
