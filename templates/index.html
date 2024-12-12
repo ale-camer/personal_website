@@ -2,32 +2,26 @@
 
 {% block content %}
 
-<div id="profile-container">
-    <div id="profile-image">
-        <img src="{{ url_for('static', filename='images/profile.jpg') }}" alt="Profile Picture">
+<div class="project-container">
+    <div id="profile-container">
+        <div id="profile-image">
+            <img src="{{ url_for('static', filename='images/profile.jpg') }}" alt="Profile Picture">
+        </div>
+        <div id="profile-intro">
+            <h1>Alejandro Camerlengo</h1>
+            <h2>Data Scientist</h2>
+        </div>
     </div>
-
-    <div class="personal-intro">
-        <h1>Alejandro Camerlengo</h1>
-        <p>
-            Passionate data scientist, constantly seeking to learn and improve in the art of working with it.
-        </p>
+    <div id="main-intro">
+        <p>I hope you find my webpage engaging and informative. Here, you can explore my resume in depth, toy projects,
+            and find links of interest at the bottom of the navigation bar.</p><br>
+        <p>My aim with this website is to dive into web development and showcase some personal projects that I worked
+            on.</p><br>
     </div>
 </div>
 
-<div id="main-intro">
-    <p><strong>Welcome!</strong></p><br>
-    <p> I hope you find my webpage engaging and informative. Here, you can explore my CV, toy projects, and find links
-        of interest at the bottom of the navigation bar.</p><br>
-    <p>I've been working on this personal website not only to present my work more effectively than on my GitHub page
-        but also to dive into web development. My aim is to showcase some of the projects I've been involved in,
-        offering a more interactive and user-friendly experience.</p><br>
-    <p>You'll discover two types of projects here: interactive tools that allow you to experiment with your own or
-        customized data, and descriptive projects where I share insights and analyses on various topics, including
-        finance, economics, mathematics, and the data science job market.</p>
-</div>
 
-<div id="projects-intro">
+<!-- <div id="projects-intro">
     <table border="1">
         <thead>
             <tr>
@@ -125,65 +119,48 @@
             </tr>
         </tbody>
     </table>
-</div>
+</div> -->
 
 <style>
-    .personal-intro {
-        margin-left: 15%;
-        padding: 40px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        height: 100vh;
-        color: white;
-        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-    }
-
-    .personal-intro h1,
-    p {
-        text-align: center;
-        margin: 10px 0;
-    }
-
     #profile-container {
-        margin-left: 15%;
-        padding: 20px;
         display: flex;
-        align-items: flex-start;
-        height: 5vh;
-        box-sizing: border-box;
+        flex-direction: row;
+    }
+
+    #profile-image {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     #profile-image img {
-        width: 150px;
-        height: 150px;
         border-radius: 50%;
-        object-fit: cover;
-        margin: 20px 20px;
     }
 
-    .personal-intro {
-        display: flex;
-        justify-content: flex-start;
-        margin: 0px;
-        padding: 20px 20px;
+    #profile-intro {
+        flex: 1;
         text-align: center;
     }
 
     #main-intro {
-        margin: 15%;
-        padding: 0px;
+        width: 100%;
+        padding: 20px;
         box-sizing: border-box;
         color: white;
-        margin-bottom: 50px;
-        margin-top: 175px;
+        text-align: center;
+        margin-top: 5%;
+    }
+
+    #main-intro p {
+        margin: 10px 0;
     }
 
     #main-intro strong {
         font-size: 25px;
     }
 
-    #projects-intro {
+    /* #projects-intro {
         margin: 16%;
         margin-top: 0px;
         color: white;
@@ -191,7 +168,7 @@
 
     #projects-intro td {
         text-align: center;
-    }
+    } */
 </style>
 
 {% endblock %}
