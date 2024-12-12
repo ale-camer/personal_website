@@ -24,32 +24,31 @@ def forecasting(
     assert isinstance(periodicity, int), "The 'periodicity' must be an integer"
 
     # Check if the length of the series is divisible by the periodicity
-    if len(serie) % periodicity == 0:
-        pass
-    else:
+    if not len(serie) % periodicity == 0:
         return print("The length of the serie does not match its periodicity.")
+    else:
             
-    ones = [1] * len(serie)
-    pastPeriods = np.arange(1, len(serie) + 1)
-    nextPeriod = np.arange(pastPeriods[-1] + 1, pastPeriods[-1] + 1 + periodicity)
-    periods = np.arange(1, periodicity + 1, 1).tolist() * int(pastPeriods[-1] / periodicity)
-    periods = periods[int(periodicity / 2) : -int(periodicity / 2)]
-    
-    serie_cma = serie.rolling(periodicity).mean().dropna().rolling(2).mean().dropna()
-    irr_seas_comp = serie[int(periodicity / 2) : -int(periodicity / 2)].values.ravel() / serie_cma.values.ravel()
-    seas_index = pd.concat([pd.Series(irr_seas_comp), pd.Series(periods)], axis = 1, keys = ['IRREGULAR_SEASONAL_COMPONENTS', 'PERIOD']).groupby('PERIOD')['IRREGULAR_SEASONAL_COMPONENTS'].mean()
-    adj_seas_index = seas_index / np.mean(seas_index.values)
-    adj_seas_index = adj_seas_index.tolist() * int(pastPeriods[-1] / periodicity)
-    unseas_serie = serie.values.ravel() / adj_seas_index
-    X, y = np.array([ones, pastPeriods]).T, unseas_serie # Data separation
-    
-    # Linear regression to fit unseasonal sales
-    b = np.linalg.inv(X.T.dot(X)).dot(X.T).dot(y)
-    future_unseasonal_serie = b[0] + b[1] * nextPeriod
-    forecast = future_unseasonal_serie * adj_seas_index[ : periodicity]
-    forecast = [round(float(elem),2) for elem in forecast]
+        ones = [1] * len(serie)
+        pastPeriods = np.arange(1, len(serie) + 1)
+        nextPeriod = np.arange(pastPeriods[-1] + 1, pastPeriods[-1] + 1 + periodicity)
+        periods = np.arange(1, periodicity + 1, 1).tolist() * int(pastPeriods[-1] / periodicity)
+        periods = periods[int(periodicity / 2) : -int(periodicity / 2)]
+        
+        serie_cma = serie.rolling(periodicity).mean().dropna().rolling(2).mean().dropna()
+        irr_seas_comp = serie[int(periodicity / 2) : -int(periodicity / 2)].values.ravel() / serie_cma.values.ravel()
+        seas_index = pd.concat([pd.Series(irr_seas_comp), pd.Series(periods)], axis = 1, keys = ['IRREGULAR_SEASONAL_COMPONENTS', 'PERIOD']).groupby('PERIOD')['IRREGULAR_SEASONAL_COMPONENTS'].mean()
+        adj_seas_index = seas_index / np.mean(seas_index.values)
+        adj_seas_index = adj_seas_index.tolist() * int(pastPeriods[-1] / periodicity)
+        unseas_serie = serie.values.ravel() / adj_seas_index
+        X, y = np.array([ones, pastPeriods]).T, unseas_serie # Data separation
+        
+        # Linear regression to fit unseasonal sales
+        b = np.linalg.inv(X.T.dot(X)).dot(X.T).dot(y)
+        future_unseasonal_serie = b[0] + b[1] * nextPeriod
+        forecast = future_unseasonal_serie * adj_seas_index[ : periodicity]
+        forecast = [round(float(elem),2) for elem in forecast]
 
-    return forecast
+        return forecast
 
 def generate_plots(
         serie : pd.Series, 

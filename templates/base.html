@@ -40,15 +40,23 @@
                 </ul>
             </li>
 
-            <!-- Dropdown Menu - Projects -->
+            <!-- Dropdown Menu - Interactive Projects -->
             <li class="dropdown">
                 <a id="projects-toggle" class="dropdown-toggle" tabindex="0" role="button" aria-expanded="false"
-                    aria-controls="projects-menu" title="Explore Mi Projects">Projects</a>
+                    aria-controls="projects-menu" title="Explore Mi Projects">Interactive Projects</a>
                 <ul class="dropdown-menu" id="projects-menu">
                     <li><a href="{{ url_for('keyphrase_extraction') }}">Keyphrase Extraction</a></li>
                     <li><a href="{{ url_for('seasonality_prediction') }}">Seasonality Prediction</a></li>
                     <li><a href="{{ url_for('whatsapp') }}">WhatsApp</a></li>
                     <li><a href="{{ url_for('world_bank') }}">World Bank</a></li>
+                </ul>
+            </li>
+
+            <!-- Dropdown Menu - Interactive Projects -->
+            <li class="dropdown">
+                <a id="projects-toggle" class="dropdown-toggle" tabindex="0" role="button" aria-expanded="false"
+                    aria-controls="projects-menu" title="Explore Mi Projects">Descriptive Projects</a>
+                <ul class="dropdown-menu" id="projects-menu">
                     <li><a href="{{ url_for('algorithmic_trading') }}" target="_blank">Algorithmic Trading</a></li>
                     <li><a href="{{ url_for('linear_algebra') }}" target="_blank">Linear Algebra</a></li>
                     <li><a href="{{ url_for('arg_macro_spanish') }}" target="_blank">Macro & Employment (Spanish)</a>

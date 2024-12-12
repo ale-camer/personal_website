@@ -3,15 +3,16 @@
 {% block content %}
 
 <div class="project-container">
-    <!-- Title -->
-    <h1 class="project-title">Keyphrase Extraction</h1>
 
-    <!-- Instructions Section -->
+    <!-- Title and Introduction Section -->
+    <h1 class="project-title">Keyphrase Extraction</h1>
     <div class="instructions">
         <h2>Instructions</h2>
-        <p style="text-align: left; margin-bottom: 50px;">Please upload a text file (.txt) containing the text you want
+        <p style="text-align: left; margin-bottom: 50px;">
+            Upload a text file (.txt) containing the text you want
             to process. If your text is in another format, such as Word (.docx), you can copy and paste it into a text
-            file before uploading.</p>
+            file before uploading.
+        </p>
     </div>
 
     <!-- Upload Form Section -->
@@ -19,7 +20,7 @@
         <form class="project-form" action="/keyphrase_extraction_process" method="post" enctype="multipart/form-data"
             id="inputForm">
             <label for="file">Upload your text file (only .txt files allowed):</label><br>
-            <input type="file" id="file" name="file" accept=".txt"> 
+            <input type="file" id="file" name="file" accept=".txt">
             <span id="fileError" style="color: red;"></span>
 
             <label for="num_tables">Number of N-grams:</label>
@@ -34,7 +35,7 @@
 </div>
 
 {% if results %}
-<div class="project-container">
+<div class="project-container" id="result-section">
     <!-- Results Section -->
     <div class="keyphrase-results-container">
         {% for ngram_value, data in results.items() %}
@@ -136,6 +137,13 @@
 
         if (isValid) {
             this.submit();
+        }
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const resultSection = document.getElementById("result-section");
+        if (resultSection) {
+            resultSection.scrollIntoView({ behavior: "smooth" });
         }
     });
 </script>

@@ -145,55 +145,143 @@ def keyphrase_extraction_process():
 # =============================================================================
 # SEASONALITY PREDICTION
 # =============================================================================
+# @app.route('/seasonality_prediction', methods=['GET', 'POST'])
+# def seasonality_prediction():
+#     """Route for seasonality prediction"""
+#     existing_plots = []  # List to store the names of existing image files
+#     error_message = None  # Variable to hold error details
+
+#     if request.method == 'POST':
+#         file = request.files.get('file')
+#         periodicity = request.form.get('periodicity')
+
+#         if file and periodicity:  # Verifica que ambos valores existan
+#             try:
+#                 periodicity = int(periodicity)
+#                 serie = pd.read_excel(file)
+
+#                 if serie.shape[1] == 1:  # Verifica que solo haya una columna
+#                     col_name = serie.columns[0]
+
+#                     if pd.api.types.is_numeric_dtype(serie[col_name]):  # Verifica si los datos son numéricos
+#                         # Perform the forecasting
+#                         forecasted_values_last_period = forecasting(
+#                             serie[col_name].iloc[:-periodicity],
+#                             periodicity=periodicity
+#                         )
+
+#                         forecasted_values_next_period = forecasting(
+#                             serie[col_name],
+#                             periodicity=periodicity
+#                         )
+
+#                         # Generate plots
+#                         generate_plots(
+#                             serie[col_name],
+#                             forecasted_values_last_period,
+#                             forecasted_values_next_period,
+#                             periodicity
+#                         )
+
+#                         # Get the list of existing image file names
+#                         for filename in ['original_data.png', 'all_periods_data.png', 'historic_and_prediction_data.png']:
+#                             if os.path.exists(os.path.join('static', 'seasonality_prediction', filename)):
+#                                 existing_plots.append(filename)
+
+#                         return render_template(
+#                             'seasonality_prediction.html',
+#                             forecast=forecasted_values_next_period,
+#                             existing_plots=existing_plots,
+#                             enumerate=enumerate
+#                         )
+#                     else:
+#                         error_message = "The data in the column must be numeric."
+#                 else:
+#                     error_message = "The uploaded file must contain exactly one column."
+
+#             except:
+#                 details = [
+#                     f"Data format: {'OK' if pd.api.types.is_numeric_dtype(serie.iloc[:, 0]) else 'Not OK'}",
+#                     f"Number of columns: {'OK' if serie.shape[1] == 1 else 'Not OK'}",
+#                     f"Series length: {len(serie)}",
+#                     f"Periodicity: {periodicity}",
+#                     f"Remainder: {len(serie) % int(periodicity) if periodicity else 'N/A'}"
+#                 ]
+#                 error_message = "<br>".join(details)
+#         else:
+#             error_message = "Both a file and periodicity are required."
+
+#     # Renderiza la página inicial o muestra errores
+#     return render_template(
+#         'seasonality_prediction.html',
+#         error_message=error_message,
+#         existing_plots=existing_plots
+#     )
+
 @app.route('/seasonality_prediction', methods=['GET', 'POST'])
 def seasonality_prediction():
     """Route for seasonality prediction"""
-    try:
-        existing_plots = []  # List to store the names of existing image files
-        if request.method == 'POST':
-            file = request.files.get('file')
-            periodicity = int(request.form.get('periodicity'))
+    existing_plots = []  # Lista para almacenar los nombres de archivos de imágenes existentes
+    error_message = None  # Variable para detalles del error
 
-            if file:
-                try:
-                    serie = pd.read_excel(file)
-                    if serie.shape[1] == 1:
+    if request.method == 'POST':
+        file = request.files.get('file')
+        periodicity = request.form.get('periodicity')
 
-                        col_name = serie.columns[0]
-                        
-                        forecasted_values_last_period = forecasting(
-                            serie[col_name].iloc[:-periodicity], 
-                            periodicity=periodicity)          
-                        
-                        forecasted_values_next_period = forecasting(
-                            serie[col_name], 
-                            periodicity=periodicity)
-                        
-                        generate_plots(
-                            serie[col_name],
-                            forecasted_values_last_period, 
-                            forecasted_values_next_period, 
-                            periodicity)
+        try:
 
-                        # Get the list of existing image file names
-                        for filename in ['original_data.png', 'all_periods_data.png', 'historic_and_prediction_data.png']:
-                            if os.path.exists(os.path.join('static', 'seasonality_prediction', filename)):
-                                existing_plots.append(filename)
+            periodicity = int(periodicity)
+            serie = pd.read_excel(file)
+            col_name = serie.columns[0]
 
-                        return render_template('seasonality_prediction.html', 
-                                               forecast=forecasted_values_next_period, 
-                                               existing_plots=existing_plots, 
-                                               enumerate=enumerate)
-                    else:
-                        return "The Excel file has more than one column"
-                except Exception as e:
-                    print(f"Error processing file: {e}")
-                    return render_template('seasonality_prediction_error.html')
-        return render_template('seasonality_prediction.html')
-    except Exception as e:
-        print(f"Error: {e}")
-        return render_template('seasonality_prediction_error.html')
+            forecasted_values_last_period = forecasting(
+                serie[col_name].iloc[:-periodicity], periodicity=periodicity
+            )
+            forecasted_values_next_period = forecasting(
+                serie[col_name], periodicity=periodicity
+            )
 
+            generate_plots(
+                serie[col_name],
+                forecasted_values_last_period,
+                forecasted_values_next_period,
+                periodicity
+            )
+
+            for filename in ['original_data.png', 'all_periods_data.png', 'historic_and_prediction_data.png']:
+                if os.path.exists(os.path.join('static', 'seasonality_prediction', filename)):
+                    existing_plots.append(filename)
+
+            return render_template(
+                'seasonality_prediction.html',
+                forecast=forecasted_values_next_period,
+                existing_plots=existing_plots,
+                enumerate=enumerate
+            )
+
+        except Exception:
+            reminder = round(len(serie) % int(periodicity))
+            details = [
+                f"<li>Data format: {'OK' if pd.api.types.is_numeric_dtype(serie.iloc[:, 0]) else 'Not OK. Data is not numeric.'}</li>",
+                f"<li>Number of columns: {'OK' if serie.shape[1] == 1 else f'Not OK. There are {serie.shape[1]} columns instead of one.'}</li>",
+                f"<li>Series length: {len(serie)}</li>",
+                f"<li>Periodicity: {'OK' if periodicity > 1 else f'Not OK. The value of the periodicity is {periodicity} and has to be higher than one and when dividing the length of the serie the reminder must be zero.'}</li>",
+                f"<li>Remainder: {'OK' if reminder == 0 else f'Not OK. The value of the reminder is {reminder} instead of zero.'}</li>"
+            ]
+            error_message = f"<ul>{''.join(details)}</ul>"
+
+            return render_template(
+                'seasonality_prediction.html',
+                error_message=error_message
+            )
+            
+    else:
+        return render_template(
+            'seasonality_prediction.html',
+            error_message=error_message,
+            existing_plots=existing_plots
+        )
+    
 # =============================================================================
 # WORLD BANK
 # =============================================================================

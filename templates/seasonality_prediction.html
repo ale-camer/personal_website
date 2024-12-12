@@ -2,80 +2,85 @@
 
 {% block content %}
 
-<div class="container">
+<div class="project-container">
 
-    <!-- Seasonality Prediction Keyphrase Extraction Container -->
-    <div class="project-container">
-        <h1 class="project-title">Seasonality Prediction</h1>
-
-        <!-- Instructions Section -->
-        <div class="instructions">
-            <h2>Instructions</h2>
-            <p style="text-align: left; margin-bottom: 50px;">The periodicity should be a divisor of the number of
-                data points you have (excluding the header).</p>
-        </div>
-
-        <!-- Form for uploading Excel file and setting periodicity -->
-        <div>
-            <form action="{{ url_for('seasonality_prediction') }}" method="post" enctype="multipart/form-data"
-                class="file-upload-form" id="predictionForm">
-                <div class="form-group">
-                    <label for="file">Upload Excel File:</label>
-                    <input type="file" name="file" id="file" accept=".xlsx,.xls">
-                    <span id="fileError" style="color: red;"></span>
-                </div>
-                <div class="form-group">
-                    <label for="periodicity">Periodicity:</label>
-                    <input type="number" name="periodicity" id="periodicity" min="1" value="1">
-                    <span id="periodicityError" style="color: red;"></span>
-                </div>
-                <button type="submit" class="btn btn-primary">Calculate Prediction</button>
-            </form>
-        </div>
+    <!-- Title and Introduction Section -->
+    <h1 class="project-title">Seasonality Prediction</h1>
+    <div class="instructions">
+        <h2>Instructions</h2>
+        <p style="text-align: left; margin-bottom: 50px;">
+            Upload an Excel file (.xls or .xlsx) with only one columns
+            containing numeric data and a header. The periodicity of the serie should be a divisor of the length of
+            the serie and different from one.
+        </p>
     </div>
 
-    <!-- Display forecast if available -->
-    {% if forecast %}
-    <div class="project-container">
-        <h2>Next Period Predictions</h2>
-        <table class="prediction-table">
-            <thead>
-                <tr>
-                    <th>Period</th>
-                    <th>Forecast</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for i, value in enumerate(forecast) %}
-                <tr>
-                    <td>{{ i + 1 }}</td>
-                    <td>{{ value }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <!-- Form for uploading Excel file and setting periodicity -->
+    <div>
+        <form action="{{ url_for('seasonality_prediction') }}" method="post" enctype="multipart/form-data"
+            class="file-upload-form" id="predictionForm">
+            <div class="form-group">
+                <label for="file">Upload Excel File:</label>
+                <input type="file" name="file" id="file" accept=".xlsx,.xls">
+                <span id="fileError" style="color: red;"></span>
+            </div>
+            <div class="form-group">
+                <label for="periodicity">Periodicity:</label>
+                <input type="number" name="periodicity" id="periodicity" min="1" value="1">
+            </div>
+            <button type="submit" class="btn btn-primary">Calculate Prediction</button>
+        </form>
     </div>
-    {% endif %}
-
-    <!-- Display plots if available -->
-    {% if existing_plots %}
-    <div class="project-container">
-        <h2>Plots</h2>
-        <div class="plot-container">
-            {% if 'original_data.png' in existing_plots %}
-            <img src="{{ url_for('static', filename='seasonality_prediction/original_data.png') }}">
-            {% endif %}
-            {% if 'all_periods_data.png' in existing_plots %}
-            <img src="{{ url_for('static', filename='seasonality_prediction/all_periods_data.png') }}">
-            {% endif %}
-            {% if 'historic_and_prediction_data.png' in existing_plots %}
-            <img src="{{ url_for('static', filename='seasonality_prediction/historic_and_prediction_data.png') }}">
-            {% endif %}
-        </div>
-    </div>
-    {% endif %}
-
 </div>
+
+<!-- Display forecast if available -->
+{% if forecast %}
+<div class="project-container" id="result-section">
+    <h2>Next Period Predictions</h2>
+    <table class="prediction-table">
+        <thead>
+            <tr>
+                <th>Period</th>
+                <th>Forecast</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i, value in enumerate(forecast) %}
+            <tr>
+                <td>{{ i + 1 }}</td>
+                <td>{{ value }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+<!-- Display error if available -->
+{% if error_message %}
+<div class="project-container" id="result-section">
+    <h2>Error Details</h2>
+    <p>{{ error_message|safe }}</p>
+</div>
+{% endif %}
+
+<!-- Display plots if available -->
+{% if existing_plots %}
+<div class="project-container" id="result-section">
+    <h2>Plots</h2>
+    <div class="plot-container">
+        {% if 'original_data.png' in existing_plots %}
+        <img src="{{ url_for('static', filename='seasonality_prediction/original_data.png') }}">
+        {% endif %}
+        {% if 'all_periods_data.png' in existing_plots %}
+        <img src="{{ url_for('static', filename='seasonality_prediction/all_periods_data.png') }}">
+        {% endif %}
+        {% if 'historic_and_prediction_data.png' in existing_plots %}
+        <img src="{{ url_for('static', filename='seasonality_prediction/historic_and_prediction_data.png') }}">
+        {% endif %}
+    </div>
+</div>
+{% endif %}
 
 <style>
     .file-upload-form {
@@ -85,7 +90,6 @@
         justify-content: center;
         margin: 40px auto;
         width: 60%;
-        background: rgba(0, 0, 0, 0.7);
         padding: 30px;
         border-radius: 10px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -163,34 +167,25 @@
         event.preventDefault();
 
         const fileInput = document.getElementById('file');
-        const periodicityInput = document.getElementById('periodicity');
         const fileError = document.getElementById('fileError');
-        const periodicityError = document.getElementById('periodicityError');
 
         fileError.textContent = ''; // Limpia los mensajes de error
-        periodicityError.textContent = '';
-
-
         let isValid = true;
 
         if (!fileInput.files.length) {
             fileError.textContent = 'Please select a file.';
             isValid = false;
-        } else {
-            const allowedExtensions = /(\.xlsx|\.xls)$/i;
-            if (!allowedExtensions.exec(fileInput.value)) {
-                fileError.textContent = 'Please select a valid Excel file (.xlsx or .xls).';
-                isValid = false;
-            }
-        }
-
-        if (periodicityInput.value === "" || periodicityInput.value <= 0) {
-            periodicityError.textContent = 'Please enter a valid periodicity (greater than 0).';
-            isValid = false;
         }
 
         if (isValid) {
             this.submit();
+        }
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const resultSection = document.getElementById("result-section");
+        if (resultSection) {
+            resultSection.scrollIntoView({ behavior: "smooth" });
         }
     });
 </script>
