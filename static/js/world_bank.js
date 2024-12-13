@@ -69,6 +69,14 @@ function showResults() {
     if (selectedIndicator && selectedType && selectedOption) {
         // If all selections are made, fetch and display results
         fetchData(selectedIndicator, selectedType, selectedOption);
+        const worldBankResultsContainer = document.querySelector('.world-bank-results-container');
+        worldBankResultsContainer.style.display = 'block'; // Cambiar el display a 'block' para hacerlo visible
+
+        worldBankResultsContainer.scrollIntoView({
+            behavior: 'smooth', // Desplazamiento suave
+            block: 'start' // Alinear al principio de la vista
+        });
+
         resultsShown = true; // Mark results as shown
     } else {
         // Alert the user if selections are incomplete
