@@ -1,3 +1,4 @@
+```bash
 ├── README.md
 ├── app.py  # MODULARIZAR! 
 ├── modules/  # Contain Python modules.
@@ -30,3 +31,4 @@
   ├── trends_in_data_science_labour_market.html  # Trends in Data Science Functionality Template
   ├── whatsapp.html  # WhatsApp Functionality Template
   └── world_bank.html  # World Bank Functionality Template
+```
