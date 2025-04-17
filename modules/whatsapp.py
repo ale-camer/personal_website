@@ -1,3 +1,7 @@
+"""
+Contain functions for WhatsApp functionality.
+"""
+
 import pandas as pd
 import plotly.graph_objects as go
 from wordcloud import WordCloud

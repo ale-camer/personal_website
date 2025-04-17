@@ -1,3 +1,5 @@
+//World Bank JS Functionalities
+
 // Initialize variables to store selected values and state
 let selectedIndicator = null;
 let selectedType = null;

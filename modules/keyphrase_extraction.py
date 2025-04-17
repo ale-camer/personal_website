@@ -1,3 +1,7 @@
+"""
+Contain functions for Keyphrase Extraction functionality.
+"""
+
 import nltk
 import pandas as pd
 from tqdm import tqdm  # For displaying progress bars

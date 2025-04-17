@@ -1,3 +1,7 @@
+"""
+Contain functions for World Bank functionality.
+"""
+
 # Import necessary libraries
 import requests, folium, warnings, os, webbrowser
 import pandas as pd

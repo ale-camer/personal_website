@@ -1,9 +1,9 @@
 """
-ESTE SCRIPT HAY QUE MODULARIZARLO
+MODULARIZAR!
 """
 
 # running web
-import webbrowser, threading, time, urllib.request
+# import webbrowser, threading, time, urllib.request
 
 # web programming frameworks
 from flask import Flask, render_template, request, redirect, url_for, send_file, jsonify
@@ -25,6 +25,7 @@ from modules.keyphrase_extraction import procesar_archivo
 from modules.seasonality_prediction import forecasting, generate_plots
 from modules.world_bank import indicators, get_country_data_for_indicator, plot_time_series, plot_heatmap
 from modules.whatsapp import preprocess_whatsapp_data, text_normalizer, sentiment_analysis, generate_wordcloud
+from modules.generate_readme import generate_readme
 
 # APPs
 app = Flask(__name__) # Initialize Flask app
@@ -34,7 +35,7 @@ dash_app = Dash(__name__, server=app, url_base_pathname='/dashboard/') # Initial
 def remove_old_files(folder, files_to_remove=None):
     """
     Removes specific files and folders in a folder or all files and folders if not specified.
-    
+
     :param folder: Folder from which files and folders will be removed.
     :param files_to_remove: List of filenames to remove. If None, all files and folders will be removed.
     """
@@ -54,32 +55,29 @@ def remove_old_files(folder, files_to_remove=None):
                 print(f"Error deleting {file_path}: {e}")
     else:
         print(f"Folder does not exist: {folder}")
-remove_old_files('static/seasonality_prediction')
-remove_old_files('static/world_bank')
 
 def delta_time():
     """"Updates the time since the last job was started"""
     today = datetime.now()
-    last_year = today.year - 1
-    last_august = datetime(year=last_year, month=8, day=1)
-    
-    if today < last_august: last_august = datetime(year=last_year - 1, month=8, day=1)
-    months = (today.year - last_august.year) * 12 + today.month - last_august.month + 1
-    
-    if months > 12:
-        
-        years = months // 12
-        months = months % 12
-        
-        if years > 1: year_string = "years"
-        else: year_string = "year"
-            
-        if months > 1: month_string = "months"
-        else: month_string = "month"
-            
-        string = f"{years} {year_string} {months} {month_string}"
-    
+    beging_last_job = datetime(2023, 8, 1)
+    delta_days = (today - beging_last_job).days
+
+    years = delta_days // 365
+    months = int((delta_days - 365) / 30)
+
+    if years == 1: year_string = "year"
+    else: year_string = "years"
+
+    if months == 1: month_string = "month"
+    else: month_string = "months"
+
+    string = "%d %s %d %s" % (years, year_string, months, month_string)
+
     return string
+
+generate_readme(os.path.dirname(os.path.realpath(__file__)))
+remove_old_files('static/seasonality_prediction')
+remove_old_files('static/world_bank')
 
 # =============================================================================
 # STATIC PAGES
@@ -145,79 +143,6 @@ def keyphrase_extraction_process():
 # =============================================================================
 # SEASONALITY PREDICTION
 # =============================================================================
-# @app.route('/seasonality_prediction', methods=['GET', 'POST'])
-# def seasonality_prediction():
-#     """Route for seasonality prediction"""
-#     existing_plots = []  # List to store the names of existing image files
-#     error_message = None  # Variable to hold error details
-
-#     if request.method == 'POST':
-#         file = request.files.get('file')
-#         periodicity = request.form.get('periodicity')
-
-#         if file and periodicity:  # Verifica que ambos valores existan
-#             try:
-#                 periodicity = int(periodicity)
-#                 serie = pd.read_excel(file)
-
-#                 if serie.shape[1] == 1:  # Verifica que solo haya una columna
-#                     col_name = serie.columns[0]
-
-#                     if pd.api.types.is_numeric_dtype(serie[col_name]):  # Verifica si los datos son numéricos
-#                         # Perform the forecasting
-#                         forecasted_values_last_period = forecasting(
-#                             serie[col_name].iloc[:-periodicity],
-#                             periodicity=periodicity
-#                         )
-
-#                         forecasted_values_next_period = forecasting(
-#                             serie[col_name],
-#                             periodicity=periodicity
-#                         )
-
-#                         # Generate plots
-#                         generate_plots(
-#                             serie[col_name],
-#                             forecasted_values_last_period,
-#                             forecasted_values_next_period,
-#                             periodicity
-#                         )
-
-#                         # Get the list of existing image file names
-#                         for filename in ['original_data.png', 'all_periods_data.png', 'historic_and_prediction_data.png']:
-#                             if os.path.exists(os.path.join('static', 'seasonality_prediction', filename)):
-#                                 existing_plots.append(filename)
-
-#                         return render_template(
-#                             'seasonality_prediction.html',
-#                             forecast=forecasted_values_next_period,
-#                             existing_plots=existing_plots,
-#                             enumerate=enumerate
-#                         )
-#                     else:
-#                         error_message = "The data in the column must be numeric."
-#                 else:
-#                     error_message = "The uploaded file must contain exactly one column."
-
-#             except:
-#                 details = [
-#                     f"Data format: {'OK' if pd.api.types.is_numeric_dtype(serie.iloc[:, 0]) else 'Not OK'}",
-#                     f"Number of columns: {'OK' if serie.shape[1] == 1 else 'Not OK'}",
-#                     f"Series length: {len(serie)}",
-#                     f"Periodicity: {periodicity}",
-#                     f"Remainder: {len(serie) % int(periodicity) if periodicity else 'N/A'}"
-#                 ]
-#                 error_message = "<br>".join(details)
-#         else:
-#             error_message = "Both a file and periodicity are required."
-
-#     # Renderiza la página inicial o muestra errores
-#     return render_template(
-#         'seasonality_prediction.html',
-#         error_message=error_message,
-#         existing_plots=existing_plots
-#     )
-
 @app.route('/seasonality_prediction', methods=['GET', 'POST'])
 def seasonality_prediction():
     """Route for seasonality prediction"""
@@ -274,14 +199,14 @@ def seasonality_prediction():
                 'seasonality_prediction.html',
                 error_message=error_message
             )
-            
+
     else:
         return render_template(
             'seasonality_prediction.html',
             error_message=error_message,
             existing_plots=existing_plots
         )
-    
+
 # =============================================================================
 # WORLD BANK
 # =============================================================================
@@ -457,7 +382,7 @@ def create_dash_layout(df, days_of_the_week, months):
 days_of_the_week = {0: 'Monday', 1: 'Tuesday', 2: 'Wednesday', 3: 'Thursday', 4: 'Friday',
                     5: 'Saturday', 6: 'Sunday'}
 months = {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June',
-        7: 'July', 8: 'August', 9: 'September', 10: 'October', 11: 'November', 
+        7: 'July', 8: 'August', 9: 'September', 10: 'October', 11: 'November',
         12: 'December'}
 
 @app.route('/whatsapp', methods=['GET', 'POST'])
@@ -467,7 +392,7 @@ def whatsapp():
         file = request.files.get('file')
         language = request.form.get('selected_language')
         print('Selected language:', language)
-        
+
         if file:
             file_content = preprocess_whatsapp_data(file)
 
@@ -477,13 +402,13 @@ def whatsapp():
             df = pd.concat([df, df_])
 
             print("Issuers: ", df['ISSUER'].unique())  # Verificar el contenido procesado
-            
+
             # Update Dash app layout
             dash_app.layout = create_dash_layout(df, days_of_the_week, months)
-            
+
             # Redirigir al dashboard
             return redirect('/dashboard/')
-        
+
     return render_template("whatsapp.html")
 
 @dash_app.callback( # Dash callback
@@ -500,7 +425,7 @@ def update_charts(selected_issuer):
     # Ensure df is available globally or adjust logic to access updated df
     if selected_issuer is None:
         return (html.P("No data available."), {}, {}, {}, {}, {}, '')
-    
+
     if df.empty:
         return (html.P("No data available."), {}, {}, {}, {}, {}, '')
 
@@ -512,26 +437,26 @@ def update_charts(selected_issuer):
     month_chart = go.Figure()
     sentiment_fig = sentiment_analysis(file_content, selected_issuer)
     wordcloud_img = generate_wordcloud(text_normalizer(file_content, 'english'))
-    
+
     print(f"Selected issuer: {selected_issuer}")
 
     # Inicializar filtered_df como un DataFrame vacío
     filtered_df = pd.DataFrame()
     # print(selected_issuer, type(selected_issuer))
-    
+
     if selected_issuer == "GENERAL":
-    
+
         # if df.empty:
         #     return (html.P("No data available for 'GENERAL'."), {}, {}, {}, {}, {}, '')
         print(df.shape)
         filtered_df = df.copy()
-        
+
         # General charts
         issuer_messages = text_normalizer(file_content, language=language)
         sentiment_fig = sentiment_analysis(file_content)
         issuer_counts = file_content['ISSUER'].value_counts().reset_index()
         issuer_counts.columns = ['ISSUER', 'COUNT']
-        
+
         # Gráfico de pie para la cantidad de mensajes por emisor
         pie_chart_messages = dcc.Graph(
             figure={
@@ -539,10 +464,10 @@ def update_charts(selected_issuer):
                 'layout': go.Layout(title='proportion of messages by issuer'.title())
             }
         )
-        
+
         # Calcular la suma de la longitud de mensajes por emisor
         message_length_sum = file_content.groupby('ISSUER')['len_message'].sum().reset_index()
-        
+
         # Gráfico de pie para la longitud de mensajes por emisor
         pie_chart_message_length = dcc.Graph(
             figure={
@@ -550,30 +475,30 @@ def update_charts(selected_issuer):
                 'layout': go.Layout(title='proportion of words by issuer'.title())
             }
         )
-        
+
         general_charts = html.Div([
             html.Div(pie_chart_messages, style={'width': '48%', 'display': 'inline-block'}),
             html.Div(pie_chart_message_length, style={'width': '48%', 'display': 'inline-block'})
         ], style={'display': 'flex', 'justify-content': 'space-between'})
-    
+
     else:
-    
+
         filtered_df = df[df['ISSUER'] == selected_issuer]
         issuer_messages = text_normalizer(file_content[file_content['ISSUER'] == selected_issuer], language=language)
         sentiment_fig = sentiment_analysis(file_content, selected_issuer)
         general_charts = ""
-    
+
     print(f"Filtered DataFrame shape: {filtered_df.shape}")
-    
+
     bar_colors = sns.color_palette("husl", n_colors=31).as_hex()
-    
+
     # Gráfico de mensajes por hora
     hour_data = filtered_df.groupby('HOUR')['MESSAGE'].count().reset_index()
     hour_chart = {
         'data': [go.Bar(x=hour_data['HOUR'], y=hour_data['MESSAGE'], marker={'color': bar_colors})],
         'layout': go.Layout(title='amount of messages per hour'.title())
     }
-    
+
     # Gráfico de mensajes por día de la semana
     dow_data = filtered_df.groupby('dow')['MESSAGE'].count().reset_index()
     dow_data['dow'] = dow_data['dow'].map(days_of_the_week)
@@ -581,14 +506,14 @@ def update_charts(selected_issuer):
         'data': [go.Bar(x=dow_data['dow'], y=dow_data['MESSAGE'], marker={'color': bar_colors})],
         'layout': go.Layout(title='amount of messages per day of the week'.title())
     }
-    
+
     # Gráfico de mensajes por día del mes
     dom_data = filtered_df.groupby('dom')['MESSAGE'].count().reset_index()
     dom_chart = {
         'data': [go.Bar(x=dom_data['dom'], y=dom_data['MESSAGE'], marker={'color': bar_colors})],
         'layout': go.Layout(title='amount of messages per day of the month'.title())
     }
-    
+
     # Gráfico de mensajes por mes
     month_data = filtered_df.groupby('month')['MESSAGE'].count().reset_index()
     month_data['month'] = month_data['month'].map(months)
@@ -596,7 +521,7 @@ def update_charts(selected_issuer):
         'data': [go.Bar(x=month_data['month'], y=month_data['MESSAGE'], marker={'color': bar_colors})],
         'layout': go.Layout(title='amount of messages per month'.title())
     }
-    
+
     # Generar nube de palabras
     wordcloud_img = generate_wordcloud(issuer_messages)
 

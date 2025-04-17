@@ -1,3 +1,7 @@
+"""
+Contain functions for Seasonality Prediction functionality.
+"""
+
 # Import necessary libraries
 import matplotlib, os
 matplotlib.use('Agg')  # Use 'Agg' backend to save plots without displaying them

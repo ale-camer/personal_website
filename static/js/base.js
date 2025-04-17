@@ -1,3 +1,5 @@
+//Project-wise Functionalities
+
 document.addEventListener('DOMContentLoaded', function() {
     // When the DOM content is fully loaded, execute the following code
 
