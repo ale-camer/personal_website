@@ -92,7 +92,7 @@ def text_normalizer(
 
     return data
 
-def procesar_archivo(
+def process_file(
         data : str, 
         num_tables : int = 5,
         num_rows : int = 5) -> dict:

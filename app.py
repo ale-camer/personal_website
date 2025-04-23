@@ -1,83 +1,54 @@
 """
 MODULARIZAR!
+
+Tareas:
+  
+  1. Seguir comentarios agregados en cada funcion.
+  2. Comentar funciones no comentadas.
+  3. Todos los comentarios deben estar en ingles y ser simples. 
+
+Proximos pasos:
+  
+  1. agregar un boton para descargarse los datos en keyphrase extraction y seasonality prediction
+  
 """
 
-# running web
-# import webbrowser, threading, time, urllib.request
-
 # web programming frameworks
-from flask import Flask, render_template, request, redirect, url_for, send_file, jsonify
+from flask import Flask, render_template, request, redirect, send_file, jsonify
 from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
 
 # data processing
-import os, shutil
-# import numpy as np
+import os, json
 import pandas as pd
-from datetime import datetime
 
 # data plotting
 import seaborn as sns
 import plotly.graph_objs as go
 
 # custom modules
-from modules.keyphrase_extraction import procesar_archivo
+from modules.keyphrase_extraction import process_file
 from modules.seasonality_prediction import forecasting, generate_plots
 from modules.world_bank import indicators, get_country_data_for_indicator, plot_time_series, plot_heatmap
 from modules.whatsapp import preprocess_whatsapp_data, text_normalizer, sentiment_analysis, generate_wordcloud
 from modules.generate_readme import generate_readme
+from modules.utils import (
+    remove_old_files, 
+    delta_time, 
+    reading_json,
+    writing_json,
+    wb_data_preprocess
+)
 
 # APPs
 app = Flask(__name__) # Initialize Flask app
 dash_app = Dash(__name__, server=app, url_base_pathname='/dashboard/') # Initialize Dash app
 
-# CLEANING FOLDERS
-def remove_old_files(folder, files_to_remove=None):
-    """
-    Removes specific files and folders in a folder or all files and folders if not specified.
-
-    :param folder: Folder from which files and folders will be removed.
-    :param files_to_remove: List of filenames to remove. If None, all files and folders will be removed.
-    """
-    if os.path.exists(folder):
-        for filename in os.listdir(folder):
-            file_path = os.path.join(folder, filename)
-            try:
-                if os.path.isfile(file_path):
-                    if files_to_remove and filename not in files_to_remove:
-                        continue
-                    os.remove(file_path)
-                    print(f"Deleted file: {file_path}")
-                elif os.path.isdir(file_path):
-                    shutil.rmtree(file_path)
-                    print(f"Deleted folder: {file_path}")
-            except Exception as e:
-                print(f"Error deleting {file_path}: {e}")
-    else:
-        print(f"Folder does not exist: {folder}")
-
-def delta_time():
-    """"Updates the time since the last job was started"""
-    today = datetime.now()
-    beging_last_job = datetime(2023, 8, 1)
-    delta_days = (today - beging_last_job).days
-
-    years = delta_days // 365
-    months = int((delta_days - 365) / 30)
-
-    if years == 1: year_string = "year"
-    else: year_string = "years"
-
-    if months == 1: month_string = "month"
-    else: month_string = "months"
-
-    string = "%d %s %d %s" % (years, year_string, months, month_string)
-
-    return string
-
-generate_readme(os.path.dirname(os.path.realpath(__file__)))
-remove_old_files('static/seasonality_prediction')
-remove_old_files('static/world_bank')
+# =============================================================================
+# CLEANING DIRECTORY
+# =============================================================================
+list(map(remove_old_files, ['static/seasonality_prediction', 'static/world_bank'])) # removing temporary files
+generate_readme(os.path.dirname(os.path.realpath(__file__))) # creating readme file
 
 # =============================================================================
 # STATIC PAGES
@@ -89,26 +60,32 @@ def index():
 
 @app.route('/linear_algebra')
 def linear_algebra():
+    """Route for the linear algebra page"""
     return render_template('intro_to_linear_algebra_for_data_science.html')
 
 @app.route('/vector_norms')
 def vector_norms():
+    """Route for the vector norms page"""
     return render_template('vector_norms_applications_in_data_science.html')
 
 @app.route('/algorithmic_trading')
 def algorithmic_trading():
+    """Route for the algorithmic trading page"""
     return render_template('stock_algorithmic_trading_strategy_backtesting.html')
 
 @app.route('/ds_trends')
 def ds_trends():
+    """Route for the data science trends page"""
     return render_template('trends_in_data_science_labour_market.html')
 
 @app.route('/arg_macro_spanish')
 def arg_macro_spanish():
+    """Route for the macroeconomic page in spanish"""
     return render_template('macro_n_employment_spanish.html')
 
 @app.route('/arg_macro_english')
 def arg_macro_english():
+    """Route for the macroeconomic page in english"""
     return render_template('macro_n_employment_english.html')
 
 @app.route('/mi_cv')
@@ -129,84 +106,68 @@ def keyphrase_extraction():
 def keyphrase_extraction_process():
     """Processes the uploaded file for keyphrase extraction"""
     file = request.files.get('file')
-    num_tables = int(request.form.get('num_tables', 0))
-    num_rows = int(request.form.get('num_rows', 0))
+    num_tables = int(request.form.get('num_tables', 1))
+    num_rows = int(request.form.get('num_rows', 1))
 
-    if file:
-        try:
-            data = file.read().decode('utf-8')
-            results = procesar_archivo(data, num_tables=num_tables, num_rows=num_rows)
-            return render_template('keyphrase_extraction.html', results=results)
-        except Exception as e: print(e)
-    return redirect(url_for('keyphrase_extraction'))
+    results = process_file(
+      file.read().decode('utf-8'), 
+      num_tables=num_tables, 
+      num_rows=num_rows
+    )
+    return render_template('keyphrase_extraction.html', results=results)
 
 # =============================================================================
 # SEASONALITY PREDICTION
 # =============================================================================
-@app.route('/seasonality_prediction', methods=['GET', 'POST'])
+@app.route('/seasonality_prediction')
 def seasonality_prediction():
-    """Route for seasonality prediction"""
-    existing_plots = []  # Lista para almacenar los nombres de archivos de imágenes existentes
-    error_message = None  # Variable para detalles del error
+    """Route for the seasonality prediction page"""
+    return render_template('seasonality_prediction.html')
 
-    if request.method == 'POST':
-        file = request.files.get('file')
-        periodicity = request.form.get('periodicity')
+@app.route('/seasonality_prediction_process', methods=['POST'])
+def seasonality_prediction_process():
+    """Processes the uploaded file for seasonality prediction"""
+    template = 'seasonality_prediction.html'
+      
+    try:
+      serie = pd.read_excel(request.files.get('file')) # reading inputs
+      periodicity = int(request.form.get('periodicity'))
+  
+      if serie.empty: # checking if file is empty
+        error_message = "File it's empty."
+        return render_template(template, error_message=error_message)
 
-        try:
+      else: # processing inputs
+        col_name = serie.columns[0]
+        forecasted_values_last_period = forecasting(serie[col_name].iloc[:-periodicity], periodicity=periodicity)
+        forecasted_values_next_period = forecasting(serie[col_name], periodicity=periodicity)
+        generate_plots(serie[col_name], forecasted_values_last_period, forecasted_values_next_period, periodicity)
 
-            periodicity = int(periodicity)
-            serie = pd.read_excel(file)
-            col_name = serie.columns[0]
+        existing_plots = []
+        for filename in ['original_data.png', 'all_periods_data.png', 'historic_and_prediction_data.png']:
+            if os.path.exists(os.path.join('static', 'seasonality_prediction', filename)):
+                existing_plots.append(filename)
 
-            forecasted_values_last_period = forecasting(
-                serie[col_name].iloc[:-periodicity], periodicity=periodicity
-            )
-            forecasted_values_next_period = forecasting(
-                serie[col_name], periodicity=periodicity
-            )
-
-            generate_plots(
-                serie[col_name],
-                forecasted_values_last_period,
-                forecasted_values_next_period,
-                periodicity
-            )
-
-            for filename in ['original_data.png', 'all_periods_data.png', 'historic_and_prediction_data.png']:
-                if os.path.exists(os.path.join('static', 'seasonality_prediction', filename)):
-                    existing_plots.append(filename)
-
-            return render_template(
-                'seasonality_prediction.html',
-                forecast=forecasted_values_next_period,
-                existing_plots=existing_plots,
-                enumerate=enumerate
-            )
-
-        except Exception:
-            reminder = round(len(serie) % int(periodicity))
-            details = [
-                f"<li>Data format: {'OK' if pd.api.types.is_numeric_dtype(serie.iloc[:, 0]) else 'Not OK. Data is not numeric.'}</li>",
-                f"<li>Number of columns: {'OK' if serie.shape[1] == 1 else f'Not OK. There are {serie.shape[1]} columns instead of one.'}</li>",
-                f"<li>Series length: {len(serie)}</li>",
-                f"<li>Periodicity: {'OK' if periodicity > 1 else f'Not OK. The value of the periodicity is {periodicity} and has to be higher than one and when dividing the length of the serie the reminder must be zero.'}</li>",
-                f"<li>Remainder: {'OK' if reminder == 0 else f'Not OK. The value of the reminder is {reminder} instead of zero.'}</li>"
-            ]
-            error_message = f"<ul>{''.join(details)}</ul>"
-
-            return render_template(
-                'seasonality_prediction.html',
-                error_message=error_message
-            )
-
-    else:
         return render_template(
-            'seasonality_prediction.html',
-            error_message=error_message,
-            existing_plots=existing_plots
+            template,
+            forecast=forecasted_values_next_period,
+            existing_plots=existing_plots,
+            enumerate=enumerate
         )
 
+    except: # potential errors
+      reminder = round(len(serie) % int(periodicity))
+      details = [
+          f"<li>Data format: {'OK' if pd.api.types.is_numeric_dtype(serie.iloc[:, 0]) else 'Not OK. Data is not numeric.'}</li>",
+          f"<li>Number of columns: {'OK' if serie.shape[1] == 1 else f'Not OK. There are {serie.shape[1]} columns instead of one.'}</li>",
+          f"<li>Series length: {len(serie)}</li>",
+          f"<li>Periodicity: {'OK' if periodicity > 1 else f'Not OK. The value of the periodicity is {periodicity} and has to be higher than one and when dividing the length of the serie the reminder must be zero.'}</li>",
+          f"<li>Remainder: {'OK' if reminder == 0 else f'Not OK. The value of the reminder is {reminder} instead of zero.'}</li>"
+      ]
+      error_message = f"<ul>{''.join(details)}</ul>"
+
+      return render_template(template, error_message=error_message)
+      
 # =============================================================================
 # WORLD BANK
 # =============================================================================
@@ -215,127 +176,82 @@ def world_bank():
     """Route for the World Bank page"""
     return render_template('world_bank.html', indicators=indicators)
 
+@app.route('/save_data_to_temp')
+def save_data_to_temp():
+    """Downloads data for the selected indicator and saves it as a temporary JSON file."""
+    indicator_selected = request.args.get('indicator') # reading user input
+    data = get_country_data_for_indicator(indicator_selected) # reading API
+    temp_file_path = os.path.join('static', 'world_bank', f'{indicator_selected}.json')
+    writing_json(data, temp_file_path) # writing temporary file
+    
+    print(f"Data of the indicator {indicator_selected} Downloaded")
+    return jsonify({'message': 'Data saved successfully', 'file': temp_file_path})
+
 @app.route('/fetch_options')
 def fetch_options():
-    """Fetches country or year options for a World Bank indicator"""
-    indicator_id = request.args.get('indicator')
-    type = request.args.get('type')
-    data = get_country_data_for_indicator(indicator_id)
+    """Returns a list of available countries or years based on the selected type and indicator."""
+    indicator_selected = request.args.get('indicator') # reading user inputs
+    type_selected = request.args.get('type')
+    temp_file_path = os.path.join('static', 'world_bank', f'{indicator_selected}.json')
+    data = reading_json(temp_file_path) # reading temporary file
 
-    if not data:
-        return jsonify([])
-
-    if type == 'country':
-        options = sorted({entry['country']['value'] for entry in data})
-    elif type == 'year':
-        options = sorted({entry['date'] for entry in data}, reverse=True)
-    else:
-        options = []
-
-    return jsonify(options)
-
+    return sorted( # returning list
+        {entry['country']['value'] for entry in data}
+        if type_selected == 'country'
+        else {entry['date'] for entry in data},
+        reverse=(type_selected == 'year')
+    )
+    
 @app.route('/fetch_data')
 def fetch_data():
     """Fetches data for a specific country or year"""
-    indicator_id = request.args.get('indicator')
-    type = request.args.get('type')
-    option = request.args.get('option')
-    data = get_country_data_for_indicator(indicator_id)
-
-    if not data:
-        return jsonify([])
-
-    if type == 'country':
-        filtered_data = [entry for entry in data if entry['country']['value'] == option]
-    elif type == 'year':
-        filtered_data = [entry for entry in data if entry['date'] == option]
-    else:
-        filtered_data = []
-
-    df = pd.DataFrame([
-        (entry['country']['value'], entry['date'], entry['value'])
-        for entry in filtered_data
-    ], columns=['COUNTRY', 'DATE', 'VALUE'])
-
-    # Sort by 'COUNTRY' in ascending order and by 'DATE' in descending order
-    df = df.sort_values(by=['COUNTRY', 'DATE'], ascending=[True, False])
-    df.drop_duplicates(inplace=True)
-    print(df.head())
-
-    return df.to_dict(orient='records')
+    indicator_selected = request.args.get('indicator') # reading user inputs
+    type_selected = request.args.get('type')
+    option_selected = request.args.get('option')
+    
+    temp_file_path = os.path.join('static', 'world_bank', f'{indicator_selected}.json') # printing data requested
+    data = reading_json(temp_file_path)
+    return wb_data_preprocess(data, type_selected, option_selected).drop('ISO_CODE', axis=1).to_dict(orient='records')
 
 @app.route('/download_csv')
 def download_csv():
     """Generates and downloads a CSV file with the filtered data"""
-    indicator_id = request.args.get('indicator')
-    type = request.args.get('type')
-    option = request.args.get('option')
-    data = get_country_data_for_indicator(indicator_id)
-
-    if not data:
-        return "No data available"
-
-    if type == 'country':
-        filtered_data = [entry for entry in data if entry['country']['value'] == option]
-    elif type == 'year':
-        filtered_data = [entry for entry in data if entry['date'] == option]
-    else:
-        filtered_data = []
-
-    df = pd.DataFrame([
-        (entry['country']['value'], entry['date'], entry['value'])
-        for entry in filtered_data
-    ], columns=['COUNTRY', 'DATE', 'VALUE'])
-
-    # Sort by 'COUNTRY' in ascending order and by 'DATE' in descending order
-    df = df.sort_values(by=['COUNTRY', 'DATE'], ascending=[True, False])
-
-    # Create the CSV file
-    downloads_folder = os.path.join(os.path.expanduser('~'), 'Downloads')
-    os.makedirs(downloads_folder, exist_ok=True)
-    csv_path = os.path.join(downloads_folder, 'data.csv')
+    indicator_selected = request.args.get('indicator') # reading user inputs
+    type_selected = request.args.get('type')
+    option_selected = request.args.get('option')
+    
+    temp_file_path = os.path.join('static', 'world_bank', f'{indicator_selected}.json') # reading data
+    data = reading_json(temp_file_path)
+    df = wb_data_preprocess(data, type_selected, option_selected).drop('ISO_CODE', axis=1)
+    
+    csv_path = os.path.join(os.path.expanduser('~'), 'Downloads', 'data.csv') # printing data requested
     df.to_csv(csv_path, index=False)
-
-    # Send the CSV file to the client
     return send_file(csv_path, mimetype='text/csv', as_attachment=True, download_name='data.csv')
 
 @app.route('/interactive_graph', methods=['POST'])
 def interactive_graph():
     """Generates an interactive graph based on the selected indicator, type, and option"""
-    indicator = request.form.get('indicator')
-    type = request.form.get('type')
-    option = request.form.get('option')
+    indicator_selected = request.form.get('indicator') # reading user inputs
+    type_selected = request.form.get('type')
+    option_selected = request.form.get('option')
+    
+    temp_file_path = os.path.join('static', 'world_bank', f'{indicator_selected}.json') # reading data
+    data = reading_json(temp_file_path)
+    df = wb_data_preprocess(data, type_selected, option_selected)
 
-    # Get data for the selected country or year
-    data = get_country_data_for_indicator(indicator)
-
-    # Filter based on the selected type (country or year)
-    if type == 'country':
-        filtered_data = [entry for entry in data if entry['country']['value'] == option]
-    elif type == 'year':
-        filtered_data = [entry for entry in data if entry['date'] == option]
-    else:
-        return "Invalid type"
-
-    df = pd.DataFrame([
-        (entry['countryiso3code'], entry['country']['value'], entry['date'], entry['value'])
-        for entry in filtered_data
-    ], columns=['ISO_CODE', 'COUNTRY', 'DATE', 'VALUE'])
-
-    # Sort by 'COUNTRY' in ascending order and by 'DATE' in descending order
-    df = df.sort_values(by=['COUNTRY', 'DATE'], ascending=[True, False])
-
-    # Execute the appropriate graph function
-    if type == 'country':
-        plot_time_series(df, title=option)
-    elif type == 'year':
-        plot_heatmap(df)
-
+    if type_selected == 'country': plot_time_series(df, title=option_selected) # printing graph requested
+    elif type_selected == 'year': plot_heatmap(df)
     return "Interactive graph generated."
 
 # =============================================================================
 # WHATSAPP
 # =============================================================================
+days_of_the_week = {0: 'Monday', 1: 'Tuesday', 2: 'Wednesday', 3: 'Thursday', 4: 'Friday',
+                    5: 'Saturday', 6: 'Sunday'}
+months = {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June',
+        7: 'July', 8: 'August', 9: 'September', 10: 'October', 11: 'November',
+        12: 'December'}
+
 dash_app.layout = html.Div([
     html.H1("Dashboard will be displayed after data upload.".capitalize()),
     html.P("Please upload a file to view the dashboard.".capitalize()),
@@ -355,6 +271,7 @@ dash_app.layout = html.Div([
     ])
 ])
 
+# SE EJECUTA UNA SOLA VEZ. ESO ESTA BIEN.
 def create_dash_layout(df, days_of_the_week, months):
     if df.empty:
         return html.Div([
@@ -379,12 +296,9 @@ def create_dash_layout(df, days_of_the_week, months):
         ])
     ])
 
-days_of_the_week = {0: 'Monday', 1: 'Tuesday', 2: 'Wednesday', 3: 'Thursday', 4: 'Friday',
-                    5: 'Saturday', 6: 'Sunday'}
-months = {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June',
-        7: 'July', 8: 'August', 9: 'September', 10: 'October', 11: 'November',
-        12: 'December'}
-
+# LA VARIABLE df DEBERIA GENERARSE POR FUERA DE LA FUNCION
+# ¿PORQUE ESTOY TENIENDO VARIABLES GLOBALES? VER SI SE PUEDEN ELIMINAR
+# ¿PARA QUE TENGO EL METODO GET?
 @app.route('/whatsapp', methods=['GET', 'POST'])
 def whatsapp():
     global df, file_content, language
@@ -411,6 +325,9 @@ def whatsapp():
 
     return render_template("whatsapp.html")
 
+# ¿QUE HACE ESTA FUNCION?
+# PARTICIONARLA PARA ENTENDERLA
+# VER QUE SE PUEDE SIMPLIFICAR
 @dash_app.callback( # Dash callback
     [Output('general-charts', 'children'),
      Output('hour-chart', 'figure'),

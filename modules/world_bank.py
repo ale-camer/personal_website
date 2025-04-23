@@ -212,9 +212,13 @@ def plot_heatmap(df : pd.DataFrame) -> None:
     # Filter the DataFrame to include only the latest data per country
     df = df.loc[df.groupby('COUNTRY')['DATE'].idxmax()]
     df['DATE'] = pd.to_datetime(df['DATE'])
+    # print(df.head())
     
     # Load the world shapefile from GeoPandas
     world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+    # print(world.head())
+    # print(world.shape)
+    # print(world.iloc[0])
     
     # Ensure country names are in English
     world = world[['iso_a3', 'geometry', 'name']]

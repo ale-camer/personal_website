@@ -28,7 +28,7 @@ function selectType(event, type) {
     document.getElementById('typeButton').innerText = type === 'country' ? 'Country' : 'Year';
     document.getElementById('optionsButton').innerText = 'Select an Option';
     // Fetch options based on selected indicator and type
-    fetchOptions();
+    // fetchOptions();
     // Close the dropdown menu after selection
     closeDropdown('typeMenu');
 }
@@ -41,6 +41,34 @@ function selectOption(event, option) {
     document.getElementById('optionsButton').innerText = option;
     // Close the options dropdown menu after selection
     closeDropdown('optionsMenu');
+}
+
+function downloadData() {
+    if (selectedIndicator && selectedType) {
+        return fetch(`/save_data_to_temp?indicator=${selectedIndicator}&type=${selectedType}`)
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            });
+    } else {
+        console.warn('Please select both an indicator and a type.');
+        return Promise.reject('Missing selection');
+    }
+}
+
+
+function selectTypeAndDownload(event, type) {
+    event.preventDefault();
+    selectedType = type;
+    document.getElementById('typeButton').innerText = type === 'country' ? 'Country' : 'Year';
+    document.getElementById('optionsButton').innerText = 'Select an Option';
+    closeDropdown('typeMenu');
+
+    downloadData().then(() => {
+        fetchOptions(); // ✅ Solo lo llamás después de que se guardaron los datos
+    }).catch(error => {
+        console.error('Error downloading data:', error);
+    });
 }
 
 // Function to fetch options based on selected indicator and type

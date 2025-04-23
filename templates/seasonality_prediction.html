@@ -19,7 +19,7 @@
 
     <!-- Form for uploading Excel file and setting periodicity -->
     <div>
-        <form action="{{ url_for('seasonality_prediction') }}" method="post" enctype="multipart/form-data"
+        <form action="{{ url_for('seasonality_prediction_process') }}" method="post" enctype="multipart/form-data"
             class="file-upload-form" id="predictionForm">
             <div class="form-group">
                 <label for="file">Upload Excel File:</label>
@@ -28,7 +28,7 @@
             </div>
             <div class="form-group">
                 <label for="periodicity">Periodicity:</label>
-                <input type="number" name="periodicity" id="periodicity" min="1" value="1">
+                <input type="number" name="periodicity" id="periodicity" min="2" max="100" value="2" required>
             </div>
             <button type="submit" class="btn btn-primary">Calculate Prediction</button>
         </form>
@@ -174,10 +174,17 @@
         fileError.textContent = ''; // Limpia los mensajes de error
         let isValid = true;
 
-        if (!fileInput.files.length) {
-            fileError.textContent = 'Please select a file.';
-            isValid = false;
-        }
+        <!-- if (!fileInput.files.length) { -->
+            <!-- fileError.textContent = 'Please select a file.'; -->
+            <!-- isValid = false; -->
+        <!-- } -->
+		if (!fileInput.files.length) {
+			fileError.textContent = 'Please select a file.';
+			isValid = false;
+		} else if (fileInput.files[0].size === 0) {
+			fileError.textContent = 'The selected file is empty.';
+			isValid = false;
+		}
 
         if (isValid) {
             this.submit();
