@@ -19,7 +19,7 @@ from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
 
 # data processing
-import os, json
+import os
 import pandas as pd
 
 # data plotting
@@ -29,8 +29,20 @@ import plotly.graph_objs as go
 # custom modules
 from modules.keyphrase_extraction import process_file
 from modules.seasonality_prediction import forecasting, generate_plots
-from modules.world_bank import indicators, get_country_data_for_indicator, plot_time_series, plot_heatmap
-from modules.whatsapp import preprocess_whatsapp_data, text_normalizer, sentiment_analysis, generate_wordcloud
+from modules.world_bank import (
+    indicators, 
+    get_country_data_for_indicator, 
+    plot_time_series, 
+    plot_heatmap
+)
+from modules.whatsapp import (
+    preprocess_whatsapp_data, 
+    text_normalizer, 
+    sentiment_analysis, 
+    generate_wordcloud, 
+    create_dash_layout,
+    concatenate_dfs
+)
 from modules.generate_readme import generate_readme
 from modules.utils import (
     remove_old_files, 
@@ -246,11 +258,8 @@ def interactive_graph():
 # =============================================================================
 # WHATSAPP
 # =============================================================================
-days_of_the_week = {0: 'Monday', 1: 'Tuesday', 2: 'Wednesday', 3: 'Thursday', 4: 'Friday',
-                    5: 'Saturday', 6: 'Sunday'}
-months = {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June',
-        7: 'July', 8: 'August', 9: 'September', 10: 'October', 11: 'November',
-        12: 'December'}
+days_of_the_week = {int(k): v for k, v in reading_json(os.path.join('static', 'json', 'config.json'))["days_of_the_week"].items()}
+months = {int(k): v for k, v in reading_json(os.path.join('static', 'json', 'config.json'))["months"].items()}
 
 dash_app.layout = html.Div([
     html.H1("Dashboard will be displayed after data upload.".capitalize()),
@@ -271,63 +280,23 @@ dash_app.layout = html.Div([
     ])
 ])
 
-# SE EJECUTA UNA SOLA VEZ. ESO ESTA BIEN.
-def create_dash_layout(df, days_of_the_week, months):
-    if df.empty:
-        return html.Div([
-            html.H1("Cantidad de Mensajes por Emisor"),
-            html.P("No data available.")
-        ])
-    return html.Div([
-        html.H1("choose an issuer".capitalize()),
-        dcc.Dropdown(
-            id='issuer-dropdown',
-            options=[{'label': issuer, 'value': issuer} for issuer in df['ISSUER'].unique()],
-            value=df['ISSUER'].unique()[0] if not df.empty else None
-        ),
-        html.Div(id='general-charts', style={'width': '100%', 'display': 'inline-block'}),
-        html.Div([
-            html.Div(dcc.Graph(id='hour-chart'), style={'width': '48%', 'display': 'inline-block'}),
-            html.Div(dcc.Graph(id='dow-chart'), style={'width': '48%', 'display': 'inline-block'}),
-            html.Div(dcc.Graph(id='dom-chart'), style={'width': '48%', 'display': 'inline-block'}),
-            html.Div(dcc.Graph(id='month-chart'), style={'width': '48%', 'display': 'inline-block'}),
-            html.Div(dcc.Graph(id='sentiment-analysis'), style={'width': '48%', 'display': 'inline-block'}),
-            html.Div(html.Img(id='wordcloud', style={'width': '100%', 'height': 'auto'}), style={'width': '48%', 'display': 'inline-block', 'vertical-align': 'top'})
-        ])
-    ])
-
-# LA VARIABLE df DEBERIA GENERARSE POR FUERA DE LA FUNCION
-# ¿PORQUE ESTOY TENIENDO VARIABLES GLOBALES? VER SI SE PUEDEN ELIMINAR
-# ¿PARA QUE TENGO EL METODO GET?
-@app.route('/whatsapp', methods=['GET', 'POST'])
+@app.route('/whatsapp')
 def whatsapp():
-    global df, file_content, language
-    if request.method == 'POST':
-        file = request.files.get('file')
-        language = request.form.get('selected_language')
-        print('Selected language:', language)
+    """Route for the WhatsApp page"""
+    return render_template('whatsapp.html', indicators=indicators)
+  
+@app.route('/whatsapp_dashboard', methods=['POST'])
+def whatsapp_dashboard():
+    global whatsapp_df, whatsapp_file_content, whatsapp_language
+        
+    file = request.files.get('file')
+    whatsapp_language = request.form.get('selected_language')
 
-        if file:
-            file_content = preprocess_whatsapp_data(file)
+    whatsapp_file_content = preprocess_whatsapp_data(file)
+    whatsapp_df = concatenate_dfs(whatsapp_file_content)
+    dash_app.layout = create_dash_layout(whatsapp_df, days_of_the_week, months) # update dash
+    return redirect('/dashboard/')
 
-            df = file_content.groupby(['ISSUER', 'HOUR', 'dow', 'dom', 'month'])['MESSAGE'].count().reset_index()
-            df_ = file_content.groupby(['HOUR', 'dow', 'dom', 'month'])['MESSAGE'].count().reset_index()
-            df_['ISSUER'] = 'GENERAL'
-            df = pd.concat([df, df_])
-
-            print("Issuers: ", df['ISSUER'].unique())  # Verificar el contenido procesado
-
-            # Update Dash app layout
-            dash_app.layout = create_dash_layout(df, days_of_the_week, months)
-
-            # Redirigir al dashboard
-            return redirect('/dashboard/')
-
-    return render_template("whatsapp.html")
-
-# ¿QUE HACE ESTA FUNCION?
-# PARTICIONARLA PARA ENTENDERLA
-# VER QUE SE PUEDE SIMPLIFICAR
 @dash_app.callback( # Dash callback
     [Output('general-charts', 'children'),
      Output('hour-chart', 'figure'),
@@ -339,42 +308,17 @@ def whatsapp():
     [Input('issuer-dropdown', 'value')]
 )
 def update_charts(selected_issuer):
-    # Ensure df is available globally or adjust logic to access updated df
-    if selected_issuer is None:
-        return (html.P("No data available."), {}, {}, {}, {}, {}, '')
 
-    if df.empty:
-        return (html.P("No data available."), {}, {}, {}, {}, {}, '')
-
-    # Prepare the figures and other data
-    # Placeholder examples
-    hour_chart = go.Figure()
-    dow_chart = go.Figure()
-    dom_chart = go.Figure()
-    month_chart = go.Figure()
-    sentiment_fig = sentiment_analysis(file_content, selected_issuer)
-    wordcloud_img = generate_wordcloud(text_normalizer(file_content, 'english'))
-
-    print(f"Selected issuer: {selected_issuer}")
-
-    # Inicializar filtered_df como un DataFrame vacío
-    filtered_df = pd.DataFrame()
-    # print(selected_issuer, type(selected_issuer))
+    if selected_issuer is None: return (html.P("No data available."), {}, {}, {}, {}, {}, '') # check data
+    if whatsapp_df.empty: return (html.P("No data available."), {}, {}, {}, {}, {}, '')
 
     if selected_issuer == "GENERAL":
 
-        # if df.empty:
-        #     return (html.P("No data available for 'GENERAL'."), {}, {}, {}, {}, {}, '')
-        print(df.shape)
-        filtered_df = df.copy()
+        filtered_df = whatsapp_df.copy()
+        issuer_messages = text_normalizer(whatsapp_file_content, language=whatsapp_language) # general charts
+        sentiment_fig = sentiment_analysis(whatsapp_file_content)
 
-        # General charts
-        issuer_messages = text_normalizer(file_content, language=language)
-        sentiment_fig = sentiment_analysis(file_content)
-        issuer_counts = file_content['ISSUER'].value_counts().reset_index()
-        issuer_counts.columns = ['ISSUER', 'COUNT']
-
-        # Gráfico de pie para la cantidad de mensajes por emisor
+        issuer_counts = whatsapp_file_content['ISSUER'].value_counts().reset_index().rename(columns={'count': 'COUNT'})
         pie_chart_messages = dcc.Graph(
             figure={
                 'data': [go.Pie(labels=issuer_counts['ISSUER'], values=issuer_counts['COUNT'], hole=.5)],
@@ -382,10 +326,7 @@ def update_charts(selected_issuer):
             }
         )
 
-        # Calcular la suma de la longitud de mensajes por emisor
-        message_length_sum = file_content.groupby('ISSUER')['len_message'].sum().reset_index()
-
-        # Gráfico de pie para la longitud de mensajes por emisor
+        message_length_sum = whatsapp_file_content.groupby('ISSUER')['len_message'].sum().reset_index()
         pie_chart_message_length = dcc.Graph(
             figure={
                 'data': [go.Pie(labels=message_length_sum['ISSUER'], values=message_length_sum['len_message'], hole=.5)],
@@ -393,57 +334,49 @@ def update_charts(selected_issuer):
             }
         )
 
-        general_charts = html.Div([
+        general_charts = html.Div([ # container
             html.Div(pie_chart_messages, style={'width': '48%', 'display': 'inline-block'}),
             html.Div(pie_chart_message_length, style={'width': '48%', 'display': 'inline-block'})
         ], style={'display': 'flex', 'justify-content': 'space-between'})
 
     else:
 
-        filtered_df = df[df['ISSUER'] == selected_issuer]
-        issuer_messages = text_normalizer(file_content[file_content['ISSUER'] == selected_issuer], language=language)
-        sentiment_fig = sentiment_analysis(file_content, selected_issuer)
+        filtered_df = whatsapp_df[whatsapp_df['ISSUER'] == selected_issuer]
+        issuer_messages = text_normalizer(whatsapp_file_content[whatsapp_file_content['ISSUER'] == selected_issuer], language=whatsapp_language)
+        sentiment_fig = sentiment_analysis(whatsapp_file_content, selected_issuer)
         general_charts = ""
-
-    print(f"Filtered DataFrame shape: {filtered_df.shape}")
 
     bar_colors = sns.color_palette("husl", n_colors=31).as_hex()
 
-    # Gráfico de mensajes por hora
-    hour_data = filtered_df.groupby('HOUR')['MESSAGE'].count().reset_index()
-    hour_chart = {
+    hour_data = filtered_df.groupby('HOUR')['MESSAGE'].count().reset_index() 
+    hour_chart = { # hour chart
         'data': [go.Bar(x=hour_data['HOUR'], y=hour_data['MESSAGE'], marker={'color': bar_colors})],
         'layout': go.Layout(title='amount of messages per hour'.title())
     }
 
-    # Gráfico de mensajes por día de la semana
     dow_data = filtered_df.groupby('dow')['MESSAGE'].count().reset_index()
     dow_data['dow'] = dow_data['dow'].map(days_of_the_week)
-    dow_chart = {
+    dow_chart = { # dow chart
         'data': [go.Bar(x=dow_data['dow'], y=dow_data['MESSAGE'], marker={'color': bar_colors})],
         'layout': go.Layout(title='amount of messages per day of the week'.title())
     }
 
-    # Gráfico de mensajes por día del mes
     dom_data = filtered_df.groupby('dom')['MESSAGE'].count().reset_index()
-    dom_chart = {
+    dom_chart = { # dom chart
         'data': [go.Bar(x=dom_data['dom'], y=dom_data['MESSAGE'], marker={'color': bar_colors})],
         'layout': go.Layout(title='amount of messages per day of the month'.title())
     }
 
-    # Gráfico de mensajes por mes
     month_data = filtered_df.groupby('month')['MESSAGE'].count().reset_index()
     month_data['month'] = month_data['month'].map(months)
-    month_chart = {
+    month_chart = { # month chart
         'data': [go.Bar(x=month_data['month'], y=month_data['MESSAGE'], marker={'color': bar_colors})],
         'layout': go.Layout(title='amount of messages per month'.title())
     }
 
-    # Generar nube de palabras
     wordcloud_img = generate_wordcloud(issuer_messages)
-
     return (general_charts, hour_chart, dow_chart, dom_chart, month_chart, sentiment_fig, wordcloud_img)
-
+  
 # =============================================================================
 # RUNNING SCRIPT
 # =============================================================================

@@ -15,6 +15,8 @@
   ├── js/  # Contain JavaScript scripts.
     ├── base.js  # Project-wise Functionalities
     └── world_bank.js  # World Bank JS Functionalities
+  ├── json/
+    └── config.json
   ├── seasonality_prediction/  # Contain Seasonality Prediction functionality temporary files.
   └── world_bank/  # Contain World Bank functionality temporary files.
 └── templates/  # Contain HTML templates.

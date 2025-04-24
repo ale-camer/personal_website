@@ -10,7 +10,42 @@ import io, re, nltk
 import base64
 from unidecode import unidecode
 import textblob as tb
+from dash import dcc, html
 
+def concatenate_dfs(df): 
+  return (
+    pd.concat(
+      [
+        df.groupby(['ISSUER', 'HOUR', 'dow', 'dom', 'month'])['MESSAGE'].count().reset_index(),
+        df.groupby(['HOUR', 'dow', 'dom', 'month'])['MESSAGE'].count().reset_index().assign(ISSUER='GENERAL')
+      ]
+    )
+  )
+
+def create_dash_layout(df, days_of_the_week, months):
+    if df.empty:
+        return html.Div([
+            html.H1("Cantidad de Mensajes por Emisor"),
+            html.P("No data available.")
+        ])
+    return html.Div([
+        html.H1("choose an issuer".capitalize()),
+        dcc.Dropdown(
+            id='issuer-dropdown',
+            options=[{'label': issuer, 'value': issuer} for issuer in df['ISSUER'].unique()],
+            value=df['ISSUER'].unique()[0] if not df.empty else None
+        ),
+        html.Div(id='general-charts', style={'width': '100%', 'display': 'inline-block'}),
+        html.Div([
+            html.Div(dcc.Graph(id='hour-chart'), style={'width': '48%', 'display': 'inline-block'}),
+            html.Div(dcc.Graph(id='dow-chart'), style={'width': '48%', 'display': 'inline-block'}),
+            html.Div(dcc.Graph(id='dom-chart'), style={'width': '48%', 'display': 'inline-block'}),
+            html.Div(dcc.Graph(id='month-chart'), style={'width': '48%', 'display': 'inline-block'}),
+            html.Div(dcc.Graph(id='sentiment-analysis'), style={'width': '48%', 'display': 'inline-block'}),
+            html.Div(html.Img(id='wordcloud', style={'width': '100%', 'height': 'auto'}), style={'width': '48%', 'display': 'inline-block', 'vertical-align': 'top'})
+        ])
+    ])
+  
 def sentiment_analysis(
         data : pd.DataFrame, 
         selected_issuer : str = None) -> go.Figure:
