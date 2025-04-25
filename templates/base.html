@@ -22,7 +22,6 @@
     {% block content %}{% endblock %}
     <!-- Navigation Bar Section -->
     <nav class="navbar">
-
         <!-- Home Link -->
         <a href="{{ url_for('index') }}" class="navbar-title-link" title="Get back to Home Page">
             <h2 class="navbar-title">Home</h2>
@@ -73,16 +72,15 @@
 
         <!-- Social Media Icons -->
         <div class="navbar-footer">
-            <a class="image-footer" href="https://github.com/ale-camer/personal_website" target="_blank"
+            <a class="image-footer" id="gh-image" href="https://github.com/ale-camer/personal_website" target="_blank"
                 title="Project Code"><img src="{{ url_for('static', filename='images/gh.png') }}" alt="GitHub"></a>
-            <a class="image-footer" href="https://www.linkedin.com/in/alejandro-camerlengo-1ab3981b/" target="_blank" ,
+            <a class="image-footer" id="li-image" href="https://www.linkedin.com/in/alejandro-camerlengo-1ab3981b/" target="_blank" ,
                 title="Personal Profile"><img src="{{ url_for('static', filename='images/li.png') }}"
                     alt="LinkedIn"></a>
-            <a class="image-footer" href="mailto:alejandrocamerlengo@gmail.com" target="_blank"
+            <a class="image-footer" id="gm-image" href="mailto:alejandrocamerlengo@gmail.com" target="_blank"
                 title="Send me an email"><img src="{{ url_for('static', filename='images/email.png') }}"
                     alt="Email"></a>
         </div>
-
     </nav>
 
     <style>
@@ -106,6 +104,10 @@
             background-color: rgba(135, 206, 235, 0.7);
             overflow-y: auto;
             padding: 30px 0;
+        }
+
+        .navbar a {
+            font-size: 1.25vw;
         }
 
         .navbar-title-link {
@@ -151,6 +153,10 @@
             display: block;
         }
 
+        .navbar .dropdown-menu li a {
+            padding-left: 10%;
+        }
+
         .navbar .navbar-footer {
             position: absolute;
             bottom: 0;
@@ -162,27 +168,24 @@
 
         .navbar .navbar-footer .image-footer img {
             display: block;
-            width: 40px;
-            height: 40px;
+            width: 3vw;
+            height: 3vw;
             margin: 0 10px;
             border-radius: 50%;
         }
 
-        .navbar .navbar-footer .image-footer img:hover {
-            border: 0.05px outset hsl(202, 81%, 55%);
-            background: hsl(202, 81%, 55%);
-        }
-
-        @media (max-width: 1100px) {
+        @media (max-width: 1000px) {
             .navbar .navbar-footer {
                 flex-direction: column;
+                align-items: center;
             }
-        }
-        @media (max-width: 1509px) {
+
             .navbar .navbar-footer .image-footer img {
-                margin: 5px 5px;
+                margin: 10px 0 0 0;
             }
         }
+
+
     </style>
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

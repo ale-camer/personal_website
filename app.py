@@ -1,5 +1,5 @@
 """
-agregar un boton para descargarse los datos en keyphrase extraction y seasonality prediction  
+falta hacer responsive todas las secciones de la pagina. 
 """
 
 # web programming frameworks
