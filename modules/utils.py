@@ -6,7 +6,7 @@ import os, shutil, json
 import pandas as pd
 from datetime import datetime
 
-def remove_old_files(folder, files_to_remove=None):
+def remove_old_files(folder, files_to_remove=None) -> None:
     """
     Removes specific files and folders in a folder or all files and folders if not specified.
 
@@ -30,7 +30,7 @@ def remove_old_files(folder, files_to_remove=None):
     else:
         print(f"Folder does not exist: {folder}")
         
-def delta_time():
+def delta_time() -> None:
     """"Updates the time since the last job was started"""
     today = datetime.now()
     beging_last_job = datetime(2023, 8, 1)
@@ -49,16 +49,16 @@ def delta_time():
 
     return string
   
-def reading_json(path):
+def reading_json(path: str) -> None:
     """Loads and returns the contents of a JSON file from the specified path."""
     return json.load(open(path, 'r'))
 
-def writing_json(data, path):
+def writing_json(data: pd.DataFrame, path: str) -> None:
     """Saves a Python object as a JSON file to the specified path."""
     with open(path, 'w') as f:
         json.dump(data, f)
 
-def wb_data_preprocess(data, type_selected, option_selected):
+def wb_data_preprocess(data: pd.DataFrame, type_selected: str, option_selected: str) -> pd.DataFrame:
     """Filters and transforms World Bank data into a standardized DataFrame based on the selected type and option."""
     filtered_data = [
         entry for entry in data 

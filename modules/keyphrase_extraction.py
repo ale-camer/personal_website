@@ -2,17 +2,39 @@
 Contain functions for Keyphrase Extraction functionality.
 """
 
-import nltk
+import nltk, re
 import pandas as pd
-from tqdm import tqdm  # For displaying progress bars
-from unidecode import unidecode  # For removing accents from characters
-import re  # For regular expressions
+from tqdm import tqdm 
+from unidecode import unidecode
+from prettytable import PrettyTable
 
+def pretty_table_for_keyphrases(data: pd.DataFrame, title: str, columns: list) -> PrettyTable:
+    """Style dataframes"""
+    table = PrettyTable()
+    table.title = title
+    table.field_names = columns
+    for i in data.index:
+      table.add_row([
+        data.loc[i, columns[0]],
+        data.loc[i, columns[1]]
+      ])
+    return table
+
+def generate_keyphrases_tables_string(data: dict) -> str:
+    """Generates all tables as a string."""
+    result_string = ""
+    for _key in list(data.keys()):
+        df = pd.DataFrame(data[_key])
+        table = pretty_table_for_keyphrases(df, _key, df.columns)
+        result_string += str(table) + "\n\n"  # Add each table to the result string
+    return result_string
+  
 def top_ngrams(
         corpus : list, 
         ngram_val : int = 1,
         limit : int = 5, 
-        rows_per_table : int = 5) -> pd.DataFrame:
+        rows_per_table : int = 5
+    ) -> pd.DataFrame:
     """
     Function to extract top n-grams from a corpus of text.
     
@@ -38,20 +60,21 @@ def top_ngrams(
         """Helper function to flatten a list of documents into a single string."""
         return ' '.join([document.strip() for document in corpus])
     
-    corpus = flatten_corpus(corpus)
-    tokens = nltk.word_tokenize(corpus)  # Tokenize the flattened corpus
-    ngrams = compute_ngrams(tokens, ngram_val)  # Generate n-grams
-    ngrams_freq_dist = nltk.FreqDist(ngrams)  # Calculate frequency distribution of n-grams
-    sorted_ngrams_fd = sorted(ngrams_freq_dist.items(), key=lambda x: x[1], reverse=True)  # Sort n-grams by frequency
-    sorted_ngrams = sorted_ngrams_fd[:limit]  # Select top 'limit' n-grams
-    sorted_ngrams = [(' '.join(text), freq) for text, freq in sorted_ngrams]  # Combine n-gram tokens into strings
-    sorted_ngrams = sorted_ngrams[:rows_per_table]  # Limit the number of rows per table
+    corpus = flatten_corpus(corpus) # flattening
+    tokens = nltk.word_tokenize(corpus)  # tokenizing
+    ngrams = compute_ngrams(tokens, ngram_val)  # generating n-grams
+    ngrams_freq_dist = nltk.FreqDist(ngrams)  # frequency distribution of n-grams
+    sorted_ngrams_fd = sorted(ngrams_freq_dist.items(), key=lambda x: x[1], reverse=True)  # sorting n-grams by frequency
+    sorted_ngrams = sorted_ngrams_fd[:limit]  # selecting top n-grams
+    sorted_ngrams = [(' '.join(text), freq) for text, freq in sorted_ngrams]  # n-gram tokens to strings
+    sorted_ngrams = sorted_ngrams[:rows_per_table]  # rows per table
     return pd.DataFrame(sorted_ngrams, columns=['Keywords', '# Appearances'])
 
 def text_normalizer(
         data : str, 
         language : str = 'english', 
-        minWordLen : int = 2) -> str:
+        minWordLen : int = 2
+    ) -> str:
     """
     Function to normalize text data by removing stopwords, URLs, non-alphanumeric characters,
     and accents, and converting text to lowercase.
@@ -68,8 +91,6 @@ def text_normalizer(
     assert isinstance(language, str), "The 'language' must be a string"
     assert isinstance(minWordLen, int), "The 'minWordLen' must be an integer"
         
-    stopword_list = nltk.corpus.stopwords.words(language)  # Get list of stopwords for the specified language
-    
     def conti_rep_char(str1):
         """Helper function to handle repeated characters."""
         tchr = str1.group(0)
@@ -80,22 +101,23 @@ def text_normalizer(
         """Helper function to check for unique characters in the text."""
         convert = re.sub(r'[^a-zA-Z0-9\s]', rep, sent_text)
         return convert
-     
-    urlRegex = re.compile(r'http\S+')
+
+    stopword_list = nltk.corpus.stopwords.words(language)  # stopwords
+    urlRegex = re.compile(r'http\S+') # URLs
     
-    # Normalize the input text step by step
-    data = ' '.join([word for word in data.lower().split() if word not in stopword_list])  # Remove stopwords
-    data = check_unique_char(conti_rep_char, data)  # Handle repeated characters
-    data = ' '.join([word for word in data.split() if not re.match(urlRegex, word)])  # Remove URLs
-    data = ' '.join([word for word in data.split() if len(word) > minWordLen])  # Remove short words
-    data = ' '.join([unidecode(word) for word in data.split()])  # Remove accents using unidecode
+    data = ' '.join([word for word in data.lower().split() if word not in stopword_list]) # removing stopwords
+    data = check_unique_char(conti_rep_char, data) # checking repeated characters
+    data = ' '.join([word for word in data.split() if not re.match(urlRegex, word)]) # removing URLs
+    data = ' '.join([word for word in data.split() if len(word) > minWordLen]) # removing short words
+    data = ' '.join([unidecode(word) for word in data.split()]) # removing tildas
 
     return data
 
 def process_file(
         data : str, 
         num_tables : int = 5,
-        num_rows : int = 5) -> dict:
+        num_rows : int = 5
+    ) -> dict:
     """
     Function to process a text file or string by tokenizing sentences, normalizing them,
     and generating top n-grams for each n value specified.
@@ -112,14 +134,13 @@ def process_file(
     assert isinstance(num_tables, int), "The 'num_tables' must be an integer"
     assert isinstance(num_rows, int), "The 'num_rows' must be an integer"
 
-    nltk.download('punkt', quiet=True)  # Download NLTK punkt tokenizer
-    
-    sentences = nltk.sent_tokenize(data)  # Tokenize text into sentences
-    normalized_sentences = [text_normalizer(sentence) for sentence in tqdm(sentences)]  # Normalize each sentence
+    nltk.download('punkt', quiet=True) # punkt tokenizer
+    sentences = nltk.sent_tokenize(data) # tokenizing
+    normalized_sentences = [text_normalizer(sentence) for sentence in tqdm(sentences)] # normalizing
     
     results = {}
     for num in range(1, num_tables + 1):
-        tempData = top_ngrams(corpus=normalized_sentences, ngram_val=num, limit=10, rows_per_table=num_rows)
-        results[f"N-Gram Value: {num}"] = tempData  # Store n-gram table in results dictionary
+        temp_data = top_ngrams(corpus=normalized_sentences, ngram_val=num, limit=10, rows_per_table=num_rows)
+        results[f"N-Gram Value: {num}"] = temp_data # storing n-gram
     
-    return results  # Return the dictionary containing all n-gram tables
+    return results

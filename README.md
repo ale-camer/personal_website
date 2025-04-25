@@ -1,6 +1,6 @@
 ```bash
 ├── README.md
-├── app.py  # MODULARIZAR!  Tareas:  1. Seguir comentarios agregados en cada funcion. 2. Comentar funciones no comentadas. 3. Todos los comentarios deben estar en ingles y ser simples.  Proximos pasos:  1. agregar un boton para descargarse los datos en keyphrase extraction y seasonality prediction  
+├── app.py  # agregar un boton para descargarse los datos en keyphrase extraction y seasonality prediction 
 ├── modules/  # Contain Python modules.
   ├── generate_readme.py  # Generate README.md file. 
   ├── keyphrase_extraction.py  # Contain functions for Keyphrase Extraction functionality. 
@@ -17,6 +17,7 @@
     └── world_bank.js  # World Bank JS Functionalities
   ├── json/
     └── config.json
+  ├── keyphrase_extraction/
   ├── seasonality_prediction/  # Contain Seasonality Prediction functionality temporary files.
   └── world_bank/  # Contain World Bank functionality temporary files.
 └── templates/  # Contain HTML templates.

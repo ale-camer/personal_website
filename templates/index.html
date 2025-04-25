@@ -6,13 +6,14 @@
 
 <div class="project-container">
     <div id="profile-container">
-        <h1>Alejandro Camerlengo</h1>
-        <h2>Data Scientist</h2>
-        <br>
-        <p>I hope you find my webpage engaging and informative. Here, you can explore my resume in depth, toy projects,
-            and find links of interest at the bottom of the navigation bar.</p>
-        <p>My aim with this website is to dive into web development and showcase some personal projects that I worked
-            on.</p>
+        <!-- <h1>Alejandro Camerlengo</h1> -->
+        <!-- <h2>Data Scientist</h2> -->
+        <!-- <br> -->
+        <!-- <p>I hope you find my webpage engaging and informative. Here, you can explore my resume in depth, toy projects, -->
+            <!-- and find links of interest at the bottom of the navigation bar.</p> -->
+        <!-- <p>My aim with this website is to dive into web development and showcase some personal projects that I worked -->
+            <!-- on.</p> -->
+		<p>Welcome! I am data scientist and I've created this website so you can take a look to my resume and have fun with my toy projects.</p>
     </div>
 </div>
 
@@ -20,7 +21,8 @@
     <h1 id="title">PROJECTS</h1>
     <div class="projects-type-container" style="display: flex; flex-direction: row;">
         <div class="project-type-container">
-            <p class="project-type">INTERACTIVE</p>
+            <!-- <p class="project-type">INTERACTIVE</p> -->
+            <p class="project-type">Wanna have fun?</p>
             <div class="back-content">
                 <p id="first_interactive_p" data-id="keyphrase-extraction">
                     Keyphrase Extraction
@@ -37,7 +39,8 @@
             </div>
         </div>
         <div class="project-type-container">
-            <p class="project-type">DESCRIPTIVE</p>
+            <!-- <p class="project-type">DESCRIPTIVE</p> -->
+            <p class="project-type">Wanna read?</p>
             <div class="back-content">
                 <p id="first_descriptive_p" data-id="algorithmic-trading">
                     Algorithmic Trading
@@ -116,7 +119,8 @@
     .project-type-container {
         background-color: white;
         height: 100%;
-        margin: 0% 5%;
+		width: 100%;
+        margin: 0% .5%;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -141,7 +145,12 @@
         letter-spacing: 5px;
         text-shadow: 1px 1px 1px black;
         font-weight: bold;
+		text-align: center;
     }
+	
+	.project-type p {
+		text-align: center;
+	}
 
     .back-content {
         position: absolute;

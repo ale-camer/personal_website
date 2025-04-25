@@ -2,27 +2,51 @@
 Contain functions for WhatsApp functionality.
 """
 
+import io, re, nltk, base64
 import pandas as pd
-import plotly.graph_objects as go
+import textblob as tb
+from unidecode import unidecode
+
+from dash import dcc, html
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
-import io, re, nltk
-import base64
-from unidecode import unidecode
-import textblob as tb
-from dash import dcc, html
+import plotly.graph_objects as go
 
-def concatenate_dfs(df): 
-  return (
+def concatenate_dfs(df: pd.DataFrame) -> pd.DataFrame: 
+    """
+    Returns message counts by issuer and time features, plus a 'GENERAL' group without issuer breakdown.
+    """
+    assert isinstance(df, pd.DataFrame), "'df' must be a pandas DataFrame"
+    required_cols = {'ISSUER', 'HOUR', 'dow', 'dom', 'month', 'MESSAGE'}
+    assert required_cols.issubset(df.columns), f"Missing required columns: {required_cols - set(df.columns)}"
+
+    return (
     pd.concat(
-      [
-        df.groupby(['ISSUER', 'HOUR', 'dow', 'dom', 'month'])['MESSAGE'].count().reset_index(),
-        df.groupby(['HOUR', 'dow', 'dom', 'month'])['MESSAGE'].count().reset_index().assign(ISSUER='GENERAL')
-      ]
+          [
+            df.groupby(['ISSUER', 'HOUR', 'dow', 'dom', 'month'])['MESSAGE'].count().reset_index(),
+            df.groupby(['HOUR', 'dow', 'dom', 'month'])['MESSAGE'].count().reset_index().assign(ISSUER='GENERAL')
+          ]
+        )
     )
-  )
 
-def create_dash_layout(df, days_of_the_week, months):
+def create_dash_layout(df: pd.DataFrame, days_of_the_week: dict, months: dict) -> html.Div:
+    """
+    Build the Dash layout for visualizing message statistics. Displays dropdown to select issuer
+    and charts for hour, weekday, day, month, sentiment, and a word cloud.
+
+    Parameters:
+    - df (pd.DataFrame): Data to visualize.
+    - days_of_the_week (dict): Mapping of day indices to names.
+    - months (dict): Mapping of month numbers to names.
+
+    Returns:
+    - html.Div: Dash layout container.
+    """
+    assert isinstance(df, pd.DataFrame), "'df' must be a Pandas DataFrame"
+    assert isinstance(days_of_the_week, dict), "'days_of_the_week' must be a dict"
+    assert isinstance(months, dict), "'months' must be a dict"
+    assert 'ISSUER' in df.columns, "'df' must contain an 'ISSUER' column"
+
     if df.empty:
         return html.Div([
             html.H1("Cantidad de Mensajes por Emisor"),
@@ -46,9 +70,7 @@ def create_dash_layout(df, days_of_the_week, months):
         ])
     ])
   
-def sentiment_analysis(
-        data : pd.DataFrame, 
-        selected_issuer : str = None) -> go.Figure:
+def sentiment_analysis(data : pd.DataFrame, selected_issuer : str = None) -> go.Figure:
     """
     Perform sentiment analysis on the provided dataset. If a specific issuer is selected, 
     the function filters the dataset by that issuer. The sentiment polarity is calculated 
@@ -116,7 +138,7 @@ def generate_wordcloud(text : str) -> str:
     img_base64 = base64.b64encode(img.getvalue()).decode('utf-8')
     return f"data:image/png;base64,{img_base64}"
 
-def preprocess_whatsapp_data(file) -> pd.DataFrame:
+def preprocess_whatsapp_data(file: str) -> pd.DataFrame:
     """
     Preprocess raw WhatsApp chat data by extracting relevant fields such as date, time, 
     sender (issuer), and message. It handles multiline messages and filters out multimedia messages.
@@ -133,7 +155,7 @@ def preprocess_whatsapp_data(file) -> pd.DataFrame:
     processed_lines = []
     pending_lines = []
     
-    for i in range(len(chat_lines)):
+    for i in range(len(chat_lines)): # checking regex
         if re.match(message_pattern, chat_lines[i]):
             if pending_lines:
                 processed_lines[-1] = ' '.join(pending_lines)
@@ -144,17 +166,17 @@ def preprocess_whatsapp_data(file) -> pd.DataFrame:
                 pending_lines.append(chat_lines[i-1])
             pending_lines.append(chat_lines[i])
     
-    df_chat = pd.DataFrame(processed_lines, columns=['RAW_DATA'])
+    df_chat = pd.DataFrame(processed_lines, columns=['RAW_DATA']) # preprocessing key columns
     df_chat['DATE'] = df_chat['RAW_DATA'].apply(lambda x: x.split(',')[0])
     df_chat['HOUR'] = df_chat['RAW_DATA'].apply(lambda x: x.split(',')[1].split('-')[0].strip())
     df_chat['ISSUER'] = df_chat['RAW_DATA'].apply(lambda x: x.split('- ')[1].split(':')[0])
     df_chat['MESSAGE'] = df_chat['RAW_DATA'].apply(lambda x: x.split(': ')[1] if ': ' in x else None)
     
-    df_chat = df_chat[df_chat['MESSAGE'].notna()]
+    df_chat = df_chat[df_chat['MESSAGE'].notna()] # deleting unnecessary data
     df_chat['IS_MULTIMEDIA'] = df_chat['MESSAGE'].apply(lambda msg: 1 if 'Multimedia' in msg else 0)
     df_chat = df_chat[df_chat['IS_MULTIMEDIA'] == 0].drop(['RAW_DATA', 'IS_MULTIMEDIA'], axis=1)
     
-    df_chat['DATE'] = pd.to_datetime(df_chat['DATE'], dayfirst=True)
+    df_chat['DATE'] = pd.to_datetime(df_chat['DATE'], dayfirst=True) # formatting key columns
     df_chat['dow'] = df_chat['DATE'].dt.dayofweek
     df_chat['dom'] = df_chat['DATE'].dt.day
     df_chat['month'] = df_chat['DATE'].dt.month
@@ -163,9 +185,7 @@ def preprocess_whatsapp_data(file) -> pd.DataFrame:
     
     return df_chat
 
-def text_normalizer(
-        data : pd.DataFrame, 
-        language : str = 'english') -> str:
+def text_normalizer(data : pd.DataFrame, language : str = 'english') -> str:
     """
     Normalize text data by converting it to lowercase, removing stopwords, URLs, 
     and diacritics, and preparing the text for further analysis.
@@ -180,9 +200,9 @@ def text_normalizer(
     assert isinstance(data, pd.DataFrame), "The 'data' must be a Pandas DataFrame"
     assert isinstance(language, str), "The 'language' must be a string"
 
-    urlRegex = re.compile('http\S+')
-    stopword_list = nltk.corpus.stopwords.words(language)
-    text = ' '.join([str(word) for word in ' '.join(data['MESSAGE']).lower().split() if word not in stopword_list])
-    text = ' '.join([unidecode(str(word)) for word in text.split()])
-    text = ' '.join([str(word) for word in text.split() if not re.match(urlRegex, word)])
+    urlRegex = re.compile('http\S+') # URLs
+    stopword_list = nltk.corpus.stopwords.words(language) # stopwords
+    text = ' '.join([str(word) for word in ' '.join(data['MESSAGE']).lower().split() if word not in stopword_list]) # removing stopwords
+    text = ' '.join([unidecode(str(word)) for word in text.split()]) # removing tildas
+    text = ' '.join([str(word) for word in text.split() if not re.match(urlRegex, word)]) # removing URLs
     return text

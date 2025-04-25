@@ -2,110 +2,20 @@
 Contain functions for World Bank functionality.
 """
 
-# Import necessary libraries
 import requests, folium, warnings, os, webbrowser
 import pandas as pd
 import geopandas as gpd
 from branca.colormap import linear
 import plotly.graph_objects as go
-
-# Ignore warnings to keep the output clean
+from modules.utils import reading_json
 warnings.filterwarnings("ignore")
 
-# Dictionary mapping indicator names to their corresponding World Bank codes
-indicators = {
-    'GDP (current US$)': 'NY.GDP.MKTP.CD', # economic
-    'GDP per capita (current US$)': 'NY.GDP.PCAP.CD',
-    'Domestic credit to private sector by banks (% of GDP)': 'FD.AST.PRVT.GD.ZS',
-    'Domestic credit to private sector (% of GDP)': 'GFDD.DI.14',
-    'International tourism, number of arrivals': 'ST.INT.ARVL',
-    'High-technology exports (current US$)': 'TX.VAL.TECH.CD',
-    'High-technology exports (% of manufactured exports)': 'TX.VAL.TECH.MF.ZS',
-    'Military expenditure (% of GDP)': 'MS.MIL.XPND.GD.ZS',
-    'Research and development expenditure (% of GDP)': 'GB.XPD.RSDV.GD.ZS',
-    'Trademark applications': 'IP.TMK.TOTL',
-    'Researchers in R&D (per million people)': 'SP.POP.SCIE.RD.P6',
-    'Technicians in R&D (per million people)': 'SP.POP.TECH.RD.P6',
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(current_dir)
+config_file_path = os.path.join(project_root, 'static', 'json', 'config.json')
+strings_to_exclude = reading_json(config_file_path)["strings_to_exclude"]
 
-    'Children out of school (% of primary school age)': 'SE.PRM.UNER.ZS',
-    'Primary completion rate (% of relevant age group)': 'SE.PRM.CMPT.ZS', # social
-    'Children in employment (% of children ages 7-14)': 'SL.TLF.0714.ZS',
-    'Unemployment (% of total labor force)': 'SL.UEM.TOTL.ZS',
-    'Labor force participation rate (% of total economic active population)': 'SL.TLF.ACTI.ZS',
-    'Net migration': 'SM.POP.NETM',
-    'Suicide mortality rate (per 100,000 population)': 'SH.STA.SUIC.P5',
-    'Life expectancy at birth (years)': 'SP.DYN.LE00.IN',
-    'Population': 'SP.POP.TOTL',
-    'Human Capital Index': 'HD.HCI.OVRL',
-
-    'Agricultural land (% of land area)': 'AG.LND.AGRI.ZS', # agro
-    'Arable land (% of land area)': 'AG.LND.ARBL.ZS',
-    'Forest area (% of land area)': 'AG.LND.FRST.ZS',
-    'Land area (sq. km)': 'AG.LND.TOTL.K2',
-    'Rural land area (sq. km)': 'AG.LND.TOTL.RU.K2',
-    'Urban land area (sq. km)': 'AG.LND.TOTL.UR.K2',
-    'Surface area (sq. km)': 'AG.SRF.TOTL.K2',
-
-    'Access to electricity (% of population)': 'EG.ELC.ACCS.ZS', # energy
-    'Renewable electricity output (% of total electricity output)': 'EG.ELC.RNEW.ZS',
-    'Alternative and nuclear energy (% of total energy use)': 'EG.USE.COMM.CL.ZS',
-}
-
-# List of strings representing regions or groupings to exclude from data visualization
-strings_to_exclude = [
-    'Africa Eastern and Southern',
-    'Africa Western and Central',
-    'Arab World',
-    'Caribbean small states',
-    'Central Europe and the Baltics',
-    'Early-demographic dividend',
-    'East Asia & Pacific',
-    'East Asia & Pacific (IDA & IBRD countries)',
-    'East Asia & Pacific (excluding high income)',
-    'Euro area',
-    'Europe & Central Asia',
-    'Europe & Central Asia (IDA & IBRD countries)',
-    'Europe & Central Asia (excluding high income)',
-    'European Union',
-    'Fragile and conflict affected situations',
-    'Heavily indebted poor countries (HIPC)',
-    'High income',
-    'IBRD only',
-    'IDA & IBRD total',
-    'IDA blend',
-    'IDA only',
-    'IDA total',
-    'Late-demographic dividend',
-    'Latin America & Caribbean',
-    'Latin America & Caribbean (excluding high income)',
-    'Latin America & the Caribbean (IDA & IBRD countries)',
-    'Least developed countries: UN classification',
-    'Low & middle income',
-    'Low income',
-    'Lower middle income',
-    'Middle East & North Africa',
-    'Middle East & North Africa (IDA & IBRD countries)',
-    'Middle East & North Africa (excluding high income)',
-    'Middle income',
-    'OECD members',
-    'Other small states',
-    'Pacific island small states',
-    'Post-demographic dividend',
-    'Pre-demographic dividend',
-    'Small states',
-    'South Asia (IDA & IBRD)',
-    'Sub-Saharan Africa',
-    'Sub-Saharan Africa (IDA & IBRD countries)',
-    'Sub-Saharan Africa (excluding high income)',
-    'Upper middle income',
-    'World',
-    'South Asia',
-    'North America'
-]
-
-# Function to fetch country-level data for a given indicator ID from the World Bank API
-def get_country_data_for_indicator(
-        indicator_id : str) -> list:
+def get_country_data_for_indicator(indicator_id : str) -> list:
     """
     Fetches country-level data for a specified indicator from the World Bank API.
     
@@ -148,11 +58,7 @@ def get_country_data_for_indicator(
         print(f'\nError {indicator_id}: {response.status_code}')
         return None
 
-# Function to plot time series data using Plotly, saving as an interactive HTML file
-def plot_time_series(
-        df : pd.DataFrame, 
-        title : str = '', 
-        template : str = 'plotly') -> None:
+def plot_time_series(df : pd.DataFrame, title : str = '', template : str = 'plotly') -> None:
     """
     Plots time series data using Plotly and saves the plot as an interactive HTML file.
     
@@ -170,14 +76,11 @@ def plot_time_series(
     assert isinstance(title, str), "The 'title' must be a string"
     assert isinstance(template, str), "The 'template' must be a string"
 
-    # Convert DATE column to datetime format and extract year
-    df['DATE'] = pd.to_datetime(df['DATE'])
+    df['DATE'] = pd.to_datetime(df['DATE']) # data
     df['DATE'] = df['DATE'].dt.year
     
-    # Create a Plotly figure with time series data, customize axes and add title
-    fig = go.Figure()
+    fig = go.Figure() # graph
     fig.add_trace(go.Scatter(x=df['DATE'], y=df['VALUE'], mode='lines+markers', name='Data'))
-
     fig.update_layout(
         title=title,
         xaxis_title='Year',
@@ -185,15 +88,13 @@ def plot_time_series(
         template=template
     )
     
-    # Save the interactive Plotly figure as an HTML file and open it in the default web browser
-    downloads_folder = 'static/world_bank/'
+    downloads_folder = 'static/world_bank/' # saving and printing
     if not os.path.exists(downloads_folder):
         os.makedirs(downloads_folder)
     temp_html_path = os.path.join(downloads_folder, 'time_series.html')
     fig.write_html(temp_html_path)
     webbrowser.open('file://' + os.path.realpath(temp_html_path))
 
-# Function to plot a heatmap using Folium and GeoPandas, saving as an interactive HTML file
 def plot_heatmap(df : pd.DataFrame) -> None:
     """
     Plots a heatmap using Folium and GeoPandas, and saves the map as an interactive HTML file.
@@ -209,32 +110,16 @@ def plot_heatmap(df : pd.DataFrame) -> None:
     """
     assert isinstance(df, pd.DataFrame), "The 'df' must be a Pandas DataFrame"
 
-    # Filter the DataFrame to include only the latest data per country
-    df = df.loc[df.groupby('COUNTRY')['DATE'].idxmax()]
+    df = df.loc[df.groupby('COUNTRY')['DATE'].idxmax()] # data
     df['DATE'] = pd.to_datetime(df['DATE'])
-    # print(df.head())
-    
-    # Load the world shapefile from GeoPandas
     world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
-    # print(world.head())
-    # print(world.shape)
-    # print(world.iloc[0])
-    
-    # Ensure country names are in English
     world = world[['iso_a3', 'geometry', 'name']]
-    
-    # Merge the world shapefile with the DataFrame's data
     world = world.merge(df, how='left', left_on='iso_a3', right_on='ISO_CODE')
     
-    # Create a base Folium map
-    m = folium.Map(location=[20, 0], zoom_start=2)
-    
-    # Create and add the colormap
+    m = folium.Map(location=[20, 0], zoom_start=2) # map
     colormap = linear.YlOrRd_09.scale(df['VALUE'].min(), df['VALUE'].max())
     colormap.caption = 'Value by Country'
-    
-    # Add country polygons to the map with color based on data values
-    for _, row in world.iterrows():
+    for _, row in world.iterrows(): # adding countries polygons to map
         if pd.notna(row['VALUE']):
             formatted_value = '{:,}'.format(round(row['VALUE'], 2))
             geo_json = folium.GeoJson(
@@ -248,11 +133,9 @@ def plot_heatmap(df : pd.DataFrame) -> None:
             )
             geo_json.add_child(folium.Tooltip(f"{row['name']} ({row['DATE'].year}): {formatted_value}"))
             geo_json.add_to(m)
-    
     colormap.add_to(m)
     
-    # Save the interactive Folium map as an HTML file and open it in the default web browser
-    downloads_folder = 'static/world_bank/'
+    downloads_folder = 'static/world_bank/' # saving and printing
     if not os.path.exists(downloads_folder):
         os.makedirs(downloads_folder)
     temp_html_path = os.path.join(downloads_folder, 'heatmap.html')

@@ -2,18 +2,20 @@
 Contain functions for Seasonality Prediction functionality.
 """
 
-# Import necessary libraries
 import matplotlib, os
-matplotlib.use('Agg')  # Use 'Agg' backend to save plots without displaying them
+matplotlib.use('Agg')
 
 import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+save_dir = 'static/seasonality_prediction' # check directory
+
 def forecasting(
         serie : pd.Series, 
-        periodicity : int = 4) -> list:
+        periodicity : int = 4
+    ) -> list:
     """
     Function to predict a time series based on its seasonality.
 
@@ -27,38 +29,55 @@ def forecasting(
     assert isinstance(serie, pd.Series), "The 'serie' must be a Pandas Series"
     assert isinstance(periodicity, int), "The 'periodicity' must be an integer"
 
-    # Check if the length of the series is divisible by the periodicity
     if not len(serie) % periodicity == 0:
         return print("The length of the serie does not match its periodicity.")
     else:
             
         ones = [1] * len(serie)
-        pastPeriods = np.arange(1, len(serie) + 1)
-        nextPeriod = np.arange(pastPeriods[-1] + 1, pastPeriods[-1] + 1 + periodicity)
-        periods = np.arange(1, periodicity + 1, 1).tolist() * int(pastPeriods[-1] / periodicity)
+        past_periods = np.arange(1, len(serie) + 1)
+        nextPeriod = np.arange(past_periods[-1] + 1, past_periods[-1] + 1 + periodicity)
+        periods = np.arange(1, periodicity + 1, 1).tolist() * int(past_periods[-1] / periodicity)
         periods = periods[int(periodicity / 2) : -int(periodicity / 2)]
         
-        serie_cma = serie.rolling(periodicity).mean().dropna().rolling(2).mean().dropna()
+        serie_cma = (
+            serie
+            .rolling(periodicity)
+            .mean()
+            .dropna()
+            .rolling(2)
+            .mean()
+            .dropna()
+        )
         irr_seas_comp = serie[int(periodicity / 2) : -int(periodicity / 2)].values.ravel() / serie_cma.values.ravel()
-        seas_index = pd.concat([pd.Series(irr_seas_comp), pd.Series(periods)], axis = 1, keys = ['IRREGULAR_SEASONAL_COMPONENTS', 'PERIOD']).groupby('PERIOD')['IRREGULAR_SEASONAL_COMPONENTS'].mean()
+        seas_index = (
+            pd.concat(
+                [
+                    pd.Series(irr_seas_comp), 
+                    pd.Series(periods)
+                ],
+                axis = 1, 
+                keys = ['IRREGULAR_SEASONAL_COMPONENTS', 'PERIOD']
+            )
+            .groupby('PERIOD')['IRREGULAR_SEASONAL_COMPONENTS']
+            .mean()
+        )
         adj_seas_index = seas_index / np.mean(seas_index.values)
-        adj_seas_index = adj_seas_index.tolist() * int(pastPeriods[-1] / periodicity)
+        adj_seas_index = adj_seas_index.tolist() * int(past_periods[-1] / periodicity)
         unseas_serie = serie.values.ravel() / adj_seas_index
-        X, y = np.array([ones, pastPeriods]).T, unseas_serie # Data separation
         
-        # Linear regression to fit unseasonal sales
-        b = np.linalg.inv(X.T.dot(X)).dot(X.T).dot(y)
-        future_unseasonal_serie = b[0] + b[1] * nextPeriod
-        forecast = future_unseasonal_serie * adj_seas_index[ : periodicity]
-        forecast = [round(float(elem),2) for elem in forecast]
+        X, y = np.array([ones, past_periods]).T, unseas_serie # partitioning
+        b = np.linalg.inv(X.T.dot(X)).dot(X.T).dot(y) # linear regression to fit unseasonal sales
+        future_unseasonal_serie = b[0] + b[1] * nextPeriod # prediction
+        forecast = future_unseasonal_serie * adj_seas_index[ : periodicity] # adjusted prediction
 
-        return forecast
+        return [round(float(f),2) for f in forecast]
 
 def generate_plots(
         serie : pd.Series, 
         prediction_last_period : list, 
         prediction_next_period : list, 
-        periodicity : int = 4) -> None:
+        periodicity : int = 4
+    ) -> None:
     """
     Function to generate and save plots of the original data, last period prediction, and next period prediction.
 
@@ -76,8 +95,6 @@ def generate_plots(
     assert isinstance(prediction_next_period, list), "The 'prediction_next_period' must be a list"
     assert isinstance(periodicity, int), "The 'periodicity' must be an integer"
 
-    # Create directory if it doesn't exist
-    save_dir = 'static/seasonality_prediction'
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
     

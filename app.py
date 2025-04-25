@@ -1,16 +1,5 @@
 """
-MODULARIZAR!
-
-Tareas:
-  
-  1. Seguir comentarios agregados en cada funcion.
-  2. Comentar funciones no comentadas.
-  3. Todos los comentarios deben estar en ingles y ser simples. 
-
-Proximos pasos:
-  
-  1. agregar un boton para descargarse los datos en keyphrase extraction y seasonality prediction
-  
+agregar un boton para descargarse los datos en keyphrase extraction y seasonality prediction  
 """
 
 # web programming frameworks
@@ -27,10 +16,9 @@ import seaborn as sns
 import plotly.graph_objs as go
 
 # custom modules
-from modules.keyphrase_extraction import process_file
+from modules.keyphrase_extraction import process_file, generate_keyphrases_tables_string
 from modules.seasonality_prediction import forecasting, generate_plots
 from modules.world_bank import (
-    indicators, 
     get_country_data_for_indicator, 
     plot_time_series, 
     plot_heatmap
@@ -59,7 +47,10 @@ dash_app = Dash(__name__, server=app, url_base_pathname='/dashboard/') # Initial
 # =============================================================================
 # CLEANING DIRECTORY
 # =============================================================================
-list(map(remove_old_files, ['static/seasonality_prediction', 'static/world_bank'])) # removing temporary files
+config = reading_json(os.path.join('static', 'json', 'config.json')) # reading config file
+folders_to_clean = ['static/seasonality_prediction', 'static/world_bank', 'static/keyphrase_extraction']
+
+list(map(remove_old_files, folders_to_clean)) # removing temporary files
 generate_readme(os.path.dirname(os.path.realpath(__file__))) # creating readme file
 
 # =============================================================================
@@ -109,6 +100,9 @@ def mi_cv():
 # =============================================================================
 # KEYPHRASE EXTRACTION
 # =============================================================================
+keyphrase_input_file_path = os.path.join('static', 'keyphrase_extraction', 'raw_keyphrases_results.json')
+keyphrase_output_file_path = os.path.join('static', 'keyphrase_extraction', 'processed_keyphrases_results.json')
+
 @app.route('/keyphrase_extraction')
 def keyphrase_extraction():
     """Route for the keyphrase extraction page"""
@@ -117,16 +111,30 @@ def keyphrase_extraction():
 @app.route('/keyphrase_extraction_process', methods=['POST'])
 def keyphrase_extraction_process():
     """Processes the uploaded file for keyphrase extraction"""
-    file = request.files.get('file')
+    file = request.files.get('file') # inputs
     num_tables = int(request.form.get('num_tables', 1))
     num_rows = int(request.form.get('num_rows', 1))
 
-    results = process_file(
+    results = process_file( # process
       file.read().decode('utf-8'), 
       num_tables=num_tables, 
       num_rows=num_rows
     )
+    results_formatted = {k: v.to_dict(orient='records') for k, v in results.items()} # printing
+    writing_json(results_formatted, keyphrase_input_file_path)
+    
     return render_template('keyphrase_extraction.html', results=results)
+
+@app.route('/download_keyphrases')
+def download_keyphrases(output_filename: str="keyphrases_results.txt"):
+    """Downloads a TXT file with the results"""    
+    data = reading_json(keyphrase_input_file_path) # reading processed data
+    keyphrases_string = generate_keyphrases_tables_string(data) # formatting data
+    
+    output_path = os.path.join(os.path.expanduser('~'), 'Downloads', output_filename) # printing data requested
+    with open(keyphrase_output_file_path, 'w') as f: f.write(keyphrases_string)
+
+    return send_file(output_path, as_attachment=True, download_name=output_filename)
 
 # =============================================================================
 # SEASONALITY PREDICTION
@@ -154,11 +162,14 @@ def seasonality_prediction_process():
         forecasted_values_last_period = forecasting(serie[col_name].iloc[:-periodicity], periodicity=periodicity)
         forecasted_values_next_period = forecasting(serie[col_name], periodicity=periodicity)
         generate_plots(serie[col_name], forecasted_values_last_period, forecasted_values_next_period, periodicity)
-
-        existing_plots = []
-        for filename in ['original_data.png', 'all_periods_data.png', 'historic_and_prediction_data.png']:
-            if os.path.exists(os.path.join('static', 'seasonality_prediction', filename)):
-                existing_plots.append(filename)
+        
+        df_to_print = (
+          pd.DataFrame(forecasted_values_next_period)
+          .reset_index()
+          .rename(columns={'index':'PERIOD', 0:'VALUE'})
+        )
+        df_to_print.to_csv(os.path.join('static', 'seasonality_prediction', 'predictions.csv'), index=False)
+        existing_plots = config["plot_names"]
 
         return render_template(
             template,
@@ -180,9 +191,28 @@ def seasonality_prediction_process():
 
       return render_template(template, error_message=error_message)
       
+import zipfile
+@app.route('/download_predictions', methods=['GET'])
+def download_predictions():
+    zip_filename = 'predictions.zip' # paths
+    folder_path = os.path.join('static', 'seasonality_prediction')
+    zip_path = os.path.join(folder_path, zip_filename)
+
+    with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf: # zipping files
+        for root, dirs, files in os.walk(folder_path):
+            for file in files:
+                if file != zip_filename:
+                    file_path = os.path.join(root, file)
+                    zipf.write(file_path, os.path.relpath(file_path, folder_path))
+
+    return send_file(zip_path, as_attachment=True, download_name=zip_filename)
+
 # =============================================================================
 # WORLD BANK
 # =============================================================================
+indicators = config["indicators"]
+indicator_names = {v: k for k, v in indicators.items()}
+
 @app.route('/world_bank')
 def world_bank():
     """Route for the World Bank page"""
@@ -226,7 +256,7 @@ def fetch_data():
     return wb_data_preprocess(data, type_selected, option_selected).drop('ISO_CODE', axis=1).to_dict(orient='records')
 
 @app.route('/download_csv')
-def download_csv():
+def download_csv(output_filename: str='data.csv'):
     """Generates and downloads a CSV file with the filtered data"""
     indicator_selected = request.args.get('indicator') # reading user inputs
     type_selected = request.args.get('type')
@@ -236,9 +266,9 @@ def download_csv():
     data = reading_json(temp_file_path)
     df = wb_data_preprocess(data, type_selected, option_selected).drop('ISO_CODE', axis=1)
     
-    csv_path = os.path.join(os.path.expanduser('~'), 'Downloads', 'data.csv') # printing data requested
+    csv_path = os.path.join(os.path.expanduser('~'), 'Downloads', output_filename) # printing data requested
     df.to_csv(csv_path, index=False)
-    return send_file(csv_path, mimetype='text/csv', as_attachment=True, download_name='data.csv')
+    return send_file(csv_path, mimetype='text/csv', as_attachment=True, download_name=output_filename)
 
 @app.route('/interactive_graph', methods=['POST'])
 def interactive_graph():
@@ -251,15 +281,15 @@ def interactive_graph():
     data = reading_json(temp_file_path)
     df = wb_data_preprocess(data, type_selected, option_selected)
 
-    if type_selected == 'country': plot_time_series(df, title=option_selected) # printing graph requested
+    if type_selected == 'country': plot_time_series(df, title=f'{option_selected} - {indicator_names.get(indicator_selected)}') # printing graph requested
     elif type_selected == 'year': plot_heatmap(df)
     return "Interactive graph generated."
 
 # =============================================================================
 # WHATSAPP
 # =============================================================================
-days_of_the_week = {int(k): v for k, v in reading_json(os.path.join('static', 'json', 'config.json'))["days_of_the_week"].items()}
-months = {int(k): v for k, v in reading_json(os.path.join('static', 'json', 'config.json'))["months"].items()}
+days_of_the_week = {int(k): v for k, v in config["days_of_the_week"].items()}
+months = {int(k): v for k, v in config["months"].items()}
 
 dash_app.layout = html.Div([
     html.H1("Dashboard will be displayed after data upload.".capitalize()),
@@ -283,7 +313,7 @@ dash_app.layout = html.Div([
 @app.route('/whatsapp')
 def whatsapp():
     """Route for the WhatsApp page"""
-    return render_template('whatsapp.html', indicators=indicators)
+    return render_template('whatsapp.html')
   
 @app.route('/whatsapp_dashboard', methods=['POST'])
 def whatsapp_dashboard():

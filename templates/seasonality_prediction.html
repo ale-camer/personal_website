@@ -30,7 +30,12 @@
                 <label for="periodicity">Periodicity:</label>
                 <input type="number" name="periodicity" id="periodicity" min="2" max="100" value="2" required>
             </div>
-            <button type="submit" class="btn btn-primary">Calculate Prediction</button>
+            
+   			<div class="button-row">
+   				<button type="submit" class="btn btn-primary">Calculate Prediction</button>
+   				<!-- <a href="{{ url_for('download_predictions') }}" class="btn btn-primary">Download Predictions</a> -->
+				<button type="button" id="downloadBtn" class="btn btn-primary">Download Predictions</button>
+   			</div>
         </form>
     </div>
 </div>
@@ -85,6 +90,33 @@
 {% endif %}
 
 <style>
+	.button-row {
+		display: flex;
+		justify-content: center;
+		gap: 20px; /* Espacio entre los botones */
+		margin-top: 20px;
+	}
+
+    .btn.btn-primary,
+    a.btn.btn-primary {
+        background-color: #3498db;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 100%;
+        text-align: center;
+    }
+    
+    .btn.btn-primary:hover,
+    a.btn.btn-primary:hover {
+        background-color: #2980b9;
+    }
+	
     .file-upload-form {
         display: flex;
         flex-direction: column;
@@ -164,7 +196,6 @@
 
 <script>
     const form = document.getElementById('predictionForm');
-
     form.addEventListener('submit', function (event) {
         event.preventDefault();
 
@@ -174,10 +205,6 @@
         fileError.textContent = ''; // Limpia los mensajes de error
         let isValid = true;
 
-        <!-- if (!fileInput.files.length) { -->
-            <!-- fileError.textContent = 'Please select a file.'; -->
-            <!-- isValid = false; -->
-        <!-- } -->
 		if (!fileInput.files.length) {
 			fileError.textContent = 'Please select a file.';
 			isValid = false;
@@ -191,6 +218,21 @@
         }
     });
 
+    const downloadBtn = document.getElementById('downloadBtn');
+    downloadBtn.addEventListener('click', function () {
+        const fileInput = document.getElementById('file');
+        const fileError = document.getElementById('fileError');
+		const resultSection = document.getElementById('result-section');
+
+        fileError.textContent = '';
+
+        if (!fileInput.files.length && !resultSection) {
+            fileError.textContent = 'Please select a file.';
+        } else {
+            window.location.href = "{{ url_for('download_predictions') }}";
+        }
+    });
+	
     document.addEventListener("DOMContentLoaded", function () {
         const resultSection = document.getElementById("result-section");
         if (resultSection) {
