@@ -1,53 +1,194 @@
 /* Project Stylesheet File */
 
+/* MAIN */
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+    width: 100%;
+
+    body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        overflow-x: hidden;
+        font-family: 'Open Sans', sans-serif;
+        background-size: cover;
+        display: flex;
+        flex-direction: row;
+        background: url("/static/images/background.jpg") no-repeat center center fixed;
+        background-size: cover;
+        min-height: 100vh;
+    }
+}
+
+/* CONTENT */
 .project-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin: 40px auto;
-    width: 60%;
-    background: rgba(0, 0, 0, 0.7); 
+    margin: auto;
+    width: 95%;
+    background: rgba(0, 0, 0, 0.7);
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     color: white;
     min-height: 15vh;
+
+    h1 {
+        font-size: clamp(50px, 2.5vw, 2.5vw);
+    }
+
+    .project-title {
+        margin-bottom: 20px;
+    }
+
+    .project-form {
+        width: 100%;
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input[type="file"],
+        input[type="number"] {
+            display: block;
+            width: 100%;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        input[type="submit"] {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+
+            &:hover {
+                background-color: #2980b9;
+            }
+        }
+    }
 }
 
-.project-title {
-    margin-bottom: 20px;
+/* NAVBAR */
+.navbar {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 25%;
+    background-color: rgba(135, 206, 235, 0.7);
+    padding: 30px 0;
+    height: 100vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+
+    a {
+        font-size: 1.25vw;
+        text-decoration: none;
+        font-size: clamp(35px, 2vw, 2vw);
+
+        &.dropdown-toggle {
+            cursor: pointer;
+            position: relative;
+        }
+
+        &:hover {
+            background-color: #135c7d;
+            color: #fff;
+        }
+    }
+
+    .navbar-title {
+        color: #135c7d;
+        text-align: center;
+        margin-top: 0;
+    }
+
+    .navbar-list {
+        background-color: transparent;
+        padding: 0;
+        margin: 0;
+        flex: 1;
+
+        a {
+            color: #fff;
+            text-decoration: none;
+            text-align: left;
+            padding: 10px;
+            display: block;
+            margin-top: 5%;
+        }
+
+        .dropdown {
+            .dropdown-menu {
+                display: none;
+                padding: 10px;
+
+                li a {
+                    padding-left: 10%;
+                    font-size: clamp(25px, 1.5vw, 1.5vw);
+                }
+            }
+
+            &.open .dropdown-menu {
+                display: block;
+            }
+        }
+    }
 }
 
-.project-form {
-    width: 100%;
+/* FOOTER */
+.links {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 15%;
+    display: flex;
+    justify-content: space-evenly;
+    margin: 0;
+    padding: 0 1%;
+    z-index: 999;
+    
+    .image-footer {
+        img {
+            border-radius: 50%;
+            margin: 0;
+            height: clamp(50px, 5vw, 100px);
+            width: clamp(50px, 5vw, 100px);
+        }
+    }
 }
 
-.project-form label {
-    display: block;
-    margin-bottom: 10px;
+/* RESPONSIVE */
+/* width intervals: 320, 768, 1024, 1600 */
+/* height intervals: 600, 800, 1000, 1200 - a partir de 1340 se rompe */
+@media (max-width: 1600px) {
+    .links {
+        flex-direction: column;
+        left: 7.5%;
+    }
+
+    .image-footer img {
+        padding: 1% 0;
+        margin-top: 10%;
+    }
 }
 
-.project-form input[type="file"],
-.project-form input[type="number"] {
-    display: block;
-    width: 100%;
-    margin-bottom: 20px;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-}
-
-.project-form input[type="submit"] {
-    background-color: #3498db;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.project-form input[type="submit"]:hover {
-    background-color: #2980b9;
+@media (min-width: 1600px) {
+    .main-project-container {
+        margin-right: 15%;
+    }
 }

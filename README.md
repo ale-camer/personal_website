@@ -1,6 +1,6 @@
 ```bash
 ├── README.md
-├── app.py  # agregar un boton para descargarse los datos en keyphrase extraction y seasonality prediction 
+├── app.py  # falta hacer responsive todas las secciones de la pagina. 
 ├── modules/  # Contain Python modules.
   ├── generate_readme.py  # Generate README.md file. 
   ├── keyphrase_extraction.py  # Contain functions for Keyphrase Extraction functionality. 
@@ -25,7 +25,7 @@
   ├── Stock_Algorithmic_Trading_Strategy_Backtesting.html  # Algorithmic Trading Functionality Template
   ├── Vector_Norms_Applications_in_Data_Science.html  # Vector Nomrs Functionality Template
   ├── base.html  # Base Project Template
-  ├── index.html  # Intro Page Template
+  ├── index.html  # Navigation Bar Section
   ├── keyphrase_extraction.html  # Keyphrase Extraction Functionality Template
   ├── macro_n_employment_english.html  # Macroeconomic (English) Functionality Template
   ├── macro_n_employment_spanish.html  # Macroeconomic (Spanish) Functionality Template

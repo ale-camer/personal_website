@@ -2,61 +2,109 @@
 
 {% block content %}
 
+
+<!-- Navigation Bar Section -->
+<nav class="navbar">
+    <!-- Home Link -->
+    <a href="{{ url_for('index') }}" class="navbar-title-link" title="Get back to Home Page">
+        <h2 class="navbar-title">Home</h2>
+    </a>
+
+    <!-- Dropdown Menu - Mi CV -->
+    <ul class="navbar-list">
+        <li class="dropdown">
+            <a id="cv-toggle" class="dropdown-toggle" tabindex="0" role="button" aria-expanded="false"
+                aria-controls="cv-menu" href="{{ url_for('mi_cv') }}" title="Explore Mi CV">Mi CV</a>
+            <ul class="dropdown-menu" id="cv-menu">
+                <li><a href="{{ url_for('mi_cv') }}#work-experience">Work Experience</a></li>
+                <li><a href="{{ url_for('mi_cv') }}#technologies">Technologies</a></li>
+                <li><a href="{{ url_for('mi_cv') }}#education">Education</a></li>
+                <li><a href="{{ url_for('mi_cv') }}#languages">Languages</a></li>
+                <li><a href="{{ url_for('mi_cv') }}#interests">Interests</a></li>
+            </ul>
+        </li>
+
+        <!-- Dropdown Menu - Interactive Projects -->
+        <li class="dropdown">
+            <a id="projects-toggle" class="dropdown-toggle" tabindex="0" role="button" aria-expanded="false"
+                aria-controls="projects-menu" title="Explore Mi Projects">Have fun</a>
+            <ul class="dropdown-menu" id="projects-menu">
+                <li><a href="{{ url_for('keyphrase_extraction') }}">Keyphrase Extraction</a></li>
+                <li><a href="{{ url_for('seasonality_prediction') }}">Seasonality Prediction</a></li>
+                <li><a href="{{ url_for('whatsapp') }}">WhatsApp</a></li>
+                <li><a href="{{ url_for('world_bank') }}">World Bank</a></li>
+            </ul>
+        </li>
+
+        <!-- Dropdown Menu - Interactive Projects -->
+        <li class="dropdown">
+            <a id="projects-toggle" class="dropdown-toggle" tabindex="0" role="button" aria-expanded="false"
+                aria-controls="projects-menu" title="Explore Mi Projects">Read</a>
+            <ul class="dropdown-menu" id="projects-menu">
+                <li><a href="{{ url_for('algorithmic_trading') }}" target="_blank">Algorithmic Trading</a></li>
+                <li><a href="{{ url_for('linear_algebra') }}" target="_blank">Linear Algebra</a></li>
+                <li><a href="{{ url_for('arg_macro_spanish') }}" target="_blank">Macro & Employment (Spanish)</a>
+                </li>
+                <li><a href="{{ url_for('arg_macro_english') }}" target="_blank">Macro & Employment (English)</a>
+                </li>
+                <li><a href="{{ url_for('ds_trends') }}" target="_blank">Trends in Data Science</a></li>
+                <li><a href="{{ url_for('vector_norms') }}" target="_blank">Vector Norms</a></li>
+            </ul>
+        </li>
+    </ul>
+</nav>
+
 <!-- Intro Page Template -->
-
-<div class="project-container">
-    <div id="profile-container">
-        <!-- <h1>Alejandro Camerlengo</h1> -->
-        <!-- <h2>Data Scientist</h2> -->
-        <!-- <br> -->
-        <!-- <p>I hope you find my webpage engaging and informative. Here, you can explore my resume in depth, toy projects, -->
-            <!-- and find links of interest at the bottom of the navigation bar.</p> -->
-        <!-- <p>My aim with this website is to dive into web development and showcase some personal projects that I worked -->
-            <!-- on.</p> -->
-		<p>Welcome! I am data scientist and I've created this website so you can take a look to my resume and have fun with my toy projects.</p>
-    </div>
-</div>
-
-<div class="project-container">
-    <h1 id="title">PROJECTS</h1>
-    <div class="projects-type-container" style="display: flex; flex-direction: row;">
-        <div class="project-type-container">
-            <!-- <p class="project-type">INTERACTIVE</p> -->
-            <p class="project-type">Wanna have fun?</p>
-            <div class="back-content">
-                <p id="first_interactive_p" data-id="keyphrase-extraction">
-                    Keyphrase Extraction
-                </p>
-                <p id="second_interactive_p" data-id="seasonality-prediction">
-                    Seasonality Prediction
-                </p>
-                <p id="third_interactive_p" data-id="whatsapp">
-                    WhatsApp
-                </p>
-                <p id="fourth_interactive_p" data-id="world-bank">
-                    World Bank
-                </p>
-            </div>
+<div class="main-project-container">
+    <div class="project-container">
+        <div id="profile-container">
+            <p>Welcome! I am data scientist and I've created this website so you can take a look to my resume and have
+                fun
+                with my toy projects.</p>
         </div>
-        <div class="project-type-container">
-            <!-- <p class="project-type">DESCRIPTIVE</p> -->
-            <p class="project-type">Wanna read?</p>
-            <div class="back-content">
-                <p id="first_descriptive_p" data-id="algorithmic-trading">
-                    Algorithmic Trading
-                </p>
-                <p id="second_descriptive_p" data-id="trends-data-science">
-                    Trend in Data Science
-                </p>
-                <p id="third_descriptive_p" data-id="macro-employment">
-                    Macro & Employment
-                </p>
-                <p id="fourth_descriptive_p" data-id="linear-algebra">
-                    Linear Algebra
-                </p>
-                <p id="fifth_descriptive_p" data-id="vector-norms">
-                    Vector Norms
-                </p>
+    </div>
+
+    <div class="project-container">
+        <h1 id="title">PROJECTS</h1>
+        <div class="projects-type-container">
+            <div class="project-type-container">
+                <!-- <p class="project-type">INTERACTIVE</p> -->
+                <p class="project-type">Wanna <br>have fun?</p>
+                <div class="back-content">
+                    <p id="first_interactive_p" data-id="keyphrase-extraction">
+                        Keyphrase Extraction
+                    </p>
+                    <p id="second_interactive_p" data-id="seasonality-prediction">
+                        Seasonality Prediction
+                    </p>
+                    <p id="third_interactive_p" data-id="whatsapp">
+                        WhatsApp
+                    </p>
+                    <p id="fourth_interactive_p" data-id="world-bank">
+                        World Bank
+                    </p>
+                </div>
+            </div>
+            <div class="project-type-container">
+                <!-- <p class="project-type">DESCRIPTIVE</p> -->
+                <p class="project-type">Wanna <br>read?</p>
+                <div class="back-content">
+                    <p id="first_descriptive_p" data-id="algorithmic-trading">
+                        Algorithmic Trading
+                    </p>
+                    <p id="second_descriptive_p" data-id="trends-data-science">
+                        Trend in Data Science
+                    </p>
+                    <p id="third_descriptive_p" data-id="macro-employment">
+                        Macro & Employment
+                    </p>
+                    <p id="fourth_descriptive_p" data-id="linear-algebra">
+                        Linear Algebra
+                    </p>
+                    <p id="fifth_descriptive_p" data-id="vector-norms">
+                        Vector Norms
+                    </p>
+                </div>
             </div>
         </div>
     </div>
@@ -73,13 +121,27 @@
     <p id="dynamic-text-output">Placeholder text</p>
 </div>
 
-<div id="resize-warning" style="display: none;">
-    <div class="warning-card">
-        <p>Please, zoom out and make the data readable.</p>
+
+
+<!-- Social Media Icons -->
+<footer>
+    <div class="links">
+        <a class="image-footer" id="gh-image" href="https://github.com/ale-camer/personal_website" target="_blank"
+            title="Project Code"><img src="{{ url_for('static', filename='images/gh.png') }}" alt="GitHub"></a>
+        <a class="image-footer" id="li-image" href="https://www.linkedin.com/in/alejandro-camerlengo-1ab3981b/"
+            target="_blank" , title="Personal Profile"><img src="{{ url_for('static', filename='images/li.png') }}"
+                alt="LinkedIn"></a>
+        <a class="image-footer" id="gm-image" href="mailto:alejandrocamerlengo@gmail.com" target="_blank"
+            title="Send me an email"><img src="{{ url_for('static', filename='images/email.png') }}" alt="Email"></a>
     </div>
-</div>
+</footer>
 
 <style>
+    .main-project-container {
+        display: block;
+        width: 100%;
+    }
+
     #profile-container {
         flex: 1;
         width: 100%;
@@ -88,35 +150,41 @@
         align-items: center;
         flex-direction: column;
         text-align: center;
-    }
 
-    #profile-container p {
-        font-size: 1.5vw;
+        p {
+            font-size: clamp(35px, 2vw, 2vw);
+        }
     }
 
     .project-container {
         perspective: 1000px;
         margin-top: 1%;
         margin-bottom: 1%;
-    }
 
-    .project-container:nth-of-type(2) {
-        height: 35vh;
-    }
+        &:nth-of-type(2) {
+            height: auto;
+            padding: 1%;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
 
-    .project-container h1,
-    .project-container h2 {
-        margin: 1% 0% 0% 0%;
-    }
+        #title {
+            margin: 0% 0% 1% 0%;
+        }
 
-    .project-container p {
-        font-size: 100%;
-        margin: 1% 0% 0% 0%;
-    }
+        .project-type {
+            font-size: clamp(75px, 2.5vw, 2.5vw);
+        }
 
-    .project-container #title {
-        margin: 0% 0% 1% 0%;
-        font-size: 2.5vw;
+        h1,
+        h2 {
+            margin: 1% 0% 0% 0%;
+        }
+
+        p {
+            font-size: 100%;
+            margin: 1% 0% 0% 0%;
+        }
     }
 
     .projects-type-container {
@@ -125,13 +193,14 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        flex-direction: row;
     }
 
     .project-type-container {
         background-color: white;
         height: 100%;
-		width: 100%;
-        margin: 0% .5%;
+        width: 90%;
+        margin: 0% 0.5%;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -139,15 +208,26 @@
         transform-style: preserve-3d;
         transition: background-color 0.6s;
         border-radius: 25%;
-    }
+        padding: 5%;
 
-    .project-type-container .project-type {
-        transition: color 0.25s;
-    }
+        .project-type {
+            transition: color 0.25s;
+        }
 
-    .project-type-container:hover .project-type {
-        color: transparent;
-        background-color: transparent;
+        &:hover {
+            animation: rotateOnce 0.001s forwards;
+            background-color: transparent;
+
+            .project-type {
+                color: transparent;
+                background-color: transparent;
+            }
+
+            .back-content {
+                opacity: 1;
+                background-color: transparent;
+            }
+        }
     }
 
     .project-type {
@@ -157,8 +237,7 @@
         letter-spacing: 5px;
         text-shadow: 1px 1px 1px black;
         font-weight: bold;
-		text-align: center;
-        font-size: 4vw !important;
+        text-align: center;
     }
 
     .back-content {
@@ -175,48 +254,68 @@
         align-items: left;
         opacity: 0;
         transition: opacity 0.001s;
+
+        p {
+            font-family: "Times New Roman";
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border-radius: 50%;
+            background-color: white;
+            color: black;
+            font-size: clamp(25px, 2vw, 2vw);
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+
+        #first_interactive_p:hover,
+        #second_interactive_p:hover,
+        #third_interactive_p:hover,
+        #fourth_interactive_p:hover,
+        #first_descriptive_p:hover,
+        #second_descriptive_p:hover,
+        #third_descriptive_p:hover,
+        #fourth_descriptive_p:hover,
+        #fifth_descriptive_p:hover {
+            background-color: aquamarine;
+            font-size: clamp(30px, 2.5vw, 2.5vw);
+        }
     }
 
-    .back-content p {
-        font-family: "Times New Roman";
-        width: 100%;
-        height: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        border-radius: 50%;
-        background-color: white;
-        color: black;
-        text-align: center;
-        font-size: 1.5vw !important;
+    #first-header {
+        margin: 0%;
     }
 
-    .back-content:hover p {
-        cursor: pointer;
+    #dynamic-project-container {
+        h3 {
+            margin-bottom: 0%;
+            text-align: center;
+        }
+
+        p {
+            font-size: 100%;
+        }
     }
 
-    .back-content #first_interactive_p:hover,
-    .back-content #second_interactive_p:hover,
-    .back-content #third_interactive_p:hover,
-    .back-content #fourth_interactive_p:hover,
-    .back-content #first_descriptive_p:hover,
-    .back-content #second_descriptive_p:hover,
-    .back-content #third_descriptive_p:hover,
-    .back-content #fourth_descriptive_p:hover,
-    .back-content #fifth_descriptive_p:hover {
-        background-color: aquamarine;
-        font-size: 2vw !important;
-    }
+    @media (max-width: 1600px) {
+        .projects-type-container {
+            flex-direction: column;
+        }
 
-    .project-type-container:hover .back-content {
-        opacity: 1;
-        background-color: transparent;
-    }
+        .project-type-container {
+            margin-bottom: 1%;
+        }
 
-    .project-type-container:hover {
-        animation: rotateOnce 0.001s forwards;
-        background-color: transparent;
+        .project-container:nth-of-type(2) {
+            padding: 1%;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
     }
 
     @keyframes rotateOnce {
@@ -227,45 +326,6 @@
         to {
             transform: rotateY(180deg);
         }
-    }
-
-    #first-header {
-        margin: 0%;
-    }
-
-    #dynamic-project-container h3 {
-        margin-bottom: 0%;
-        text-align: center;
-    }
-
-    #dynamic-project-container p {
-        font-size: 100%;
-    }
-
-    #resize-warning {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.6);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-    }
-
-    .warning-card {
-        background-color: white;
-        padding: 20px;
-        border-radius: 10px;
-        text-align: center;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    .warning-card p {
-        font-size: 1.2rem;
-        color: black;
     }
 </style>
 

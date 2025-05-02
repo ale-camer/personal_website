@@ -21,7 +21,7 @@ def concatenate_dfs(df: pd.DataFrame) -> pd.DataFrame:
     assert required_cols.issubset(df.columns), f"Missing required columns: {required_cols - set(df.columns)}"
 
     return (
-    pd.concat(
+        pd.concat(
           [
             df.groupby(['ISSUER', 'HOUR', 'dow', 'dom', 'month'])['MESSAGE'].count().reset_index(),
             df.groupby(['HOUR', 'dow', 'dom', 'month'])['MESSAGE'].count().reset_index().assign(ISSUER='GENERAL')
