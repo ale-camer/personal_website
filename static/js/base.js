@@ -47,7 +47,5 @@ document.addEventListener('DOMContentLoaded', function() {
 window.addEventListener('resize', function() {
     const anchoVentana = window.innerWidth;
     const altoVentana = window.innerHeight;
-
-    // Imprimir las dimensiones en la consola
     console.log(`Ancho: ${anchoVentana}px, Alto: ${altoVentana}px`);
 });

@@ -152,7 +152,7 @@
         text-align: center;
 
         p {
-            font-size: clamp(35px, 2vw, 2vw);
+            font-size: 20px; /* clamp(20px. PREFERIBLE, MAXIMA) */
         }
     }
 
@@ -173,7 +173,7 @@
         }
 
         .project-type {
-            font-size: clamp(75px, 2.5vw, 2.5vw);
+            font-size: 25px; /* clamp(20px. PREFERIBLE, MAXIMA) */
         }
 
         h1,
@@ -281,31 +281,22 @@
             font-size: clamp(15px, 1vw, 1vw);
             opacity: 0.5;
         }
-
-        /* #first_interactive_p:hover,
-        #second_interactive_p:hover,
-        #third_interactive_p:hover,
-        #fourth_interactive_p:hover,
-        #first_descriptive_p:hover,
-        #second_descriptive_p:hover,
-        #third_descriptive_p:hover,
-        #fourth_descriptive_p:hover,
-        #fifth_descriptive_p:hover {
-            background-color: aquamarine;
-            font-size: clamp(30px, 2.5vw, 2.5vw);
-        } */
     }
 
     #first-header {
         margin: 0%;
     }
 
-    #dynamic-text-explanation,
+    #dynamic-project-container {
+        display: none;
+    }
+
+    /* #dynamic-text-explanation,
     #dynamic-text-utility,
     #dynamic-text-howto,
     #dynamic-text-output {
-        font-size: clamp(20px, 1vw, 1vw);
-    }
+        font-size: 20px;
+    } */
 
     @media (max-width: 1600px) {
         .projects-type-container {
@@ -430,22 +421,6 @@
             });
         });
     });
-
-
-    // function checkWindowSize() {
-    //     const minWidth = 600;
-    //     const minHeight = 400;
-
-    //     const warningElement = document.getElementById("resize-warning");
-    //     const width = window.innerWidth;
-    //     const height = window.innerHeight;
-
-    //     if (width < minWidth || height < minHeight) {
-    //         warningElement.style.display = "flex";
-    //     } else {
-    //         warningElement.style.display = "none";
-    //     }
-    // }
     window.addEventListener('resize', checkWindowSize);
     window.addEventListener('load', checkWindowSize);
 </script>
