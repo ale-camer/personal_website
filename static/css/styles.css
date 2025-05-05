@@ -44,6 +44,12 @@ html {
         font-size: clamp(50px, 2.5vw, 2.5vw);
     }
 
+    h3 {
+        font-size: clamp(40px, 2vw, 2vw);
+        margin-bottom: 0%;
+        text-align: center;
+    }
+
     .project-title {
         margin-bottom: 20px;
     }
@@ -84,7 +90,7 @@ html {
 
 /* NAVBAR */
 .navbar {
-    position: relative;
+    position: fixed;
     top: 0;
     left: 0;
     width: 25%;
@@ -154,13 +160,12 @@ html {
 .links {
     position: fixed;
     bottom: 0;
-    left: 0;
+    right: 0;
     width: 15%;
     display: flex;
     justify-content: space-evenly;
     margin: 0;
     padding: 0 1%;
-    z-index: 999;
     
     .image-footer {
         img {
@@ -173,9 +178,8 @@ html {
 }
 
 /* RESPONSIVE */
-/* width intervals: 320, 768, 1024, 1600 */
-/* height intervals: 600, 800, 1000, 1200 - a partir de 1340 se rompe */
-@media (max-width: 1600px) {
+/* width intervals: 480, 481 - 767, 768 - 1024, 1025 - 1280, 1281 */
+/* @media (max-width: 1600px) {
     .links {
         flex-direction: column;
         left: 7.5%;
@@ -185,7 +189,7 @@ html {
         padding: 1% 0;
         margin-top: 10%;
     }
-}
+} */
 
 @media (min-width: 1600px) {
     .main-project-container {

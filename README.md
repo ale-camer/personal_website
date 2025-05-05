@@ -25,7 +25,7 @@
   ├── Stock_Algorithmic_Trading_Strategy_Backtesting.html  # Algorithmic Trading Functionality Template
   ├── Vector_Norms_Applications_in_Data_Science.html  # Vector Nomrs Functionality Template
   ├── base.html  # Base Project Template
-  ├── index.html  # Navigation Bar Section
+  ├── index.html  # NAVIGATION BAR
   ├── keyphrase_extraction.html  # Keyphrase Extraction Functionality Template
   ├── macro_n_employment_english.html  # Macroeconomic (English) Functionality Template
   ├── macro_n_employment_spanish.html  # Macroeconomic (Spanish) Functionality Template
