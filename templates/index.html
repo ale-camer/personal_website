@@ -2,6 +2,7 @@
 
 {% block content %}
 
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
 
 <!-- NAVIGATION BAR -->
 <nav class="navbar">
@@ -13,7 +14,7 @@
     <!-- Dropdown Menu - Mi CV -->
     <ul class="navbar-list">
         <li class="dropdown">
-            <a id="cv-toggle" class="dropdown-toggle" tabindex="0" role="button" aria-expanded="false"
+            <a class="dropdown-toggle" tabindex="0" role="button" aria-expanded="false"
                 aria-controls="cv-menu" href="{{ url_for('mi_cv') }}" title="Explore Mi CV">Mi CV</a>
             <ul class="dropdown-menu" id="cv-menu">
                 <li><a href="{{ url_for('mi_cv') }}#work-experience">Work Experience</a></li>
@@ -26,9 +27,9 @@
 
         <!-- Dropdown Menu - Interactive Projects -->
         <li class="dropdown">
-            <a id="projects-toggle" class="dropdown-toggle" tabindex="0" role="button" aria-expanded="false"
+            <a class="dropdown-toggle" tabindex="0" role="button" aria-expanded="false"
                 aria-controls="projects-menu" title="Explore Mi Projects">Have fun</a>
-            <ul class="dropdown-menu" id="projects-menu">
+            <ul class="dropdown-menu">
                 <li><a href="{{ url_for('keyphrase_extraction') }}">Keyphrase Extraction</a></li>
                 <li><a href="{{ url_for('seasonality_prediction') }}">Seasonality Prediction</a></li>
                 <li><a href="{{ url_for('whatsapp') }}">WhatsApp</a></li>
@@ -38,9 +39,9 @@
 
         <!-- Dropdown Menu - Interactive Projects -->
         <li class="dropdown">
-            <a id="projects-toggle" class="dropdown-toggle" tabindex="0" role="button" aria-expanded="false"
+            <a class="dropdown-toggle" tabindex="0" role="button" aria-expanded="false"
                 aria-controls="projects-menu" title="Explore Mi Projects">Read</a>
-            <ul class="dropdown-menu" id="projects-menu">
+            <ul class="dropdown-menu">
                 <li><a href="{{ url_for('algorithmic_trading') }}" target="_blank">Algorithmic Trading</a></li>
                 <li><a href="{{ url_for('linear_algebra') }}" target="_blank">Linear Algebra</a></li>
                 <li><a href="{{ url_for('arg_macro_spanish') }}" target="_blank">Macro & Employment (Spanish)</a>
@@ -135,196 +136,7 @@
     </div>
 </footer>
 
-<style>
-    .main-project-container {
-        display: block;
-        width: 75%;
-        margin-left: 25%;
-    }
-
-    #profile-container {
-        flex: 1;
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        text-align: center;
-
-        p {
-            font-size: 20px; /* clamp(20px. PREFERIBLE, MAXIMA) */
-        }
-    }
-
-    .project-container {
-        perspective: 1000px;
-        margin-top: 1%;
-        margin-bottom: 1%;
-
-        &:nth-of-type(2) {
-            height: auto;
-            padding: 1%;
-            overflow: hidden;
-            box-sizing: border-box;
-        }
-
-        #title {
-            margin: 0% 0% 1% 0%;
-        }
-
-        .project-type {
-            font-size: 25px; /* clamp(20px. PREFERIBLE, MAXIMA) */
-        }
-
-        h1,
-        h2 {
-            margin: 1% 0% 0% 0%;
-        }
-
-        p {
-            margin: 1% 0% 0% 0%;
-        }
-    }
-
-    .projects-type-container {
-        height: 100%;
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: row;
-    }
-
-    .project-type-container {
-        background-color: white;
-        height: 100%;
-        width: 90%;
-        margin: 0% 0.5%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: relative;
-        transform-style: preserve-3d;
-        transition: background-color 0.6s;
-        border-radius: 25%;
-        padding: 5%;
-
-        .project-type {
-            transition: color 0.25s;
-        }
-
-        &:hover {
-            animation: rotateOnce 0.001s forwards;
-            background-color: transparent;
-
-            .project-type {
-                color: transparent;
-                background-color: transparent;
-            }
-
-            .back-content {
-                opacity: 1;
-                background-color: transparent;
-            }
-        }
-    }
-
-    .project-type {
-        color: black;
-        font-family: "Times New Roman";
-        text-decoration: none;
-        letter-spacing: 5px;
-        text-shadow: 1px 1px 1px black;
-        font-weight: bold;
-        text-align: center;
-    }
-
-    .back-content {
-        position: absolute;
-        backface-visibility: hidden;
-        transform: rotateY(180deg);
-        background-color: black;
-        color: white;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        width: 80%;
-        justify-content: space-evenly;
-        align-items: left;
-        opacity: 0;
-        transition: opacity 0.001s;
-
-        p {
-            font-family: "Times New Roman";
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            border-radius: 50%;
-            background-color: white;
-            color: black;
-            font-size: clamp(25px, 2vw, 2vw);
-
-            &:hover {
-                cursor: pointer;
-            }
-        }
-
-        p.selected {
-            font-size: clamp(35px, 3vw, 3vw);
-            background-color: aquamarine;
-        }
-        
-        p.not-selected {
-            font-size: clamp(15px, 1vw, 1vw);
-            opacity: 0.5;
-        }
-    }
-
-    #first-header {
-        margin: 0%;
-    }
-
-    #dynamic-project-container {
-        display: none;
-    }
-
-    /* #dynamic-text-explanation,
-    #dynamic-text-utility,
-    #dynamic-text-howto,
-    #dynamic-text-output {
-        font-size: 20px;
-    } */
-
-    @media (max-width: 1600px) {
-        .projects-type-container {
-            flex-direction: column;
-        }
-
-        .project-type-container {
-            margin-bottom: 1%;
-        }
-
-        .project-container:nth-of-type(2) {
-            padding: 1%;
-            overflow: hidden;
-            box-sizing: border-box;
-        }
-    }
-
-    @keyframes rotateOnce {
-        from {
-            transform: rotateY(0deg);
-        }
-
-        to {
-            transform: rotateY(180deg);
-        }
-    }
-</style>
-
+<!-- JS -->
 <script>
     const projectDetailsExplanation = {
         "keyphrase-extraction": "Helps identify and extract important terms and phrases from texts summarizing the main content.",

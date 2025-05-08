@@ -10,7 +10,8 @@
   └── world_bank.py  # Contain functions for World Bank functionality. 
 ├── static/  # Contain static files (CSS, JS and images).
   ├── css/  # Contain CSS main script.
-    └── styles.css  # Project Stylesheet File
+    ├── index.css  # Intro Stylesheet File
+    └── main.css  # Main Project Stylesheet File
   ├── images/  # Contain images for the UI.
   ├── js/  # Contain JavaScript scripts.
     ├── base.js  # Project-wise Functionalities
