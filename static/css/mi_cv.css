@@ -1,0 +1,116 @@
+/* My CV Stylesheet File */
+
+/* MAIN CONTAINER */
+.mi-cv {
+    width: 75%;
+    margin-left: 25%;
+
+    h1 {
+        margin: 2.5% 0 0 0;
+        padding: 0 0 0.5% 2%;
+        font-family: 'Roboto', sans-serif;
+        border-bottom: clamp(2px, 0.1vw, 0.1vw) solid white;
+        font-size: clamp(15px, 3vw, 3vw);
+        color: white;
+    }
+}
+
+/* WORK EXPERIENCE */
+.job {
+    width: 99%;
+    margin: 0% 0.5% 0% 0.5%;
+    padding: 0 0 0.01% 0.5%;
+    background: rgba(0, 0, 0, 0.7);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    color: white;
+
+    h3 {
+        color: #3498db;
+        padding-top: 1%;
+        margin-bottom: 2.5%;
+        font-size: clamp(15px, 2.5vw, 2.5vw);
+    }
+
+    h4 {
+        color: #95a5a6;
+        padding: 0;
+        margin: 0;
+        margin-top: 2.5%;
+        font-size: clamp(12.5px, 1.75vw, 1.75vw);
+    }
+
+    li {
+        font-size: clamp(12.5px, 1.5vw, 1.5vw);
+        padding: 0.5% 0 0 0;
+        margin: 0 0 0.5% 1%;
+    }
+}
+
+/* TECHNOLOGIES */
+.skills-grid {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-rows: repeat(10, auto);
+    gap: clamp(0px, 20px, 20px);
+    padding: 1%;
+}
+
+.skill-name {
+    font-size: clamp(12.5px, 2vw, 2vw);
+}
+
+.progress-bar-container {
+    display: flex;
+    height: 3vh;
+    width: 95%;
+    background-color: #ddd;
+    overflow: hidden;
+    gap: clamp(0px, 20px, 20px);
+}
+
+.progress-bar {
+    height: 100%;
+    transition: width 1s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: clamp(10px, 1.5vw, 1.5vw);
+}
+
+.basic {
+    width: 25%;
+    background-color: #e74c3c;
+}
+
+.label {
+    white-space: nowrap;
+    width: 50%;
+    font-size: clamp(10px, 1.5vw, 1.5vw);
+    color: black;
+    z-index: 2;
+}
+
+.intermediate {
+    width: 50%;
+    min-width: max-content;
+    background-color: #f39c12;
+}
+
+.advanced {
+    width: 75%;
+    background-color: #3498db;
+}
+
+.expert {
+    width: 100%;
+    background-color: #2ecc71;
+}
+
+/* EDUCATION & INTERESTS */
+.education-list,
+.interests-list {
+    margin: 1.5% 0 0 1%;
+    padding: 1%
+}

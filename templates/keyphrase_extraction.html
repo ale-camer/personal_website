@@ -4,136 +4,77 @@
 
 <!-- Keyphrase Extraction Functionality Template -->
 
-<div class="project-container">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/keyphrases.css') }}">
 
-    <!-- Title and Introduction Section -->
-    <h1 class="project-title">Keyphrase Extraction</h1>
-    <div class="instructions">
-        <h2>Instructions</h2>
-        <p style="text-align: left; margin-bottom: 50px;">
-            Upload a text file (.txt) containing the text you want
-            to process. If your text is in another format, such as Word (.docx), you can copy and paste it into a text
-            file before uploading.
-        </p>
-    </div>
-
-    <!-- Upload Form Section -->
-    <div class="upload-form">
-        <form class="project-form" action="/keyphrase_extraction_process" method="post" enctype="multipart/form-data"
-            id="inputForm">
-            <label for="file">Upload your text file (only .txt files allowed):</label><br>
-            <input type="file" id="file" name="file" accept=".txt">
-            <span id="fileError" style="color: red;"></span>
-
-            <label for="num_tables">Number of N-grams:</label>
-            <input type="number" id="num_tables" name="num_tables" min="1" max="10" value="5" required>
-
-            <label for="num_rows">Results per N-gram:</label>
-            <input type="number" id="num_rows" name="num_rows" min="1" max="10" value="5" required><br><br>
-
-			<div class="button-row">
-				<button type="submit" class="project-button">Extract Keyphrases</button>
-				<button type="button" id="downloadBtn" class="project-button">Download Keyphrases</button>
-			</div>
-        </form>
-    </div>
-</div>
-
-{% if results %}
-<div class="project-container" id="result-section">
-    <!-- Results Section -->
-    <div class="keyphrase-results-container">
-        {% for ngram_value, data in results.items() %}
-        <div class="ngram-container">
-            <h2>{{ ngram_value }}</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Keywords</th>
-                        <th># Appearances</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for row in data.values %}
-                    <tr>
-                        <td>{{ row[0] }}</td>
-                        <td style="text-align: center;">{{ row[1] }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+<div class="main-project-container">
+    <div class="project-container">
+        <h1>Keyphrase Extraction</h1>
+        <div>
+            <p id="intro-paragraph">
+                Upload the text you want the keyphrases from.
+            </p>
         </div>
-        {% if not loop.last %}
-        <hr>
-        {% endif %}
-        {% endfor %}
+        <div class="upload-form">
+            <form class="project-form" action="/keyphrase_extraction_process" method="post"
+                enctype="multipart/form-data" id="inputForm">
+
+                <div class="form-group"> 
+                    <label for="file">Upload your text file (only .txt files allowed):</label><br>
+                    <input type="file" id="file" name="file" accept=".txt">
+                    <span id="fileError" style="color: red;"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="num_tables">Number of N-grams:</label>
+                    <input type="number" id="num_tables" name="num_tables" min="1" max="10" value="5" required title="Choose number of words associated">
+                </div>
+
+                <div class="form-group">
+                    <label for="num_rows">Results per N-gram:</label>
+                    <input type="number" id="num_rows" name="num_rows" min="1" max="10" value="5" required title="Choose number of rows per N-gram">
+                </div>
+
+                <div class="button-row">
+                    <button type="submit">Extract <br>Keyphrases</button>
+                    <button type="button" id="downloadBtn">Download <br>Keyphrases</button>
+                </div>
+            </form>
+        </div>
     </div>
-    {% else %}
-    <!-- Placeholder for Results if None -->
-    <div class="keyphrase-results-container" style="display: none;"></div>
+
+    {% if results %}
+    <div class="project-container" id="result-section">
+        <div>
+            {% for ngram_value, data in results.items() %}
+            <div>
+                <h2>{{ ngram_value }}</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Keywords</th>
+                            <th># Appearances</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in data.values %}
+                        <tr>
+                            <td>{{ row[0] }}</td>
+                            <td style="text-align: center;">{{ row[1] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% if not loop.last %}
+            <hr>
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <div></div>
+    </div>
+    {% endif %}
 </div>
-{% endif %}
-
-<style>
-    .keyphrase-results-container {
-        margin-top: 20px;
-    }
-
-    .keyphrase-results-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 20px;
-    }
-
-    .keyphrase-results-table th,
-    .keyphrase-results-table td {
-        border: 1px solid #fff;
-        padding: 8px;
-    }
-
-    .keyphrase-results-table th {
-        background-color: #3498db;
-    }
-
-    .keyphrase-results-table tbody tr:nth-child(even) {
-        background-color: rgba(255, 255, 255, 0.1);
-    }
-
-    .keyphrase-results-table tbody tr:hover {
-        background-color: rgba(255, 255, 255, 0.2);
-    }
-
-    .keyphrase-button {
-        margin-left: 30%;
-        margin-top: 10px;
-    }
-	
-	.button-row {
-		display: flex;
-		justify-content: center;
-		gap: 20px; /* Espacio entre los botones */
-		margin-top: 20px;
-	}
-
-	.project-button,
-	a.project-button {
-		background-color: #3498db;
-		color: white;
-		padding: 10px 20px;
-		border: none;
-		border-radius: 5px;
-		cursor: pointer;
-		transition: background-color 0.3s ease;
-		text-decoration: none;
-		display: inline-block;
-		font-size: 100%;
-	}
-
-	.project-button:hover,
-	a.project-button:hover {
-		background-color: #2980b9;
-	}
-</style>
 
 <!-- JavaScript File for Enhancing UI -->
 <script>

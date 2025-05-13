@@ -14,7 +14,74 @@
 </head>
 
 <body>
+
+    <!-- NAVIGATION BAR -->
+    <nav class="navbar">
+        <!-- Home Link -->
+        <a href="{{ url_for('index') }}" class="navbar-title-link" title="Home Page">
+            <h2 class="navbar-title">Home</h2>
+        </a>
+
+        <!-- Dropdown Menu - Mi CV -->
+        <ul class="navbar-list">
+            <li class="dropdown">
+                <a class="dropdown-toggle" tabindex="0" role="button" aria-expanded="false" aria-controls="cv-menu"
+                    href="{{ url_for('mi_cv') }}" title="Read My CV">My CV</a>
+                <ul class="dropdown-menu" id="cv-menu">
+                    <li><a href="{{ url_for('mi_cv') }}#work-experience">Work Experience</a></li>
+                    <li><a href="{{ url_for('mi_cv') }}#technologies">Technologies</a></li>
+                    <li><a href="{{ url_for('mi_cv') }}#education">Education</a></li>
+                    <li><a href="{{ url_for('mi_cv') }}#languages">Languages</a></li>
+                    <li><a href="{{ url_for('mi_cv') }}#interests">Interests</a></li>
+                </ul>
+            </li>
+
+            <!-- Dropdown Menu - Interactive Projects -->
+            <li class="dropdown">
+                <a class="dropdown-toggle" tabindex="0" role="button" aria-expanded="false"
+                    aria-controls="projects-menu" title="Choose a project">Have fun</a>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ url_for('keyphrase_extraction') }}">Keyphrase Extraction</a></li>
+                    <li><a href="{{ url_for('seasonality_prediction') }}">Seasonality Prediction</a></li>
+                    <li><a href="{{ url_for('whatsapp') }}">WhatsApp</a></li>
+                    <li><a href="{{ url_for('world_bank') }}">World Bank</a></li>
+                </ul>
+            </li>
+
+            <!-- Dropdown Menu - Interactive Projects -->
+            <li class="dropdown">
+                <a class="dropdown-toggle" tabindex="0" role="button" aria-expanded="false"
+                    aria-controls="projects-menu" title="Choose a project">Read</a>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ url_for('algorithmic_trading') }}" target="_blank" title="Description">Algorithmic Trading</a></li>
+                    <li><a href="{{ url_for('linear_algebra') }}" target="_blank" title="Description">Linear Algebra</a></li>
+                    <li><a href="{{ url_for('arg_macro_spanish') }}" target="_blank" title="Description">Macro & Employment (Spanish)</a>
+                    </li>
+                    <li><a href="{{ url_for('arg_macro_english') }}" target="_blank" title="Description">Macro & Employment (English)</a>
+                    </li>
+                    <li><a href="{{ url_for('ds_trends') }}" target="_blank" title="Description">Trends in Data Science</a></li>
+                    <li><a href="{{ url_for('vector_norms') }}" target="_blank" title="Description">Vector Norms</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+    
     {% block content %}{% endblock %}
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="links">
+            <a class="image-footer" id="gh-image" href="https://github.com/ale-camer/personal_website" target="_blank"
+                title="Project Code"><img src="{{ url_for('static', filename='images/gh.png') }}" alt="GitHub"></a>
+            <a class="image-footer" id="li-image" href="https://www.linkedin.com/in/alejandro-camerlengo-1ab3981b/"
+                target="_blank" , title="Personal Profile"><img src="{{ url_for('static', filename='images/li.png') }}"
+                    alt="LinkedIn"></a>
+            <a class="image-footer" id="gm-image" href="mailto:alejandrocamerlengo@gmail.com" target="_blank"
+                title="Send me an email"><img src="{{ url_for('static', filename='images/email.png') }}"
+                    alt="Email"></a>
+        </div>
+    </footer>
+
     <script src="{{ url_for('static', filename='js/base.js') }}"></script>
 </body>
 

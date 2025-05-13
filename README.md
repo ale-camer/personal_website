@@ -11,7 +11,13 @@
 ├── static/  # Contain static files (CSS, JS and images).
   ├── css/  # Contain CSS main script.
     ├── index.css  # Intro Stylesheet File
-    └── main.css  # Main Project Stylesheet File
+    ├── keyphrases.css  # No comment available
+    ├── main.css  # RESPONSIVE
+    ├── mi_cv.css  # My CV Stylesheet File
+    ├── seasonality.css  # No comment available
+    ├── utils.css  # Main Project Stylesheet File
+    ├── whatsapp.css  # No comment available
+    └── world_bank.css  # No comment available
   ├── images/  # Contain images for the UI.
   ├── js/  # Contain JavaScript scripts.
     ├── base.js  # Project-wise Functionalities
@@ -26,11 +32,11 @@
   ├── Stock_Algorithmic_Trading_Strategy_Backtesting.html  # Algorithmic Trading Functionality Template
   ├── Vector_Norms_Applications_in_Data_Science.html  # Vector Nomrs Functionality Template
   ├── base.html  # Base Project Template
-  ├── index.html  # NAVIGATION BAR
+  ├── index.html  # INTRO
   ├── keyphrase_extraction.html  # Keyphrase Extraction Functionality Template
   ├── macro_n_employment_english.html  # Macroeconomic (English) Functionality Template
   ├── macro_n_employment_spanish.html  # Macroeconomic (Spanish) Functionality Template
-  ├── mi_cv.html  # Mi CV Functionality Template
+  ├── mi_cv.html  # Work Experience
   ├── seasonality_prediction.html  # Seasonality Prediction Functionality Template
   ├── trends_in_data_science_labour_market.html  # Trends in Data Science Functionality Template
   ├── whatsapp.html  # WhatsApp Functionality Template

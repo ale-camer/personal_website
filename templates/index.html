@@ -4,57 +4,6 @@
 
 <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
 
-<!-- NAVIGATION BAR -->
-<nav class="navbar">
-    <!-- Home Link -->
-    <a href="{{ url_for('index') }}" class="navbar-title-link" title="Get back to Home Page">
-        <h2 class="navbar-title">Home</h2>
-    </a>
-
-    <!-- Dropdown Menu - Mi CV -->
-    <ul class="navbar-list">
-        <li class="dropdown">
-            <a class="dropdown-toggle" tabindex="0" role="button" aria-expanded="false"
-                aria-controls="cv-menu" href="{{ url_for('mi_cv') }}" title="Explore Mi CV">Mi CV</a>
-            <ul class="dropdown-menu" id="cv-menu">
-                <li><a href="{{ url_for('mi_cv') }}#work-experience">Work Experience</a></li>
-                <li><a href="{{ url_for('mi_cv') }}#technologies">Technologies</a></li>
-                <li><a href="{{ url_for('mi_cv') }}#education">Education</a></li>
-                <li><a href="{{ url_for('mi_cv') }}#languages">Languages</a></li>
-                <li><a href="{{ url_for('mi_cv') }}#interests">Interests</a></li>
-            </ul>
-        </li>
-
-        <!-- Dropdown Menu - Interactive Projects -->
-        <li class="dropdown">
-            <a class="dropdown-toggle" tabindex="0" role="button" aria-expanded="false"
-                aria-controls="projects-menu" title="Explore Mi Projects">Have fun</a>
-            <ul class="dropdown-menu">
-                <li><a href="{{ url_for('keyphrase_extraction') }}">Keyphrase Extraction</a></li>
-                <li><a href="{{ url_for('seasonality_prediction') }}">Seasonality Prediction</a></li>
-                <li><a href="{{ url_for('whatsapp') }}">WhatsApp</a></li>
-                <li><a href="{{ url_for('world_bank') }}">World Bank</a></li>
-            </ul>
-        </li>
-
-        <!-- Dropdown Menu - Interactive Projects -->
-        <li class="dropdown">
-            <a class="dropdown-toggle" tabindex="0" role="button" aria-expanded="false"
-                aria-controls="projects-menu" title="Explore Mi Projects">Read</a>
-            <ul class="dropdown-menu">
-                <li><a href="{{ url_for('algorithmic_trading') }}" target="_blank">Algorithmic Trading</a></li>
-                <li><a href="{{ url_for('linear_algebra') }}" target="_blank">Linear Algebra</a></li>
-                <li><a href="{{ url_for('arg_macro_spanish') }}" target="_blank">Macro & Employment (Spanish)</a>
-                </li>
-                <li><a href="{{ url_for('arg_macro_english') }}" target="_blank">Macro & Employment (English)</a>
-                </li>
-                <li><a href="{{ url_for('ds_trends') }}" target="_blank">Trends in Data Science</a></li>
-                <li><a href="{{ url_for('vector_norms') }}" target="_blank">Vector Norms</a></li>
-            </ul>
-        </li>
-    </ul>
-</nav>
-
 <!-- INTRO -->
 <div class="main-project-container">
 
@@ -122,19 +71,6 @@
     </div>
 
 </div>
-
-<!-- FOOTER -->
-<footer>
-    <div class="links">
-        <a class="image-footer" id="gh-image" href="https://github.com/ale-camer/personal_website" target="_blank"
-            title="Project Code"><img src="{{ url_for('static', filename='images/gh.png') }}" alt="GitHub"></a>
-        <a class="image-footer" id="li-image" href="https://www.linkedin.com/in/alejandro-camerlengo-1ab3981b/"
-            target="_blank" , title="Personal Profile"><img src="{{ url_for('static', filename='images/li.png') }}"
-                alt="LinkedIn"></a>
-        <a class="image-footer" id="gm-image" href="mailto:alejandrocamerlengo@gmail.com" target="_blank"
-            title="Send me an email"><img src="{{ url_for('static', filename='images/email.png') }}" alt="Email"></a>
-    </div>
-</footer>
 
 <!-- JS -->
 <script>

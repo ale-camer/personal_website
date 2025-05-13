@@ -4,195 +4,86 @@
 
 <!-- Seasonality Prediction Functionality Template -->
 
-<div class="project-container">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/seasonality.css') }}">
 
-    <!-- Title and Introduction Section -->
-    <h1 class="project-title">Seasonality Prediction</h1>
-    <div class="instructions">
-        <h2>Instructions</h2>
-        <p style="text-align: left; margin-bottom: 50px;">
-            Upload an Excel file (.xls or .xlsx) with only one columns
-            containing numeric data and a header. The periodicity of the serie should be a divisor of the length of
-            the serie and different from one.
-        </p>
+<div class="main-project-container">
+    <div class="project-container">
+        <h1>Seasonality Prediction</h1>
+        <div>
+            <p id="intro-paragraph">
+                Upload the spreadsheet to forecast.
+            </p>
+        </div>
+
+        <div class="upload-form">
+            <form action="{{ url_for('seasonality_prediction_process') }}" method="post" enctype="multipart/form-data"
+                class="project-form" id="predictionForm">
+                <div class="form-group">
+                    <label for="file">Upload Excel File:</label><br>
+                    <input type="file" name="file" id="file" accept=".xlsx,.xls">
+                    <span id="fileError" style="color: red;"></span>
+                </div>
+                <div class="form-group">
+                    <label for="periodicity">Periodicity:</label><br>
+                    <input type="number" name="periodicity" id="periodicity" min="2" max="100" value="2" required title="Choose periodicity of time serie">
+                </div>
+                <div class="button-row">
+                    <button type="submit">Calculate <br>Prediction</button>
+                    <button type="button" id="downloadBtn">Download <br>Predictions</button>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <!-- Form for uploading Excel file and setting periodicity -->
-    <div>
-        <form action="{{ url_for('seasonality_prediction_process') }}" method="post" enctype="multipart/form-data"
-            class="file-upload-form" id="predictionForm">
-            <div class="form-group">
-                <label for="file">Upload Excel File:</label>
-                <input type="file" name="file" id="file" accept=".xlsx,.xls">
-                <span id="fileError" style="color: red;"></span>
-            </div>
-            <div class="form-group">
-                <label for="periodicity">Periodicity:</label>
-                <input type="number" name="periodicity" id="periodicity" min="2" max="100" value="2" required>
-            </div>
-            
-   			<div class="button-row">
-   				<button type="submit" class="btn btn-primary">Calculate Prediction</button>
-   				<!-- <a href="{{ url_for('download_predictions') }}" class="btn btn-primary">Download Predictions</a> -->
-				<button type="button" id="downloadBtn" class="btn btn-primary">Download Predictions</button>
-   			</div>
-        </form>
+    <!-- Display forecast if available -->
+    {% if forecast %}
+    <div class="project-container" id="result-section">
+        <h2>Next Period Predictions</h2>
+        <table class="prediction-table">
+            <thead>
+                <tr>
+                    <th>Period</th>
+                    <th>Forecast</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i, value in enumerate(forecast) %}
+                <tr>
+                    <td>{{ i + 1 }}</td>
+                    <td>{{ value }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-</div>
+    {% endif %}
 
-<!-- Display forecast if available -->
-{% if forecast %}
-<div class="project-container" id="result-section">
-    <h2>Next Period Predictions</h2>
-    <table class="prediction-table">
-        <thead>
-            <tr>
-                <th>Period</th>
-                <th>Forecast</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for i, value in enumerate(forecast) %}
-            <tr>
-                <td>{{ i + 1 }}</td>
-                <td>{{ value }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-{% endif %}
+    <!-- Display error if available -->
+    {% if error_message %}
+    <div class="project-container" id="result-section">
+        <h2>Error Details</h2>
+        <p>{{ error_message|safe }}</p>
+    </div>
+    {% endif %}
 
-<!-- Display error if available -->
-{% if error_message %}
-<div class="project-container" id="result-section">
-    <h2>Error Details</h2>
-    <p>{{ error_message|safe }}</p>
-</div>
-{% endif %}
-
-<!-- Display plots if available -->
-{% if existing_plots %}
-<div class="project-container" id="result-section">
-    <h2>Plots</h2>
-    <div class="plot-container">
-        {% if 'original_data.png' in existing_plots %}
-        <img src="{{ url_for('static', filename='seasonality_prediction/original_data.png') }}">
-        {% endif %}
-        {% if 'all_periods_data.png' in existing_plots %}
-        <img src="{{ url_for('static', filename='seasonality_prediction/all_periods_data.png') }}">
-        {% endif %}
-        {% if 'historic_and_prediction_data.png' in existing_plots %}
-        <img src="{{ url_for('static', filename='seasonality_prediction/historic_and_prediction_data.png') }}">
-        {% endif %}
+    <!-- Display plots if available -->
+    {% if existing_plots %}
+    <div class="project-container" id="result-section">
+        <h2>Plots</h2>
+        <div class="plot-container">
+            {% if 'original_data.png' in existing_plots %}
+            <img src="{{ url_for('static', filename='seasonality_prediction/original_data.png') }}">
+            {% endif %}
+            {% if 'all_periods_data.png' in existing_plots %}
+            <img src="{{ url_for('static', filename='seasonality_prediction/all_periods_data.png') }}">
+            {% endif %}
+            {% if 'historic_and_prediction_data.png' in existing_plots %}
+            <img src="{{ url_for('static', filename='seasonality_prediction/historic_and_prediction_data.png') }}">
+            {% endif %}
+        </div>
     </div>
 </div>
 {% endif %}
-
-<style>
-	.button-row {
-		display: flex;
-		justify-content: center;
-		gap: 20px; /* Espacio entre los botones */
-		margin-top: 20px;
-	}
-
-    .btn.btn-primary,
-    a.btn.btn-primary {
-        background-color: #3498db;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 100%;
-        text-align: center;
-    }
-    
-    .btn.btn-primary:hover,
-    a.btn.btn-primary:hover {
-        background-color: #2980b9;
-    }
-	
-    .file-upload-form {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        margin: 40px auto;
-        width: 60%;
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        color: white;
-    }
-
-    .file-upload-form .form-group {
-        width: 100%;
-        margin-bottom: 20px;
-    }
-
-    .file-upload-form label {
-        display: block;
-        margin-bottom: 10px;
-        color: #fff;
-    }
-
-    .file-upload-form input[type="file"],
-    .file-upload-form input[type="number"] {
-        display: block;
-        width: 100%;
-        margin-bottom: 20px;
-        padding: 10px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-        background-color: #fff;
-        color: #000;
-    }
-
-    .file-upload-form .btn-primary {
-        background-color: #3498db;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-
-    .prediction-table {
-        text-align: center;
-        padding: 10px;
-    }
-
-    .plot-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .plot-container img {
-        max-width: 100%;
-        height: auto;
-        margin: 10px 0;
-    }
-
-    .seasonality-prediction-error-h3,
-    .seasonality-prediction-error-ul,
-    .seasonality-prediction-error-p {
-        text-align: left;
-        width: 100%;
-        margin-left: 0;
-        padding-left: 0;
-    }
-
-    .seasonality-prediction-error-ul {
-        list-style-position: inside;
-    }
-</style>
 
 <script>
     const form = document.getElementById('predictionForm');
@@ -205,13 +96,13 @@
         fileError.textContent = ''; // Limpia los mensajes de error
         let isValid = true;
 
-		if (!fileInput.files.length) {
-			fileError.textContent = 'Please select a file.';
-			isValid = false;
-		} else if (fileInput.files[0].size === 0) {
-			fileError.textContent = 'The selected file is empty.';
-			isValid = false;
-		}
+        if (!fileInput.files.length) {
+            fileError.textContent = 'Please select a file.';
+            isValid = false;
+        } else if (fileInput.files[0].size === 0) {
+            fileError.textContent = 'The selected file is empty.';
+            isValid = false;
+        }
 
         if (isValid) {
             this.submit();
@@ -222,7 +113,7 @@
     downloadBtn.addEventListener('click', function () {
         const fileInput = document.getElementById('file');
         const fileError = document.getElementById('fileError');
-		const resultSection = document.getElementById('result-section');
+        const resultSection = document.getElementById('result-section');
 
         fileError.textContent = '';
 
@@ -232,7 +123,7 @@
             window.location.href = "{{ url_for('download_predictions') }}";
         }
     });
-	
+
     document.addEventListener("DOMContentLoaded", function () {
         const resultSection = document.getElementById("result-section");
         if (resultSection) {

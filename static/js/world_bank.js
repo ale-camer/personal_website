@@ -99,7 +99,7 @@ function showResults() {
     if (selectedIndicator && selectedType && selectedOption) {
         // If all selections are made, fetch and display results
         fetchData(selectedIndicator, selectedType, selectedOption);
-        const worldBankResultsContainer = document.querySelector('.world-bank-results-container');
+        const worldBankResultsContainer = document.getElementById('wb-results');
         worldBankResultsContainer.style.display = 'block'; // Cambiar el display a 'block' para hacerlo visible
 
         worldBankResultsContainer.scrollIntoView({
@@ -126,7 +126,7 @@ function fetchData(indicator, type, option) {
 
 // Function to display results in the results table
 function displayResults(data) {
-    const resultsTableBody = document.getElementById("world_bank_table_body");
+    const resultsTableBody = document.getElementById("wb_tbody");
 
     if (resultsTableBody == null) {
         alert("Algo está mal");
@@ -147,7 +147,7 @@ function displayResults(data) {
     });
 
     // Show the results container (it was hidden by default)
-    const resultsContainer = document.querySelector('.world-bank-results-container');
+    const resultsContainer = document.getElementById('wb-results');
     resultsContainer.style.display = 'block'; // Show the results container
 }
 
@@ -181,7 +181,7 @@ document.addEventListener('click', function (event) {
 
 // Function to sort the results table by clicking on table headers
 function sortTable(columnIndex, ascending) {
-    const rows = document.querySelectorAll('.world-bank-results-table-topics tbody tr');
+    const rows = document.querySelectorAll('.wb-table tbody tr');
     const sortedRows = Array.from(rows).sort((a, b) => {
         const aValue = a.cells[columnIndex].innerText;
         const bValue = b.cells[columnIndex].innerText;
@@ -196,7 +196,7 @@ function sortTable(columnIndex, ascending) {
     });
 
     // Get the table body element
-    const tableBody = document.querySelector('.world-bank-results-table-topics tbody');
+    const tableBody = document.querySelector('.wb-table tbody');
     if (tableBody && tableBody.rows.length > 0) {
         // Only proceed if there are rows in the tbody
         sortedRows.forEach(row => tableBody.appendChild(row));
@@ -213,7 +213,7 @@ document.querySelectorAll('.sortable').forEach(header => {
         ascending = !ascending; // Toggle ascending/descending order
         const columnIndex = Array.from(header.parentNode.children).indexOf(header); // Get column index
         // Remove sort classes from all headers and apply to current header
-        document.querySelectorAll('.world-bank-results-table-topics th').forEach(th => th.classList.remove('asc', 'desc'));
+        document.querySelectorAll('.wb-table th').forEach(th => th.classList.remove('asc', 'desc'));
         header.classList.toggle('asc', ascending);
         header.classList.toggle('desc', !ascending);
         // Sort table based on clicked header column

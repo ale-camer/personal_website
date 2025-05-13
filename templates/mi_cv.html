@@ -2,14 +2,13 @@
 
 {% block content %}
 
-<!-- Mi CV Functionality Template -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/mi_cv.css') }}">
 
 <div class="mi-cv">
 
-    <!-- Work Experience Section -->
-    <h1 id="work-experience" class="section-title">Work Experience in Data</h1>
+    <!-- Work Experience -->
+    <h1>Work Experience in Data</h1>
 
-    <!-- Job 1: Data Scientist at ABinBev -->
     <div class="job">
         <h3>Data Scientist in ABinBev | 08-2023 - Present (<span id="months-counter">{{ delta_time_string }}</span>)
         </h3>
@@ -52,7 +51,6 @@
         </ul>
     </div>
 
-    <!-- Job 2: Data Scientist at Lumen Technologies -->
     <div class="job">
         <h3>Data Scientist in Lumen Technologies | 11-2021 - 07-2023 (1 year 9 months)</h3>
         <h4>Industry</h4>
@@ -89,7 +87,6 @@
         </ul>
     </div>
 
-    <!-- Job 3: Quantitative Analyst at Balanz Capital -->
     <div class="job">
         <h3>Quantitative Analyst in Balanz Capital | 02-2021 - 10-2021 (9 months)</h3>
         <h4>Industry</h4>
@@ -122,361 +119,215 @@
         </ul>
     </div>
 
-    <!-- Technologies Section -->
-    <h1 id="technologies" class="section-title">Technologies</h1>
+    <!-- Technologies -->
+    <h1>Technologies</h1>
 
-    <!-- Backend Development Section -->
-    <div class="category">
-        <h2 class="category-title">Backend Development</h2>
-        <div class="subsection">
-            <h3>Languages & Frameworks</h3>
-            <div class="skills-grid">
-                <div class="skill">
-                    <div class="skill-name">Python</div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar advanced">Advanced</div>
-                    </div>
-                </div>
-                <div class="skill">
-                    <div class="skill-name">Pandas</div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar advanced">Advanced</div>
-                    </div>
-                </div>
-                <div class="skill">
-                    <div class="skill-name">Numpy</div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar intermediate">Intermediate</div>
-                    </div>
-                </div>
-                <div class="skill">
-                    <div class="skill-name">Nltk</div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar basic">Basic</div>
-                    </div>
-                </div>
-                <div class="skill">
-                    <div class="skill-name">Spark</div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar basic">Basic</div>
-                    </div>
-                </div>
-                <div class="skill">
-                    <div class="skill-name">R</div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar basic">Basic</div>
-                    </div>
-                </div>
+    <div class="job">
+        <h3>Backend Development</h3>
+        <div class="skills-grid">
+            <div class="skill-name">Python</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar advanced">Advanced</div>
+            </div>
+            <div class="skill-name">Pandas</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar advanced">Advanced</div>
+            </div>
+            <div class="skill-name">Numpy</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar intermediate">Intermediate</div>
+            </div>
+            <div class="skill-name">Nltk</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar basic"></div>
+                <div class="progress-bar label">Basic</div>
+            </div>
+            <div class="skill-name">Spark</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar basic"></div>
+                <div class="progress-bar label">Basic</div>
+            </div>
+            <div class="skill-name">R</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar basic"></div>
+                <div class="progress-bar label">Basic</div>
             </div>
         </div>
     </div>
 
-    <div class="category">
-        <h2 class="category-title">Artificial Intelligence</h2>
-        <div class="subsection">
-            <h3>Frameworks</h3>
-            <div class="skills-grid">
-                <div class="skill">
-                    <div class="skill-name">Sklearn</div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar advanced">Advanced</div>
-                    </div>
-                </div>
-                <div class="skill">
-                    <div class="skill-name">Tensorflow</div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar intermediate">Intermediate</div>
-                    </div>
-                </div>
-                <div class="skill">
-                    <div class="skill-name">Scipy</div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar intermediate">Intermediate</div>
-                    </div>
-                </div>
+    <div class="job">
+        <h3>Artificial Intelligence</h3>
+        <div class="skills-grid">
+            <div class="skill-name">Sklearn</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar advanced">Advanced</div>
+            </div>
+            <div class="skill-name">Tensorflow</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar intermediate">Intermediate</div>
+            </div>
+            <div class="skill-name">Scipy</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar intermediate">Intermediate</div>
             </div>
         </div>
     </div>
 
-    <div class="category">
-        <h2 class="category-title">Data Ingestion</h2>
-        <div class="subsection">
-            <h3>Languages & Methods</h3>
-            <div class="skills-grid">
-                <div class="skill">
-                    <div class="skill-name">SQL</div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar advanced">Advanced</div>
-                    </div>
-                </div>
-                <div class="skill">
-                    <div class="skill-name">Azure Cosmos DB</div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar intermediate">Intermediate</div>
-                    </div>
-                </div>
-                <div class="skill">
-                    <div class="skill-name">APIs</div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar intermediate">Intermediate</div>
-                    </div>
-                </div>
-                <div class="skill">
-                    <div class="skill-name">Web Scraping</div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar basic">Basic</div>
-                    </div>
-                </div>
+    <div class="job">
+        <h3>Data Ingestion</h3>
+        <div class="skills-grid">
+            <div class="skill-name">SQL</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar advanced">Advanced</div>
+            </div>
+
+            <div class="skill-name">Azure Cosmos DB</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar intermediate">Intermediate</div>
+            </div>
+
+            <div class="skill-name">APIs</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar intermediate">Intermediate</div>
+            </div>
+
+            <div class="skill-name">Web Scraping</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar basic"></div>
+                <div class="progress-bar label">Basic</div>
+            </div>
+        </div>
+    </div>
+    <div class="job">
+        <h3>Visualization</h3>
+        <div class="skills-grid">
+            <div class="skill-name">Power BI</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar intermediate">Intermediate</div>
+            </div>
+
+            <div class="skill-name">DAX</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar basic"></div>
+                <div class="progress-bar label">Basic</div>
+            </div>
+
+            <div class="skill-name">Seaborn</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar advanced">Advanced</div>
+            </div>
+
+            <div class="skill-name">Plotly</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar intermediate">Intermediate</div>
+            </div>
+
+            <div class="skill-name">Flask</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar basic"></div>
+                <div class="progress-bar label">Basic</div>
+            </div>
+
+            <div class="skill-name">Dash</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar basic"></div>
+                <div class="progress-bar label">Basic</div>
+            </div>
+
+            <div class="skill-name">HTML</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar basic"></div>
+                <div class="progress-bar label">Basic</div>
+            </div>
+
+            <div class="skill-name">CSS</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar basic"></div>
+                <div class="progress-bar label">Basic</div>
             </div>
         </div>
     </div>
 
-    <div class="category">
-        <h2 class="category-title">Visualization</h2>
-        <div class="subsection">
-            <h3>Languages & Frameworks</h3>
-            <div class="skills-grid">
-                <div class="skill">
-                    <div class="skill-name">Power BI</div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar intermediate">Intermediate</div>
-                    </div>
-                </div>
-                <div class="skill">
-                    <div class="skill-name">DAX</div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar basic">Basic</div>
-                    </div>
-                </div>
-                <div class="skill">
-                    <div class="skill-name">Seaborn</div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar advanced">Advanced</div>
-                    </div>
-                </div>
-                <div class="skill">
-                    <div class="skill-name">Plotly</div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar intermediate">Intermediate</div>
-                    </div>
-                </div>
-                <div class="skill">
-                    <div class="skill-name">Flask</div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar basic">Basic</div>
-                    </div>
-                </div>
-                <div class="skill">
-                    <div class="skill-name">Dash</div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar basic">Basic</div>
-                    </div>
-                </div>
-                <div class="skill">
-                    <div class="skill-name">HTML</div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar basic">Basic</div>
-                    </div>
-                </div>
-                <div class="skill">
-                    <div class="skill-name">CSS</div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar basic">Basic</div>
-                    </div>
-                </div>
+    <div class="job">
+        <h3>Miscellaneous</h3>
+        <div class="skills-grid">
+            <div class="skill-name">Microsoft Azure</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar basic"></div>
+                <div class="progress-bar label">Basic</div>
             </div>
-        </div>
-    </div>
-    
-    <div class="category">
-        <h2 class="category-title">Miscellaneous</h2>
-        <div class="subsection">
-            <h3>Frameworks</h3>
-            <div class="skills-grid">
-                <div class="skill">
-                    <div class="skill-name">Microsoft Azure</div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar basic">Basic</div>
-                    </div>
-                </div>
-                <div class="skill">
-                    <div class="skill-name">Databricks</div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar advanced">Advanced</div>
-                    </div>
-                </div>
-                <div class="skill">
-                    <div class="skill-name">GitHub</div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar intermediate">Intermediate</div>
-                    </div>
-                </div>
+
+            <div class="skill-name">Databricks</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar advanced">Advanced</div>
+            </div>
+
+            <div class="skill-name">GitHub</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar intermediate">Intermediate</div>
             </div>
         </div>
     </div>
 
-    <!-- Education Section -->
-    <h1 id="education" class="section-title">Education</h1>
-    <ul>
-        <li>2022 - 2022 | Executive Program in Quantitative Finance | Center for Macroeconomics Studies University
-            (UCEMA) | Completed</li>
-        <li>2020 - 2021 | Master Degree in Data Science | University of Buenos Aires (UBA) | Thesis Pending</li>
-        <li>2017 - 2019 | Master Degree in Finance oriented to Corporate Finance | University of Buenos Aires (UBA) |
-            Thesis Pending</li>
-        <li>2011 - 2017 | Bachelor Degree in Business Administration | National University of Lomas de Zamora (UNLZ) |
-            Completed</li>
-    </ul>
+    <!-- Education -->
+    <h1>Education</h1>
 
-    <!-- Languages Section -->
-    <h1 id="languages" class="section-title">Languages</h1>
-
-    <div class="skill">
-        <div class="skill-name">Spanish</div>
-        <div class="progress-bar-container">
-            <div class="progress-bar expert">Native/Bilingual</div>
-        </div>
-    </div>
-
-    <div class="skill">
-        <div class="skill-name">English</div>
-        <div class="progress-bar-container">
-            <div class="progress-bar advanced">Advanced</div>
-        </div>
-    </div>
-
-    <h1 id="interests" class="section-title">Interests</h1>
-    <div class="skill">
-        <ul>
-            <li>Web Development</li>
-            <li>Backend Programming</li>
+    <div class="job">
+        <ul class="education-list">
+            <li class="education-list-item">2022 - 2022 | Executive Program in <b>Quantitative Finance</b> | Center for
+                Macroeconomics
+                Studies University
+                (UCEMA)</li>
+            <li class="education-list-item">2020 - 2021 | Master Degree in <b>Data Science</b> | University of Buenos
+                Aires
+                (UBA)</li>
+            <li class="education-list-item">2017 - 2019 | Master Degree in <b>Finance</b> oriented to Corporate Finance
+                |
+                University of
+                Buenos Aires (UBA)
+            </li>
+            <li class="education-list-item">2011 - 2017 | Bachelor Degree in <b>Business Administration</b> | National
+                University of Lomas
+                de Zamora (UNLZ)
+            </li>
         </ul>
     </div>
+
+    <!-- Languages -->
+    <h1>Languages</h1>
+
+    <div class="job">
+        <div class="skills-grid">
+            <div class="skill-name">Spanish</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar expert">Native/Bilingual</div>
+            </div>
+            <div class="skill-name">English</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar advanced">Advanced</div>
+            </div>
+            <div class="skill-name">German</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar basic"></div>
+                <div class="progress-bar label">Basic</div>
+            </div>
+            <div class="skill-name">Portugues</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar basic"></div>
+                <div class="progress-bar label">Basic</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interests -->
+    <h1>Interests</h1>
+
+    <div class="job" id="interests">
+            <ul class="interests-list">
+                <li class="interests-list-item">Backend Development</li>
+                <li class="interests-list-item">German Language</li>
+            </ul>
+    </div>
 </div>
-
-<style>
-    .mi-cv {
-        background: rgba(0, 0, 0, 0.7);
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        margin: 20px auto;
-        width: 60%;
-        color: white;
-    }
-
-    .mi-cv p {
-        text-align: left;
-        margin: 0;
-        color: white;
-    }
-
-    .mi-cv h1 {
-        margin: 50px 0;
-        font-family: 'Roboto', sans-serif;
-        border-bottom: 2px solid white;
-        padding-bottom: 10px;
-        font-size: 24px;
-    }
-
-    .mi-cv .section-title {
-        font-size: 20px;
-        color: #ecf0f1;
-        margin-top: 40px;
-        margin-bottom: 20px;
-    }
-
-    .mi-cv h3 {
-        margin: 25px 0;
-        font-size: 18px;
-        color: #3498db;
-    }
-
-    .mi-cv h4 {
-        margin: 10px 0;
-        font-size: 16px;
-        color: #95a5a6;
-    }
-
-    .mi-cv ul {
-        margin: 10px 0;
-        padding-left: 20px;
-    }
-
-    .mi-cv li {
-        margin: 5px 0;
-        color: white;
-    }
-
-    .category {
-        margin-bottom: 40px;
-    }
-
-    .category-title {
-        font-size: 24px;
-        color: #3498db;
-        margin-bottom: 20px;
-    }
-
-    .subsection {
-        margin-bottom: 20px;
-    }
-
-    .skills-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        grid-template-columns: repeat(3, 1fr);
-        /* Max of three columns */
-        gap: 20px;
-    }
-
-    .skill {
-        margin-bottom: 20px;
-    }
-
-    .skill-name {
-        font-weight: bold;
-        margin-bottom: 5px;
-        color: white;
-    }
-
-    .progress-bar-container {
-        width: 100%;
-        background-color: #ddd;
-        border-radius: 5px;
-        overflow: hidden;
-        position: relative;
-    }
-
-    .progress-bar {
-        height: 30px;
-        border-radius: 5px;
-        transition: width 1s ease-in-out;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: bold;
-    }
-
-    .basic {
-        width: 25%;
-        background-color: #e74c3c;
-    }
-
-    .intermediate {
-        width: 50%;
-        background-color: #f39c12;
-    }
-
-    .advanced {
-        width: 75%;
-        background-color: #3498db;
-    }
-
-    .expert {
-        width: 100%;
-        background-color: #2ecc71;
-    }
-</style>
 
 {% endblock %}

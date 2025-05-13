@@ -4,278 +4,85 @@
 
 <!-- World Bank Functionality Template -->
 
-<!-- Dropdown Menus and Buttons for World Bank Data Selection -->
-<div class="project-container">
-    
-    <!-- Title and Introduction Section -->
-    <h1 class="project-title">World Bank</h1>
-    <div class="instructions">
-        <h2>Instructions</h2>
-        <p style="text-align: left; margin-bottom: 50px;">Select the categories of the data that you want to visualize.
-        </p>
-    </div>
-    <!-- Dropdown for selecting an indicator -->
-    <div class="world-bank-dropdown-group">
-        <label for="indicators">Select an indicator:</label>
-        <div class="world-bank-dropdown-topics">
-            <button class="world-bank-dropbtn-topics" id="dropdownButton">Choose an Indicator</button>
-            <div class="world-bank-dropdown-content-topics" id="dropdownMenu">
-                {% for key in indicators %}
-                <a href="#" onclick="selectIndicator(event, '{{ key }}', '{{ indicators[key] }}')">{{ key }}</a>
-                {% endfor %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/world_bank.css') }}">
+
+<div class="main-project-container">
+    <div class="project-container">
+
+        <h1>World Bank</h1>
+        <div>
+            <p id="intro-paragraph">Select the categories of the data that you want to visualize.</p>
+        </div>
+
+        <div class="wb-group">
+            <label for="indicators">Select an indicator:</label>
+            <div class="wb-topics">
+                <button class="wb-button" id="dropdownButton">Indicator</button>
+                <div class="wb-content" id="dropdownMenu">
+                    {% for key in indicators %}
+                    <a href="#" onclick="selectIndicator(event, '{{ key }}', '{{ indicators[key] }}')">{{ key }}</a>
+                    {% endfor %}
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Dropdown for selecting type (Country or Year) -->
-    <div class="world-bank-dropdown-group">
-        <label for="type">Select type:</label>
-        <div class="world-bank-dropdown-topics">
-            <button class="world-bank-dropbtn-topics" id="typeButton">Choose Data Type</button>
-            <div class="world-bank-dropdown-content-topics" id="typeMenu">
-                <a href="#" onclick="selectTypeAndDownload(event, 'country')">Country</a>
-                <a href="#" onclick="selectTypeAndDownload(event, 'year')">Year</a>
+        <div class="wb-group">
+            <label for="type">Select type:</label>
+            <div class="wb-topics">
+                <button class="wb-button" id="typeButton">Data Type</button>
+                <div class="wb-content" id="typeMenu">
+                    <a href="#" onclick="selectTypeAndDownload(event, 'country')">Country</a>
+                    <a href="#" onclick="selectTypeAndDownload(event, 'year')">Year</a>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Dropdown for selecting a specific option based on the type -->
-    <div class="world-bank-dropdown-group">
-        <label for="options">Select an option:</label>
-        <div class="world-bank-dropdown-topics">
-            <button class="world-bank-dropbtn-topics" id="optionsButton">Choose Country/Year</button>
-            <div class="world-bank-dropdown-content-topics" id="optionsMenu">
-                <!-- Options will be inserted here by JavaScript -->
+        <div class="wb-group">
+            <label for="options">Select an option:</label>
+            <div class="wb-topics">
+                <button class="wb-button" id="optionsButton">Country/Year</button>
+                <div class="wb-content" id="optionsMenu">
+                </div>
             </div>
         </div>
+
+        <div class="upload-form">
+            <div class="project-form">
+                <div class="button-row" id="wb-button-row">
+                    <button type="submit" onclick="showResults()">Show <br>Results</button>
+                    <button type="button" onclick="downloadCSV()">Download <br>CSV</button>
+                    <button type="button">Interactive <br>Graph</button>
+                </div>
+            </div>
+        </div>
+        <p class="side-note">Note: it takes 3 seconds apporixmately to open the interactive graph since you clicked the
+            button.</p>
     </div>
 
-
-    <!-- Buttons for showing results, downloading CSV, and generating interactive graph -->
-    <div class="world-bank-button-group">
-        <button class="show-results" onclick="showResults()">Show Results</button>
-        <button class="download-csv" onclick="downloadCSV()">Download CSV</button>
-        <button class="interactive-graph">Interactive Graph</button>
+    <div class="project-container" id="wb-results">
+        <h1>Results</h1>
+        <table class="wb-table">
+            <thead>
+                <tr>
+                    <th class="sortable">
+                        Country
+                        <span class="sort-icon">&#8597;</span>
+                    </th>
+                    <th class="sortable">
+                        Date
+                        <span class="sort-icon">&#8597;</span>
+                    </th>
+                    <th class="sortable"> 
+                        Value
+                        <span class="sort-icon">&#8597;</span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="wb_tbody">
+            </tbody>
+        </table>
     </div>
-    <p class="side-note">Note: it takes 3 seconds apporixmately to open the interactive graph since you clicked the
-        button.</p>
 </div>
 
-<style>
-    .container .project-container .side-note {
-        font-size: 85%;
-        margin: 15px 0px 0px 0px;
-        text-align: left;
-    }
-</style>
-
-<!-- Container for displaying results -->
-<div class="world-bank-results-container" style="display: none;">
-    <h3>Results</h3>
-    <table class="world-bank-results-table-topics" id="world_bank_table">
-        <thead>
-            <tr>
-                <th id="countryHeader" class="sortable">
-                    Country
-                    <span class="sort-icon">&#8597;</span> <!-- Unicode for vertical sorting arrow -->
-                </th>
-                <th id="dateHeader" class="sortable">
-                    Date
-                    <span class="sort-icon">&#8597;</span> <!-- Unicode for vertical sorting arrow -->
-                </th>
-                <th id="valueHeader" class="sortable">
-                    Value
-                    <span class="sort-icon">&#8597;</span> <!-- Unicode for vertical sorting arrow -->
-                </th>
-            </tr>
-        </thead>
-        <tbody id="world_bank_table_body">
-            <!-- Result rows will be inserted here by JavaScript -->
-        </tbody>
-    </table>
-</div>
-
-</div>
-
-<style>
-    .world-bank-dropdown-topics {
-        position: relative;
-        display: inline-block;
-        margin: 20px 0;
-        width: 55%;
-    }
-
-    .world-bank-dropbtn-topics {
-        background-color: white;
-        color: black;
-        padding: 10px 20px;
-        font-size: 16px;
-        border: none;
-        cursor: pointer;
-        border-radius: 5px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        transition: background-color 0.3s ease;
-        width: 200%;
-        text-align: center;
-        position: relative;
-        left: 50%;
-        transform: translateX(-50%);
-    }
-
-    .world-bank-dropdown-content-topics {
-        display: none;
-        position: absolute;
-        background-color: #fff;
-        min-width: 200%;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        z-index: 1;
-        border-radius: 5px;
-        padding: 5px 0;
-        left: 50%;
-        transform: translateX(-50%);
-        max-height: 500px;
-        overflow-y: auto;
-    }
-
-    .world-bank-dropdown-content-topics a {
-        color: black;
-        padding: 12px 16px;
-        text-decoration: none;
-        display: block;
-        transition: background-color 0.3s ease;
-        font-size: 14px;
-    }
-
-    .world-bank-dropdown-content-topics a:hover {
-        background-color: rgba(0, 0, 0, 0.1);
-    }
-
-    .world-bank-dropdown-topics:hover .world-bank-dropdown-content-topics {
-        display: block;
-    }
-
-    .world-bank-dropdown-topics:hover .world-bank-dropbtn-topics {
-        background-color: white;
-    }
-
-    .world-bank-dropdown-group {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-bottom: 20px;
-    }
-
-    .world-bank-results-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        margin: 40px auto;
-        width: 60%;
-        background: rgba(0, 0, 0, 0.7);
-        /* Fondo semitransparente */
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        color: white;
-        text-align: center;
-        /* Centrar el texto */
-    }
-
-    .world-bank-results-container h3 {
-        margin: 30px 0px;
-        font-size: 50px;
-    }
-
-    .world-bank-results-container .world-bank-results-table-topics {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 20px;
-        background: rgba(0, 0, 0, 0.7);
-        /* Fondo semitransparente */
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        color: white;
-    }
-
-    .world-bank-results-container .world-bank-results-table-topics th,
-    .world-bank-results-container .world-bank-results-table-topics td {
-        border: 1px solid #fff;
-        padding: 8px;
-        /* text-align: center; */
-    }
-
-    .world-bank-results-container .world-bank-results-table-topics tbody td.value-column {
-        text-align: right;
-    }
-
-    .world-bank-results-container .world-bank-results-table-topics th {
-        background-color: #3498db;
-        color: #fff;
-        font-weight: bold;
-        text-align: center;
-        /* Centrar los títulos */
-    }
-
-    .world-bank-results-container .world-bank-results-table-topics tbody tr:nth-child(even) {
-        background-color: rgba(255, 255, 255, 0.2);
-        /* Filas pares con fondo semitransparente */
-    }
-
-    .world-bank-results-container .world-bank-results-table-topics tbody tr:hover {
-        background-color: rgba(255, 255, 255, 0.3);
-        /* Fondo semitransparente al pasar el mouse */
-    }
-
-    .world-bank-button-group {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        margin-top: 20px;
-    }
-
-    .sortable {
-        cursor: pointer;
-    }
-
-    .sort-icon {
-        margin-left: 5px;
-        font-size: 12px;
-        cursor: pointer;
-        transition: transform 0.3s;
-    }
-
-    .asc .sort-icon {
-        transform: rotate(180deg);
-    }
-
-    .desc .sort-icon {
-        transform: rotate(0deg);
-    }
-
-    .sort-icon:hover {
-        transform: scale(1.2);
-    }
-
-    .download-csv,
-    .show-results,
-    .interactive-graph {
-        background-color: #3498db;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-
-    .download-csv:hover,
-    .show-results:hover,
-    .interactive-graph:hover {
-        background-color: #2980b9;
-    }
-</style>
-
-<!-- JavaScript for handling World Bank data interactions -->
 <script src="{{ url_for('static', filename='js/world_bank.js') }}"></script>
 {% endblock %}

@@ -1,0 +1,281 @@
+/* Main Project Stylesheet File */
+
+/* MAIN */
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+    width: 100%;
+
+    body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        overflow-x: hidden;
+        font-family: 'Inter', sans-serif;
+        background-size: cover;
+        display: flex;
+        flex-direction: row;
+        background: url("/static/images/background.jpg") no-repeat center center fixed;
+        background-size: cover;
+        min-height: 100vh;
+    }
+}
+
+/* CONTENT */
+.main-project-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 75%;
+    margin-left: 25%;
+}
+
+.project-container {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: center;
+    margin-top: 1%;
+    width: 95%;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 30px;
+    border-radius: 2.5%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    color: white;
+    min-height: 15vh;
+
+    h1 {
+        font-size: clamp(30px, 3vw, 3vw);
+        align-self: center !important;
+    }
+
+    h2 {
+        font-size: clamp(25px, 2.5vw, 2.5vw);
+    }
+
+    h3 {
+        font-size: clamp(20px, 2vw, 2vw);
+        margin-bottom: 0%;
+        text-align: center;
+    }
+}
+
+/* NAVIGATION BAR */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 25%;
+    background-color: rgba(135, 206, 235, 0.7);
+    padding: 30px 0;
+    height: 100vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+
+    a {
+        font-size: 1.25vw;
+        text-decoration: none;
+
+        &.dropdown-toggle {
+            cursor: pointer;
+            position: relative;
+        }
+
+        &:hover {
+            background-color: #135c7d;
+            color: #fff;
+        }
+    }
+
+    .navbar-title {
+        color: #135c7d;
+        text-align: center;
+        margin: 0;
+        padding: 2.5% 0;
+        font-size: clamp(20px, 2vw, 2vw);
+
+        &:hover {
+            color: rgba(135, 206, 235, 0.7);
+            background-color: #135c7d;
+        }
+    }
+
+    .navbar-list {
+        background-color: transparent;
+        padding: 0;
+        margin: 0;
+        flex: 1;
+
+        a {
+            color: #fff;
+            text-decoration: none;
+            text-align: left;
+            padding: 5% 0 5% 2.5%;
+            display: block;
+            margin-top: 1%;
+
+        }
+
+        .dropdown {
+
+            .dropdown-toggle {
+                font-size: clamp(15px, 1.5vw, 1.5vw);
+            }
+
+            .dropdown-menu {
+                display: none;
+                padding: 10px;
+
+                li a {
+                    padding-left: 10%;
+                    font-size: clamp(12.5px, 1.25vw, 1.25vw);
+                }
+            }
+
+            &.open .dropdown-menu {
+                display: block;
+            }
+        }
+    }
+}
+
+/* FOOTER */
+.links {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 15%;
+    display: flex;
+    justify-content: space-evenly;
+    margin: 0;
+    padding: 0;
+    margin-right: clamp(0%, 2.5%, 5%);
+
+    .image-footer {
+        img {
+            border-radius: 50%;
+            padding: 0% 10% 0% 0%;
+            height: clamp(22.5px, 2.5vw, 2.5vw);
+            width: clamp(22.5px, 2.5vw, 2.5vw);
+        }
+    }
+}
+
+/* HAVE FUN SECTION */
+#intro-paragraph {
+    text-align: left;
+    width: 100%;
+    padding: 1%;
+    margin: 0;
+    font-size: clamp(15px, 1.5vw, 1.5vw);
+}
+
+.upload-form {
+    width: 100%;
+    font-size: clamp(15px, 1.5vw, 1.5vw);
+    margin: 0;
+
+    .project-form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 5% 0 0 0;
+        width: 100%;
+        color: white;
+
+        .form-group,
+        .button-row {
+            width: 90%;
+            padding: 2.5% 0;
+        }
+
+        .form-group {
+            display: inline-block;
+        }
+
+        .button-row {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: 5%;
+            margin-top: 5%;
+        }
+
+        input {
+            color: #000;
+            width: 100%;
+            height: 3.5vh;
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 5%;
+            text-align: center;
+            background-color: #f9f9f9;
+            font-size: clamp(15px, 1.5vw, 1.5vw);
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+
+            &:hover {
+                border-color: black;
+                background-color: #3498db;
+                color: white;
+            }
+        }
+
+        input[type="file"] {
+            cursor: pointer;
+            font-size: clamp(7.5px, 1.5vw, 1.5vw);
+        }
+
+        button {
+            padding: 2.5% 5%;
+            font-size: clamp(12.5px, 1.5vw, 1.5vw);
+            width: auto;
+            cursor: pointer;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            background-color: #3498db;
+            transition: background-color 0.3s ease;
+
+            &:hover {
+                background-color: white;
+                color: #3498db;
+                font-size: clamp(15px, 1.75vw, 1.75vw);
+            }
+        }
+
+        select {
+            cursor: pointer;
+            width: 100%;
+            height: 3.5vh;
+            padding: .01%;
+            border: 2px solid #ccc;
+            border-radius: 2.5%;
+            background-color: #f9f9f9;
+            color: #000;
+            font-size: clamp(15px, 1.75vw, 1.75vw);
+            appearance: none;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 16px 16px;
+
+            &:hover {
+                background-color: #a2daff;
+                color: black;
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .upload-form {
+        width: 100%;
+    }
+}

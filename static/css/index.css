@@ -1,14 +1,6 @@
 /* Intro Stylesheet File */
 
 /* 
-Cosas a modificar:
-
-    1. footer
-    2. navigation bar
-    3. profile container
-    4. projects container
-    5. descriptions container 
-    
 Resoluciones:
 
     360 × 640
@@ -24,88 +16,7 @@ Resoluciones:
     3840 × 2160
 */
 
-/* NAVIGATION BAR */
-.navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 25%;
-    background-color: rgba(135, 206, 235, 0.7);
-    padding: 30px 0;
-    height: 100vh;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-
-    a {
-        font-size: 1.25vw;
-        text-decoration: none;
-        /* font-size: clamp(1px, 1.5vw, 1.5vw); */
-
-        &.dropdown-toggle {
-            cursor: pointer;
-            position: relative;
-        }
-
-        &:hover {
-            background-color: #135c7d;
-            color: #fff;
-        }
-    }
-
-    .navbar-title {
-        color: #135c7d;
-        text-align: center;
-        margin-top: 0;
-        font-size: clamp(20px, 2vw, 2vw)
-    }
-
-    .navbar-list {
-        background-color: transparent;
-        padding: 0;
-        margin: 0;
-        flex: 1;
-
-        a {
-            color: #fff;
-            text-decoration: none;
-            text-align: left;
-            padding: 10px;
-            display: block;
-            margin-top: 5%;
-
-        }
-
-        .dropdown {
-
-            .dropdown-toggle {
-                font-size: clamp(15px, 1.5vw, 1.5vw);
-            }
-
-            .dropdown-menu {
-                display: none;
-                padding: 10px;
-
-                li a {
-                    padding-left: 10%;
-                    font-size: clamp(12.5px, 1.25vw, 1.25vw);
-                }
-            }
-
-            &.open .dropdown-menu {
-                display: block;
-            }
-        }
-    }
-}
-
 /* INTRO */
-.main-project-container {
-    display: block;
-    width: 75%;
-    margin-left: 25%;
-}
-
 #profile-container {
     flex: 1;
     width: 100%;
@@ -226,6 +137,8 @@ Resoluciones:
 
         &:hover {
             cursor: pointer;
+            background-color: aquamarine;
+            font-size: clamp(15px, 2.25vw, 2.25vw);
         }
     }
 
@@ -249,28 +162,6 @@ Resoluciones:
 
     p {
         font-size: clamp(15px, 1.5vw, 1.5vw);
-    }
-}
-
-/* FOOTER */
-.links {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    width: 15%;
-    display: flex;
-    justify-content: space-evenly;
-    margin: 0;
-    padding: 0;
-    margin-right: clamp(0%, 2.5%, 5%); /* min 5% */
-    
-    .image-footer {
-        img {
-            border-radius: 50%;
-            padding: 0% 10% 0% 0%;
-            height: clamp(22.5px, 2.5vw, 2.5vw);
-            width: clamp(22.5px, 2.5vw, 2.5vw);
-        }
     }
 }
 
