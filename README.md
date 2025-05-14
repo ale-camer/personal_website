@@ -1,6 +1,6 @@
 ```bash
 ├── README.md
-├── app.py  # falta hacer responsive todas las secciones de la pagina. 
+├── app.py  # Main project file.  HAY UN ERROR EN LAS FUNCIONES: download_keyphrases y download_predictions. 
 ├── modules/  # Contain Python modules.
   ├── generate_readme.py  # Generate README.md file. 
   ├── keyphrase_extraction.py  # Contain functions for Keyphrase Extraction functionality. 
@@ -10,19 +10,21 @@
   └── world_bank.py  # Contain functions for World Bank functionality. 
 ├── static/  # Contain static files (CSS, JS and images).
   ├── css/  # Contain CSS main script.
-    ├── index.css  # Intro Stylesheet File
-    ├── keyphrases.css  # No comment available
-    ├── main.css  # RESPONSIVE
+    ├── index.css  # Home Page Stylesheet File
+    ├── main.css  # Main Stylesheet File
     ├── mi_cv.css  # My CV Stylesheet File
-    ├── seasonality.css  # No comment available
-    ├── utils.css  # Main Project Stylesheet File
-    ├── whatsapp.css  # No comment available
-    └── world_bank.css  # No comment available
+    ├── seasonality.css  # Seasonality Prediction Stylesheet File
+    ├── utils.css  # Utils Project Stylesheet File
+    └── world_bank.css  # World Bank Stylesheet File
   ├── images/  # Contain images for the UI.
   ├── js/  # Contain JavaScript scripts.
     ├── base.js  # Project-wise Functionalities
+    ├── index.js  # No comment available
+    ├── keyphrases.js  #  const form = document.getElementById('inputForm');
+    ├── seasonality.js  # No comment available
+    ├── whatsapp.js  # No comment available
     └── world_bank.js  # World Bank JS Functionalities
-  ├── json/
+  ├── json/  # Contain JSON files.
     └── config.json
   ├── keyphrase_extraction/
   ├── seasonality_prediction/  # Contain Seasonality Prediction functionality temporary files.
@@ -32,11 +34,11 @@
   ├── Stock_Algorithmic_Trading_Strategy_Backtesting.html  # Algorithmic Trading Functionality Template
   ├── Vector_Norms_Applications_in_Data_Science.html  # Vector Nomrs Functionality Template
   ├── base.html  # Base Project Template
-  ├── index.html  # INTRO
+  ├── index.html  # Home Page Template
   ├── keyphrase_extraction.html  # Keyphrase Extraction Functionality Template
   ├── macro_n_employment_english.html  # Macroeconomic (English) Functionality Template
   ├── macro_n_employment_spanish.html  # Macroeconomic (Spanish) Functionality Template
-  ├── mi_cv.html  # Work Experience
+  ├── mi_cv.html  # Keyphrase Extraction Functionality Template
   ├── seasonality_prediction.html  # Seasonality Prediction Functionality Template
   ├── trends_in_data_science_labour_market.html  # Trends in Data Science Functionality Template
   ├── whatsapp.html  # WhatsApp Functionality Template

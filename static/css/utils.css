@@ -1,4 +1,4 @@
-/* Main Project Stylesheet File */
+/* Utils Project Stylesheet File */
 
 /* MAIN */
 * {
@@ -93,6 +93,18 @@ html {
         }
     }
 
+    .burger-menu {
+        display: none;
+        font-size: 2rem;
+        background: none;
+        border: none;
+        color: #135c7d;
+        padding: 10px;
+        cursor: pointer;
+        align-self: flex-end;
+        margin-right: 10px;
+    }
+
     .navbar-title {
         color: #135c7d;
         text-align: center;
@@ -163,6 +175,10 @@ html {
             padding: 0% 10% 0% 0%;
             height: clamp(22.5px, 2.5vw, 2.5vw);
             width: clamp(22.5px, 2.5vw, 2.5vw);
+
+            &:hover {
+                transform: scale(1.5);
+            }
         }
     }
 }
@@ -246,7 +262,8 @@ html {
             &:hover {
                 background-color: white;
                 color: #3498db;
-                font-size: clamp(15px, 1.75vw, 1.75vw);
+                transform: scale(1.25);
+                border: #3498db solid;
             }
         }
 
@@ -271,11 +288,5 @@ html {
                 color: black;
             }
         }
-    }
-}
-
-@media (max-width: 768px) {
-    .upload-form {
-        width: 100%;
     }
 }

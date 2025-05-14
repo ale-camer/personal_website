@@ -2,12 +2,14 @@
 
 {% block content %}
 
+<!-- Keyphrase Extraction Functionality Template -->
+
 <link rel="stylesheet" href="{{ url_for('static', filename='css/mi_cv.css') }}">
 
 <div class="mi-cv">
 
     <!-- Work Experience -->
-    <h1>Work Experience in Data</h1>
+    <h1 id="work-experience">Work Experience in Data</h1>
 
     <div class="job">
         <h3>Data Scientist in ABinBev | 08-2023 - Present (<span id="months-counter">{{ delta_time_string }}</span>)
@@ -120,7 +122,7 @@
     </div>
 
     <!-- Technologies -->
-    <h1>Technologies</h1>
+    <h1 id="technologies">Technologies</h1>
 
     <div class="job">
         <h3>Backend Development</h3>
@@ -198,6 +200,7 @@
             </div>
         </div>
     </div>
+
     <div class="job">
         <h3>Visualization</h3>
         <div class="skills-grid">
@@ -270,7 +273,7 @@
     </div>
 
     <!-- Education -->
-    <h1>Education</h1>
+    <h1 id="education">Education</h1>
 
     <div class="job">
         <ul class="education-list">
@@ -294,7 +297,7 @@
     </div>
 
     <!-- Languages -->
-    <h1>Languages</h1>
+    <h1 id="languages">Languages</h1>
 
     <div class="job">
         <div class="skills-grid">
@@ -320,7 +323,7 @@
     </div>
 
     <!-- Interests -->
-    <h1>Interests</h1>
+    <h1 id="interests">Interests</h1>
 
     <div class="job" id="interests">
             <ul class="interests-list">

@@ -4,8 +4,6 @@
 
 <!-- Keyphrase Extraction Functionality Template -->
 
-<link rel="stylesheet" href="{{ url_for('static', filename='css/keyphrases.css') }}">
-
 <div class="main-project-container">
     <div class="project-container">
         <h1>Keyphrase Extraction</h1>
@@ -35,7 +33,7 @@
                 </div>
 
                 <div class="button-row">
-                    <button type="submit">Extract <br>Keyphrases</button>
+                    <button type="submit" id="submitBtn">Extract <br>Keyphrases</button>
                     <button type="button" id="downloadBtn">Download <br>Keyphrases</button>
                 </div>
             </form>
@@ -76,48 +74,5 @@
     {% endif %}
 </div>
 
-<!-- JavaScript File for Enhancing UI -->
-<script>
-    const form = document.getElementById('inputForm');
-    form.addEventListener('submit', function (event) {
-        event.preventDefault();
-
-        const fileInput = document.getElementById('file');
-        const fileError = document.getElementById('fileError');
-
-        fileError.textContent = '';
-        let isValid = true;
-
-        if (!fileInput.files.length) {
-            fileError.textContent = 'Please select a file.';
-            isValid = false;
-        }
-
-        if (isValid) {
-            this.submit();
-        }
-    });
-
-    const downloadBtn = document.getElementById('downloadBtn');
-    downloadBtn.addEventListener('click', function () {
-        const fileInput = document.getElementById('file');
-        const fileError = document.getElementById('fileError');
-
-        fileError.textContent = '';
-
-        if (!fileInput.files.length) {
-            fileError.textContent = 'Please select a file.';
-        } else {
-            window.location.href = "{{ url_for('download_keyphrases') }}";
-        }
-    });
-
-    document.addEventListener("DOMContentLoaded", function () {
-        const resultSection = document.getElementById("result-section");
-        if (resultSection) {
-            resultSection.scrollIntoView({ behavior: "smooth" });
-        }
-    });
-</script>
-
+<script src="{{ url_for('static', filename='js/keyphrases.js') }}"></script>
 {% endblock %}

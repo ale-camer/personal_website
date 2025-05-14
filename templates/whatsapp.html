@@ -4,8 +4,6 @@
 
 <!-- WhatsApp Functionality Template -->
 
-<link rel="stylesheet" href="{{ url_for('static', filename='css/whatsapp.css') }}">
-
 <div class="main-project-container">
     <div class="project-container">
         <h1>WhatsApp</h1>
@@ -37,64 +35,6 @@
     </div>
 </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const languages = [
-            { value: "english", text: "English" },
-            { value: "mandarin", text: "Mandarin" },
-            { value: "spanish", text: "Spanish" },
-            { value: "french", text: "French" },
-            { value: "arabic", text: "Arabic" },
-            { value: "bengali", text: "Bengali" },
-            { value: "portuguese", text: "Portuguese" },
-            { value: "russian", text: "Russian" },
-            { value: "japanese", text: "Japanese" },
-            { value: "punjabi", text: "Punjabi" },
-            { value: "german", text: "German" },
-            { value: "javanese", text: "Javanese" },
-            { value: "korean", text: "Korean" },
-            { value: "vietnamese", text: "Vietnamese" },
-            { value: "telugu", text: "Telugu" }
-        ];
-
-        const selectElement = document.getElementById('language');
-        const hiddenInput = document.getElementById('selected_language');
-
-        languages.forEach(function (language) {
-            const option = document.createElement('option');
-            option.value = language.value;
-            option.textContent = language.text;
-            selectElement.appendChild(option);
-        });
-
-        // Establece el valor seleccionado por defecto
-        selectElement.value = "english";  // Ajusta esto según el idioma predeterminado
-        hiddenInput.value = selectElement.value;
-
-        selectElement.addEventListener('change', function () {
-            hiddenInput.value = selectElement.value;
-        });
-    });
-
-    const form = document.getElementById('project-form');
-    form.addEventListener('submit', function (event) {
-        event.preventDefault();
-
-        const fileInput = document.getElementById('file');
-        const fileError = document.getElementById('fileError');
-
-        fileError.textContent = '';
-        let isValid = true;
-
-        if (!fileInput.files.length) {
-            fileError.textContent = 'Please select a file.';
-            isValid = false;
-        }
-
-        if (isValid) {
-            this.submit();
-        }
-    });
-</script>
+<script src="{{ url_for('static', filename='js/whatsapp.js') }}"></script>
 
 {% endblock %}

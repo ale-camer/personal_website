@@ -107,8 +107,8 @@
     "North America"
   ],
   "plot_names": [
-    "original_data.png", 
-    "all_periods_data.png", 
+    "original_data.png",
+    "all_periods_data.png",
     "historic_and_prediction_data.png"
   ]
 }

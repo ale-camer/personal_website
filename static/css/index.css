@@ -1,20 +1,4 @@
-/* Intro Stylesheet File */
-
-/* 
-Resoluciones:
-
-    360 × 640
-    375 × 667
-    414 × 896
-    768 × 1024
-    1024 × 768
-    1280 × 800
-    1366 × 768
-    1440 × 900
-    1920 × 1080
-    2560 × 1440
-    3840 × 2160
-*/
+/* Home Page Stylesheet File */
 
 /* INTRO */
 #profile-container {
@@ -162,23 +146,6 @@ Resoluciones:
 
     p {
         font-size: clamp(15px, 1.5vw, 1.5vw);
-    }
-}
-
-/* RESPONSIVE */
-@media (max-width: 1600px) {
-    .projects-type-container {
-        flex-direction: column;
-    }
-
-    .project-type-container {
-        margin-bottom: 1%;
-    }
-
-    .project-container:nth-of-type(2) {
-        padding: 1%;
-        overflow: hidden;
-        box-sizing: border-box;
     }
 }
 
