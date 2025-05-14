@@ -19,9 +19,10 @@
   ├── images/  # Contain images for the UI.
   ├── js/  # Contain JavaScript scripts.
     ├── base.js  # Project-wise Functionalities
-    ├── index.js  # No comment available
+    ├── index.js  #  PART TWO
     ├── keyphrases.js  #  const form = document.getElementById('inputForm');
     ├── seasonality.js  # No comment available
+    ├── utils.js  # No comment available
     ├── whatsapp.js  # No comment available
     └── world_bank.js  # World Bank JS Functionalities
   ├── json/  # Contain JSON files.

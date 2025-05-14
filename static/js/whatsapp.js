@@ -1,21 +1,19 @@
-const LANGUAGES_DATA = [
-    { value: "english", text: "English" },
-    { value: "mandarin", text: "Mandarin" },
-    { value: "spanish", text: "Spanish" },
-    { value: "french", text: "French" },
-    { value: "arabic", text: "Arabic" },
-    { value: "bengali", text: "Bengali" },
-    { value: "portuguese", text: "Portuguese" },
-    { value: "russian", text: "Russian" },
-    { value: "japanese", text: "Japanese" },
-    { value: "punjabi", text: "Punjabi" },
-    { value: "german", text: "German" },
-    { value: "javanese", text: "Javanese" },
-    { value: "korean", text: "Korean" },
-    { value: "vietnamese", text: "Vietnamese" },
-    { value: "telugu", text: "Telugu" }
-];
+//WhatsApp Functionalities
+
+let LANGUAGES_DATA = [];
 const DEFAULT_LANGUAGE = "english";
+const JSONfilePath = 'static/json/config.json';
+
+fetch(JSONfilePath)
+    .then(response => response.json())
+    .then(data => {
+        LANGUAGES_DATA = data["languagues-to-choose"];
+
+        setupLanguageSelection('language', 'selected_language', LANGUAGES_DATA, DEFAULT_LANGUAGE);
+    })
+    .catch(error => {
+        console.error('Error al cargar los idiomas:', error);
+    });
 
 function setupLanguageSelection(selectId, hiddenInputId, languages, defaultLang) {
     const selectElement = document.getElementById(selectId);
