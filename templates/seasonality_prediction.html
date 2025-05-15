@@ -25,7 +25,7 @@
                 </div>
                 <div class="form-group">
                     <label for="periodicity">Periodicity:</label><br>
-                    <input type="number" name="periodicity" id="periodicity" min="2" max="100" value="2" required title="Choose periodicity of time serie">
+                    <input type="number" name="periodicity" id="periodicity" min="2" max="100" value="4" required title="Choose periodicity of time serie">
                 </div>
                 <div class="button-row">
                     <button type="submit">Calculate <br>Prediction</button>
@@ -39,7 +39,7 @@
     {% if forecast %}
     <div class="project-container" id="result-section">
         <h2>Next Period Predictions</h2>
-        <table class="prediction-table">
+        <table id="seasonality-table">
             <thead>
                 <tr>
                     <th>Period</th>

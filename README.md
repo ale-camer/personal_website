@@ -20,7 +20,7 @@
   ├── js/  # Contain JavaScript scripts.
     ├── base.js  # Project-wise Functionalities
     ├── index.js  # Home Page Functionalities
-    ├── keyphrases.js  #  document.addEventListener('DOMContentLoaded', () => {
+    ├── keyphrases.js  # Keyphrase Extraction Functionalities
     ├── seasonality.js  # Seasonality Prediction Functionalities
     ├── whatsapp.js  # WhatsApp Functionalities
     └── world_bank.js  # World Bank Functionalities

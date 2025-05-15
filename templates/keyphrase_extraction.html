@@ -46,7 +46,7 @@
             {% for ngram_value, data in results.items() %}
             <div>
                 <h2>{{ ngram_value }}</h2>
-                <table>
+                <table id="keyphrases-table">
                     <thead>
                         <tr>
                             <th>Keywords</th>
@@ -56,8 +56,8 @@
                     <tbody>
                         {% for row in data.values %}
                         <tr>
-                            <td>{{ row[0] }}</td>
-                            <td style="text-align: center;">{{ row[1] }}</td>
+                            <td id="keyword">{{ row[0] }}</td>
+                            <td id="n-appearances">{{ row[1] }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
