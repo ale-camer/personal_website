@@ -1,3 +1,5 @@
+//Seasonality Prediction Functionalities
+
 const form = document.getElementById('predictionForm');
 form.addEventListener('submit', function (event) {
     event.preventDefault();

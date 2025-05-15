@@ -1,46 +1,41 @@
-// const form = document.getElementById('inputForm');
-// form.addEventListener('submit', function (event) {
-//     event.preventDefault();
-
+// document.addEventListener('DOMContentLoaded', () => {
 //     const fileInput = document.getElementById('file');
 //     const fileError = document.getElementById('fileError');
+//     const downloadBtn = document.getElementById('downloadBtn');
+//     const submitBtn = document.getElementById('submitBtn');
+//     const resultSection = document.getElementById('result-section');
 
-//     fileError.textContent = '';
-//     let isValid = true;
+//     let extractionDone = window.extractionDone || false;
 
-//     if (!fileInput.files.length) {
-//         fileError.textContent = 'Please select a file.';
-//         isValid = false;
+//     if (submitBtn) {
+//         submitBtn.addEventListener('click', (event) => {
+//             fileError.textContent = '';
+//             if (!fileInput.files.length) {
+//                 fileError.textContent = 'ERROR 1';
+//                 event.preventDefault();
+//                 extractionDone = false;
+//             } else {
+//                 extractionDone = true; // <-- Marca que se hizo extracción (asumido exitoso)
+//             }
+//         });
 //     }
 
-//     if (isValid) {
-//         this.submit();
+//     if (downloadBtn) {
+//         downloadBtn.addEventListener('click', function (event) {
+//             fileError.textContent = '';
+
+//             if (!fileInput.files.length) {
+//                 fileError.textContent = 'ERROR 2';
+//             } else if (!extractionDone) {
+//                 fileError.textContent = 'ERROR 3';
+//             } else {
+//                 window.location.href = "/download_keyphrases";
+//             }
+//         });
 //     }
-// });
 
-// const downloadBtn = document.getElementById('downloadBtn');
-// const resultSection = document.getElementById('result-section');
-// downloadBtn.addEventListener('click', function () {
-//     const fileInput = document.getElementById('file');
-//     const fileError = document.getElementById('fileError');
-//     // console.log(resultSection.textContent);
-//     console.log(resultSection.textContent.length);
-//     console.log(!resultSection.textContent.length);
-    
-
-//     fileError.textContent = '';
-
-//     if (!fileInput.files.length) {
-//         fileError.textContent = 'Please select a file first.';
-//     } else {
-//         window.location.href = "{{ url_for('download_keyphrases') }}";
-//     }
-// });
-
-// document.addEventListener("DOMContentLoaded", function () {
-//     const resultSection = document.getElementById("result-section");
-//     if (resultSection) {
-//         resultSection.scrollIntoView({ behavior: "smooth" });
+//     if (resultSection && resultSection.textContent.trim().length > 0) {
+//         resultSection.scrollIntoView({ behavior: 'smooth' });
 //     }
 // });
 
@@ -49,35 +44,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const fileError = document.getElementById('fileError');
     const downloadBtn = document.getElementById('downloadBtn');
     const submitBtn = document.getElementById('submitBtn');
-    const resultSection = document.getElementById('result-section');
+    const resultSection = document.getElementById('result-section'); // El div que contiene los resultados
 
-    // Para el botón de envío (Extract)
     if (submitBtn) {
         submitBtn.addEventListener('click', (event) => {
-            fileError.textContent = '';
+            fileError.textContent = ''; // Limpiar errores
             if (!fileInput.files.length) {
-                fileError.textContent = 'ERROR 1';
-                event.preventDefault();
+                fileError.textContent = 'ERROR 1: Please select a .txt file to upload.';
+                event.preventDefault(); // Prevenir el envío del formulario si no hay archivo
             }
         });
     }
 
-    // Para el botón de descarga
     if (downloadBtn) {
-        downloadBtn.addEventListener('click', function () {
-            fileError.textContent = '';
+        downloadBtn.addEventListener('click', function (event) {
+            fileError.textContent = ''; // Limpiar errores
 
-            if (!resultSection || resultSection.textContent.trim().length === 0) {
-                // Si resultSection NO existe O si existe PERO su contenido (sin espacios en blanco) está vacío
-                fileError.textContent = 'ERROR 2';
+            const hasResultsDisplayed = resultSection && resultSection.querySelector('table');
+            if (!fileInput.files.length && !hasResultsDisplayed) {
+                fileError.textContent = 'ERROR 2: Please upload a file and extract keyphrases first.';
+            } else if (!hasResultsDisplayed) {
+                fileError.textContent = 'ERROR 3: Please extract keyphrases first to see results.';
             } else {
-                // Si hay archivo seleccionado Y resultSection existe y tiene contenido
-                window.location.href = "{{ url_for('download_keyphrases') }}";
+                console.log("Download button clicked. Results are displayed. Attempting to navigate to /download_keyphrases");
+                window.location.href = "/download_keyphrases";
             }
         });
     }
 
-    if (resultSection && resultSection.textContent.trim().length > 0) {
+    if (resultSection && resultSection.querySelector('table')) {
         resultSection.scrollIntoView({ behavior: 'smooth' });
     }
 });

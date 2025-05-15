@@ -132,11 +132,9 @@ def download_keyphrases(output_filename: str="keyphrases_results.txt"):
     """Downloads a TXT file with the results"""    
     data = reading_json(keyphrase_input_file_path) # reading processed data
     keyphrases_string = generate_keyphrases_tables_string(data) # formatting data
+    writing_json(keyphrases_string, keyphrase_output_file_path) # printing results
     
-    output_path = os.path.join(os.path.expanduser('~'), 'Downloads', output_filename) # printing data requested
-    with open(keyphrase_output_file_path, 'w') as f: f.write(keyphrases_string)
-
-    return send_file(output_path, as_attachment=True, download_name=output_filename)
+    return send_file(keyphrase_output_file_path, as_attachment=True, download_name=output_filename)
 
 # =============================================================================
 # SEASONALITY PREDICTION

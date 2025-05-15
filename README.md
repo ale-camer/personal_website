@@ -19,15 +19,14 @@
   ├── images/  # Contain images for the UI.
   ├── js/  # Contain JavaScript scripts.
     ├── base.js  # Project-wise Functionalities
-    ├── index.js  #  PART TWO
-    ├── keyphrases.js  #  const form = document.getElementById('inputForm');
-    ├── seasonality.js  # No comment available
-    ├── utils.js  # No comment available
-    ├── whatsapp.js  # No comment available
-    └── world_bank.js  # World Bank JS Functionalities
+    ├── index.js  # Home Page Functionalities
+    ├── keyphrases.js  #  document.addEventListener('DOMContentLoaded', () => {
+    ├── seasonality.js  # Seasonality Prediction Functionalities
+    ├── whatsapp.js  # WhatsApp Functionalities
+    └── world_bank.js  # World Bank Functionalities
   ├── json/  # Contain JSON files.
     └── config.json
-  ├── keyphrase_extraction/
+  ├── keyphrase_extraction/  # Contain Keyphrase Extraction functionality temporary files.
   ├── seasonality_prediction/  # Contain Seasonality Prediction functionality temporary files.
   └── world_bank/  # Contain World Bank functionality temporary files.
 └── templates/  # Contain HTML templates.

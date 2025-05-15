@@ -81,6 +81,7 @@ def generate_tree(directory, indent=0, tree_str="", last_item=False):
             elif item == "css": tree_str += f"{prefix}{item}/  # Contain CSS main script.\n"
             elif item == "js": tree_str += f"{prefix}{item}/  # Contain JavaScript scripts.\n"
             elif item == "seasonality_prediction": tree_str += f"{prefix}{item}/  # Contain Seasonality Prediction functionality temporary files.\n"
+            elif item == "keyphrase_extraction": tree_str += f"{prefix}{item}/  # Contain Keyphrase Extraction functionality temporary files.\n"
             elif item == "world_bank": tree_str += f"{prefix}{item}/  # Contain World Bank functionality temporary files.\n"
             elif item == "json": tree_str += f"{prefix}{item}/  # Contain JSON files.\n"
             elif item == 'images': 
