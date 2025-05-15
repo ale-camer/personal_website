@@ -4,7 +4,6 @@ Custom functions for the projects.
 
 import os, shutil, json
 import pandas as pd
-from datetime import datetime
 
 def remove_old_files(folder, files_to_remove=None) -> None:
     """
@@ -32,22 +31,17 @@ def remove_old_files(folder, files_to_remove=None) -> None:
         
 def delta_time() -> None:
     """"Updates the time since the last job was started"""
-    today = datetime.now()
-    beging_last_job = datetime(2023, 8, 1)
-    delta_days = (today - beging_last_job).days
-
-    years = delta_days // 365
-    months = int((delta_days - 365) / 30)
-
-    if years == 1: year_string = "year"
-    else: year_string = "years"
-
-    if months == 1: month_string = "month"
-    else: month_string = "months"
-
-    string = "%d %s %d %s" % (years, year_string, months, month_string)
-
-    return string
+    days_per_month, days_per_year = 30, 365
+    today, job_start_date = pd.Timestamp.now(), pd.Timestamp(2025, 2, 1)
+    elapsed_days = (today - job_start_date).days
+    
+    years = elapsed_days // days_per_year if elapsed_days > days_per_year else 0
+    months = int((elapsed_days - days_per_year) / days_per_month) if elapsed_days > days_per_year else int(elapsed_days / days_per_month) + 1
+    
+    year_text = "" if years == 0 else "year" if years == 1 else "years"
+    month_text = "month" if months == 1 else "months"
+    
+    return f"{months} {month_text}" if years == 0 else f"{years} {year_text} {months} {month_text}"
   
 def reading_json(path: str) -> None:
     """Loads and returns the contents of a JSON file from the specified path."""

@@ -1,7 +1,5 @@
 """
 Main project file.
-
-HAY UN ERROR EN LAS FUNCIONES: download_keyphrases y download_predictions.
 """
 
 # web programming frameworks
