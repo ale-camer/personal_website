@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.png') }}">
+    <!-- <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/profile.jpg') }}"> -->
     <title>Alejandro Camerlengo</title>
 </head>
 
@@ -49,19 +50,25 @@
                 <a class="dropdown-toggle" tabindex="0" role="button" aria-expanded="false"
                     aria-controls="projects-menu" title="Choose a project">Read</a>
                 <ul class="dropdown-menu">
-                    <li><a href="{{ url_for('algorithmic_trading') }}" target="_blank" title="Description">Algorithmic Trading</a></li>
-                    <li><a href="{{ url_for('linear_algebra') }}" target="_blank" title="Description">Linear Algebra</a></li>
-                    <li><a href="{{ url_for('arg_macro_spanish') }}" target="_blank" title="Description">Macro & Employment (Spanish)</a>
+                    <li><a href="{{ url_for('algorithmic_trading') }}" target="_blank" title="Description">Algorithmic
+                            Trading</a></li>
+                    <li><a href="{{ url_for('linear_algebra') }}" target="_blank" title="Description">Linear Algebra</a>
                     </li>
-                    <li><a href="{{ url_for('arg_macro_english') }}" target="_blank" title="Description">Macro & Employment (English)</a>
+                    <li><a href="{{ url_for('arg_macro_spanish') }}" target="_blank" title="Description">Macro &
+                            Employment (Spanish)</a>
                     </li>
-                    <li><a href="{{ url_for('ds_trends') }}" target="_blank" title="Description">Trends in Data Science</a></li>
-                    <li><a href="{{ url_for('vector_norms') }}" target="_blank" title="Description">Vector Norms</a></li>
+                    <li><a href="{{ url_for('arg_macro_english') }}" target="_blank" title="Description">Macro &
+                            Employment (English)</a>
+                    </li>
+                    <li><a href="{{ url_for('ds_trends') }}" target="_blank" title="Description">Trends in Data
+                            Science</a></li>
+                    <li><a href="{{ url_for('vector_norms') }}" target="_blank" title="Description">Vector Norms</a>
+                    </li>
                 </ul>
             </li>
         </ul>
     </nav>
-    
+
     {% block content %}{% endblock %}
 
     <!-- FOOTER -->

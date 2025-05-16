@@ -1,269 +1,419 @@
 //World Bank Functionalities
 
-// Initialize variables to store selected values and state
 let selectedIndicator = null;
+let selectedIndicatorKey = null;
 let selectedType = null;
-let selectedOption = null;
-let resultsShown = false;
+let selectedTypeKey = null;
+let selectedOptionValue = null;
+let currentTableData = [];
 
-// Function to handle selection of an indicator
+function closeDropdown(menuId) {
+    const menu = document.getElementById(menuId);
+    if (menu) {
+        menu.style.display = 'none';
+    }
+}
+
 function selectIndicator(event, key, value) {
-    event.preventDefault(); // Prevent default action
-    selectedIndicator = value;
-    // Update UI elements with selected indicator information
-    document.getElementById('dropdownButton').innerText = key;
-    document.getElementById('typeButton').innerText = 'Select Type';
-    document.getElementById('optionsButton').innerText = 'Select an Option';
-    // Fetch options based on selected indicator and type
-    fetchOptions();
-    // Close the dropdown menu after selection
+    event.preventDefault();
+    if (selectedIndicator !== value) {
+        selectedIndicator = value;
+        selectedIndicatorKey = key;
+        document.getElementById('dropdownButton').innerText = key;
+        selectedOptionValue = null;
+        document.getElementById('optionsButton').innerText = 'Country/Year';
+        const optionsMenu = document.getElementById('optionsMenu');
+        if (optionsMenu) {
+            optionsMenu.innerHTML = selectedType ? '<a href="#" class="options-message">Loading options...</a>' : '<a href="#" class="options-message">Select type to see options...</a>';
+        }
+        document.getElementById('wb-results').style.display = 'none';
+        document.getElementById('wb_tbody').innerHTML = '';
+        currentTableData = [];
+        checkAndLoadOptions();
+    }
     closeDropdown('dropdownMenu');
 }
 
-// Function to handle selection of a type (country or year)
 function selectType(event, type) {
-    event.preventDefault(); // Prevent default action
-    selectedType = type;
-    // Update UI element with selected type information
-    document.getElementById('typeButton').innerText = type === 'country' ? 'Country' : 'Year';
-    document.getElementById('optionsButton').innerText = 'Select an Option';
-    // Fetch options based on selected indicator and type
-    // fetchOptions();
-    // Close the dropdown menu after selection
-    closeDropdown('typeMenu');
-}
-
-// Function to handle selection of an option
-function selectOption(event, option) {
-    event.preventDefault(); // Prevent default action
-    selectedOption = option;
-    // Update UI element with selected option information
-    document.getElementById('optionsButton').innerText = option;
-    // Close the options dropdown menu after selection
-    closeDropdown('optionsMenu');
-}
-
-function downloadData() {
-    if (selectedIndicator && selectedType) {
-        return fetch(`/save_data_to_temp?indicator=${selectedIndicator}&type=${selectedType}`)
-            .then(response => {
-                if (!response.ok) throw new Error('Network response was not ok');
-                return response.json();
-            });
-    } else {
-        console.warn('Please select both an indicator and a type.');
-        return Promise.reject('Missing selection');
-    }
-}
-
-
-function selectTypeAndDownload(event, type) {
     event.preventDefault();
-    selectedType = type;
-    document.getElementById('typeButton').innerText = type === 'country' ? 'Country' : 'Year';
-    document.getElementById('optionsButton').innerText = 'Select an Option';
+    if (selectedType !== type) {
+        selectedType = type;
+        selectedTypeKey = type.charAt(0).toUpperCase() + type.slice(1);
+        document.getElementById('typeButton').innerText = selectedTypeKey;
+        selectedOptionValue = null;
+        document.getElementById('optionsButton').innerText = 'Country/Year';
+        const optionsMenu = document.getElementById('optionsMenu');
+        if (optionsMenu) {
+            optionsMenu.innerHTML = selectedIndicator ? '<a href="#" class="options-message">Loading options...</a>' : '<a href="#" class="options-message">Select indicator to see options...</a>';
+        }
+        document.getElementById('wb-results').style.display = 'none';
+        document.getElementById('wb_tbody').innerHTML = '';
+        currentTableData = [];
+        checkAndLoadOptions();
+    }
     closeDropdown('typeMenu');
-
-    downloadData().then(() => {
-        fetchOptions(); // ✅ Solo lo llamás después de que se guardaron los datos
-    }).catch(error => {
-        console.error('Error downloading data:', error);
-    });
 }
 
-// Function to fetch options based on selected indicator and type
-function fetchOptions() {
-    if (selectedIndicator && selectedType) {
-        // Make a fetch request to retrieve options based on indicator and type
-        fetch(`/fetch_options?indicator=${selectedIndicator}&type=${selectedType}`)
-            .then(response => response.json()) // Parse the JSON response
-            .then(data => {
-                const optionsMenu = document.getElementById('optionsMenu');
-                optionsMenu.innerHTML = ''; // Clear existing options
-                // Create and append new option elements based on fetched data
+function selectOption(event, optionValue, optionText) {
+    event.preventDefault();
+    document.getElementById('optionsButton').innerText = optionText;
+    selectedOptionValue = optionValue;
+    closeDropdown('optionsMenu');
+    console.log("Selected option value:", selectedOptionValue, "Display text:", optionText);
+    document.getElementById('wb-results').style.display = 'none';
+    document.getElementById('wb_tbody').innerHTML = '';
+    currentTableData = [];
+}
+
+function checkAndLoadOptions() {
+    const optionsMenu = document.getElementById('optionsMenu');
+    const optionsButton = document.getElementById('optionsButton');
+    if (!optionsMenu || !optionsButton) return;
+
+    if (!selectedIndicator || !selectedType) {
+        let message = "First choose an indicator and type.";
+        if (!selectedIndicator && !selectedType) message = "First choose an indicator and type.";
+        else if (!selectedIndicator) message = "First choose an indicator.";
+        else message = "First choose a type.";
+        optionsButton.innerText = 'Country/Year';
+        optionsMenu.innerHTML = `<a href="#" class="options-message">${message}</a>`;
+        return;
+    }
+
+    optionsMenu.innerHTML = '<a href="#" class="options-message">Loading options...</a>';
+
+    fetch(`/save_data_to_temp?indicator=${encodeURIComponent(selectedIndicator)}&type=${encodeURIComponent(selectedType)}`)
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => {
+                    throw new Error(`Save data failed: ${response.status} ${response.statusText}. ${text}`);
+                });
+            }
+            return;
+        })
+        .then(() => {
+            return fetch(`/fetch_options?indicator=${encodeURIComponent(selectedIndicator)}&type=${encodeURIComponent(selectedType)}`);
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(errData => {
+                    throw new Error(`Fetch options failed: ${response.status}. ${errData.message || 'Server error'}`);
+                }).catch(() => {
+                    throw new Error(`Fetch options failed: ${response.status} ${response.statusText}`);
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            optionsMenu.innerHTML = '';
+            if (data && data.length > 0) {
                 data.forEach(option => {
                     const optionElement = document.createElement('a');
                     optionElement.href = '#';
-                    optionElement.innerText = option;
-                    optionElement.onclick = () => selectOption(event, option); // Pass event and option
+                    let optionValue, optionText;
+                    if (typeof option === 'object' && option !== null && option.hasOwnProperty('value') && option.hasOwnProperty('text')) {
+                        optionValue = option.value;
+                        optionText = option.text;
+                    } else {
+                        optionValue = option;
+                        optionText = option;
+                    }
+                    optionElement.innerText = optionText;
+                    optionElement.onclick = (e) => selectOption(e, optionValue, optionText);
                     optionsMenu.appendChild(optionElement);
                 });
-                // Show the options menu
-                optionsMenu.style.display = 'block';
-            });
-    }
-}
-
-// Function to show results after selections are made
-function showResults() {
-    if (selectedIndicator && selectedType && selectedOption) {
-        // If all selections are made, fetch and display results
-        fetchData(selectedIndicator, selectedType, selectedOption);
-        const worldBankResultsContainer = document.getElementById('wb-results');
-        worldBankResultsContainer.style.display = 'block'; // Cambiar el display a 'block' para hacerlo visible
-
-        worldBankResultsContainer.scrollIntoView({
-            behavior: 'smooth', // Desplazamiento suave
-            block: 'start' // Alinear al principio de la vista
-        });
-
-        resultsShown = true; // Mark results as shown
-    } else {
-        // Alert the user if selections are incomplete
-        alert("Please make sure all selections are made before showing results.");
-    }
-}
-
-// Function to fetch data based on selected indicator, type, and option
-function fetchData(indicator, type, option) {
-    fetch(`/fetch_data?indicator=${indicator}&type=${type}&option=${option}`)
-        .then(response => response.json()) // Parse the JSON response
-        .then(data => {
-            // Display fetched data in the results table
-            displayResults(data);
-        });
-}
-
-// Function to display results in the results table
-function displayResults(data) {
-    const resultsTableBody = document.getElementById("wb_tbody");
-
-    if (resultsTableBody == null) {
-        alert("Algo está mal");
-    }
-
-    resultsTableBody.innerHTML = ''; // Clear existing table rows
-    // Iterate through fetched data and populate the table rows
-    data.forEach(row => {
-        const newRow = resultsTableBody.insertRow();
-        newRow.insertCell(0).innerText = row['COUNTRY'];
-        newRow.insertCell(1).innerText = row['DATE'];
-        // Format and display numeric values with two decimal places
-        const value = parseFloat(row['VALUE']);
-        const formattedValue = value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        const valueCell = newRow.insertCell(2);
-        valueCell.innerText = formattedValue;
-        valueCell.classList.add('value-column'); // Add class for right alignment
-    });
-
-    // Show the results container (it was hidden by default)
-    const resultsContainer = document.getElementById('wb-results');
-    resultsContainer.style.display = 'block'; // Show the results container
-}
-
-// Function to close a dropdown menu by hiding it
-function closeDropdown(menuId) {
-    document.getElementById(menuId).style.display = 'none';
-}
-
-// Event listener to handle clicks outside dropdowns to close them
-document.addEventListener('click', function (event) {
-    const dropdownButtons = document.querySelectorAll('.dropbtn-world-bank-topics');
-    if (!event.target.matches('.dropbtn-world-bank-topics')) {
-        // Close all dropdown menus if clicked outside
-        const dropdowns = document.getElementsByClassName('dropdown-content-world-bank-topics');
-        for (let i = 0; i < dropdowns.length; i++) {
-            let openDropdown = dropdowns[i];
-            if (openDropdown.style.display === 'block') {
-                openDropdown.style.display = 'none';
+            } else {
+                optionsMenu.innerHTML = '<a href="#" class="options-message">No options available.</a>';
             }
-        }
-    } else {
-        // Toggle visibility of dropdown content when dropdown button is clicked
-        dropdownButtons.forEach(button => {
-            if (event.target === button) {
-                const dropdownContent = event.target.nextElementSibling;
-                dropdownContent.style.display = dropdownContent.style.display === 'none' ? 'block' : 'none';
-            }
-        });
-    }
-});
-
-// Function to sort the results table by clicking on table headers
-function sortTable(columnIndex, ascending) {
-    const rows = document.querySelectorAll('.wb-table tbody tr');
-    const sortedRows = Array.from(rows).sort((a, b) => {
-        const aValue = a.cells[columnIndex].innerText;
-        const bValue = b.cells[columnIndex].innerText;
-        // Convert values to numbers if sorting by 'Value' column
-        if (columnIndex === 2) {
-            const aNumValue = parseFloat(aValue.replace(/[^0-9.]/g, ''));
-            const bNumValue = parseFloat(bValue.replace(/[^0-9.]/g, ''));
-            return ascending ? aNumValue - bNumValue : bNumValue - aNumValue;
-        }
-        // Sort as strings for other columns
-        return ascending ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
-    });
-
-    // Get the table body element
-    const tableBody = document.querySelector('.wb-table tbody');
-    if (tableBody && tableBody.rows.length > 0) {
-        // Only proceed if there are rows in the tbody
-        sortedRows.forEach(row => tableBody.appendChild(row));
-    }
-}
-
-// Event listeners to sort the table when table headers are clicked
-document.querySelectorAll('.sortable').forEach(header => {
-    let ascending = true; // Variable to control ascending/descending order
-    header.addEventListener('click', () => {
-        // Toggle sort order icon and class on header
-        const icon = header.querySelector('.sort-icon');
-        icon.innerHTML = ascending ? '&#8593;' : '&#8595;'; // Unicode for up and down arrows
-        ascending = !ascending; // Toggle ascending/descending order
-        const columnIndex = Array.from(header.parentNode.children).indexOf(header); // Get column index
-        // Remove sort classes from all headers and apply to current header
-        document.querySelectorAll('.wb-table th').forEach(th => th.classList.remove('asc', 'desc'));
-        header.classList.toggle('asc', ascending);
-        header.classList.toggle('desc', !ascending);
-        // Sort table based on clicked header column
-        sortTable(columnIndex, ascending);
-    });
-});
-
-// Function to download CSV file
-function downloadCSV() {
-    if (!resultsShown) {
-        alert("Please show results before downloading CSV.");
-        return;
-    }
-    if (selectedIndicator && selectedType && selectedOption) {
-        // If all selections are made, construct download URL and initiate download
-        const url = `/download_csv?indicator=${selectedIndicator}&type=${selectedType}&option=${selectedOption}`;
-        window.location.href = url;
-    } else {
-        alert("Please make sure all selections are made.");
-    }
-}
-
-// Function to handle interactive graph generation
-document.querySelector('.interactive-graph').addEventListener('click', function () {
-    if (!resultsShown) {
-        alert("Please show results before viewing the interactive graph.");
-        return;
-    }
-    if (selectedIndicator && selectedType && selectedOption) {
-        // If all selections are made, prepare data and make POST request to generate interactive graph
-        const indicator = selectedIndicator;
-        const type = selectedType === 'country' ? 'country' : 'year';
-        const option = selectedOption;
-        fetch('/interactive_graph', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `indicator=${encodeURIComponent(indicator)}&type=${encodeURIComponent(type)}&option=${encodeURIComponent(option)}`
         })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                console.log('Interactive graph generated.');
-            })
-            .catch(error => {
-                console.error('There was a problem with the interactive graph request:', error);
-            });
-    } else {
-        alert("Please make sure all selections are made.");
+        .catch(error => {
+            console.error('Error in checkAndLoadOptions:', error);
+            optionsMenu.innerHTML = `<a href="#" class="options-message">Error: ${error.message}. Try again.</a>`;
+        });
+}
+
+function populateTable(data) {
+    const tableBody = document.getElementById('wb_tbody');
+    if (!tableBody) {
+        console.error("Table body 'wb_tbody' not found!");
+        return;
     }
+    tableBody.innerHTML = '';
+
+    if (!data || data.length === 0) {
+        const row = tableBody.insertRow();
+        const cell = row.insertCell();
+        cell.colSpan = 3;
+        cell.textContent = 'No data available for the selected criteria.';
+        cell.style.textAlign = 'center';
+        return;
+    }
+
+    data.forEach(item => {
+        const newRow = tableBody.insertRow();
+        newRow.insertCell(0).innerText = item['COUNTRY'] || 'N/A';
+        newRow.insertCell(1).innerText = item['DATE'] || 'N/A';
+
+        const value = parseFloat(item['VALUE']);
+        const valueCell = newRow.insertCell(2);
+        if (!isNaN(value)) {
+            valueCell.innerText = value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        } else {
+            valueCell.innerText = item['VALUE'] || 'N/A';
+        }
+        valueCell.classList.add('value-column');
+    });
+}
+
+async function fetchAndShowResults() {
+    if (!selectedIndicator || !selectedType || !selectedOptionValue) {
+        alert('Please make sure all selections are made before showing results.');
+        return;
+    }
+
+    const resultsDiv = document.getElementById('wb-results');
+    const tableBody = document.getElementById('wb_tbody');
+
+    tableBody.innerHTML = '';
+    const loadingRow = tableBody.insertRow();
+    const loadingCell = loadingRow.insertCell();
+    loadingCell.colSpan = 3;
+    loadingCell.textContent = 'Loading data...';
+    loadingCell.style.textAlign = 'center';
+
+    resultsDiv.style.display = 'block';
+
+    try {
+        const response = await fetch(`/fetch_data?indicator=${encodeURIComponent(selectedIndicator)}&type=${encodeURIComponent(selectedType)}&option=${encodeURIComponent(selectedOptionValue)}`);
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Network response was not ok (${response.status}): ${errorText || response.statusText}`);
+        }
+
+        const data = await response.json();
+        currentTableData = data;
+        populateTable(data);
+
+        resultsDiv.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+
+    } catch (error) {
+        console.error('Error fetching or processing results:', error);
+        tableBody.innerHTML = '';
+        const errorRow = tableBody.insertRow();
+        const errorCell = errorRow.insertCell();
+        errorCell.colSpan = 3;
+        errorCell.textContent = `Error loading data: ${error.message}`;
+        errorCell.style.textAlign = 'center';
+        errorCell.style.color = 'red';
+    }
+}
+
+function makeTableSortable() {
+    const table = document.querySelector('.wb-table');
+    if (!table) return;
+    const headers = table.querySelectorAll('th.sortable');
+
+    const columnKeys = {
+        'Country': 'COUNTRY',
+        'Date': 'DATE',
+        'Value': 'VALUE'
+    };
+    let sortStates = {};
+
+    headers.forEach(header => {
+        const columnTextClean = header.childNodes[0].nodeValue.trim();
+        const dataKey = columnKeys[columnTextClean];
+
+        if (!dataKey) {
+            console.warn(`No data key mapped for header: ${columnTextClean}`);
+            return;
+        }
+
+        header.addEventListener('click', () => {
+            if (currentTableData.length === 0) return;
+
+            const currentDirection = sortStates[dataKey] || 'none';
+            let newDirection;
+            if (currentDirection === 'asc') newDirection = 'desc';
+            else newDirection = 'asc';
+
+            Object.keys(sortStates).forEach(key => sortStates[key] = 'none');
+            headers.forEach(h => {
+                h.classList.remove('asc', 'desc');
+                const icon = h.querySelector('.sort-icon');
+                if (icon) icon.innerHTML = '↕';
+            });
+
+            sortStates[dataKey] = newDirection;
+            header.classList.add(newDirection);
+            const icon = header.querySelector('.sort-icon');
+            if (icon) icon.innerHTML = newDirection === 'asc' ? '↑' : '↓';
+
+            currentTableData.sort((a, b) => {
+                let valA = a[dataKey];
+                let valB = b[dataKey];
+
+                if (dataKey === 'VALUE') {
+                    valA = parseFloat(String(valA).replace(/,/g, ''));
+                    valB = parseFloat(String(valB).replace(/,/g, ''));
+                    if (isNaN(valA)) valA = newDirection === 'asc' ? Infinity : -Infinity;
+                    if (isNaN(valB)) valB = newDirection === 'asc' ? Infinity : -Infinity;
+                } else if (dataKey === 'DATE') {
+                    const numA = parseFloat(valA);
+                    const numB = parseFloat(valB);
+                    if (!isNaN(numA) && !isNaN(numB)) {
+                        valA = numA;
+                        valB = numB;
+                    } else {
+                        valA = String(valA).toLowerCase();
+                        valB = String(valB).toLowerCase();
+                    }
+                } else {
+                    valA = String(valA).toLowerCase();
+                    valB = String(valB).toLowerCase();
+                }
+
+                if (valA < valB) return newDirection === 'asc' ? -1 : 1;
+                if (valA > valB) return newDirection === 'asc' ? 1 : -1;
+                return 0;
+            });
+            populateTable(currentTableData);
+        });
+    });
+}
+
+function downloadDataAsCSV() {
+    if (!currentTableData || currentTableData.length === 0) {
+        alert("No data available to download. Please 'Show Results' first.");
+        return;
+    }
+
+    const headers = ["Country", "Date", "Value"];
+    const dataKeys = ["COUNTRY", "DATE", "VALUE"];
+    let csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\n";
+
+    currentTableData.forEach(item => {
+        const row = dataKeys.map(key => {
+            let cellData = item[key];
+            if (typeof cellData === 'string' && (cellData.includes(',') || cellData.includes('"') || cellData.includes('\n'))) {
+                cellData = `"${cellData.replace(/"/g, '""')}"`;
+            }
+            if (key === 'VALUE') {
+                const numericValue = parseFloat(item['VALUE']);
+                cellData = !isNaN(numericValue) ? numericValue.toString() : (item['VALUE'] || '');
+            }
+            return cellData;
+        });
+        csvContent += row.join(",") + "\n";
+    });
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    const indicatorName = selectedIndicatorKey ? selectedIndicatorKey.replace(/[^a-z0-9]/gi, '_').toLowerCase() : 'data';
+    const optionName = selectedOptionValue ? String(selectedOptionValue).replace(/[^a-z0-9]/gi, '_').toLowerCase() : 'all';
+    const typeName = selectedTypeKey ? selectedTypeKey.toLowerCase() : 'selection';
+    const fileName = `world_bank_${indicatorName}_${typeName}_${optionName}.csv`;
+    link.setAttribute("download", fileName);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+async function showInteractiveGraph() {
+    if (!selectedIndicator || !selectedType || !selectedOptionValue) {
+        alert('Please make sure all selections are made before requesting the graph.');
+        return;
+    }
+
+    const originalButtonText = document.getElementById('interactiveGraphBtn')?.innerHTML;
+    if (document.getElementById('interactiveGraphBtn')) {
+        document.getElementById('interactiveGraphBtn').innerHTML = 'Generating...';
+        document.getElementById('interactiveGraphBtn').disabled = true;
+    }
+
+
+    const formData = new FormData();
+    formData.append('indicator', selectedIndicator);
+    formData.append('type', selectedType);
+    formData.append('option', selectedOptionValue);
+
+    try {
+        const response = await fetch('/interactive_graph', {
+            method: 'POST',
+            body: formData,
+        });
+
+        if (document.getElementById('interactiveGraphBtn') && originalButtonText) {
+            document.getElementById('interactiveGraphBtn').innerHTML = originalButtonText;
+            document.getElementById('interactiveGraphBtn').disabled = false;
+        }
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Graph generation request failed (${response.status}): ${errorText || response.statusText}`);
+        }
+
+        const responseText = await response.text();
+        console.log('Server response for graph:', responseText);
+
+        alert(responseText + "\n\nIf a new tab/window with the graph did not open, please ensure your browser allows pop-ups from this site or check your local server environment if running locally.");
+
+    } catch (error) {
+        console.error('Error requesting interactive graph:', error);
+        alert(`Error: ${error.message}`);
+        if (document.getElementById('interactiveGraphBtn') && originalButtonText) {
+            document.getElementById('interactiveGraphBtn').innerHTML = originalButtonText;
+            document.getElementById('interactiveGraphBtn').disabled = false;
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.wb-topics').forEach(topicsDiv => {
+        const contentElement = topicsDiv.querySelector('.wb-content');
+        if (contentElement) {
+            topicsDiv.addEventListener('mouseleave', function () {
+                contentElement.style.removeProperty('display');
+            });
+        }
+    });
+
+    checkAndLoadOptions();
+
+    const showResultsButton = document.querySelector('.upload-form .project-form .button-row button[type="submit"]');
+    if (showResultsButton) {
+        showResultsButton.addEventListener('click', function (event) {
+            event.preventDefault();
+            fetchAndShowResults();
+        });
+    } else {
+        console.warn('Show Results button not found.');
+    }
+
+    const downloadCSVButton = document.getElementById('downloadCSVBtn');
+    if (downloadCSVButton) {
+        downloadCSVButton.addEventListener('click', function (event) {
+            event.preventDefault();
+            downloadDataAsCSV();
+        });
+    } else {
+        console.warn('Download CSV button (id="downloadCSVBtn") not found.');
+    }
+
+    const interactiveGraphButton = document.getElementById('interactiveGraphBtn');
+    if (interactiveGraphButton) {
+        interactiveGraphButton.addEventListener('click', function (event) {
+            event.preventDefault();
+            showInteractiveGraph();
+        });
+    } else {
+        console.warn('Interactive Graph button (id="interactiveGraphBtn") not found.');
+    }
+
+    makeTableSortable();
 });

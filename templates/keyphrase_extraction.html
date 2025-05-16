@@ -4,6 +4,8 @@
 
 <!-- Keyphrase Extraction Functionality Template -->
 
+<script src="{{ url_for('static', filename='js/keyphrases.js') }}"></script>
+
 <div class="main-project-container">
     <div class="project-container">
         <h1>Keyphrase Extraction</h1>
@@ -16,7 +18,7 @@
             <form class="project-form" action="/keyphrase_extraction_process" method="post"
                 enctype="multipart/form-data" id="inputForm">
 
-                <div class="form-group"> 
+                <div class="form-group">
                     <label for="file">Upload your text file (only .txt files allowed):</label><br>
                     <input type="file" id="file" name="file" accept=".txt">
                     <span id="fileError" style="color: red;"></span>
@@ -24,12 +26,14 @@
 
                 <div class="form-group">
                     <label for="num_tables">Number of N-grams:</label>
-                    <input type="number" id="num_tables" name="num_tables" min="1" max="10" value="5" required title="Choose number of words associated">
+                    <input type="number" id="num_tables" name="num_tables" min="1" max="10" value="5" required
+                        title="Choose number of words associated">
                 </div>
 
                 <div class="form-group">
                     <label for="num_rows">Results per N-gram:</label>
-                    <input type="number" id="num_rows" name="num_rows" min="1" max="10" value="5" required title="Choose number of rows per N-gram">
+                    <input type="number" id="num_rows" name="num_rows" min="1" max="10" value="5" required
+                        title="Choose number of rows per N-gram">
                 </div>
 
                 <div class="button-row">
@@ -74,5 +78,4 @@
     {% endif %}
 </div>
 
-<script src="{{ url_for('static', filename='js/keyphrases.js') }}"></script>
 {% endblock %}

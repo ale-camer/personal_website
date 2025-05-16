@@ -5,6 +5,7 @@
 <!-- Seasonality Prediction Functionality Template -->
 
 <link rel="stylesheet" href="{{ url_for('static', filename='css/seasonality.css') }}">
+<script src="{{ url_for('static', filename='js/seasonality.js') }}"></script>
 
 <div class="main-project-container">
     <div class="project-container">
@@ -25,7 +26,8 @@
                 </div>
                 <div class="form-group">
                     <label for="periodicity">Periodicity:</label><br>
-                    <input type="number" name="periodicity" id="periodicity" min="2" max="100" value="4" required title="Choose periodicity of time serie">
+                    <input type="number" name="periodicity" id="periodicity" min="2" max="100" value="4" required
+                        title="Choose periodicity of time serie">
                 </div>
                 <div class="button-row">
                     <button type="submit">Calculate <br>Prediction</button>
@@ -85,5 +87,4 @@
 </div>
 {% endif %}
 
-<script src="{{ url_for('static', filename='js/seasonality.js') }}"></script>
 {% endblock %}

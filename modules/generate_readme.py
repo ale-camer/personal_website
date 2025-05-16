@@ -4,11 +4,12 @@ Generate README.md file.
 
 import os
 
+
 def get_python_docstring(file_path):
     """Extracts the first docstring from a Python file, excluding the final triple quotes."""
     with open(file_path, 'r', encoding='utf-8') as file:
         lines = file.readlines()
-    
+
     docstring = ""
     in_docstring = False
     for line in lines:

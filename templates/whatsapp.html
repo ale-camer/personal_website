@@ -4,6 +4,8 @@
 
 <!-- WhatsApp Functionality Template -->
 
+<script src="{{ url_for('static', filename='js/whatsapp.js') }}"></script>
+
 <div class="main-project-container">
     <div class="project-container">
         <h1>WhatsApp</h1>
@@ -22,7 +24,8 @@
 
                 <div class="form-group">
                     <label for="language">Select Language:</label>
-                    <select id="language" name="language" title="Select the language in which the conversation was hold"></select>
+                    <select id="language" name="language"
+                        title="Select the language in which the conversation was hold"></select>
                 </div>
 
                 <input type="hidden" id="selected_language" name="selected_language">
@@ -34,7 +37,5 @@
         </div>
     </div>
 </div>
-
-<script src="{{ url_for('static', filename='js/whatsapp.js') }}"></script>
 
 {% endblock %}

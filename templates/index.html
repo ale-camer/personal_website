@@ -2,9 +2,10 @@
 
 {% block content %}
 
-<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
-
 <!-- Home Page Template -->
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
 
 <!-- INTRO -->
 <div class="main-project-container">
@@ -74,5 +75,4 @@
 
 </div>
 
-<script src="{{ url_for('static', filename='js/index.js') }}"></script>
 {% endblock %}
