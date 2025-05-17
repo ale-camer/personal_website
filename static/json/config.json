@@ -218,5 +218,17 @@
       "value": "telugu",
       "text": "Telugu"
     }
-  ]
+  ],
+  "tree_comments" : {
+      "modules": "Contain Python modules.",
+      "static": "Contain static files (CSS, JS and images).",
+      "templates": "Contain HTML templates.",
+      "css": "Contain CSS main script.",
+      "js": "Contain JavaScript scripts.",
+      "seasonality_prediction": "Contain Seasonality Prediction functionality temporary files.",
+      "keyphrase_extraction": "Contain Keyphrase Extraction functionality temporary files.",
+      "world_bank": "Contain World Bank functionality temporary files.",
+      "json": "Contain JSON files.",
+      "images": "Contain images for the UI."
+  } 
 }

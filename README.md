@@ -1,13 +1,13 @@
 ```bash
 ├── README.md
-├── app.py  # Main project file. 
+├── app.py  # Main project file.
+├── generate_readme.py  # Generate README.md file.
 ├── modules/  # Contain Python modules.
-  ├── generate_readme.py  # Generate README.md file. 
-  ├── keyphrase_extraction.py  # Contain functions for Keyphrase Extraction functionality. 
-  ├── seasonality_prediction.py  # Contain functions for Seasonality Prediction functionality. 
-  ├── utils.py  # Custom functions for the projects. 
-  ├── whatsapp.py  # Contain functions for WhatsApp functionality. 
-  └── world_bank.py  # Contain functions for World Bank functionality. 
+  ├── keyphrase_extraction.py  # Contain functions for Keyphrase Extraction functionality.
+  ├── seasonality_prediction.py  # Contain functions for Seasonality Prediction functionality.
+  ├── utils.py  # Custom functions for the projects.
+  ├── whatsapp.py  # Contain functions for WhatsApp functionality.
+  └── world_bank.py  # Contain functions for World Bank functionality.
 ├── static/  # Contain static files (CSS, JS and images).
   ├── css/  # Contain CSS main script.
     ├── index.css  # Home Page Stylesheet File
@@ -23,8 +23,7 @@
     ├── keyphrases.js  # Keyphrase Extraction Functionalities
     ├── seasonality.js  # Seasonality Prediction Functionalities
     ├── whatsapp.js  # WhatsApp Functionalities
-    ├── world_bank.js  #  ... (código anterior sin cambios hasta el final de 'downloadDataAsCSV') ...
-    └── world_bank_OLD.js  # World Bank Functionalities
+    └── world_bank.js  # World Bank Functionalities
   ├── json/  # Contain JSON files.
     └── config.json
   ├── keyphrase_extraction/  # Contain Keyphrase Extraction functionality temporary files.

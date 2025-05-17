@@ -15,6 +15,34 @@ project_root = os.path.dirname(current_dir)
 config_file_path = os.path.join(project_root, 'static', 'json', 'config.json')
 strings_to_exclude = reading_json(config_file_path)["strings_to_exclude"]
 
+def wb_data_preprocess(data: pd.DataFrame, type_selected: str, option_selected: str) -> pd.DataFrame:
+    """
+    Filter and transform World Bank data into a standardized DataFrame.
+
+    The function selects rows by country or date, depending on `type_selected`, and 
+    returns a cleaned DataFrame with selected columns.
+
+    Args:
+        data (pd.DataFrame): Raw World Bank API data.
+        type_selected (str): Type of filtering, either "country" or "date".
+        option_selected (str): Value to filter by (country name or year).
+
+    Returns:
+        pd.DataFrame: Filtered and formatted DataFrame with ISO code, country, date, and value.
+    """
+    filtered_data = [
+        entry for entry in data 
+        if (entry['country']['value'] if type_selected == 'country' else entry['date']) == option_selected
+    ]
+    return (
+       pd.DataFrame(
+         [(entry['countryiso3code'], entry['country']['value'], entry['date'], entry['value']) for entry in filtered_data], 
+         columns=['ISO_CODE', 'COUNTRY', 'DATE', 'VALUE']
+       )
+      .sort_values(by=['COUNTRY', 'DATE'], ascending=[True, False])
+      .drop_duplicates()
+    )
+  
 def get_country_data_for_indicator(indicator_id : str) -> list:
     """
     Fetches country-level data for a specified indicator from the World Bank API.

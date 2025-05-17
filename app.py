@@ -18,9 +18,10 @@ import plotly.graph_objs as go
 
 # custom modules
 from modules.keyphrase_extraction import process_file, generate_keyphrases_tables_string
-from modules.seasonality_prediction import forecasting, generate_plots
+from modules.seasonality_prediction import seasonal_forecast, generate_plots
 from modules.world_bank import (
     get_country_data_for_indicator,
+    wb_data_preprocess,
     plot_time_series,
     plot_heatmap
 )
@@ -32,13 +33,12 @@ from modules.whatsapp import (
     create_dash_layout,
     concatenate_dfs
 )
-from modules.generate_readme import generate_readme
+# from modules.generate_readme import generate_readme
 from modules.utils import (
     remove_old_files,
     delta_time,
     reading_json,
-    writing_json,
-    wb_data_preprocess
+    writing_json
 )
 
 # APPs
@@ -56,7 +56,7 @@ folders_to_clean = ['static/seasonality_prediction',
 
 list(map(remove_old_files, folders_to_clean))  # removing temporary files
 # creating readme file
-generate_readme(os.path.dirname(os.path.realpath(__file__)))
+# generate_readme(os.path.dirname(os.path.realpath(__file__)))
 
 # =============================================================================
 # STATIC PAGES
@@ -183,9 +183,9 @@ def seasonality_prediction_process():
 
         else:  # processing inputs
             col_name = serie.columns[0]
-            forecasted_values_last_period = forecasting(
+            forecasted_values_last_period = seasonal_forecast(
                 serie[col_name].iloc[:-periodicity], periodicity=periodicity)
-            forecasted_values_next_period = forecasting(
+            forecasted_values_next_period = seasonal_forecast(
                 serie[col_name], periodicity=periodicity)
             generate_plots(serie[col_name], forecasted_values_last_period,
                            forecasted_values_next_period, periodicity)
