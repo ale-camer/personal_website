@@ -83,3 +83,17 @@ def writing_json(data: pd.DataFrame, path: str) -> None:
     """
     with open(path, 'w') as f:
         json.dump(data, f)
+        
+def writing_txt(content: str, path: str) -> None:
+    """
+    Save a plain text string to a file.
+
+    Args:
+        content (str): The string to write.
+        path (str): Destination file path.
+        
+    Returns:
+        None
+    """
+    with open(path, 'w', encoding='utf-8') as f:
+        f.write(content)        

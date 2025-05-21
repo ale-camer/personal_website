@@ -1,146 +1,221 @@
-"""
-Contain functions for Keyphrase Extraction functionality.
-"""
-
-import nltk, re
+import re
+import nltk
 import pandas as pd
-from tqdm import tqdm 
-from unidecode import unidecode
+from tqdm import tqdm
+from unidecode import unidecode   
 from prettytable import PrettyTable
 
-def pretty_table_for_keyphrases(data: pd.DataFrame, title: str, columns: list) -> PrettyTable:
-    """Style dataframes"""
-    table = PrettyTable()
-    table.title = title
-    table.field_names = columns
-    for i in data.index:
-      table.add_row([
-        data.loc[i, columns[0]],
-        data.loc[i, columns[1]]
-      ])
-    return table
+# =============================================================================
+# TOP NGRAMS
+# =============================================================================
+nltk.download('punkt', quiet=True)
+URL_REGEX = re.compile(r'http\S+')
+STOPWORDS = set(nltk.corpus.stopwords.words('english'))
 
-def generate_keyphrases_tables_string(data: dict) -> str:
-    """Generates all tables as a string."""
-    result_string = ""
-    for _key in list(data.keys()):
-        df = pd.DataFrame(data[_key])
-        table = pretty_table_for_keyphrases(df, _key, df.columns)
-        result_string += str(table) + "\n\n"  # Add each table to the result string
-    return result_string
+def text_to_ngrams(data: str, max_ngram: int = 5, num_rows: int = 5) -> dict:
+    """
+    Generate top n-gram frequency tables from input text.
   
-def top_ngrams(
-        corpus : list, 
-        ngram_val : int = 1,
-        limit : int = 5, 
-        rows_per_table : int = 5
-    ) -> pd.DataFrame:
-    """
-    Function to extract top n-grams from a corpus of text.
-    
     Args:
-    - corpus (list): List of strings where each string is a document or text.
-    - ngram_val (int): Value of n for n-grams (default is 1 for unigrams).
-    - limit (int): Number of top n-grams to retrieve.
-    - rows_per_table (int): Number of rows per table in the output DataFrame.
-    
+        data (str): Input text to analyze.
+        max_ngram (int, optional): Maximum size of n-grams (default is 5).
+        num_rows (int, optional): Number of top n-grams to include per n-gram table (default is 5).
+  
     Returns:
-    - DataFrame: DataFrame containing the top n-grams and their frequencies.
+        dict: Dictionary where keys are n-gram size descriptions and values are DataFrames 
+              with top n-grams and their frequencies.
     """
-    assert isinstance(corpus, list), "The 'corpus' input must be a list"
-    assert isinstance(rows_per_table, int), "The 'rows_per_table' input must be an integer"
-    assert isinstance(ngram_val, int), "The 'ngram_val' input must be an integer"
-    assert isinstance(limit, int), "The 'limit' input must be an integer"
+    return _generate_ngram_tables(_normalize_sentences(data), max_ngram, num_rows)
 
-    def compute_ngrams(sequence, n):
-        """Helper function to compute n-grams."""
-        return list(zip(*(sequence[index:] for index in range(n))))
-
-    def flatten_corpus(corpus):
-        """Helper function to flatten a list of documents into a single string."""
-        return ' '.join([document.strip() for document in corpus])
-    
-    corpus = flatten_corpus(corpus) # flattening
-    tokens = nltk.word_tokenize(corpus)  # tokenizing
-    ngrams = compute_ngrams(tokens, ngram_val)  # generating n-grams
-    ngrams_freq_dist = nltk.FreqDist(ngrams)  # frequency distribution of n-grams
-    sorted_ngrams_fd = sorted(ngrams_freq_dist.items(), key=lambda x: x[1], reverse=True)  # sorting n-grams by frequency
-    sorted_ngrams = sorted_ngrams_fd[:limit]  # selecting top n-grams
-    sorted_ngrams = [(' '.join(text), freq) for text, freq in sorted_ngrams]  # n-gram tokens to strings
-    sorted_ngrams = sorted_ngrams[:rows_per_table]  # rows per table
-    return pd.DataFrame(sorted_ngrams, columns=['Keywords', '# Appearances'])
-
-def text_normalizer(
-        data : str, 
-        language : str = 'english', 
-        minWordLen : int = 2
-    ) -> str:
+def _normalize_sentences(text: str) -> list:
     """
-    Function to normalize text data by removing stopwords, URLs, non-alphanumeric characters,
-    and accents, and converting text to lowercase.
-    
+    Tokenize and normalize each sentence from the input text.
+  
     Args:
-    - data (str): Input text data to be normalized.
-    - language (str): Language for stopwords (default is 'english').
-    - minWordLen (int): Minimum word length to retain in the normalized text (default is 2).
-    
+        text (str): Raw input text.
+  
     Returns:
-    - str: Normalized text data.
+        list: List of normalized sentences.
     """
-    assert isinstance(data, str), "The 'data' must be a string"
-    assert isinstance(language, str), "The 'language' must be a string"
-    assert isinstance(minWordLen, int), "The 'minWordLen' must be an integer"
-        
-    def conti_rep_char(str1):
-        """Helper function to handle repeated characters."""
-        tchr = str1.group(0)
-        if len(tchr) > 1:
-            return tchr[0:1]
-         
-    def check_unique_char(rep, sent_text):
-        """Helper function to check for unique characters in the text."""
-        convert = re.sub(r'[^a-zA-Z0-9\s]', rep, sent_text)
-        return convert
+    return [_text_normalizer(sentence) for sentence in tqdm(nltk.sent_tokenize(text))]
 
-    stopword_list = nltk.corpus.stopwords.words(language)  # stopwords
-    urlRegex = re.compile(r'http\S+') # URLs
-    
-    data = ' '.join([word for word in data.lower().split() if word not in stopword_list]) # removing stopwords
-    data = check_unique_char(conti_rep_char, data) # checking repeated characters
-    data = ' '.join([word for word in data.split() if not re.match(urlRegex, word)]) # removing URLs
-    data = ' '.join([word for word in data.split() if len(word) > minWordLen]) # removing short words
-    data = ' '.join([unidecode(word) for word in data.split()]) # removing tildas
-
-    return data
-
-def process_file(
-        data : str, 
-        num_tables : int = 5,
-        num_rows : int = 5
-    ) -> dict:
+def _generate_ngram_tables(sentences: list, max_ngram: int, nrows_per_table: int) -> dict:
     """
-    Function to process a text file or string by tokenizing sentences, normalizing them,
-    and generating top n-grams for each n value specified.
-    
+    Generate n-gram frequency tables for n from 1 to max_ngram.
+  
     Args:
-    - data (str): Input text data to be processed.
-    - num_tables (int): Number of n-gram tables to generate (default is 5).
-    - num_rows (int): Number of rows per table in the output DataFrame (default is 5).
-    
+        sentences (list): List of normalized sentences.
+        max_ngram (int): Maximum size of n-grams to generate.
+        nrows_per_table (int): Number of top n-grams to return per table.
+  
     Returns:
-    - dict: Dictionary containing n-gram tables for each n value.
+        dict: Dictionary mapping n-gram description to DataFrame of top n-grams.
     """
-    assert isinstance(data, str), "The 'data' must be a string"
-    assert isinstance(num_tables, int), "The 'num_tables' must be an integer"
-    assert isinstance(num_rows, int), "The 'num_rows' must be an integer"
+    return {
+        f"N-Gram Value: {n}": _top_ngrams(
+            corpus=sentences, 
+            ngram_val=n, 
+            limit=10, 
+            nrows=nrows_per_table
+        )
+        for n in range(1, max_ngram + 1)
+    }
 
-    nltk.download('punkt', quiet=True) # punkt tokenizer
-    sentences = nltk.sent_tokenize(data) # tokenizing
-    normalized_sentences = [text_normalizer(sentence) for sentence in tqdm(sentences)] # normalizing
+def _top_ngrams(corpus: list[str], ngram_val: int = 1, limit: int = 10, nrows: int = 5) -> pd.DataFrame:
+    """
+    Compute and format the top n-grams from a corpus.
+  
+    Args:
+        corpus (list[str]): List of normalized sentences.
+        ngram_val (int, optional): Size of the n-grams (default 1).
+        limit (int, optional): Number of n-grams to consider before slicing (default 10).
+        nrows (int, optional): Number of rows to return in the DataFrame (default 5).
+  
+    Returns:
+        pd.DataFrame: DataFrame with columns ['Keywords', '# Appearances'] showing top n-grams.
+    """
+    tokens = nltk.word_tokenize(_flatten_corpus(corpus))
+    ngrams_freq = nltk.FreqDist(_compute_ngrams(tokens, ngram_val))
+    return _format_top_ngrams(ngrams_freq, limit, nrows)
+
+def _flatten_corpus(corpus: list[str]) -> str:
+    """
+    Flatten a list of strings into a single string, joining with spaces.
+  
+    Args:
+        corpus (list[str]): List of sentences or documents.
+  
+    Returns:
+        str: Single concatenated string.
+    """
+    return _transform_words('  '.join(corpus), fn=lambda w: w.strip())
     
-    results = {}
-    for num in range(1, num_tables + 1):
-        temp_data = top_ngrams(corpus=normalized_sentences, ngram_val=num, limit=10, rows_per_table=num_rows)
-        results[f"N-Gram Value: {num}"] = temp_data # storing n-gram
+def _compute_ngrams(tokens: list[str], n: int) -> list[tuple]:
+    """
+    Generate n-grams tuples from a list of tokens.
+  
+    Args:
+        tokens (list[str]): List of tokens (words).
+        n (int): Size of n-grams.
+  
+    Returns:
+        list[tuple]: List of n-gram tuples.
+    """
+    return list(zip(*(tokens[i:] for i in range(n))))
+
+def _format_top_ngrams(ngrams_freq: dict[tuple, int], limit: int, nrows: int) -> pd.DataFrame:
+    """
+    Format the top n-grams frequency dictionary into a DataFrame.
+  
+    Args:
+        ngrams_freq (dict[tuple, int]): Frequency distribution of n-grams.
+        limit (int): Number of top n-grams to consider.
+        nrows (int): Number of rows to include in the resulting DataFrame.
+  
+    Returns:
+        pd.DataFrame: DataFrame with top n-grams and their counts.
+    """
+    top = sorted(ngrams_freq.items(), key=lambda x: x[1], reverse=True)[:limit]
+    top_formatted = [(' '.join(ngram), freq) for ngram, freq in top][:nrows]
+    return pd.DataFrame(top_formatted, columns=['Keywords', '# Appearances'])
     
-    return results
+def _text_normalizer(text: str, stopwords: set = STOPWORDS, min_word_len: int = 2) -> str:
+    """
+    Normalize text by lowering case, removing stopwords, URLs, and short words,
+    and applying Unicode normalization.
+  
+    Args:
+        text (str): Input text to normalize.
+        stopwords (set, optional): Set of stopwords to remove (default is STOPWORDS).
+        min_word_len (int, optional): Minimum word length to keep (default is 2).
+  
+    Returns:
+        str: Normalized text.
+    """
+    return _transform_words(
+        text=_reduce_repeated_chars(text.lower()),
+        fn=unidecode,
+        condition=lambda w: (
+            w not in stopwords
+            and not URL_REGEX.match(w)
+            and len(w) > min_word_len
+        )
+    )
+
+def _transform_words(text: str, fn=lambda x: x, condition=lambda x: True) -> str:
+    """
+    Apply a transformation function to words in a string if they satisfy a condition.
+  
+    Args:
+        text (str): Input text.
+        fn (callable, optional): Function to apply to each word (default is identity).
+        condition (callable, optional): Predicate to filter words (default always True).
+  
+    Returns:
+        str: Transformed and filtered text as a string.
+    """
+    return ' '.join(fn(word) for word in text.split() if condition(word))
+
+def _reduce_repeated_chars(text: str) -> str:
+    """
+    Replace sequences of repeated non-alphanumeric characters with a single character.
+  
+    Args:
+        text (str): Input text.
+  
+    Returns:
+        str: Text with reduced repeated characters.
+    """
+    return re.sub(r'[^a-zA-Z0-9\s]', _count_rep_char, text)
+
+def _count_rep_char(match) -> str:
+    """
+    Return a single character from a regex match group of repeated characters.
+  
+    Args:
+        match (re.Match): Regex match object.
+  
+    Returns:
+        str: Single character string from the matched group.
+    """
+    return match.group(0)[0]
+ 
+# =============================================================================
+# PRINT TOP NGRAMS
+# =============================================================================
+def get_tables_string(data: dict) -> str:
+    """
+    Generate a formatted string with pretty tables for each dataset in a dictionary.
+  
+    Each key-value pair in the dictionary is converted to a PrettyTable with the key 
+    as the title and the value (list of records) as the table content.
+  
+    Args:
+        data (dict): Dictionary where keys are table titles and values are lists of records.
+  
+    Returns:
+        str: A string with all tables formatted, separated by double newlines.
+    """
+    return "\n\n".join(
+        str(_create_table(df, title, df.columns.tolist()))
+        for title, records in data.items()
+        for df in [pd.DataFrame(records)]
+    ) + "\n\n"
+  
+def _create_table(df: pd.DataFrame, title: str, cols: list) -> PrettyTable:
+    """
+    Create a PrettyTable from a DataFrame with a given title and columns.
+  
+    Args:
+        df (pd.DataFrame): DataFrame containing the table data.
+        title (str): Title to display above the table.
+        cols (list): List of column names to include in the table.
+  
+    Returns:
+        PrettyTable: Formatted table object ready for printing or conversion to string.
+    """
+    table = PrettyTable(field_names=cols)
+    table.title = title
+    table.add_rows(df[cols].values.tolist())
+    return table
+  

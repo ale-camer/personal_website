@@ -17,7 +17,7 @@ import seaborn as sns
 import plotly.graph_objs as go
 
 # custom modules
-from modules.keyphrase_extraction import process_file, generate_keyphrases_tables_string
+from modules.keyphrase_extraction import text_to_ngrams, get_tables_string
 from modules.seasonality_prediction import seasonal_forecast, generate_plots
 from modules.world_bank import (
     get_country_data_for_indicator,
@@ -38,7 +38,8 @@ from modules.utils import (
     remove_old_files,
     delta_time,
     reading_json,
-    writing_json
+    writing_json,
+    writing_txt
 )
 
 # APPs
@@ -118,7 +119,7 @@ def mi_cv():
 keyphrase_input_file_path = os.path.join(
     'static', 'keyphrase_extraction', 'raw_keyphrases_results.json')
 keyphrase_output_file_path = os.path.join(
-    'static', 'keyphrase_extraction', 'processed_keyphrases_results.json')
+    'static', 'keyphrase_extraction', 'processed_keyphrases_results.txt')
 
 
 @app.route('/keyphrase_extraction')
@@ -131,12 +132,12 @@ def keyphrase_extraction():
 def keyphrase_extraction_process():
     """Processes the uploaded file for keyphrase extraction"""
     file = request.files.get('file')  # inputs
-    num_tables = int(request.form.get('num_tables', 1))
+    max_ngram = int(request.form.get('num_tables', 1))
     num_rows = int(request.form.get('num_rows', 1))
 
-    results = process_file(  # process
+    results = text_to_ngrams(  # process
         file.read().decode('utf-8'),
-        num_tables=num_tables,
+        max_ngram=max_ngram,
         num_rows=num_rows
     )
     results_formatted = {k: v.to_dict(orient='records')
@@ -148,13 +149,9 @@ def keyphrase_extraction_process():
 
 @app.route('/download_keyphrases')
 def download_keyphrases(output_filename: str = "keyphrases_results.txt"):
-    """Downloads a TXT file with the results"""
-    data = reading_json(keyphrase_input_file_path)  # reading processed data
-    keyphrases_string = generate_keyphrases_tables_string(
-        data)  # formatting data
-    # printing results
-    writing_json(keyphrases_string, keyphrase_output_file_path)
-
+    data = reading_json(keyphrase_input_file_path)
+    keyphrases_string = get_tables_string(data)
+    writing_txt(keyphrases_string, keyphrase_output_file_path)
     return send_file(keyphrase_output_file_path, as_attachment=True, download_name=output_filename)
 
 # =============================================================================
