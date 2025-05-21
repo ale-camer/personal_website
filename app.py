@@ -20,8 +20,8 @@ import plotly.graph_objs as go
 from modules.keyphrase_extraction import text_to_ngrams, get_tables_string
 from modules.seasonality_prediction import seasonal_forecast, generate_plots
 from modules.world_bank import (
-    get_country_data_for_indicator,
-    wb_data_preprocess,
+    get_indicator_data,
+    get_result_data,
     plot_time_series,
     plot_heatmap
 )
@@ -33,7 +33,6 @@ from modules.whatsapp import (
     create_dash_layout,
     concatenate_dfs
 )
-# from modules.generate_readme import generate_readme
 from modules.utils import (
     remove_old_files,
     delta_time,
@@ -44,8 +43,7 @@ from modules.utils import (
 
 # APPs
 app = Flask(__name__)  # Initialize Flask app
-# Initialize Dash app
-dash_app = Dash(__name__, server=app, url_base_pathname='/dashboard/')
+dash_app = Dash(__name__, server=app, url_base_pathname='/dashboard/') # Initialize Dash app
 
 # =============================================================================
 # CLEANING DIRECTORY
@@ -116,11 +114,8 @@ def mi_cv():
 # =============================================================================
 # KEYPHRASE EXTRACTION
 # =============================================================================
-keyphrase_input_file_path = os.path.join(
-    'static', 'keyphrase_extraction', 'raw_keyphrases_results.json')
-keyphrase_output_file_path = os.path.join(
-    'static', 'keyphrase_extraction', 'processed_keyphrases_results.txt')
-
+keyphrase_input_file_path = os.path.join('static', 'keyphrase_extraction', 'raw_keyphrases_results.json')
+keyphrase_output_file_path = os.path.join('static', 'keyphrase_extraction', 'processed_keyphrases_results.txt')
 
 @app.route('/keyphrase_extraction')
 def keyphrase_extraction():
@@ -237,38 +232,24 @@ def download_predictions():
 # =============================================================================
 # WORLD BANK
 # =============================================================================
-"""
-Pasos:
-
-    1. Entra a la pagina.
-    2. Descarga los datos del indicador seleccionado y los almacena temporalmente.
-    3. Se leen los datos y obtiene una lista de opciones a partir del indicador y tipo seleccionado.
-    4. Se muestran los resultados.
-    5. Se descarga un CSV con los resultados.
-    6. Se visualiza un grafico con los resultados.
-"""
 indicators = config["indicators"]
 indicator_names = {v: k for k, v in indicators.items()}
-
+geo_data_file_path = os.path.join('static', 'json', 'world_administrative_boundaries.json')
 
 @app.route('/world_bank')
 def world_bank():
     """Route for the World Bank page"""
     return render_template('world_bank.html', indicators=indicators)
 
-
 @app.route('/save_data_to_temp')
 def save_data_to_temp():
     """Downloads data for the selected indicator and saves it as a temporary JSON file."""
     indicator_selected = request.args.get('indicator')  # reading user input
-    data = get_country_data_for_indicator(indicator_selected)  # reading API
+    data = get_indicator_data(indicator_selected)  # reading API
     temp_file_path = os.path.join(
         'static', 'world_bank', f'{indicator_selected}.json')
     writing_json(data, temp_file_path)  # writing temporary file
-
-    # print(f"Data of the indicator {indicator_selected} Downloaded")
     return jsonify({'message': 'Data saved successfully', 'file': temp_file_path})
-
 
 @app.route('/fetch_options')
 def fetch_options():
@@ -286,7 +267,6 @@ def fetch_options():
         reverse=(type_selected == 'year')
     )
 
-
 @app.route('/fetch_data')
 def fetch_data():
     """Fetches data for a specific country or year"""
@@ -298,8 +278,7 @@ def fetch_data():
         # printing data requested
         'static', 'world_bank', f'{indicator_selected}.json')
     data = reading_json(temp_file_path)
-    return wb_data_preprocess(data, type_selected, option_selected).drop('ISO_CODE', axis=1).to_dict(orient='records')
-
+    return get_result_data(data, type_selected, option_selected).drop('ISO_CODE', axis=1).to_dict(orient='records')
 
 @app.route('/interactive_graph', methods=['POST'])
 def interactive_graph():
@@ -313,14 +292,13 @@ def interactive_graph():
     temp_file_path = os.path.join(
         'static', 'world_bank', f'{indicator_selected}.json')  # reading data
     data = reading_json(temp_file_path)
-    df = wb_data_preprocess(data, type_selected, option_selected)
+    df = get_result_data(data, type_selected, option_selected)
 
     if type_selected == 'country':
-        # printing graph requested
         plot_time_series(
             df, title=f'{option_selected} - {indicator_names.get(indicator_selected)}')
     elif type_selected == 'year':
-        plot_heatmap(df)
+        plot_heatmap(df, geo_data_file_path)
     return "Interactive graph generated."
 
 
