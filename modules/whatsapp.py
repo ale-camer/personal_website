@@ -2,62 +2,168 @@
 Contain functions for WhatsApp functionality.
 """
 
+from dataclasses import dataclass
+
 import io, re, nltk, base64
 import pandas as pd
 import textblob as tb
 from unidecode import unidecode
 
 from dash import dcc, html
+import seaborn as sns
 from wordcloud import WordCloud
-import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 
-def concatenate_dfs(df: pd.DataFrame) -> pd.DataFrame: 
-    """
-    Returns message counts by issuer and time features, plus a 'GENERAL' group without issuer breakdown.
-    """
-    assert isinstance(df, pd.DataFrame), "'df' must be a pandas DataFrame"
-    required_cols = {'ISSUER', 'HOUR', 'dow', 'dom', 'month', 'MESSAGE'}
-    assert required_cols.issubset(df.columns), f"Missing required columns: {required_cols - set(df.columns)}"
+MESSAGE = 'MESSAGE'
+COLS_TO_GROUP = ['HOUR', 'dow', 'dom', 'month']
+  
+@dataclass
+class WhatsAppData:
+    df: pd.DataFrame
+    content: pd.DataFrame
+    language: str
 
-    return (
-        pd.concat(
-          [
-            df.groupby(['ISSUER', 'HOUR', 'dow', 'dom', 'month'])['MESSAGE'].count().reset_index(),
-            df.groupby(['HOUR', 'dow', 'dom', 'month'])['MESSAGE'].count().reset_index().assign(ISSUER='GENERAL')
-          ]
+class WhatsAppService:
+    
+    def __init__(self):
+        self.current_data = None
+    
+    def process_file(self, file, language: str) -> WhatsAppData:
+        df, content = process_whatsapp_file(file)
+        self.current_data = WhatsAppData(df=df, content=content, language=language)
+        return self.current_data
+    
+    def get_filtered_data(self, issuer: str) -> tuple:
+        is_general = issuer == "GENERAL"
+        
+        if is_general:
+            filtered_df = self.current_data.df.copy()
+            issuer_filter = slice(None)
+        else:
+            filtered_df = self.current_data.df[
+                self.current_data.df['ISSUER'] == issuer
+            ]
+            issuer_filter = self.current_data.content['ISSUER'] == issuer
+        
+        issuer_messages = text_normalizer(
+            self.current_data.content[issuer_filter], 
+            language=self.current_data.language
         )
+        
+        return filtered_df, issuer_messages, is_general
+
+class ChartGenerator:
+    
+    @staticmethod
+    def generate_all_charts(
+            whatsapp_data: WhatsAppData, 
+            issuer: str, 
+            weekdays_mapper: dict,
+            months_mapper: dict
+        ) -> dict:
+        
+        service = WhatsAppService()
+        service.current_data = whatsapp_data
+        filtered_df, issuer_messages, is_general = service.get_filtered_data(issuer)
+        
+        return {
+            'general_charts': (
+                create_general_charts(whatsapp_data.content) 
+                if is_general else ""
+            ),
+            'hour_chart': create_bar_chart(
+                filtered_df, 'HOUR', 'amount of messages per hour'
+            ),
+            'dow_chart': create_bar_chart(
+                filtered_df, 'dow', 'amount of messages per day of the week', weekdays_mapper
+            ),
+            'dom_chart': create_bar_chart(
+                filtered_df, 'dom', 'amount of messages per day of the month'
+            ),
+            'month_chart': create_bar_chart(
+                filtered_df, 'month', 'amount of messages per month', months_mapper
+            ),
+            'sentiment_chart': sentiment_analysis(
+                whatsapp_data.content, None if is_general else issuer
+            ),
+            'wordcloud': generate_wordcloud(issuer_messages)
+        }
+      
+def create_general_charts(df):
+  
+  issuer_counts = df['ISSUER'].value_counts().reset_index().rename(columns={'count': 'COUNT'})
+  message_length_sum = df.groupby('ISSUER')['len_message'].sum().reset_index()
+
+  return html.Div(
+      [
+          html.Div(
+              _create_pie_chart(
+                  issuer_counts['ISSUER'], 
+                  issuer_counts['COUNT'], 
+                  'proportion of messages by issuer'
+              ), 
+              style={
+                  'width': '48%', 'display': 'inline-block'
+                  }
+              ),
+          html.Div(
+              _create_pie_chart(
+                  message_length_sum['ISSUER'], 
+                  message_length_sum['len_message'], 
+                  'proportion of words by issuer'
+              ), 
+              style={
+                   'width': '48%', 'display': 'inline-block'
+                   }
+              )
+        ], 
+      style={
+          'display': 'flex', 'justify-content': 'space-between'
+          }
+      )
+
+def _create_pie_chart(labels, values, title):
+    return dcc.Graph(
+        figure={
+            'data': [go.Pie(labels=labels, values=values, hole=.5)],
+            'layout': go.Layout(title=title.title())
+        }
     )
-
-def create_dash_layout(df: pd.DataFrame, days_of_the_week: dict, months: dict) -> html.Div:
-    """
-    Build the Dash layout for visualizing message statistics. Displays dropdown to select issuer
-    and charts for hour, weekday, day, month, sentiment, and a word cloud.
-
-    Parameters:
-    - df (pd.DataFrame): Data to visualize.
-    - days_of_the_week (dict): Mapping of day indices to names.
-    - months (dict): Mapping of month numbers to names.
-
-    Returns:
-    - html.Div: Dash layout container.
-    """
-    assert isinstance(df, pd.DataFrame), "'df' must be a Pandas DataFrame"
-    assert isinstance(days_of_the_week, dict), "'days_of_the_week' must be a dict"
-    assert isinstance(months, dict), "'months' must be a dict"
-    assert 'ISSUER' in df.columns, "'df' must contain an 'ISSUER' column"
-
-    if df.empty:
+  
+def create_bar_chart(df, group_col, title, mapper=None, color_palette: str = "husl"):
+    bar_colors = sns.color_palette(color_palette, n_colors=31).as_hex()
+    data = df.groupby(group_col)['MESSAGE'].count().reset_index()
+    if mapper:
+        data[group_col] = data[group_col].map(mapper)
+    return {
+        'data': [go.Bar(x=data[group_col], y=data['MESSAGE'], marker={'color': bar_colors})],
+        'layout': go.Layout(title=title.title())
+    }
+  
+  
+def build_layout(df: pd.DataFrame = None) -> html.Div:
+    if df is None or df.empty:
         return html.Div([
-            html.H1("Cantidad de Mensajes por Emisor"),
-            html.P("No data available.")
+            html.H1("Dashboard will be displayed after data upload.".capitalize()),
+            html.P("Please upload a file to view the dashboard.".capitalize()),
+            dcc.Dropdown(id='issuer-dropdown', options=[], value=None),
+            html.Div(id='general-charts', style={'width': '100%', 'display': 'inline-block'}),
+            html.Div([
+                dcc.Graph(id='hour-chart'),
+                dcc.Graph(id='dow-chart'),
+                dcc.Graph(id='dom-chart'),
+                dcc.Graph(id='month-chart'),
+                dcc.Graph(id='sentiment-analysis'),
+                html.Img(id='wordcloud', style={'width': '100%', 'height': 'auto'})
+            ])
         ])
+
     return html.Div([
-        html.H1("choose an issuer".capitalize()),
+        html.H1("Choose an issuer".capitalize()),
         dcc.Dropdown(
             id='issuer-dropdown',
             options=[{'label': issuer, 'value': issuer} for issuer in df['ISSUER'].unique()],
-            value=df['ISSUER'].unique()[0] if not df.empty else None
+            value=df['ISSUER'].unique()[0]
         ),
         html.Div(id='general-charts', style={'width': '100%', 'display': 'inline-block'}),
         html.Div([
@@ -69,24 +175,56 @@ def create_dash_layout(df: pd.DataFrame, days_of_the_week: dict, months: dict) -
             html.Div(html.Img(id='wordcloud', style={'width': '100%', 'height': 'auto'}), style={'width': '48%', 'display': 'inline-block', 'vertical-align': 'top'})
         ])
     ])
+
+def process_whatsapp_file(file):
+    content = _parse_whatsapp_file(file)
+    df = _agg_message_counts(content)
+    return df, content
+  
+def _agg_message_counts(df: pd.DataFrame) -> pd.DataFrame: 
+    group_and_count = lambda cols: df.groupby(cols)[MESSAGE].count().reset_index()
+    return (
+        pd.concat(
+          [
+            group_and_count(['ISSUER'] + COLS_TO_GROUP),
+            group_and_count(COLS_TO_GROUP).assign(ISSUER='GENERAL')
+          ]
+        )
+    )
+  
+def _parse_whatsapp_file(file: str) -> pd.DataFrame:
+    chat = file.read().decode('utf-8').splitlines()
+    messages = _split_multiline_messages(chat)
+    return _parse_chat_messages(messages)
+  
+def _parse_chat_messages(messages: list) -> pd.DataFrame:
+    return (
+      pd.DataFrame(messages, columns=['RAW_DATA'])
+      .loc[lambda df: df['RAW_DATA'].str.contains(': ') & ~df['RAW_DATA'].str.contains('Multimedia')]
+      .assign(
+          DATE=lambda df: pd.to_datetime(df['RAW_DATA'].str.split(',', expand=True)[0], dayfirst=True),
+          HOUR=lambda df: df['RAW_DATA'].str.split(',', expand=True)[1].str.split('-', expand=True)[0].str.strip(),
+          ISSUER=lambda df: df['RAW_DATA'].str.split('- ', expand=True)[1].str.split(':', expand=True)[0],
+          MESSAGE=lambda df: df['RAW_DATA'].str.split(': ', n=1, expand=True)[1],
+      )
+      .drop('RAW_DATA', axis=1)
+      .assign(
+          dow=lambda df: df['DATE'].dt.dayofweek,
+          dom=lambda df: df['DATE'].dt.day,
+          month=lambda df: df['DATE'].dt.month,
+          HOUR=lambda df: df['HOUR'].apply(lambda h: int(h.split(':')[0])),
+          len_message=lambda df: df['MESSAGE'].apply(lambda msg: len(msg.split()))
+        )
+    )
+
+def _split_multiline_messages(message_lines: list, regex_pattern: str = r".*\/.*\/.*,.*:.* - .*") -> list:
+    messages = []
+    for current_line in message_lines:
+        if re.match(regex_pattern, current_line): messages.append(current_line)
+        elif messages: messages[-1] += ' ' + current_line
+    return messages
   
 def sentiment_analysis(data : pd.DataFrame, selected_issuer : str = None) -> go.Figure:
-    """
-    Perform sentiment analysis on the provided dataset. If a specific issuer is selected, 
-    the function filters the dataset by that issuer. The sentiment polarity is calculated 
-    using TextBlob for each message, and a violin plot is generated to visualize the sentiment 
-    distribution.
-    
-    Parameters:
-    - data (pd.DataFrame): The input data containing messages and issuer information.
-    - selected_issuer (str): The issuer to filter by (optional). If 'GENERAL' or None, 
-      all issuers are included.
-    
-    Returns:
-    - plotly.graph_objects.Figure: A Plotly figure with a violin plot showing sentiment polarity.
-    """
-    assert isinstance(data, pd.DataFrame), "The 'data' must be a Pandas DataFrame"
-    # assert isinstance(selected_issuer, str), "The 'selected_issuer' must be a string"
 
     if selected_issuer and selected_issuer != "GENERAL":
         filtered_data = data[data['ISSUER'] == selected_issuer]
@@ -120,16 +258,6 @@ def sentiment_analysis(data : pd.DataFrame, selected_issuer : str = None) -> go.
     return fig
 
 def generate_wordcloud(text : str) -> str:
-    """
-    Generate a word cloud from the input text and return it as a base64-encoded image.
-    
-    Parameters:
-    - text (str): The input text from which to generate the word cloud.
-    
-    Returns:
-    - str: A base64-encoded string representing the word cloud image.
-    """
-    assert isinstance(text, str), "The 'text' must be a string"
 
     wordcloud = WordCloud(width=800, height=400, background_color ='white').generate(text)
     img = io.BytesIO()
@@ -138,67 +266,7 @@ def generate_wordcloud(text : str) -> str:
     img_base64 = base64.b64encode(img.getvalue()).decode('utf-8')
     return f"data:image/png;base64,{img_base64}"
 
-def preprocess_whatsapp_data(file: str) -> pd.DataFrame:
-    """
-    Preprocess raw WhatsApp chat data by extracting relevant fields such as date, time, 
-    sender (issuer), and message. It handles multiline messages and filters out multimedia messages.
-    
-    Parameters:
-    - file (file-like object): The WhatsApp chat file to process.
-    
-    Returns:
-    - pd.DataFrame: A DataFrame containing processed chat data with columns for date, time, 
-      sender (issuer), message, and message length.
-    """
-    chat_lines = file.read().decode('utf-8').splitlines()
-    message_pattern = r".*\/.*\/.*,.*:.* - .*"
-    processed_lines = []
-    pending_lines = []
-    
-    for i in range(len(chat_lines)): # checking regex
-        if re.match(message_pattern, chat_lines[i]):
-            if pending_lines:
-                processed_lines[-1] = ' '.join(pending_lines)
-                pending_lines = []
-            processed_lines.append(chat_lines[i])
-        else:
-            if not pending_lines:
-                pending_lines.append(chat_lines[i-1])
-            pending_lines.append(chat_lines[i])
-    
-    df_chat = pd.DataFrame(processed_lines, columns=['RAW_DATA']) # preprocessing key columns
-    df_chat['DATE'] = df_chat['RAW_DATA'].apply(lambda x: x.split(',')[0])
-    df_chat['HOUR'] = df_chat['RAW_DATA'].apply(lambda x: x.split(',')[1].split('-')[0].strip())
-    df_chat['ISSUER'] = df_chat['RAW_DATA'].apply(lambda x: x.split('- ')[1].split(':')[0])
-    df_chat['MESSAGE'] = df_chat['RAW_DATA'].apply(lambda x: x.split(': ')[1] if ': ' in x else None)
-    
-    df_chat = df_chat[df_chat['MESSAGE'].notna()] # deleting unnecessary data
-    df_chat['IS_MULTIMEDIA'] = df_chat['MESSAGE'].apply(lambda msg: 1 if 'Multimedia' in msg else 0)
-    df_chat = df_chat[df_chat['IS_MULTIMEDIA'] == 0].drop(['RAW_DATA', 'IS_MULTIMEDIA'], axis=1)
-    
-    df_chat['DATE'] = pd.to_datetime(df_chat['DATE'], dayfirst=True) # formatting key columns
-    df_chat['dow'] = df_chat['DATE'].dt.dayofweek
-    df_chat['dom'] = df_chat['DATE'].dt.day
-    df_chat['month'] = df_chat['DATE'].dt.month
-    df_chat['HOUR'] = df_chat['HOUR'].apply(lambda hour: int(hour.split(':')[0]))
-    df_chat['len_message'] = df_chat['MESSAGE'].apply(lambda msg: len(msg.split()))
-    
-    return df_chat
-
 def text_normalizer(data : pd.DataFrame, language : str = 'english') -> str:
-    """
-    Normalize text data by converting it to lowercase, removing stopwords, URLs, 
-    and diacritics, and preparing the text for further analysis.
-    
-    Parameters:
-    - data (pd.DataFrame): The input DataFrame containing a 'MESSAGE' column with the text to normalize.
-    - language (str): The language for the stopword list (default is 'english').
-    
-    Returns:
-    - str: A string containing the normalized text.
-    """
-    assert isinstance(data, pd.DataFrame), "The 'data' must be a Pandas DataFrame"
-    assert isinstance(language, str), "The 'language' must be a string"
 
     urlRegex = re.compile('http\S+') # URLs
     stopword_list = nltk.corpus.stopwords.words(language) # stopwords

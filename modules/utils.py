@@ -2,8 +2,9 @@
 Custom project functions.
 """
 
-import os, shutil, json
+import os, shutil, json, re
 import pandas as pd
+from unidecode import unidecode   
 
 def remove_old_files(folder, files_to_remove=None) -> None:
     """
@@ -96,4 +97,4 @@ def writing_txt(content: str, path: str) -> None:
         None
     """
     with open(path, 'w', encoding='utf-8') as f:
-        f.write(content)        
+        f.write(content)

@@ -230,5 +230,10 @@
       "world_bank": "Contain World Bank functionality temporary files.",
       "json": "Contain JSON files.",
       "images": "Contain images for the UI."
-  } 
+  } ,
+  "whatsapp_state" : {
+      "wp_df": null,
+      "wp_content": null,
+      "whatsapp_language": null
+  }
 }
