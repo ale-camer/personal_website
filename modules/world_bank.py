@@ -2,14 +2,21 @@
 Contain functions for World Bank functionality.
 """
 
-import requests, os, webbrowser
+# --- Standard library ---
+import os
+import webbrowser
+
+# --- Third-party ---
+import folium
 import pandas as pd
+import plotly.graph_objects as go
+import requests
+from branca.colormap import linear
+
+# --- Project/system ---
 from modules.utils import reading_json
 
-import folium
-from branca.colormap import linear
-import plotly.graph_objects as go
-
+# --- Constants ---
 VALUE_STR = 'value'
 DATE_STR = 'date'
 COUNTRY_STR = 'country'
@@ -17,10 +24,14 @@ ISO_STR = 'ISO_CODE'
 HTML_PLOTLY = 'html_plotly'
 HTML_FOLIUM = 'html_folium'
 TEMPORARY_FILES_FOLDER = 'static/world_bank/'
+
+# --- Configuration file path ---
 CONFIG_FILE_PATH = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
     'static', 'json', 'config.json'
 )
+
+# --- Configuration data loaded from JSON ---
 STRINGS_TO_EXCLUDE = reading_json(CONFIG_FILE_PATH)["strings_to_exclude"]
 
 # =============================================================================

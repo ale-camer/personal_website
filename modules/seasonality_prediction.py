@@ -2,14 +2,17 @@
 Contain functions for Seasonality Prediction functionality.
 """
 
-import matplotlib, os
-matplotlib.use('Agg')
+# --- Standard library ---
+import os
 
+# --- Third-party ---
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
 import numpy as np
 import pandas as pd
 import seaborn as sns
-import matplotlib.pyplot as plt
-from matplotlib.figure import Figure
 
 # =============================================================================
 # TIME SERIES SEASONALITY PREDICTION

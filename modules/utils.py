@@ -6,6 +6,9 @@ import os, shutil, json, re
 import pandas as pd
 from unidecode import unidecode   
 
+STOPWORDS = None
+URL_REGEX = re.compile(r'http\S+')
+
 def remove_old_files(folder, files_to_remove=None) -> None:
     """
     Remove specific files and folders from a given directory.
@@ -98,3 +101,64 @@ def writing_txt(content: str, path: str) -> None:
     """
     with open(path, 'w', encoding='utf-8') as f:
         f.write(content)
+        
+def text_normalizer(text: str, stopwords: set = STOPWORDS, min_word_len: int = 2) -> str:
+    """
+    Normalize text by lowering case, removing stopwords, URLs, and short words,
+    and applying Unicode normalization.
+  
+    Args:
+        text (str): Input text to normalize.
+        stopwords (set, optional): Set of stopwords to remove (default is STOPWORDS).
+        min_word_len (int, optional): Minimum word length to keep (default is 2).
+  
+    Returns:
+        str: Normalized text.
+    """
+    return transform_words(
+        text=_reduce_repeated_chars(text.lower()),
+        fn=unidecode,
+        condition=lambda w: (
+            w not in stopwords
+            and not URL_REGEX.match(w)
+            and len(w) > min_word_len
+        )
+    )
+
+def transform_words(text: str, fn=lambda x: x, condition=lambda x: True) -> str:
+    """
+    Apply a transformation function to words in a string if they satisfy a condition.
+  
+    Args:
+        text (str): Input text.
+        fn (callable, optional): Function to apply to each word (default is identity).
+        condition (callable, optional): Predicate to filter words (default always True).
+  
+    Returns:
+        str: Transformed and filtered text as a string.
+    """
+    return ' '.join(fn(word) for word in text.split() if condition(word))
+
+def _reduce_repeated_chars(text: str) -> str:
+    """
+    Replace sequences of repeated non-alphanumeric characters with a single character.
+  
+    Args:
+        text (str): Input text.
+  
+    Returns:
+        str: Text with reduced repeated characters.
+    """
+    return re.sub(r'[^a-zA-Z0-9\s]', _count_rep_char, text)
+
+def _count_rep_char(match) -> str:
+    """
+    Return a single character from a regex match group of repeated characters.
+  
+    Args:
+        match (re.Match): Regex match object.
+  
+    Returns:
+        str: Single character string from the matched group.
+    """
+    return match.group(0)[0]

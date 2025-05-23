@@ -2,21 +2,18 @@
 Main project file.
 """
 
-# web programming frameworks
+# --- Standard library ---
+import os
+import warnings
 import zipfile
+
+# --- Third-party ---
+import pandas as pd
 from flask import Flask, render_template, request, redirect, send_file, jsonify
-from dash import Dash, dcc, html
+from dash import Dash
 from dash.dependencies import Input, Output
 
-# data processing
-import os
-import pandas as pd
-
-# data plotting
-import seaborn as sns
-import plotly.graph_objs as go
-
-# custom modules
+# --- Project/system ---
 from modules.keyphrase_extraction import text_to_ngrams, get_tables_string
 from modules.seasonality_prediction import seasonal_forecast, generate_plots
 from modules.whatsapp import build_layout, WhatsAppService, ChartGenerator
@@ -34,7 +31,6 @@ from modules.utils import (
     writing_txt
 )
 
-import warnings
 warnings.filterwarnings("ignore")
 
 # APPs
@@ -50,8 +46,6 @@ folders_to_clean = ['static/seasonality_prediction',
                     'static/world_bank', 'static/keyphrase_extraction']
 
 list(map(remove_old_files, folders_to_clean))  # removing temporary files
-# creating readme file
-# generate_readme(os.path.dirname(os.path.realpath(__file__)))
 
 # =============================================================================
 # STATIC PAGES
@@ -121,7 +115,7 @@ def keyphrase_extraction():
 
 @app.route('/keyphrase_extraction_process', methods=['POST'])
 def keyphrase_extraction_process():
-    """Processes the uploaded file for keyphrase extraction"""
+
     file = request.files.get('file')  # inputs
     max_ngram = int(request.form.get('num_tables', 1))
     num_rows = int(request.form.get('num_rows', 1))
@@ -131,10 +125,8 @@ def keyphrase_extraction_process():
         max_ngram=max_ngram,
         num_rows=num_rows
     )
-    results_formatted = {k: v.to_dict(orient='records')
-                         for k, v in results.items()}  # printing
+    results_formatted = {k: v.to_dict(orient='records') for k, v in results.items()}
     writing_json(results_formatted, keyphrase_input_file_path)
-
     return render_template('keyphrase_extraction.html', results=results)
 
 
