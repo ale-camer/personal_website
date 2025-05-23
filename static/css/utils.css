@@ -63,6 +63,10 @@ html {
         margin-bottom: 0%;
         text-align: center;
     }
+
+    /* p {
+        font-size: clamp(15px, 1vw, 1vw);
+    } */
 }
 
 /* NAVIGATION BAR */
@@ -306,6 +310,10 @@ html {
         text-align: center;
         font-size: clamp(20px, 2vw, 2vw);
         margin: 2.5% auto;
+    }
+
+    p {
+        font-size: clamp(15px, 1.5vw, 1.5vw);
     }
 
     #keyphrases-table {

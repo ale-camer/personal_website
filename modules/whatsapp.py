@@ -1,6 +1,4 @@
-"""
-Contain functions for WhatsApp functionality.
-"""
+"""Contain functions for WhatsApp functionality."""
 
 # --- Standard library ---
 import base64
@@ -151,6 +149,7 @@ class WhatsAppService:
       
         return filtered_df, issuer_messages, is_general
     
+    @staticmethod
     def _agg_message_counts(df: pd.DataFrame) -> pd.DataFrame:
         """
         Aggregate message counts per issuer and time period.
@@ -169,6 +168,7 @@ class WhatsAppService:
             ])
         )
     
+    @staticmethod
     def _parse_whatsapp_file(file: str) -> pd.DataFrame:
         """
         Parse a raw WhatsApp chat file into a structured DataFrame.
@@ -183,6 +183,7 @@ class WhatsAppService:
         messages = WhatsAppService._split_multiline_messages(chat)
         return WhatsAppService._parse_chat_messages(messages)
     
+    @staticmethod
     def _parse_chat_messages(messages: list) -> pd.DataFrame:
         """
         Convert parsed chat message strings into a structured DataFrame.
@@ -212,6 +213,7 @@ class WhatsAppService:
             )
         )
     
+    @staticmethod
     def _split_multiline_messages(message_lines: list, regex_pattern: str = r".*\/.*\/.*,.*:.* - .*") -> list:
         """
         Combine multi-line messages into single strings based on date-time patterns.
@@ -234,6 +236,7 @@ class WhatsAppService:
 class ChartGenerator:
     """Utility class to generate various WhatsApp message visualizations."""
 
+    @staticmethod
     def generate_all_charts(
             whatsapp_data: WhatsAppData, 
             issuer: str, 
@@ -279,6 +282,7 @@ class ChartGenerator:
             WC_ID: ChartGenerator._generate_wordcloud(issuer_messages)
         }
     
+    @staticmethod
     def _generate_wordcloud(text: str) -> str:
         """
         Generate a word cloud image encoded in base64.
@@ -294,6 +298,7 @@ class ChartGenerator:
         buffer.seek(0)
         return f"data:image/png;base64,{base64.b64encode(buffer.getvalue()).decode(UTF8)}"
     
+    @staticmethod
     def _sentiment_analysis(data: pd.DataFrame, selected_issuer: str = None) -> go.Figure: 
         """
         Create a sentiment analysis violin plot of message polarity.
@@ -330,6 +335,7 @@ class ChartGenerator:
         )
         return fig
     
+    @staticmethod
     def _create_general_charts(df: pd.DataFrame) -> html.Div:
         """
         Create pie charts for general issuer message and word proportions.
@@ -365,6 +371,7 @@ class ChartGenerator:
             style={'display': 'flex', 'justify-content': 'space-between'}
         )
 
+    @staticmethod
     def _create_pie_chart(labels: pd.Series, values: pd.Series, title: str) -> dcc.Graph:
         """
         Create a pie chart from labels and values.
@@ -384,6 +391,7 @@ class ChartGenerator:
             }
         )
     
+    @staticmethod
     def _create_bar_chart(df: pd.DataFrame, group_col: list[str], title: str, mapper: bool = None, color_palette: str = "husl") -> dict:
         """
          Create a grouped bar chart with optional label mapping.

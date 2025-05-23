@@ -1,6 +1,4 @@
-"""
-Main project file.
-"""
+"""Main project file."""
 
 # --- Standard library ---
 import os
@@ -14,15 +12,10 @@ from dash import Dash
 from dash.dependencies import Input, Output
 
 # --- Project/system ---
-from modules.keyphrase_extraction import text_to_ngrams, get_tables_string
-from modules.seasonality_prediction import seasonal_forecast, generate_plots
+from modules.keyphrase import text_to_ngrams, get_tables_string
+from modules.seasonality import SeasonalityProcessor
 from modules.whatsapp import build_layout, WhatsAppService, ChartGenerator
-from modules.world_bank import (
-    get_indicator_data,
-    get_result_data,
-    plot_time_series,
-    plot_heatmap
-)
+from modules.world_bank import WorldBankManager
 from modules.utils import (
     remove_old_files,
     delta_time,
@@ -40,77 +33,65 @@ dash_app = Dash(__name__, server=app, url_base_pathname='/dashboard/') # Initial
 # =============================================================================
 # CLEANING DIRECTORY
 # =============================================================================
-config = reading_json(os.path.join(
-    'static', 'json', 'config.json'))  # reading config file
-folders_to_clean = ['static/seasonality_prediction',
-                    'static/world_bank', 'static/keyphrase_extraction']
-
+config = reading_json(os.path.join('static', 'json', 'config.json'))
+folders_to_clean = ['static/seasonality',
+                    'static/world_bank', 'static/keyphrase']
 list(map(remove_old_files, folders_to_clean))  # removing temporary files
 
 # =============================================================================
 # STATIC PAGES
 # =============================================================================
-
-
 @app.route('/')
 def index():
-    """Route for the main page"""
     return render_template('index.html')
 
 
 @app.route('/linear_algebra')
 def linear_algebra():
-    """Route for the linear algebra page"""
     return render_template('intro_to_linear_algebra_for_data_science.html')
 
 
 @app.route('/vector_norms')
 def vector_norms():
-    """Route for the vector norms page"""
     return render_template('vector_norms_applications_in_data_science.html')
 
 
 @app.route('/algorithmic_trading')
 def algorithmic_trading():
-    """Route for the algorithmic trading page"""
     return render_template('stock_algorithmic_trading_strategy_backtesting.html')
 
 
 @app.route('/ds_trends')
 def ds_trends():
-    """Route for the data science trends page"""
     return render_template('trends_in_data_science_labour_market.html')
 
 
 @app.route('/arg_macro_spanish')
 def arg_macro_spanish():
-    """Route for the macroeconomic page in spanish"""
     return render_template('macro_n_employment_spanish.html')
 
 
 @app.route('/arg_macro_english')
 def arg_macro_english():
-    """Route for the macroeconomic page in english"""
     return render_template('macro_n_employment_english.html')
 
 
 @app.route('/mi_cv')
 def mi_cv():
-    """Route for the CV page"""
     delta_time_string = delta_time()
     return render_template('mi_cv.html', delta_time_string=delta_time_string)
-
-
 # =============================================================================
 # KEYPHRASE EXTRACTION
 # =============================================================================
-keyphrase_input_file_path = os.path.join('static', 'keyphrase_extraction', 'raw_keyphrases_results.json')
-keyphrase_output_file_path = os.path.join('static', 'keyphrase_extraction', 'processed_keyphrases_results.txt')
+keyphrase_input_file_path = os.path.join(
+    'static', 'keyphrase', 'raw_keyphrases_results.json')
+keyphrase_output_file_path = os.path.join(
+    'static', 'keyphrase', 'processed_keyphrases_results.txt')
+
 
 @app.route('/keyphrase_extraction')
 def keyphrase_extraction():
-    """Route for the keyphrase extraction page"""
-    return render_template('keyphrase_extraction.html')
+    return render_template('keyphrase.html')
 
 
 @app.route('/keyphrase_extraction_process', methods=['POST'])
@@ -125,9 +106,10 @@ def keyphrase_extraction_process():
         max_ngram=max_ngram,
         num_rows=num_rows
     )
-    results_formatted = {k: v.to_dict(orient='records') for k, v in results.items()}
+    results_formatted = {k: v.to_dict(orient='records')
+                         for k, v in results.items()}
     writing_json(results_formatted, keyphrase_input_file_path)
-    return render_template('keyphrase_extraction.html', results=results)
+    return render_template('keyphrase.html', results=results)
 
 
 @app.route('/download_keyphrases')
@@ -140,115 +122,81 @@ def download_keyphrases(output_filename: str = "keyphrases_results.txt"):
 # =============================================================================
 # SEASONALITY PREDICTION
 # =============================================================================
-
-
 @app.route('/seasonality_prediction')
 def seasonality_prediction():
-    """Route for the seasonality prediction page"""
-    return render_template('seasonality_prediction.html')
-
+    return render_template('seasonality.html')
 
 @app.route('/seasonality_prediction_process', methods=['POST'])
 def seasonality_prediction_process():
-    """Processes the uploaded file for seasonality prediction"""
-    template = 'seasonality_prediction.html'
-
+    template = 'seasonality.html'
+    
     try:
-        serie = pd.read_excel(request.files.get('file'))  # reading inputs
+        file = request.files.get('file')
         periodicity = int(request.form.get('periodicity'))
-
-        if serie.empty:  # checking if file is empty
-            error_message = "File it's empty."
-            return render_template(template, error_message=error_message)
-
-        else:  # processing inputs
-            col_name = serie.columns[0]
-            forecasted_values_last_period = seasonal_forecast(
-                serie[col_name].iloc[:-periodicity], periodicity=periodicity)
-            forecasted_values_next_period = seasonal_forecast(
-                serie[col_name], periodicity=periodicity)
-            generate_plots(serie[col_name], forecasted_values_last_period,
-                           forecasted_values_next_period, periodicity)
-
-            df_to_print = (
-                pd.DataFrame(forecasted_values_next_period)
-                .reset_index()
-                .rename(columns={'index': 'PERIOD', 0: 'VALUE'})
-            )
-            df_to_print.to_csv(os.path.join(
-                'static', 'seasonality_prediction', 'predictions.csv'), index=False)
-            existing_plots = config["plot_names"]
-
-            return render_template(
-                template,
-                forecast=forecasted_values_next_period,
-                existing_plots=existing_plots,
-                enumerate=enumerate
-            )
-
-    except:  # potential errors
-        reminder = round(len(serie) % int(periodicity))
-        details = [
-            f"<li>Data format: {'OK' if pd.api.types.is_numeric_dtype(serie.iloc[:, 0]) else 'Not OK. Data is not numeric.'}</li>",
-            f"<li>Number of columns: {'OK' if serie.shape[1] == 1 else f'Not OK. There are {serie.shape[1]} columns instead of one.'}</li>",
-            f"<li>Series length: {len(serie)}</li>",
-            f"<li>Periodicity: {'OK' if periodicity > 1 else f'Not OK. The value of the periodicity is {periodicity} and has to be higher than one and when dividing the length of the serie the reminder must be zero.'}</li>",
-            f"<li>Remainder: {'OK' if reminder == 0 else f'Not OK. The value of the reminder is {reminder} instead of zero.'}</li>"
-        ]
-        error_message = f"<ul>{''.join(details)}</ul>"
-
+        
+        processor = SeasonalityProcessor(periodicity)
+        results = processor.process_file(file)
+        
+        processor.save_predictions_csv(results['forecasted_next_period'])
+        
+        existing_plots = config["plot_names"]
+        
+        return render_template(
+            template,
+            forecast=results['forecasted_next_period'],
+            existing_plots=existing_plots,
+            enumerate=enumerate
+        )
+    
+    except Exception:
+        serie = pd.read_excel(request.files.get('file'))
+        periodicity = int(request.form.get('periodicity'))
+        
+        processor = SeasonalityProcessor(periodicity)
+        error_message = processor.get_validation_details(serie, periodicity)
+        
         return render_template(template, error_message=error_message)
-
 
 @app.route('/download_predictions', methods=['GET'])
 def download_predictions():
-    zip_filename = 'predictions.zip'  # paths
-    folder_path = os.path.join('static', 'seasonality_prediction')
-    zip_path = os.path.join(folder_path, zip_filename)
-
-    with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:  # zipping files
-        for root, dirs, files in os.walk(folder_path):
-            for file in files:
-                if file != zip_filename:
-                    file_path = os.path.join(root, file)
-                    zipf.write(file_path, os.path.relpath(
-                        file_path, folder_path))
-
-    return send_file(zip_path, as_attachment=True, download_name=zip_filename)
-
+    processor = SeasonalityProcessor()
+    zip_path = processor.create_predictions_zip()
+    
+    return send_file(zip_path, as_attachment=True, download_name='predictions.zip')
 
 # =============================================================================
 # WORLD BANK
 # =============================================================================
-indicators = config["indicators"]
+indicators = dict(sorted(config["indicators"].items()))
 indicator_names = {v: k for k, v in indicators.items()}
 geo_data_file_path = os.path.join('static', 'json', 'world_administrative_boundaries.json')
+wb_manager = WorldBankManager(geo_data_file_path)
 
 @app.route('/world_bank')
 def world_bank():
-    """Route for the World Bank page"""
     return render_template('world_bank.html', indicators=indicators)
 
 @app.route('/save_data_to_temp')
 def save_data_to_temp():
     """Downloads data for the selected indicator and saves it as a temporary JSON file."""
-    indicator_selected = request.args.get('indicator')  # reading user input
-    data = get_indicator_data(indicator_selected)  # reading API
-    temp_file_path = os.path.join(
-        'static', 'world_bank', f'{indicator_selected}.json')
-    writing_json(data, temp_file_path)  # writing temporary file
+    indicator_selected = request.args.get('indicator')
+    
+    data = wb_manager.get_indicator_data(indicator_selected)
+    
+    temp_file_path = os.path.join('static', 'world_bank', f'{indicator_selected}.json')
+    writing_json(data, temp_file_path)
+    
     return jsonify({'message': 'Data saved successfully', 'file': temp_file_path})
 
 @app.route('/fetch_options')
 def fetch_options():
-    """Returns a list of available countries or years based on the selected type and indicator."""
-    indicator_selected = request.args.get('indicator')  # reading user inputs
+    indicator_selected = request.args.get('indicator')
     type_selected = request.args.get('type')
-    temp_file_path = os.path.join(
-        'static', 'world_bank', f'{indicator_selected}.json')
-    data = reading_json(temp_file_path)  # reading temporary file
+    
+    temp_file_path = os.path.join('static', 'world_bank', f'{indicator_selected}.json')
+    data = reading_json(temp_file_path)
 
-    return sorted(  # returning list
+    return sorted(
         {entry['country']['value'] for entry in data}
         if type_selected == 'country'
         else {entry['date'] for entry in data},
@@ -257,38 +205,38 @@ def fetch_options():
 
 @app.route('/fetch_data')
 def fetch_data():
-    """Fetches data for a specific country or year"""
-    indicator_selected = request.args.get('indicator')  # reading user inputs
+    indicator_selected = request.args.get('indicator')
     type_selected = request.args.get('type')
     option_selected = request.args.get('option')
 
-    temp_file_path = os.path.join(
-        # printing data requested
-        'static', 'world_bank', f'{indicator_selected}.json')
+    temp_file_path = os.path.join('static', 'world_bank', f'{indicator_selected}.json')
     data = reading_json(temp_file_path)
-    return get_result_data(data, type_selected, option_selected).drop('ISO_CODE', axis=1).to_dict(orient='records')
+    
+    result_df = wb_manager.get_result_data(data, type_selected, option_selected)
+    
+    return result_df.drop('ISO_CODE', axis=1).to_dict(orient='records')
 
 @app.route('/interactive_graph', methods=['POST'])
 def interactive_graph():
-    """Generates an interactive graph based on the selected indicator, type, and option"""
-    indicator_selected = request.form.get('indicator')  # reading user inputs
+    indicator_selected = request.form.get('indicator')
     type_selected = request.form.get('type')
     option_selected = request.form.get('option')
-    print(f"La función fue llamada para las siguientes opciones \
-        {indicator_selected}, {type_selected} y {option_selected}")
+    
+    print(f"La función fue llamada para las siguientes opciones: "
+          f"{indicator_selected}, {type_selected} y {option_selected}")
 
-    temp_file_path = os.path.join(
-        'static', 'world_bank', f'{indicator_selected}.json')  # reading data
+    temp_file_path = os.path.join('static', 'world_bank', f'{indicator_selected}.json')
     data = reading_json(temp_file_path)
-    df = get_result_data(data, type_selected, option_selected)
-
+    
+    df = wb_manager.get_result_data(data, type_selected, option_selected)
+    
     if type_selected == 'country':
-        plot_time_series(
-            df, title=f'{option_selected} - {indicator_names.get(indicator_selected)}')
+        title = f'{option_selected} - {indicator_names.get(indicator_selected)}'
+        wb_manager.create_visualization(df, type_selected, title=title)
     elif type_selected == 'year':
-        plot_heatmap(df, geo_data_file_path)
+        wb_manager.create_visualization(df, type_selected)
+    
     return "Interactive graph generated."
-
 
 # =============================================================================
 # WHATSAPP
@@ -306,7 +254,7 @@ def whatsapp():
 @app.route('/whatsapp_dashboard', methods=['POST'])
 def whatsapp_dashboard():
     whatsapp_data = whatsapp_service.process_file(
-        request.files.get('file'), 
+        request.files.get('file'),
         request.form.get('selected_language')
     )
     dash_app.layout = build_layout(whatsapp_data.df)
@@ -323,15 +271,15 @@ def whatsapp_dashboard():
     [Input('issuer-dropdown', 'value')]
 )
 def update_charts(selected_issuer: str):
-    
+
     charts = ChartGenerator.generate_all_charts(
-        whatsapp_service.current_data, 
+        whatsapp_service.current_data,
         selected_issuer,
         weekdays_mapper=WEEK_DAYS,
         months_mapper=MONTHS
-    )    
+    )
     return tuple(charts.values())
-  
+
 # =============================================================================
 # RUNNING SCRIPT
 # =============================================================================

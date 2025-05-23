@@ -1,6 +1,4 @@
-"""
-Contain functions for Keyphrases functionality.
-"""
+"""Contain functions for Keyphrases functionality."""
 
 # --- Standard library ---
 import re

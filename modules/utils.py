@@ -1,6 +1,4 @@
-"""
-Custom project functions.
-"""
+"""Custom project functions."""
 
 import os, shutil, json, re
 import pandas as pd
