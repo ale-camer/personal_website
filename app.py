@@ -5,15 +5,14 @@ import os
 import warnings
 
 # --- Third-party ---
-import pandas as pd
 from flask import Flask, render_template, request, redirect, send_file, jsonify
 
 # --- Project/system ---
 import modules.utils as ut
 from modules.dash_app import init_dash_app
 from modules.keyphrase import NGramExtractor, get_tables_string
-from modules.seasonality import SeasonalityProcessor
-from modules.whatsapp import build_layout, WhatsAppService
+from modules.seasonality import SeasonalityPipeline, download_forecast
+from modules.whatsapp import layout, WhatsAppService
 from modules.world_bank import WorldBankManager
 
 warnings.filterwarnings("ignore")
@@ -33,12 +32,10 @@ GEO_DATA_PATH = os.path.join(JSON_DIR, 'world_administrative_boundaries.json')
 KEYPHRASE_INPUT_PATH = os.path.join(KEYPHRASE_DIR, 'raw_keyphrases_results.json')
 KEYPHRASE_OUTPUT_PATH = os.path.join(KEYPHRASE_DIR, 'processed_keyphrases_results.txt')
 
-config = ut.read_json(CONFIG_PATH)
-temp_folders_to_clean = config["temporary_folders"]
-
 # =============================================================================
 # CONSTANTS
 # =============================================================================
+config = ut.read_json(CONFIG_PATH)
 INDICATORS = dict(sorted(config["indicators"].items()))
 INDICATOR_NAMES = {v: k for k, v in INDICATORS.items()}
 WEEK_DAYS = {int(k): v for k, v in config["days_of_the_week"].items()}
@@ -103,8 +100,8 @@ def whatsapp():
 # =============================================================================
 # KEYPHRASE EXTRACTION
 # =============================================================================
-@app.route('/keyphrase_extraction_process', methods=['POST'])
-def keyphrase_extraction_process():
+@app.route('/extract_keyphrases', methods=['POST'])
+def extract_keyphrases():
     ngrams = NGramExtractor(
       raw_text=request.files.get('file').read().decode('utf-8'),
       max_ngrams=int(request.form.get('num_tables', 1)),
@@ -115,7 +112,7 @@ def keyphrase_extraction_process():
     return render_template('keyphrase.html', results=result)
 
 @app.route('/download_keyphrases')
-def download_keyphrases(output_filename: str = "keyphrases_results.txt"):
+def download_keyphrases(output_filename: str = "keyphrases.txt"):
     data = ut.read_json(KEYPHRASE_INPUT_PATH)
     keyphrases_string = get_tables_string(data)
     ut.write_txt(keyphrases_string, KEYPHRASE_OUTPUT_PATH)
@@ -124,36 +121,35 @@ def download_keyphrases(output_filename: str = "keyphrases_results.txt"):
 # =============================================================================
 # SEASONALITY PREDICTION
 # =============================================================================
-@app.route('/seasonality_prediction_process', methods=['POST'])
-def seasonality_prediction_process():
+@app.route('/predict_seasonality', methods=['POST'])
+def predict_seasonality():
+
     template = 'seasonality.html'
-    
+    file = request.files.get('file')
+    periodicity = int(request.form.get('periodicity'))
+    processor = SeasonalityPipeline(file, periodicity)
+
+    error = processor.is_empty
+    if error:
+        return render_template(template, error_message=error)
+
     try:
-        file = request.files.get('file')
-        periodicity = int(request.form.get('periodicity'))
-        processor = SeasonalityProcessor(periodicity)
-        results = processor.process_file(file)
-        processor.save_predictions_csv(results['forecasted_next_period'])
-        existing_plots = config["plot_names"]
+        forecast = processor.forecast()
         return render_template(
             template,
-            forecast=results['forecasted_next_period'],
-            existing_plots=existing_plots,
+            forecast=forecast,
+            existing_plots=config["plot_names"],
             enumerate=enumerate
         )
-    
-    except Exception:
-        serie = pd.read_excel(request.files.get('file'))
-        periodicity = int(request.form.get('periodicity'))
-        processor = SeasonalityProcessor(periodicity)
-        error_message = processor.get_validation_details(serie, periodicity)
+
+    except:
+        error_message = processor.validation
         return render_template(template, error_message=error_message)
 
 @app.route('/download_predictions', methods=['GET'])
 def download_predictions():
-    processor = SeasonalityProcessor()
-    zip_path = processor.create_predictions_zip()
-    return send_file(zip_path, as_attachment=True, download_name='predictions.zip')
+    file_path, file_name = download_forecast()
+    return send_file(file_path, as_attachment=True, download_name=file_name)
 
 # =============================================================================
 # WORLD BANK
@@ -224,9 +220,9 @@ whatsapp_service = WhatsAppService()
 dash_app = init_dash_app(app, whatsapp_service, WEEK_DAYS, MONTHS)
 @app.route('/whatsapp_dashboard', methods=['POST'])
 def whatsapp_dashboard():
-    whatsapp_data = whatsapp_service.process_file(
+    data = whatsapp_service.parse_chat(
         request.files.get('file'),
         request.form.get('selected_language')
     )
-    dash_app.layout = build_layout(whatsapp_data.df)
+    dash_app.layout = layout(data.df)
     return redirect('/dashboard/')

@@ -147,6 +147,10 @@ html {
                 li a {
                     padding-left: 10%;
                     font-size: clamp(12.5px, 1.25vw, 1.25vw);
+
+                    &:hover {
+                        transform: scale(1.1);
+                    }
                 }
             }
 

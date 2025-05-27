@@ -13,6 +13,9 @@ from tqdm import tqdm
 from dataclasses import dataclass
 from modules.utils import text_normalizer, transform_words
 
+# =============================================================================
+# TOP NGRAMS
+# =============================================================================
 @dataclass
 class NGramConfig:
     data: str
@@ -86,6 +89,9 @@ class NGramExtractor:
             for ngram_label, df in self._ngram_tables.items()
         }
 
+# =============================================================================
+# DOWNLOAD TOP NGRAMS
+# =============================================================================
 def get_tables_string(data: dict) -> str:
     return "\n\n".join(
         str(_create_table(df, title, df.columns.tolist()))

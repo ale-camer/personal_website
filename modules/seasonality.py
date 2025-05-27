@@ -2,7 +2,7 @@
 
 # --- Standard library ---
 import os
-import zipfile
+import zipfile as zf
 from dataclasses import dataclass
 
 # --- Third-party ---
@@ -13,9 +13,12 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
+# =============================================================================
+# PREDICTION
+# =============================================================================
 @dataclass
 class PlotConfig:    
-    save_dir: str = 'static/seasonality'
+    save_dir: str = 'static\\seasonality'
     fig_size: tuple = (10, 5)
     y_fontsize: int = 15
     subplot_title_fontsize: int = 18
@@ -28,13 +31,9 @@ class PlotConfig:
 
 class SeasonalityPredictor:
 
-    def __init__(self, periodicity: int = 4) -> None:
+    def __init__(self, config: PlotConfig, periodicity: int = 4) -> None:
         self.periodicity = periodicity
-
-    @staticmethod
-    def read_time_series(filepath: str) -> pd.Series:
-        serie = pd.read_excel(filepath)
-        return pd.Series(serie[serie.columns[0]])
+        self.config = PlotConfig()
 
     def _calculate_centered_moving_average(self, serie: pd.Series) -> pd.Series:
         return (
@@ -98,11 +97,15 @@ class SeasonalityPredictor:
 
         forecast = trend_forecast * seasonal_indices[:self.periodicity]
         return [round(float(v), 2) for v in forecast]
+      
+    def save_predictions(self, forecast: list[float], file_name: str = 'predictions.csv') -> None:
+        forecast = {'PERIOD': range(1, len(forecast) + 1), 'VALUE': forecast}
+        pd.DataFrame(forecast).to_csv(os.path.join(self.config.save_dir, file_name), index=False)
 
 class SeasonalityPlotter:
 
-    def __init__(self, config=None) -> None:
-        self.config = config or PlotConfig()
+    def __init__(self, config: PlotConfig) -> None:
+        self.config = PlotConfig()
 
     def _ensure_save_directory(self) -> None:
         if not os.path.exists(self.config.save_dir):
@@ -204,97 +207,76 @@ class SeasonalityPlotter:
 
         self._save_figure(fig, 'historic_and_prediction_data.png')
 
-    def generate_all_plots(self, serie: pd.Series, prediction_last_period: list | np.ndarray, prediction_next_period: list | np.ndarray, periodicity: int = 4) -> None:
+    def generate_all_plots(
+        self, 
+        serie: pd.Series, 
+        prediction_last_period: list | np.ndarray, 
+        prediction_next_period: list | np.ndarray, 
+        periodicity: int = 4
+    ) -> None:
         self.plot_original_data(serie, periodicity)
         self.plot_next_period_forecast(serie, prediction_next_period)
         self.plot_last_period_comparison(serie, prediction_last_period, periodicity)
 
-class FileManager:
+class SeasonalityPipeline:
 
-    def __init__(self, base_dir: str = 'static\\seasonality'):
-        self.base_dir = base_dir
-
-    def save_predictions_csv(self, predictions, filename: str = 'predictions.csv'):
-        df_to_print = (
-            pd.DataFrame(predictions)
-            .reset_index()
-            .rename(columns={'index': 'PERIOD', 0: 'VALUE'})
-        )
-
-        filepath = os.path.join(self.base_dir, filename)
-        os.makedirs(os.path.dirname(filepath), exist_ok=True)
-        df_to_print.to_csv(filepath, index=False)
-
-    def create_predictions_zip(self, zip_filename: str = 'predictions.zip'):
-        zip_path = os.path.join(self.base_dir, zip_filename)
-        with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
-            for root, dirs, files in os.walk(self.base_dir):
-                for file in files:
-                    if file != zip_filename:
-                        file_path = os.path.join(root, file)
-                        zipf.write(file_path, os.path.relpath(file_path, self.base_dir))
-        return zip_path
-    
-class SeasonalityProcessor:
-
-    def __init__(self, periodicity: int = 4, plot_config: PlotConfig | None = None) -> None:
-        self.predictor = SeasonalityPredictor(periodicity)
-        self.plotter = SeasonalityPlotter(plot_config)
-        self.file_manager = FileManager()
+    def __init__(self, file: str, periodicity: int = 4, plot_config: PlotConfig | None = None) -> None:
+        self.serie = None
+        self.file = file
         self.periodicity = periodicity
+        self.plotter = SeasonalityPlotter(plot_config)
+        self.predictor = SeasonalityPredictor(self.periodicity)
+        
+    @property
+    def is_empty(self) -> None:
+      
+        self.df = pd.read_excel(self.file)
+        if self.df.empty:
+            return "The file is empty"
+        self.serie = self.df.iloc[:, 0]
+        return None
 
-    def process_file(self, file: str) -> dict:
+    def forecast(self) -> dict:
     
-        serie = pd.read_excel(file)
-        if serie.empty:
-            raise ValueError("File is empty")
+        forecasted_last_period = self.predictor.predict(self.serie.iloc[:-self.periodicity])
+        forecasted_next_period = self.predictor.predict(self.serie)
 
-        col_name = serie.columns[0]
-        serie_data = serie[col_name]
-
-        if not pd.api.types.is_numeric_dtype(serie_data):
-            raise ValueError("Data is not numeric")
-
-        if serie.shape[1] != 1:
-            raise ValueError(f"Expected 1 column, got {serie.shape[1]}")
-
-        if len(serie_data) % self.periodicity != 0:
-            raise ValueError(
-                f"Series length ({len(serie_data)}) is not divisible by "
-                f"periodicity ({self.periodicity})"
-            )
-
-        forecasted_last_period = self.predictor.predict(serie_data.iloc[:-self.periodicity])
-        forecasted_next_period = self.predictor.predict(serie_data)
-
+        self.predictor.save_predictions(forecasted_next_period)
         self.plotter.generate_all_plots(
-            serie_data,
+            self.serie,
             forecasted_last_period,
             forecasted_next_period,
             self.periodicity
         )
+        return forecasted_next_period
 
-        return {
-            'forecasted_last_period': forecasted_last_period,
-            'forecasted_next_period': forecasted_next_period,
-            'serie_data': serie_data
-        }
-
-    def save_predictions_csv(self, predictions: dict) -> None:
-        self.file_manager.save_predictions_csv(predictions)
-
-    def create_predictions_zip(self) -> str:
-        return self.file_manager.create_predictions_zip()
-
-    def get_validation_details(self, serie: pd.Series, periodicity: int) -> str:
-        remainder = len(serie) % periodicity
-
+    @property
+    def validation(self) -> str:
+        remainder = len(self.serie) % self.periodicity
         details = [
-            f"<li>Data format: {'OK' if pd.api.types.is_numeric_dtype(serie.iloc[:, 0]) else 'Not OK. Data is not numeric.'}</li>",
-            f"<li>Number of columns: {'OK' if serie.shape[1] == 1 else f'Not OK. There are {serie.shape[1]} columns instead of one.'}</li>",
-            f"<li>Series length: {len(serie)}</li>",
-            f"<li>Periodicity: {'OK' if periodicity > 1 else f'Not OK. The value of the periodicity is {periodicity} and has to be higher than one and when dividing the length of the serie the reminder must be zero.'}</li>",
+            f"<li>Data format: {'OK' if pd.api.types.is_numeric_dtype(self.serie) else 'Not OK. Data is not numeric.'}</li>",
+            f"<li>Number of columns: {'OK' if self.df.shape[1] == 1 else f'Not OK. There are {self.serie.shape[1]} columns instead of one.'}</li>",
+            f"<li>Series length: {len(self.serie)}</li>",
+            f"<li>Periodicity: {'OK' if self.periodicity > 1 else f'Not OK. The value of the periodicity is {self.periodicity} and has to be higher than one and when dividing the length of the serie the reminder must be zero.'}</li>",
             f"<li>Remainder: {'OK' if remainder == 0 else f'Not OK. The value of the reminder is {remainder} instead of zero.'}</li>"
         ]
-
         return f"<ul>{''.join(details)}</ul>"
+      
+# =============================================================================
+# DOWNLOAD PREDICTIONS
+# =============================================================================
+def download_forecast(config: PlotConfig = PlotConfig(), zip_filename: str = 'predictions.zip'):
+    base_dir = config.save_dir
+    zip_path = os.path.join(base_dir, zip_filename)
+    with zf.ZipFile(zip_path, 'w', zf.ZIP_DEFLATED) as f:
+        for root, _, files in os.walk(base_dir):
+            for file in files:
+                if file != zip_filename:
+                    file_path = os.path.join(root, file)
+                    f.write(file_path, os.path.relpath(file_path, base_dir))
+    return zip_path, zip_filename
+  
+  
+  
+  
+

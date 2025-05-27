@@ -1,11 +1,5 @@
 ```bash
 ├── README.md
-├── app/
-  └── static/  # Contain static files (CSS, JS and images).
-    └── seasonality/
-      ├── all_periods_data.png
-      ├── historic_and_prediction_data.png
-      └── original_data.png
 ├── app.py  # Web App project file.
 ├── main.py  # Main project file.
 ├── modules/  # Contain Python modules.
@@ -28,7 +22,7 @@
   ├── js/  # Contain JavaScript scripts.
     ├── base.js  # Project-wise Functionalities
     ├── index.js  # Home Page Functionalities - Versión Corregida
-    ├── keyphrases.js  # Keyphrase Extraction Functionalities
+    ├── keyphrase.js  # Keyphrase Extraction Functionalities
     ├── seasonality.js  # Seasonality Prediction Functionalities
     ├── whatsapp.js  # WhatsApp Functionalities
     └── world_bank.js  # World Bank Functionalities
