@@ -88,45 +88,22 @@ def build_layout(df: pd.DataFrame = None) -> html.Div:
     
 @dataclass
 class WhatsAppData:
-    """Data class that holds WhatsApp chat data after processing."""
     df: pd.DataFrame
     content: pd.DataFrame
     language: str
 
 class WhatsAppService:
-    """Service class for processing and analyzing WhatsApp chat data."""
-
     
     def __init__(self):
-        """Initialize the WhatsAppService with no current data."""
         self.current_data = None
     
     def process_file(self, file, language: str) -> WhatsAppData:
-        """
-        Process a WhatsApp chat file and generate structured data.
-      
-        Args:
-            file: The uploaded WhatsApp chat file.
-            language (str): Language to be used for text processing.
-      
-        Returns:
-            WhatsAppData: Object containing processed DataFrames and language.
-        """
         content = self._parse_whatsapp_file(file)
         df = self._agg_message_counts(content)
         self.current_data = WhatsAppData(df=df, content=content, language=language)
         return self.current_data
     
     def get_filtered_data(self, issuer: str) -> tuple:
-        """
-        Filter chat data for a specific issuer or return general stats.
-      
-        Args:
-            issuer (str): Issuer name to filter by.
-      
-        Returns:
-            tuple: (Filtered aggregated DataFrame, normalized text, is_general flag)
-        """
         is_general = issuer == GENERAL
         
         if is_general:
@@ -151,15 +128,6 @@ class WhatsAppService:
     
     @staticmethod
     def _agg_message_counts(df: pd.DataFrame) -> pd.DataFrame:
-        """
-        Aggregate message counts per issuer and time period.
-      
-        Args:
-            df (pd.DataFrame): Raw message data.
-      
-        Returns:
-            pd.DataFrame: Aggregated message count data.
-        """
         group_and_count = lambda cols: df.groupby(cols)[MESSAGE].count().reset_index()
         return (
             pd.concat([
@@ -170,30 +138,12 @@ class WhatsAppService:
     
     @staticmethod
     def _parse_whatsapp_file(file: str) -> pd.DataFrame:
-        """
-        Parse a raw WhatsApp chat file into a structured DataFrame.
-      
-        Args:
-            file (str): File object containing WhatsApp messages.
-      
-        Returns:
-            pd.DataFrame: Structured DataFrame of chat messages.
-        """
         chat = file.read().decode(UTF8).splitlines()
         messages = WhatsAppService._split_multiline_messages(chat)
         return WhatsAppService._parse_chat_messages(messages)
     
     @staticmethod
     def _parse_chat_messages(messages: list) -> pd.DataFrame:
-        """
-        Convert parsed chat message strings into a structured DataFrame.
-      
-        Args:
-            messages (list): List of message strings.
-      
-        Returns:
-            pd.DataFrame: DataFrame containing parsed message data.
-        """
         return (
             pd.DataFrame(messages, columns=[RAW_DATA])
             .loc[lambda df: df[RAW_DATA].str.contains(': ') & ~df[RAW_DATA].str.contains('Multimedia')]
@@ -215,16 +165,6 @@ class WhatsAppService:
     
     @staticmethod
     def _split_multiline_messages(message_lines: list, regex_pattern: str = r".*\/.*\/.*,.*:.* - .*") -> list:
-        """
-        Combine multi-line messages into single strings based on date-time patterns.
-      
-        Args:
-            message_lines (list): Raw lines from the chat file.
-            regex_pattern (str): Regex pattern identifying the start of new messages.
-      
-        Returns:
-            list: List of full message strings.
-        """
         messages = []
         for current_line in message_lines:
             if re.match(regex_pattern, current_line): 
@@ -234,31 +174,13 @@ class WhatsAppService:
         return messages
 
 class ChartGenerator:
-    """Utility class to generate various WhatsApp message visualizations."""
 
     @staticmethod
-    def generate_all_charts(
-            whatsapp_data: WhatsAppData, 
-            issuer: str, 
-            weekdays_mapper: dict[str, str],
-            months_mapper: dict[str, str]
-        ) -> dict:
-        """
-        Generate all visual charts for the selected WhatsApp issuer.
-      
-        Args:
-            whatsapp_data (WhatsAppData): The parsed WhatsApp dataset.
-            issuer (str): Name of the person or group to filter messages.
-            weekdays_mapper (dict[str, str]): Mapping from weekday numbers to names.
-            months_mapper (dict[str, str]): Mapping from month numbers to names.
-      
-        Returns:
-            dict: A dictionary containing Plotly/Dash figures and HTML components.
-        """        
+    def generate_all_charts(whatsapp_data: WhatsAppData, issuer: str, weekdays_mapper: dict[str, str], months_mapper: dict[str, str]) -> dict:    
+        
         service = WhatsAppService()
         service.current_data = whatsapp_data
         filtered_df, issuer_messages, is_general = service.get_filtered_data(issuer)
-        
         return {
             'general_charts': (
                 ChartGenerator._create_general_charts(whatsapp_data.content) 
@@ -284,15 +206,6 @@ class ChartGenerator:
     
     @staticmethod
     def _generate_wordcloud(text: str) -> str:
-        """
-        Generate a word cloud image encoded in base64.
-      
-        Args:
-            text (str): Text from which to generate the word cloud.
-      
-        Returns:
-            str: A base64-encoded string representation of the image.
-        """
         buffer = io.BytesIO()
         WordCloud(width=800, height=400, background_color='white').generate(text).to_image().save(buffer, format='PNG')
         buffer.seek(0)
@@ -300,16 +213,6 @@ class ChartGenerator:
     
     @staticmethod
     def _sentiment_analysis(data: pd.DataFrame, selected_issuer: str = None) -> go.Figure: 
-        """
-        Create a sentiment analysis violin plot of message polarity.
-      
-        Args:
-            data (pd.DataFrame): DataFrame containing the messages.
-            selected_issuer (str, optional): Issuer to filter by, or None for all.
-      
-        Returns:
-            go.Figure: A Plotly violin chart showing sentiment distribution.
-        """
         df = (
             (data[data[ISSUER] == selected_issuer] if selected_issuer and selected_issuer != GENERAL else data.copy())
             .assign(SCORE=lambda d: d[MESSAGE].apply(lambda a: tb.TextBlob(a.replace('\n', ' ')).sentiment.polarity))
@@ -337,18 +240,8 @@ class ChartGenerator:
     
     @staticmethod
     def _create_general_charts(df: pd.DataFrame) -> html.Div:
-        """
-        Create pie charts for general issuer message and word proportions.
-      
-        Args:
-            df (pd.DataFrame): Full message dataset.
-      
-        Returns:
-            html.Div: Dash component containing pie charts.
-        """
         issuer_counts = df[ISSUER].value_counts().reset_index().rename(columns={COUNT.lower(): COUNT})
         message_length_sum = df.groupby(ISSUER)[LEN_MESSAGE].sum().reset_index()
-
         return html.Div(
             [
                 html.Div(
@@ -373,17 +266,6 @@ class ChartGenerator:
 
     @staticmethod
     def _create_pie_chart(labels: pd.Series, values: pd.Series, title: str) -> dcc.Graph:
-        """
-        Create a pie chart from labels and values.
-      
-        Args:
-            labels (pd.Series): Labels for the pie chart.
-            values (pd.Series): Corresponding values for each label.
-            title (str): Title of the chart.
-      
-        Returns:
-            dcc.Graph: Dash Graph component with the pie chart.
-        """
         return dcc.Graph(
             figure={
                 DATA: [go.Pie(labels=labels, values=values, hole=.5)],
@@ -393,19 +275,6 @@ class ChartGenerator:
     
     @staticmethod
     def _create_bar_chart(df: pd.DataFrame, group_col: list[str], title: str, mapper: bool = None, color_palette: str = "husl") -> dict:
-        """
-         Create a grouped bar chart with optional label mapping.
-        
-           Args:
-             df (pd.DataFrame): The DataFrame to use.
-             group_col (list[str]): Column to group by.
-             title (str): Title for the chart.
-             mapper (bool, optional): Mapping for label replacement. Defaults to None.
-             color_palette (str): Seaborn color palette to use. Defaults to "husl".
-          
-         Returns:
-             dict: A dictionary representing a Plotly bar chart.
-         """
         bar_colors = sns.color_palette(color_palette, n_colors=31).as_hex()
         data = df.groupby(group_col)[MESSAGE].count().reset_index()
         if mapper:

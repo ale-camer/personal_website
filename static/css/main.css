@@ -1,21 +1,5 @@
 /* Main Stylesheet File */
 
-/* 
-Resoluciones:
-
-    360 × 640
-    375 × 667
-    414 × 896
-    768 × 1024
-    1024 × 768
-    1280 × 800
-    1366 × 768
-    1440 × 900
-    1920 × 1080
-    2560 × 1440
-    3840 × 2160
-*/
-
 /* IMPORTS  */
 @import url('utils.css');
 @import url('index.css');

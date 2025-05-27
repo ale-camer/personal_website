@@ -1,4 +1,7 @@
 {
+  "temporary_folders": [
+    "static/seasonality", "static/world_bank", "static/keyphrase"
+  ],
   "days_of_the_week": {
     "0": "Monday",
     "1": "Tuesday",

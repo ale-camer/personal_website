@@ -4,7 +4,6 @@
 import os
 import webbrowser
 from abc import ABC, abstractmethod
-from typing import Optional, Union
 
 # --- Third-party ---
 import folium
@@ -14,7 +13,7 @@ import requests
 from branca.colormap import linear
 
 # --- Project/system ---
-from modules.utils import reading_json
+from modules.utils import read_json
 
 # =============================================================================
 # CONSTANTS
@@ -32,37 +31,20 @@ CONFIG_FILE_PATH = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
     'static', 'json', 'config.json'
 )
-
-# --- Configuration data loaded from JSON ---
-STRINGS_TO_EXCLUDE = reading_json(CONFIG_FILE_PATH)["strings_to_exclude"]
+STRINGS_TO_EXCLUDE = read_json(CONFIG_FILE_PATH)["strings_to_exclude"]
 
 # =============================================================================
 # DATA HANDLER CLASS
 # =============================================================================
 class WorldBankDataHandler:
-    """Handle World Bank data operations including fetching and processing."""
     
     def __init__(self):
         self.strings_to_exclude = STRINGS_TO_EXCLUDE
     
-    def get_indicator_data(self, indicator_id: str) -> Optional[list]:
-        """
-        Fetch data for a specific World Bank indicator for all countries.
-
-        Parameters
-        ----------
-        indicator_id : str
-            The World Bank indicator identifier.
-
-        Returns
-        -------
-        list or None
-            A list of data entries filtered to exclude certain string values and None values,
-            or None if the request or parsing fails.
-        """
+    def get_indicator_data(self, indicator_id: str) -> list | None:
+    
         url = f'https://api.worldbank.org/v2/country/all/indicator/{indicator_id}'
         params = {'format': 'json', DATE_STR: '1960:2023', 'per_page': 20000}
-        
         try:
             response = requests.get(url, params=params)
             data = response.json()
@@ -76,29 +58,10 @@ class WorldBankDataHandler:
             return None
     
     def get_result_data(self, data: list, type_selected: str, option_selected: str) -> pd.DataFrame:
-        """
-        Filter and format World Bank data based on selected type and option.
-
-        Parameters
-        ----------
-        data : list
-            The input data as a list containing World Bank indicator entries.
-        type_selected : str
-            The type of filter, typically 'country' or 'date'.
-        option_selected : str
-            The specific country or date to filter on.
-
-        Returns
-        -------
-        pd.DataFrame
-            A DataFrame filtered by the selected country or date, sorted and deduplicated,
-            containing columns ISO code, country name, date, and value.
-        """
         filtered_data = [
             entry for entry in data 
             if (entry[COUNTRY_STR][VALUE_STR] if type_selected == COUNTRY_STR else entry[DATE_STR]) == option_selected
         ]
-        
         return (
             pd.DataFrame(
                 [(entry['countryiso3code'], entry[COUNTRY_STR][VALUE_STR], 
@@ -109,12 +72,10 @@ class WorldBankDataHandler:
             .drop_duplicates()
         )
 
-
 # =============================================================================
 # ABSTRACT BASE CLASS FOR PLOTS
 # =============================================================================
 class WorldBankPlotter(ABC):
-    """Abstract base class for World Bank data visualization."""
     
     def __init__(self, temporary_folder: str = TEMPORARY_FILES_FOLDER):
         self.temporary_folder = temporary_folder
@@ -122,21 +83,17 @@ class WorldBankPlotter(ABC):
     
     @abstractmethod
     def create_figure(self, df: pd.DataFrame, **kwargs):
-        """Create the visualization figure."""
         pass
     
     @abstractmethod
     def get_filename(self) -> str:
-        """Get the filename for saving the visualization."""
         pass
     
     @abstractmethod
     def get_format(self) -> str:
-        """Get the format type for saving."""
         pass
     
     def save_and_open(self, figure, filepath: str) -> None:
-        """Save and open the visualization."""
         if self.get_format() == HTML_PLOTLY:
             figure.write_html(filepath)
         elif self.get_format() == HTML_FOLIUM:
@@ -147,24 +104,20 @@ class WorldBankPlotter(ABC):
         webbrowser.open(f'file://{os.path.realpath(filepath)}')
     
     def plot(self, df: pd.DataFrame, **kwargs) -> None:
-        """Main plotting method."""
         figure = self.create_figure(df, **kwargs)
         filepath = os.path.join(self.temporary_folder, self.get_filename())
         self.save_and_open(figure, filepath)
-
 
 # =============================================================================
 # CONCRETE PLOTTER CLASSES
 # =============================================================================
 class TimeSeriesPlotter(WorldBankPlotter):
-    """Handle time series plotting using Plotly."""
     
     def create_figure(self, df: pd.DataFrame, **kwargs) -> go.Figure:
         """Create a Plotly time series figure."""
         title = kwargs.get('title', '')
         template = kwargs.get('template', 'plotly')
         
-        # Convert date to year
         df_copy = df.copy()
         df_copy[DATE_STR.upper()] = pd.to_datetime(df_copy[DATE_STR.upper()]).dt.year
         
@@ -190,16 +143,13 @@ class TimeSeriesPlotter(WorldBankPlotter):
     def get_format(self) -> str:
         return HTML_PLOTLY
 
-
 class HeatmapPlotter(WorldBankPlotter):
-    """Handle heatmap plotting using Folium."""
     
     def __init__(self, geojson_path: str, temporary_folder: str = TEMPORARY_FILES_FOLDER):
         super().__init__(temporary_folder)
         self.geojson_path = geojson_path
     
     def create_figure(self, df: pd.DataFrame, **kwargs) -> folium.Map:
-        """Create a Folium heatmap figure."""
         geo_df = self._prepare_heatmap_data(df)
         
         m = folium.Map(location=[20, 0], zoom_start=2)
@@ -232,9 +182,8 @@ class HeatmapPlotter(WorldBankPlotter):
         return m
     
     def _prepare_heatmap_data(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Prepare data for heatmap by merging with geographical data."""
         return (
-            pd.DataFrame(reading_json(self.geojson_path))
+            pd.DataFrame(read_json(self.geojson_path))
             .merge(
                 df.loc[df.groupby(COUNTRY_STR.upper())[DATE_STR.upper()].idxmax()]
                 .assign(DATE=lambda x: pd.to_datetime(x[DATE_STR.upper()])), 
@@ -250,12 +199,10 @@ class HeatmapPlotter(WorldBankPlotter):
     def get_format(self) -> str:
         return HTML_FOLIUM
 
-
 # =============================================================================
 # MAIN WORLD BANK CLASS
 # =============================================================================
 class WorldBankManager:
-    """Main class to manage World Bank data operations and visualizations."""
     
     def __init__(self, geojson_path: str):
         self.data_handler = WorldBankDataHandler()
@@ -263,24 +210,19 @@ class WorldBankManager:
         self.time_series_plotter = TimeSeriesPlotter()
         self.heatmap_plotter = HeatmapPlotter(geojson_path)
     
-    def get_indicator_data(self, indicator_id: str) -> Optional[list]:
-        """Fetch indicator data using the data handler."""
+    def get_indicator_data(self, indicator_id: str) -> list:
         return self.data_handler.get_indicator_data(indicator_id)
     
     def get_result_data(self, data: list, type_selected: str, option_selected: str) -> pd.DataFrame:
-        """Get processed result data using the data handler."""
         return self.data_handler.get_result_data(data, type_selected, option_selected)
     
     def plot_time_series(self, df: pd.DataFrame, title: str = '', template: str = 'plotly') -> None:
-        """Create and display time series plot."""
         self.time_series_plotter.plot(df, title=title, template=template)
     
     def plot_heatmap(self, df: pd.DataFrame) -> None:
-        """Create and display heatmap plot."""
         self.heatmap_plotter.plot(df)
     
     def create_visualization(self, df: pd.DataFrame, type_selected: str, **kwargs) -> None:
-        """Create appropriate visualization based on type selected."""
         if type_selected == 'country':
             self.plot_time_series(df, **kwargs)
         elif type_selected == 'year':
