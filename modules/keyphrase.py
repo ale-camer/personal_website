@@ -29,6 +29,7 @@ class NGramAnalyzer:
     
     def __init__(self, language: str = 'english'):
         nltk.download('punkt', quiet=True)
+        nltk.download('stopwords', quiet=True)
         self.url_regex = re.compile(r'http\S+')
         self.stopwords = set(nltk.corpus.stopwords.words(language))
     

@@ -96,6 +96,7 @@ class WhatsAppModule:
         filtered_messages = self.current_data.content[issuer_filter]
         combined_text = ' '.join(filtered_messages['MESSAGE'].astype(str))
         
+        nltk.download('stopwords', quiet=True)
         stopwords = set(nltk.corpus.stopwords.words(self.current_data.language))
         issuer_messages = text_normalizer(
             text=combined_text,
