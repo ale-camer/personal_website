@@ -1,11 +1,15 @@
 """Custom project functions."""
 
+# =============================================================================
+# IMPORTS
+# =============================================================================
 import os, shutil, json, re
 import pandas as pd
 from unidecode import unidecode   
 
-URL_REGEX = re.compile(r'http\S+')
-
+# =============================================================================
+# FILE OPERATIONS
+# =============================================================================
 def remove_temp_files(folders: str | list[str], files_to_remove: list[str] = None) -> None:
     print("Cleaning temporary folders")
     if isinstance(folders, str):
@@ -52,7 +56,10 @@ def write_json(data: pd.DataFrame, path: str) -> None:
 def write_txt(content: str, path: str) -> None:
     with open(path, 'w', encoding='utf-8') as f:
         f.write(content)
-        
+      
+# =============================================================================
+# TEXT PROCESSING
+# =============================================================================
 def text_normalizer(text: str, stopwords: set = None, min_word_len: int = 2) -> str:
     
     def _reduce_repeated_chars(text: str) -> str:
@@ -66,7 +73,7 @@ def text_normalizer(text: str, stopwords: set = None, min_word_len: int = 2) -> 
           fn=unidecode,
           condition=lambda w: (
               w not in stopwords
-              and not URL_REGEX.match(w)
+              and not re.compile(r'http\S+').match(w)
               and len(w) > min_word_len
           )
       )

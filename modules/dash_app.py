@@ -1,8 +1,14 @@
 """Dash App project file."""
 
+# =============================================================================
+# IMPORTS
+# =============================================================================
 from dash import Dash, Input, Output
 from modules.whatsapp import layout, ChartGenerator
 
+# =============================================================================
+# INIT
+# =============================================================================
 def init_dash_app(server, whatsapp_service, weekdays_mapper, months_mapper):
     dash_app = Dash(__name__, server=server, url_base_pathname='/dashboard/')
     dash_app.layout = layout(whatsapp_service.current_data)

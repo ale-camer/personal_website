@@ -82,7 +82,7 @@ function checkAndLoadOptions() {
 
     optionsMenu.innerHTML = '<a href="#" class="options-message">Loading options...</a>';
 
-    fetch(`/save_data_to_temp?indicator=${encodeURIComponent(selectedIndicator)}&type=${encodeURIComponent(selectedType)}`)
+    fetch(`/download_data?indicator=${encodeURIComponent(selectedIndicator)}&type=${encodeURIComponent(selectedType)}`)
         .then(response => {
             if (!response.ok) {
                 return response.text().then(text => {
@@ -92,7 +92,7 @@ function checkAndLoadOptions() {
             return;
         })
         .then(() => {
-            return fetch(`/fetch_options?indicator=${encodeURIComponent(selectedIndicator)}&type=${encodeURIComponent(selectedType)}`);
+            return fetch(`/show_options?indicator=${encodeURIComponent(selectedIndicator)}&type=${encodeURIComponent(selectedType)}`);
         })
         .then(response => {
             if (!response.ok) {
@@ -184,7 +184,7 @@ async function fetchAndShowResults() {
     resultsDiv.style.display = 'block';
 
     try {
-        const response = await fetch(`/fetch_data?indicator=${encodeURIComponent(selectedIndicator)}&type=${encodeURIComponent(selectedType)}&option=${encodeURIComponent(selectedOptionValue)}`);
+        const response = await fetch(`/show_data?indicator=${encodeURIComponent(selectedIndicator)}&type=${encodeURIComponent(selectedType)}&option=${encodeURIComponent(selectedOptionValue)}`);
 
         if (!response.ok) {
             const errorText = await response.text();
@@ -343,7 +343,7 @@ async function showInteractiveGraph() {
     formData.append('option', selectedOptionValue);
 
     try {
-        const response = await fetch('/interactive_graph', {
+        const response = await fetch('/plot_graph', {
             method: 'POST',
             body: formData,
         });

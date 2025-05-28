@@ -1,5 +1,8 @@
 """Web App project file."""
 
+# =============================================================================
+# IMPORTS
+# =============================================================================
 # --- Standard library ---
 import os
 import warnings
@@ -9,11 +12,12 @@ from flask import Flask, render_template, request, redirect, send_file, jsonify
 
 # --- Project/system ---
 import modules.utils as ut
+import modules.world_bank_utils as wb_ut
 from modules.dash_app import init_dash_app
-from modules.keyphrase import NGramExtractor, get_tables_string
-from modules.seasonality import SeasonalityPipeline, download_forecast
-from modules.whatsapp import layout, WhatsAppService
-from modules.world_bank import WorldBankManager
+from modules.keyphrase import NGramModule, get_tables_string
+from modules.seasonality import SeasonalityModule, download_forecast
+from modules.whatsapp import layout, WhatsAppModule
+from modules.world_bank import WorldBankModule
 
 warnings.filterwarnings("ignore")
 
@@ -24,6 +28,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
 KEYPHRASE_DIR = os.path.join(STATIC_DIR, 'keyphrase')
+WORLD_BANK_DIR = os.path.join(STATIC_DIR, 'world_bank')
 JSON_DIR = os.path.join(STATIC_DIR, 'json')
 
 CONFIG_PATH = os.path.join(JSON_DIR, 'config.json')
@@ -98,11 +103,11 @@ def whatsapp():
     return render_template('whatsapp.html')
   
 # =============================================================================
-# KEYPHRASE EXTRACTION
+# KEYPHRASE
 # =============================================================================
 @app.route('/extract_keyphrases', methods=['POST'])
 def extract_keyphrases():
-    ngrams = NGramExtractor(
+    ngrams = NGramModule(
       raw_text=request.files.get('file').read().decode('utf-8'),
       max_ngrams=int(request.form.get('num_tables', 1)),
       num_nrows=int(request.form.get('num_rows', 1))
@@ -119,7 +124,7 @@ def download_keyphrases(output_filename: str = "keyphrases.txt"):
     return send_file(KEYPHRASE_OUTPUT_PATH, as_attachment=True, download_name=output_filename)
 
 # =============================================================================
-# SEASONALITY PREDICTION
+# SEASONALITY
 # =============================================================================
 @app.route('/predict_seasonality', methods=['POST'])
 def predict_seasonality():
@@ -127,7 +132,7 @@ def predict_seasonality():
     template = 'seasonality.html'
     file = request.files.get('file')
     periodicity = int(request.form.get('periodicity'))
-    processor = SeasonalityPipeline(file, periodicity)
+    processor = SeasonalityModule(file, periodicity)
 
     error = processor.is_empty
     if error:
@@ -154,70 +159,41 @@ def download_predictions():
 # =============================================================================
 # WORLD BANK
 # =============================================================================
-wb_manager = WorldBankManager(GEO_DATA_PATH)
-@app.route('/save_data_to_temp')
-def save_data_to_temp():
-    indicator_selected = request.args.get('indicator')
-    
-    data = wb_manager.get_indicator_data(indicator_selected)
-    
-    temp_file_path = os.path.join('static', 'world_bank', f'{indicator_selected}.json')
-    ut.write_json(data, temp_file_path)
-    
-    return jsonify({'message': 'Data saved successfully', 'file': temp_file_path})
+wb_manager = WorldBankModule(GEO_DATA_PATH)
 
-@app.route('/fetch_options')
-def fetch_options():
-    indicator_selected = request.args.get('indicator')
-    type_selected = request.args.get('type')
-    
-    temp_file_path = os.path.join('static', 'world_bank', f'{indicator_selected}.json')
-    data = ut.read_json(temp_file_path)
+@app.route('/download_data')
+def download_data():
+    indicator = request.args.get('indicator')
+    data = wb_manager.indicator(indicator)    
+    ut.write_json(data, wb_ut.get_file_path(indicator))
+    return jsonify({'message': 'Data saved successfully', 'file': wb_ut.get_file_path(indicator)})
+      
+@app.route('/show_options')
+def show_options():
+    data = wb_ut.load_data(request.args.get('indicator'))
+    return wb_ut.extract_options(data, request.args.get('type'))
 
-    return sorted(
-        {entry['country']['value'] for entry in data}
-        if type_selected == 'country'
-        else {entry['date'] for entry in data},
-        reverse=(type_selected == 'year')
-    )
+@app.route('/show_data')
+def show_data():
+    args = request.args
+    data = wb_ut.load_data(args.get('indicator'), args.get('type'), args.get('option'))  
+    return data.drop('ISO_CODE', axis=1).to_dict(orient='records')
 
-@app.route('/fetch_data')
-def fetch_data():
-    indicator_selected = request.args.get('indicator')
-    type_selected = request.args.get('type')
-    option_selected = request.args.get('option')
-
-    temp_file_path = os.path.join('static', 'world_bank', f'{indicator_selected}.json')
-    data = ut.read_json(temp_file_path)
-    
-    result_df = wb_manager.get_result_data(data, type_selected, option_selected)
-    
-    return result_df.drop('ISO_CODE', axis=1).to_dict(orient='records')
-
-@app.route('/interactive_graph', methods=['POST'])
-def interactive_graph():
-    indicator_selected = request.form.get('indicator')
-    type_selected = request.form.get('type')
-    option_selected = request.form.get('option')
-    
-    temp_file_path = os.path.join('static', 'world_bank', f'{indicator_selected}.json')
-    data = ut.read_json(temp_file_path)
-    
-    df = wb_manager.get_result_data(data, type_selected, option_selected)
-    
-    if type_selected == 'country':
-        title = f'{option_selected} - {INDICATOR_NAMES.get(indicator_selected)}'
-        wb_manager.create_visualization(df, type_selected, title=title)
-    elif type_selected == 'year':
-        wb_manager.create_visualization(df, type_selected)
-    
+@app.route('/plot_graph', methods=['POST'])
+def plot_graph():
+    form = request.form
+    indicator, type_selected, option = form.get('indicator'), form.get('type'), form.get('option')
+    df = wb_ut.load_data(indicator, type_selected, option)
+    title = f'{option} - {INDICATOR_NAMES.get(indicator)}' if type_selected == 'country' else None
+    wb_manager.create_visualization(df, type_selected, title=title)
     return "Interactive graph generated."
 
 # =============================================================================
 # WHATSAPP
 # =============================================================================
-whatsapp_service = WhatsAppService()
+whatsapp_service = WhatsAppModule()
 dash_app = init_dash_app(app, whatsapp_service, WEEK_DAYS, MONTHS)
+
 @app.route('/whatsapp_dashboard', methods=['POST'])
 def whatsapp_dashboard():
     data = whatsapp_service.parse_chat(

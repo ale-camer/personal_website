@@ -1,5 +1,8 @@
 """Refactored Seasonality Prediction functionality using two classes."""
 
+# =============================================================================
+# IMPORTS
+# =============================================================================
 # --- Standard library ---
 import os
 import zipfile as zf
@@ -218,7 +221,7 @@ class SeasonalityPlotter:
         self.plot_next_period_forecast(serie, prediction_next_period)
         self.plot_last_period_comparison(serie, prediction_last_period, periodicity)
 
-class SeasonalityPipeline:
+class SeasonalityModule:
 
     def __init__(self, file: str, periodicity: int = 4, plot_config: PlotConfig | None = None) -> None:
         self.serie = None

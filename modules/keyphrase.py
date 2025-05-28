@@ -1,5 +1,8 @@
 """Contain functions for Keyphrases functionality."""
 
+# =============================================================================
+# IMPORTS
+# =============================================================================
 # --- Standard library ---
 import re
 
@@ -70,7 +73,7 @@ class NGramAnalyzer:
         top_ngrams_formatted = [(' '.join(ngram), freq) for ngram, freq in top_ngrams][:nrows]
         return pd.DataFrame(top_ngrams_formatted, columns=['Keywords', '# Appearances'])
 
-class NGramExtractor:
+class NGramModule:
     def __init__(self, raw_text: str, max_ngrams: int = 5, num_nrows: int = 5):
         self.config = NGramConfig(data=raw_text, max_ngrams=max_ngrams, num_nrows=num_nrows)
         self.analyzer = NGramAnalyzer()

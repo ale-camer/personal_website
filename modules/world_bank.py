@@ -1,5 +1,8 @@
 """Contain classes for World Bank functionality."""
 
+# =============================================================================
+# IMPORTS
+# =============================================================================
 # --- Standard library ---
 import os
 import webbrowser
@@ -34,14 +37,14 @@ CONFIG_FILE_PATH = os.path.join(
 STRINGS_TO_EXCLUDE = read_json(CONFIG_FILE_PATH)["strings_to_exclude"]
 
 # =============================================================================
-# DATA HANDLER CLASS
+# DATA
 # =============================================================================
 class WorldBankDataHandler:
     
     def __init__(self):
         self.strings_to_exclude = STRINGS_TO_EXCLUDE
     
-    def get_indicator_data(self, indicator_id: str) -> list | None:
+    def indicator(self, indicator_id: str) -> list | None:
     
         url = f'https://api.worldbank.org/v2/country/all/indicator/{indicator_id}'
         params = {'format': 'json', DATE_STR: '1960:2023', 'per_page': 20000}
@@ -57,7 +60,7 @@ class WorldBankDataHandler:
             print(f"Error fetching data for indicator {indicator_id}: {e}")
             return None
     
-    def get_result_data(self, data: list, type_selected: str, option_selected: str) -> pd.DataFrame:
+    def results(self, data: list, type_selected: str, option_selected: str) -> pd.DataFrame:
         filtered_data = [
             entry for entry in data 
             if (entry[COUNTRY_STR][VALUE_STR] if type_selected == COUNTRY_STR else entry[DATE_STR]) == option_selected
@@ -73,7 +76,7 @@ class WorldBankDataHandler:
         )
 
 # =============================================================================
-# ABSTRACT BASE CLASS FOR PLOTS
+# PLOTS
 # =============================================================================
 class WorldBankPlotter(ABC):
     
@@ -108,9 +111,6 @@ class WorldBankPlotter(ABC):
         filepath = os.path.join(self.temporary_folder, self.get_filename())
         self.save_and_open(figure, filepath)
 
-# =============================================================================
-# CONCRETE PLOTTER CLASSES
-# =============================================================================
 class TimeSeriesPlotter(WorldBankPlotter):
     
     def create_figure(self, df: pd.DataFrame, **kwargs) -> go.Figure:
@@ -200,9 +200,9 @@ class HeatmapPlotter(WorldBankPlotter):
         return HTML_FOLIUM
 
 # =============================================================================
-# MAIN WORLD BANK CLASS
+# MAIN
 # =============================================================================
-class WorldBankManager:
+class WorldBankModule:
     
     def __init__(self, geojson_path: str):
         self.data_handler = WorldBankDataHandler()
@@ -210,11 +210,11 @@ class WorldBankManager:
         self.time_series_plotter = TimeSeriesPlotter()
         self.heatmap_plotter = HeatmapPlotter(geojson_path)
     
-    def get_indicator_data(self, indicator_id: str) -> list:
-        return self.data_handler.get_indicator_data(indicator_id)
+    def indicator(self, indicator_id: str) -> list:
+        return self.data_handler.indicator(indicator_id)
     
-    def get_result_data(self, data: list, type_selected: str, option_selected: str) -> pd.DataFrame:
-        return self.data_handler.get_result_data(data, type_selected, option_selected)
+    def results(self, data: list, type_selected: str, option_selected: str) -> pd.DataFrame:
+        return self.data_handler.results(data, type_selected, option_selected)
     
     def plot_time_series(self, df: pd.DataFrame, title: str = '', template: str = 'plotly') -> None:
         self.time_series_plotter.plot(df, title=title, template=template)
