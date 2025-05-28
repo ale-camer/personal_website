@@ -21,7 +21,7 @@ temp_folders_to_clean = config["temporary_folders"]
 def main():
     generate_readme_file(".")
     remove_temp_files(temp_folders_to_clean)
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=False)
 
 if __name__ == '__main__':
     main()

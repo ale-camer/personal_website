@@ -1,0 +1,82 @@
+🧭 ROADMAP PARA DESPLEGAR TU PRIMERA WEB COMO INGENIERO DE DATOS
+🎯 Objetivo final:
+Subir tu proyecto a la nube (AWS) con buenas prácticas como lo haría un ingeniero de datos, usando herramientas modernas como Docker, Terraform y CI/CD.
+
+🔹 FASE 1: Despliegue simple para mostrar tu web
+Duración: 1-2 días
+Objetivo: Que tu web funcione online rápido, mientras aprendés lo básico del despliegue.
+
+✅ Pasos:
+Subí tu código a GitHub.
+
+Creá cuenta en Render o Railway.
+
+Conectá tu repositorio y seguí los pasos para desplegar (ellos lo hacen casi solo).
+
+Tu web ya va a estar online con URL pública.
+
+(Opcional) Configurá un dominio gratuito con Freenom o pagá uno barato (.dev, .tech).
+
+🔹 FASE 2: Aprendé contenedores con Docker
+Duración: 2-3 días
+Objetivo: Que tu aplicación corra de forma portable, como lo hacen en producción.
+
+✅ Pasos:
+Instalá Docker en tu compu.
+
+Aprendé lo básico: Dockerfile, docker build, docker run.
+
+Containerizá tu web (ej.: Flask + HTML).
+
+Subí tu imagen a Docker Hub.
+
+👉 Curso sugerido (gratis):
+Docker para principiantes - YouTube (Fazt)
+
+🔹 FASE 3: Desplegá en AWS con EC2
+Duración: 4-6 días
+Objetivo: Subir tu contenedor Docker a una máquina virtual real.
+
+✅ Pasos:
+Creá cuenta en AWS Free Tier.
+
+Lanzá una instancia EC2 (t2.micro, Ubuntu).
+
+Subí tu código o imagen Docker (puede ser con Git o DockerHub).
+
+Instalá Docker y corré tu contenedor.
+
+Configurá los puertos (Security Groups) para que sea accesible.
+
+👉 Aprendé lo básico de EC2:
+Guía EC2 + Docker
+
+🔹 FASE 4: Infraestructura como código con Terraform
+Duración: 3-5 días
+Objetivo: Que puedas recrear toda tu infraestructura con un solo archivo.
+
+✅ Pasos:
+Instalá Terraform en tu máquina.
+
+Aprendé los bloques básicos (provider, resource).
+
+Automatizá el despliegue de EC2 y S3 con Terraform.
+
+Usá terraform apply y mirá cómo se crea todo desde código.
+
+👉 Curso gratuito corto:
+Terraform Básico - YouTube (Midudev)
+
+🔹 FASE 5: Automatización con GitHub Actions (CI/CD)
+Duración: 2-3 días
+Objetivo: Cada vez que hagas push a GitHub, se actualiza tu web sola.
+
+✅ Pasos:
+Creá un workflow .github/workflows/deploy.yml.
+
+En él, configurá que haga docker build, push y despliegue en EC2 o Render.
+
+Probá hacer un cambio en GitHub → se actualiza todo solo.
+
+👉 Guía para empezar:
+GitHub Actions para principiantes
