@@ -28,8 +28,16 @@ class NGramConfig:
 class NGramAnalyzer:
     
     def __init__(self, language: str = 'english'):
-        nltk.download('punkt', quiet=True)
-        nltk.download('stopwords', quiet=True)
+        try:
+            nltk.data.find('tokenizers/punkt')
+        except LookupError:
+            nltk.download('punkt')
+
+        try:
+            nltk.data.find('corpora/stopwords')
+        except LookupError:
+            nltk.download('stopwords')
+            
         self.url_regex = re.compile(r'http\S+')
         self.stopwords = set(nltk.corpus.stopwords.words(language))
     
