@@ -50,7 +50,7 @@ class WorldBankDataHandler:
     def indicator(self, indicator_id: str) -> list | None:
     
         url = f'https://api.worldbank.org/v2/country/all/indicator/{indicator_id}'
-        params = {'format': 'json', DATE_STR: '1960:2023', 'per_page': 20000}
+        params = {'format': 'json', DATE_STR: '1960:2025', 'per_page': 20000}
         try:
             response = requests.get(url, params=params)
             data = response.json()
@@ -289,11 +289,11 @@ class WorldBankModule:
     def results(self, data: list, type_selected: str, option_selected: str) -> pd.DataFrame:
         return self.data_handler.results(data, type_selected, option_selected)
     
-    def plot_time_series(self, df: pd.DataFrame, title: str = '', template: str = 'plotly') -> str:
-        self.time_series_plotter.plot(df, title=title, template=template)
+    # def plot_time_series(self, df: pd.DataFrame, title: str = '', template: str = 'plotly') -> str:
+        # self.time_series_plotter.plot(df, title=title, template=template)
     
-    def plot_heatmap(self, df: pd.DataFrame) -> None:
-        self.heatmap_plotter.plot(df)
+    # def plot_heatmap(self, df: pd.DataFrame) -> None:
+        # self.heatmap_plotter.plot(df)
     
     # def create_visualization(self, df: pd.DataFrame, type_selected: str, **kwargs) -> None:
         # if type_selected == 'country':
@@ -303,12 +303,28 @@ class WorldBankModule:
         # else:
             # raise ValueError(f"Visualization type '{type_selected}' not supported")
             
+    # def create_visualization(self, df: pd.DataFrame, type_selected: str, **kwargs) -> str:
+        # logging.info(f"Creating visualization of type: {type_selected}")
+        # if type_selected == 'country':
+            # self.plot_time_series(df, **kwargs)
+        # elif type_selected == 'year':
+            # self.plot_heatmap(df)
+        # else:
+            # logging.error(f"Visualization type '{type_selected}' not supported")
+            # raise ValueError(f"Visualization type '{type_selected}' not supported")
+
+    def plot_time_series(self, df: pd.DataFrame, title: str = '', template: str = 'plotly') -> str:
+        return self.time_series_plotter.plot(df, title=title, template=template)  # Añadir return
+
+    def plot_heatmap(self, df: pd.DataFrame) -> str:  # Cambiar tipo de retorno a str
+        return self.heatmap_plotter.plot(df)  # Añadir return
+
     def create_visualization(self, df: pd.DataFrame, type_selected: str, **kwargs) -> str:
         logging.info(f"Creating visualization of type: {type_selected}")
         if type_selected == 'country':
-            self.plot_time_series(df, **kwargs)
+            return self.plot_time_series(df, **kwargs)  # Añadir return
         elif type_selected == 'year':
-            self.plot_heatmap(df)
+            return self.plot_heatmap(df)  # Añadir return
         else:
             logging.error(f"Visualization type '{type_selected}' not supported")
             raise ValueError(f"Visualization type '{type_selected}' not supported")
