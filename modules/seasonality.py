@@ -102,6 +102,7 @@ class SeasonalityPredictor:
         return [round(float(v), 2) for v in forecast]
       
     def save_predictions(self, forecast: list[float], file_name: str = 'predictions.csv') -> None:
+        os.makedirs(self.config.save_dir, exist_ok=True)
         forecast = {'PERIOD': range(1, len(forecast) + 1), 'VALUE': forecast}
         pd.DataFrame(forecast).to_csv(os.path.join(self.config.save_dir, file_name), index=False)
 
