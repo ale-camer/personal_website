@@ -8,7 +8,7 @@ import os
 import warnings
 
 # --- Third-party ---
-from flask import Flask, render_template, request, redirect, send_file, jsonify
+from flask import Flask, render_template, request, redirect, send_file, jsonify, url_for
 
 # --- Project/system ---
 import modules.utils as ut
@@ -240,9 +240,19 @@ def plot_graph():
     title = f'{option} - {INDICATOR_NAMES.get(indicator)}' if type_selected == 'country' else None
     
     logging.info("Creating visualization...")
-    wb_manager.create_visualization(df, type_selected, title=title)
+    # Ahora create_visualization devuelve la ruta del archivo
+    # Ejemplo de filepath: "static/world_bank/heatmap.html"
+    filepath = wb_manager.create_visualization(df, type_selected, title=title)
     
-    return "Interactive graph generated."
+    # Necesitamos convertir la ruta del sistema de archivos a una URL accesible por el navegador.
+    # Asumiendo que tu carpeta 'static' se sirve desde la raíz de la URL '/static/'
+    # y que app.static_folder está configurado a 'static' (lo habitual en Flask)
+    # os.path.relpath(filepath, app.static_folder) daría "world_bank/heatmap.html"
+    relative_path_to_static = os.path.relpath(filepath, app.static_folder)
+    plot_url = url_for('static', filename=relative_path_to_static)
+
+    logging.info(f"Interactive graph generated. Accessible at: {plot_url}")
+    return jsonify({'message': 'Interactive graph generated.', 'plot_url': plot_url})
 
 # =============================================================================
 # WHATSAPP

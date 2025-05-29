@@ -99,6 +99,7 @@ class WorldBankPlotter(ABC):
     def get_format(self) -> str:
         pass
     
+    # ANTERIOR
     # def save_and_open(self, figure, filepath: str) -> None:
         # if self.get_format() == HTML_PLOTLY:
             # figure.write_html(filepath)
@@ -118,11 +119,12 @@ class WorldBankPlotter(ABC):
         else:
             raise ValueError(f"Format '{self.get_format()}' not supported")
         
-        full_path = os.path.realpath(filepath)
-        logging.info(f"Opening file in browser: file://{full_path}")
-        webbrowser.open(f'file://{full_path}')
-
+        # ANTERIOR
+        # full_path = os.path.realpath(filepath)
+        # logging.info(f"Opening file in browser: file://{full_path}")
+        # webbrowser.open(f'file://{full_path}')
     
+    # ANTERIOR
     # def plot(self, df: pd.DataFrame, **kwargs) -> None:
         # figure = self.create_figure(df, **kwargs)
         # filepath = os.path.join(self.temporary_folder, self.get_filename())
@@ -135,6 +137,7 @@ class WorldBankPlotter(ABC):
         logging.info(f"[{self.__class__.__name__}] Saving figure to {filepath}...")
         self.save_and_open(figure, filepath)
         logging.info(f"[{self.__class__.__name__}] Plotting complete.")
+        return filepath
 
 class TimeSeriesPlotter(WorldBankPlotter):
     
@@ -239,13 +242,13 @@ class WorldBankModule:
         self.time_series_plotter = TimeSeriesPlotter()
         self.heatmap_plotter = HeatmapPlotter(geojson_path)
     
-    def indicator(self, indicator_id: str) -> list:
+    def indicator(self, indicator_id: str) -> list | None:
         return self.data_handler.indicator(indicator_id)
     
     def results(self, data: list, type_selected: str, option_selected: str) -> pd.DataFrame:
         return self.data_handler.results(data, type_selected, option_selected)
     
-    def plot_time_series(self, df: pd.DataFrame, title: str = '', template: str = 'plotly') -> None:
+    def plot_time_series(self, df: pd.DataFrame, title: str = '', template: str = 'plotly') -> str:
         self.time_series_plotter.plot(df, title=title, template=template)
     
     def plot_heatmap(self, df: pd.DataFrame) -> None:
@@ -259,11 +262,12 @@ class WorldBankModule:
         # else:
             # raise ValueError(f"Visualization type '{type_selected}' not supported")
             
-    def create_visualization(self, df: pd.DataFrame, type_selected: str, **kwargs) -> None:
+    def create_visualization(self, df: pd.DataFrame, type_selected: str, **kwargs) -> str:
         logging.info(f"Creating visualization of type: {type_selected}")
         if type_selected == 'country':
             self.plot_time_series(df, **kwargs)
         elif type_selected == 'year':
             self.plot_heatmap(df)
         else:
+            logging.error(f"Visualization type '{type_selected}' not supported")
             raise ValueError(f"Visualization type '{type_selected}' not supported")
