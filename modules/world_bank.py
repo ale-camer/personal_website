@@ -81,6 +81,68 @@ class WorldBankDataHandler:
 # =============================================================================
 # PLOTS
 # =============================================================================
+# class WorldBankPlotter(ABC):
+    
+    # def __init__(self, temporary_folder: str = TEMPORARY_FILES_FOLDER):
+        # self.temporary_folder = temporary_folder
+        # os.makedirs(self.temporary_folder, exist_ok=True)
+    
+    # @abstractmethod
+    # def create_figure(self, df: pd.DataFrame, **kwargs):
+        # pass
+    
+    # @abstractmethod
+    # def get_filename(self) -> str:
+        # pass
+    
+    # @abstractmethod
+    # def get_format(self) -> str:
+        # pass
+    
+    # # ANTERIOR
+    # # def save_and_open(self, figure, filepath: str) -> None:
+        # # if self.get_format() == HTML_PLOTLY:
+            # # figure.write_html(filepath)
+        # # elif self.get_format() == HTML_FOLIUM:
+            # # figure.save(filepath)
+        # # else:
+            # # raise ValueError(f"Format '{self.get_format()}' not supported")
+        # # webbrowser.open(f'file://{os.path.realpath(filepath)}')
+        
+    # def save_and_open(self, figure, filepath: str) -> None:
+        # if self.get_format() == HTML_PLOTLY:
+            # logging.info(f"Saving Plotly figure to {filepath}")
+            # figure.write_html(filepath)
+        # elif self.get_format() == HTML_FOLIUM:
+            # logging.info(f"Saving Folium map to {filepath}")
+            # figure.save(filepath)
+        # else:
+            # raise ValueError(f"Format '{self.get_format()}' not supported")
+        
+        # # ANTERIOR
+        # # full_path = os.path.realpath(filepath)
+        # # logging.info(f"Opening file in browser: file://{full_path}")
+        # # webbrowser.open(f'file://{full_path}')
+    
+    # # ANTERIOR
+    # # def plot(self, df: pd.DataFrame, **kwargs) -> None:
+        # # figure = self.create_figure(df, **kwargs)
+        # # filepath = os.path.join(self.temporary_folder, self.get_filename())
+        # # self.save_and_open(figure, filepath)
+
+    # def plot(self, df: pd.DataFrame, **kwargs) -> None:
+        # logging.info(f"[{self.__class__.__name__}] Creating figure...")
+        # figure = self.create_figure(df, **kwargs)
+        # filepath = os.path.join(self.temporary_folder, self.get_filename())
+        # logging.info(f"[{self.__class__.__name__}] Saving figure to {filepath}...")
+        # self.save_and_open(figure, filepath)
+        # logging.info(f"[{self.__class__.__name__}] Plotting complete.")
+        # return filepath
+        
+# En tu archivo world_bank.py
+
+# ... otras partes de la clase WorldBankPlotter ...
+
 class WorldBankPlotter(ABC):
     
     def __init__(self, temporary_folder: str = TEMPORARY_FILES_FOLDER):
@@ -98,17 +160,7 @@ class WorldBankPlotter(ABC):
     @abstractmethod
     def get_format(self) -> str:
         pass
-    
-    # ANTERIOR
-    # def save_and_open(self, figure, filepath: str) -> None:
-        # if self.get_format() == HTML_PLOTLY:
-            # figure.write_html(filepath)
-        # elif self.get_format() == HTML_FOLIUM:
-            # figure.save(filepath)
-        # else:
-            # raise ValueError(f"Format '{self.get_format()}' not supported")
-        # webbrowser.open(f'file://{os.path.realpath(filepath)}')
-        
+            
     def save_and_open(self, figure, filepath: str) -> None:
         if self.get_format() == HTML_PLOTLY:
             logging.info(f"Saving Plotly figure to {filepath}")
@@ -118,26 +170,15 @@ class WorldBankPlotter(ABC):
             figure.save(filepath)
         else:
             raise ValueError(f"Format '{self.get_format()}' not supported")
-        
-        # ANTERIOR
-        # full_path = os.path.realpath(filepath)
-        # logging.info(f"Opening file in browser: file://{full_path}")
-        # webbrowser.open(f'file://{full_path}')
-    
-    # ANTERIOR
-    # def plot(self, df: pd.DataFrame, **kwargs) -> None:
-        # figure = self.create_figure(df, **kwargs)
-        # filepath = os.path.join(self.temporary_folder, self.get_filename())
-        # self.save_and_open(figure, filepath)
 
-    def plot(self, df: pd.DataFrame, **kwargs) -> None:
+    def plot(self, df: pd.DataFrame, **kwargs) -> str: # Asegúrate que devuelve str
         logging.info(f"[{self.__class__.__name__}] Creating figure...")
         figure = self.create_figure(df, **kwargs)
         filepath = os.path.join(self.temporary_folder, self.get_filename())
         logging.info(f"[{self.__class__.__name__}] Saving figure to {filepath}...")
         self.save_and_open(figure, filepath)
         logging.info(f"[{self.__class__.__name__}] Plotting complete.")
-        return filepath
+        return filepath # <<<--- ESTA LÍNEA ES CRUCIAL Y DEBE ESTAR PRESENTE Y CORRECTAMENTE INDENTADA
 
 class TimeSeriesPlotter(WorldBankPlotter):
     
