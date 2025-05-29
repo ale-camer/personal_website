@@ -126,14 +126,41 @@ def download_keyphrases(output_filename: str = "keyphrases.txt"):
 # =============================================================================
 # SEASONALITY
 # =============================================================================
+# @app.route('/predict_seasonality', methods=['POST'])
+# def predict_seasonality():
+
+    # template = 'seasonality.html'
+    # file = request.files.get('file')
+    # periodicity = int(request.form.get('periodicity'))
+    # processor = SeasonalityModule(file, periodicity)
+
+    # error = processor.is_empty
+    # if error:
+        # return render_template(template, error_message=error)
+
+    # try:
+        # forecast = processor.forecast()
+        # return render_template(
+            # template,
+            # forecast=forecast,
+            # existing_plots=config["plot_names"],
+            # enumerate=enumerate
+        # )
+
+    # except:
+        # error_message = processor.validation
+        # return render_template(template, error_message=error_message)
+        
+import traceback
+import logging
+
 @app.route('/predict_seasonality', methods=['POST'])
 def predict_seasonality():
-
     template = 'seasonality.html'
     file = request.files.get('file')
     periodicity = int(request.form.get('periodicity'))
+    
     processor = SeasonalityModule(file, periodicity)
-
     error = processor.is_empty
     if error:
         return render_template(template, error_message=error)
@@ -146,10 +173,21 @@ def predict_seasonality():
             existing_plots=config["plot_names"],
             enumerate=enumerate
         )
+    except Exception as e:
+        # Loggeo del error
+        logging.error("Error en predict_seasonality", exc_info=True)
+        
+        # Info adicional útil para diagnosticar en Render
+        if file:
+            logging.error(f"Nombre del archivo subido: {file.filename}")
+            logging.error(f"Tipo MIME del archivo: {file.mimetype}")
+        else:
+            logging.error("No se recibió ningún archivo en la request.")
 
-    except:
-        error_message = processor.validation
+        # Mostrar mensaje de error en el template
+        error_message = processor.validation or f"Ocurrió un error: {str(e)}"
         return render_template(template, error_message=error_message)
+
 
 @app.route('/download_predictions', methods=['GET'])
 def download_predictions():
