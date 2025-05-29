@@ -50,8 +50,9 @@ def read_json(path: str) -> None:
     return json.load(open(path, 'r', encoding='utf-8'))
 
 def write_json(data: pd.DataFrame, path: str) -> None:
-    with open(path, 'w') as f:
-        json.dump(data, f)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, 'w', encoding='utf-8') as f:
+        json.dump(data, f, unsure_ascii=False, indent=2)
         
 def write_txt(content: str, path: str) -> None:
     with open(path, 'w', encoding='utf-8') as f:
