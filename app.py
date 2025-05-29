@@ -161,9 +161,13 @@ def predict_seasonality():
     periodicity = int(request.form.get('periodicity'))
     
     processor = SeasonalityModule(file, periodicity)
-    error = processor.is_empty
+    # error = processor.is_empty
+    # if error:
+        # return render_template(template, error_message=error)
+    error = processor.validate
     if error:
         return render_template(template, error_message=error)
+
 
     try:
         forecast = processor.forecast()
@@ -185,7 +189,7 @@ def predict_seasonality():
             logging.error("No se recibió ningún archivo en la request.")
 
         # Mostrar mensaje de error en el template
-        error_message = processor.validation or f"Ocurrió un error: {str(e)}"
+        error_message = f"Ocurrió un error al procesar la predicción: {e}"
         return render_template(template, error_message=error_message)
 
 

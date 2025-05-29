@@ -21,7 +21,8 @@ import seaborn as sns
 # =============================================================================
 @dataclass
 class PlotConfig:    
-    save_dir: str = 'static\\seasonality'
+    # save_dir: str = 'static\\seasonality'
+    save_dir: str = os.path.join('static', 'seasonality')
     fig_size: tuple = (10, 5)
     y_fontsize: int = 15
     subplot_title_fontsize: int = 18
@@ -228,18 +229,30 @@ class SeasonalityModule:
         self.serie = None
         self.file = file
         self.periodicity = periodicity
-        self.plotter = SeasonalityPlotter(plot_config)
-        self.predictor = SeasonalityPredictor(self.periodicity)
+        # self.plotter = SeasonalityPlotter(plot_config)
+        # self.predictor = SeasonalityPredictor(self.periodicity)
+        self.config = plot_config or PlotConfig()
+        self.plotter = SeasonalityPlotter(self.config)
+        self.predictor = SeasonalityPredictor(self.config, self.periodicity)
+
         
-    @property
-    def is_empty(self) -> None:
+    # @property
+    # def is_empty(self) -> None:
       
+        # self.df = pd.read_excel(self.file)
+        # if self.df.empty:
+            # return "The file is empty"
+        # self.serie = self.df.iloc[:, 0]
+        # return None
+
+    @property
+    def validate(self) -> str | None:
         self.df = pd.read_excel(self.file)
         if self.df.empty:
             return "The file is empty"
         self.serie = self.df.iloc[:, 0]
         return None
-
+        
     def forecast(self) -> dict:
     
         forecasted_last_period = self.predictor.predict(self.serie.iloc[:-self.periodicity])
@@ -259,7 +272,8 @@ class SeasonalityModule:
         remainder = len(self.serie) % self.periodicity
         details = [
             f"<li>Data format: {'OK' if pd.api.types.is_numeric_dtype(self.serie) else 'Not OK. Data is not numeric.'}</li>",
-            f"<li>Number of columns: {'OK' if self.df.shape[1] == 1 else f'Not OK. There are {self.serie.shape[1]} columns instead of one.'}</li>",
+            # f"<li>Number of columns: {'OK' if self.df.shape[1] == 1 else f'Not OK. There are {self.serie.shape[1]} columns instead of one.'}</li>",
+            f"<li>Number of columns: {'OK' if self.df.shape[1] == 1 else f'Not OK. There are {self.df.shape[1]} columns instead of one.'}</li>",
             f"<li>Series length: {len(self.serie)}</li>",
             f"<li>Periodicity: {'OK' if self.periodicity > 1 else f'Not OK. The value of the periodicity is {self.periodicity} and has to be higher than one and when dividing the length of the serie the reminder must be zero.'}</li>",
             f"<li>Remainder: {'OK' if remainder == 0 else f'Not OK. The value of the reminder is {remainder} instead of zero.'}</li>"
