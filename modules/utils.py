@@ -11,8 +11,10 @@ from unidecode import unidecode
 # =============================================================================
 # FILE OPERATIONS
 # =============================================================================
-def remove_temp_files(folders: str | list[str], files_to_remove: list[str] = None) -> None:
+def remove_temp_files(folders: str | list[str], files_to_remove: list[str] = None, protected_folders: list[str] = None) -> None:
     start_time = time()
+    if isinstance(folders, str):
+        folders = [folders]
     for folder in folders:
         if os.path.exists(folder):
             for filename in os.listdir(folder):
@@ -24,6 +26,8 @@ def remove_temp_files(folders: str | list[str], files_to_remove: list[str] = Non
                         os.remove(file_path)
                         print(f"Deleted file: {file_path}")
                     elif os.path.isdir(file_path):
+                        if protected_folders and file_path in protected_folders:
+                            continue
                         shutil.rmtree(file_path)
                         print(f"Deleted folder: {file_path}")
                 except Exception as e:
@@ -31,7 +35,6 @@ def remove_temp_files(folders: str | list[str], files_to_remove: list[str] = Non
         else:
             print(f"Folder does not exist: {folder}")
     print(f"Temporary folders cleaned in {round(time() - start_time, 4)} seconds.")
-    # print(f"Temporary folders cleaned in {time() - start_time} seconds.")
         
 def job_duration() -> None:
     days_per_month, days_per_year = 30, 365
@@ -52,7 +55,7 @@ def read_json(path: str) -> None:
 def write_json(data: pd.DataFrame, path: str) -> None:
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, 'w', encoding='utf-8') as f:
-        json.dump(data, f, unsure_ascii=False, indent=2)
+        json.dump(data, f, ensure_ascii=False, indent=2)
         
 def write_txt(content: str, path: str) -> None:
     with open(path, 'w', encoding='utf-8') as f:
