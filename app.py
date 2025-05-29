@@ -235,22 +235,56 @@ def plot_graph():
     form = request.form
     indicator, type_selected, option = form.get('indicator'), form.get('type'), form.get('option')
     logging.info(f"Received request to plot graph with indicator={indicator}, type={type_selected}, option={option}")
-    
-    df = wb_ut.load_data(indicator, type_selected, option)
+
+    # Asumo que wb_ut y INDICATOR_NAMES están definidos y accesibles
+    df = wb_ut.load_data(indicator, type_selected, option) 
     title = f'{option} - {INDICATOR_NAMES.get(indicator)}' if type_selected == 'country' else None
     
     logging.info("Creating visualization...")
-    # Ahora create_visualization devuelve la ruta del archivo
-    # Ejemplo de filepath: "static/world_bank/heatmap.html"
     filepath = wb_manager.create_visualization(df, type_selected, title=title)
-    
-    # Necesitamos convertir la ruta del sistema de archivos a una URL accesible por el navegador.
-    # Asumiendo que tu carpeta 'static' se sirve desde la raíz de la URL '/static/'
-    # y que app.static_folder está configurado a 'static' (lo habitual en Flask)
-    # os.path.relpath(filepath, app.static_folder) daría "world_bank/heatmap.html"
-    relative_path_to_static = os.path.relpath(filepath, app.static_folder)
-    plot_url = url_for('static', filename=relative_path_to_static)
+    # filepath es, por ejemplo, "static/world_bank/heatmap.html", asumimos relativa al directorio raíz del proyecto.
 
+    # --- Información de depuración (puedes eliminarla después) ---
+    logging.debug(f"Raw filepath from module: {filepath}")
+    logging.debug(f"app.static_folder: {app.static_folder}")
+    logging.debug(f"app.static_url_path: {app.static_url_path}")
+    logging.debug(f"Current working directory: {os.getcwd()}")
+    # --- Fin de información de depuración ---
+
+    abs_filepath = os.path.abspath(filepath) # Ruta absoluta al archivo guardado.
+                                             # Ej: /opt/render/project/src/static/world_bank/heatmap.html
+
+    filename_for_url = None
+
+    if app.static_folder == '':
+        # Si static_folder es '', Flask sirve archivos desde la raíz del proyecto (os.getcwd()).
+        # filepath (ej: "static/world_bank/heatmap.html") ya es relativo a la raíz del proyecto.
+        filename_for_url = filepath
+    elif app.static_folder is None:
+        logging.error("Flask app's static_folder is None. This is unusual. Cannot generate URL for static file.")
+        return jsonify({'message': 'Server error: static folder not configured.', 'plot_url': None}), 500
+    else:
+        # app.static_folder es una ruta (ej: 'static' o '/opt/render/project/src/static').
+        # Necesitamos la ruta del archivo relativa a esta carpeta estática.
+        abs_static_path = os.path.abspath(app.static_folder)
+        
+        if not abs_filepath.startswith(abs_static_path):
+            logging.error(f"File {abs_filepath} is not located within the app's static folder {abs_static_path}. "
+                          f"Check TEMPORARY_FILES_FOLDER in world_bank.py ('{TEMPORARY_FILES_FOLDER}') "
+                          f"and Flask's static_folder configuration.")
+            return jsonify({'message': 'Server error: generated file location is outside the static serving directory.', 'plot_url': None}), 500
+        
+        filename_for_url = os.path.relpath(abs_filepath, abs_static_path)
+
+    if filename_for_url is None: # Por si acaso alguna lógica anterior no asigna
+        logging.error("Could not determine the filename for url_for.")
+        return jsonify({'message': 'Server error: Could not determine static file URL path.', 'plot_url': None}), 500
+
+    # url_for espera separadores de ruta con '/', independientemente del SO.
+    filename_for_url = filename_for_url.replace(os.sep, '/')
+    
+    plot_url = url_for('static', filename=filename_for_url)
+    
     logging.info(f"Interactive graph generated. Accessible at: {plot_url}")
     return jsonify({'message': 'Interactive graph generated.', 'plot_url': plot_url})
 
