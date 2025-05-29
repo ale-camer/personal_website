@@ -18,6 +18,9 @@ from branca.colormap import linear
 # --- Project/system ---
 from modules.utils import read_json
 
+import logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 # =============================================================================
 # CONSTANTS
 # =============================================================================
@@ -96,25 +99,49 @@ class WorldBankPlotter(ABC):
     def get_format(self) -> str:
         pass
     
+    # def save_and_open(self, figure, filepath: str) -> None:
+        # if self.get_format() == HTML_PLOTLY:
+            # figure.write_html(filepath)
+        # elif self.get_format() == HTML_FOLIUM:
+            # figure.save(filepath)
+        # else:
+            # raise ValueError(f"Format '{self.get_format()}' not supported")
+        # webbrowser.open(f'file://{os.path.realpath(filepath)}')
+        
     def save_and_open(self, figure, filepath: str) -> None:
         if self.get_format() == HTML_PLOTLY:
+            logging.info(f"Saving Plotly figure to {filepath}")
             figure.write_html(filepath)
         elif self.get_format() == HTML_FOLIUM:
+            logging.info(f"Saving Folium map to {filepath}")
             figure.save(filepath)
         else:
             raise ValueError(f"Format '{self.get_format()}' not supported")
         
-        webbrowser.open(f'file://{os.path.realpath(filepath)}')
+        full_path = os.path.realpath(filepath)
+        logging.info(f"Opening file in browser: file://{full_path}")
+        webbrowser.open(f'file://{full_path}')
+
     
+    # def plot(self, df: pd.DataFrame, **kwargs) -> None:
+        # figure = self.create_figure(df, **kwargs)
+        # filepath = os.path.join(self.temporary_folder, self.get_filename())
+        # self.save_and_open(figure, filepath)
+
     def plot(self, df: pd.DataFrame, **kwargs) -> None:
+        logging.info(f"[{self.__class__.__name__}] Creating figure...")
         figure = self.create_figure(df, **kwargs)
         filepath = os.path.join(self.temporary_folder, self.get_filename())
+        logging.info(f"[{self.__class__.__name__}] Saving figure to {filepath}...")
         self.save_and_open(figure, filepath)
+        logging.info(f"[{self.__class__.__name__}] Plotting complete.")
 
 class TimeSeriesPlotter(WorldBankPlotter):
     
     def create_figure(self, df: pd.DataFrame, **kwargs) -> go.Figure:
         """Create a Plotly time series figure."""
+        logging.info("Generating Plotly time series plot...")
+
         title = kwargs.get('title', '')
         template = kwargs.get('template', 'plotly')
         
@@ -150,6 +177,8 @@ class HeatmapPlotter(WorldBankPlotter):
         self.geojson_path = geojson_path
     
     def create_figure(self, df: pd.DataFrame, **kwargs) -> folium.Map:
+        logging.info("Generating Folium heatmap...")
+
         geo_df = self._prepare_heatmap_data(df)
         
         m = folium.Map(location=[20, 0], zoom_start=2)
@@ -222,7 +251,16 @@ class WorldBankModule:
     def plot_heatmap(self, df: pd.DataFrame) -> None:
         self.heatmap_plotter.plot(df)
     
+    # def create_visualization(self, df: pd.DataFrame, type_selected: str, **kwargs) -> None:
+        # if type_selected == 'country':
+            # self.plot_time_series(df, **kwargs)
+        # elif type_selected == 'year':
+            # self.plot_heatmap(df)
+        # else:
+            # raise ValueError(f"Visualization type '{type_selected}' not supported")
+            
     def create_visualization(self, df: pd.DataFrame, type_selected: str, **kwargs) -> None:
+        logging.info(f"Creating visualization of type: {type_selected}")
         if type_selected == 'country':
             self.plot_time_series(df, **kwargs)
         elif type_selected == 'year':

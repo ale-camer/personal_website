@@ -221,13 +221,27 @@ def show_data():
     data = wb_ut.load_data(args.get('indicator'), args.get('type'), args.get('option'))  
     return data.drop('ISO_CODE', axis=1).to_dict(orient='records')
 
+# @app.route('/plot_graph', methods=['POST'])
+# def plot_graph():
+    # form = request.form
+    # indicator, type_selected, option = form.get('indicator'), form.get('type'), form.get('option')
+    # df = wb_ut.load_data(indicator, type_selected, option)
+    # title = f'{option} - {INDICATOR_NAMES.get(indicator)}' if type_selected == 'country' else None
+    # wb_manager.create_visualization(df, type_selected, title=title)
+    # return "Interactive graph generated."
+    
 @app.route('/plot_graph', methods=['POST'])
 def plot_graph():
     form = request.form
     indicator, type_selected, option = form.get('indicator'), form.get('type'), form.get('option')
+    logging.info(f"Received request to plot graph with indicator={indicator}, type={type_selected}, option={option}")
+    
     df = wb_ut.load_data(indicator, type_selected, option)
     title = f'{option} - {INDICATOR_NAMES.get(indicator)}' if type_selected == 'country' else None
+    
+    logging.info("Creating visualization...")
     wb_manager.create_visualization(df, type_selected, title=title)
+    
     return "Interactive graph generated."
 
 # =============================================================================
