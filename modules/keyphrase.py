@@ -7,10 +7,10 @@
 import re
 
 # --- Third-party ---
-import nltk
 import pandas as pd
-from prettytable import PrettyTable
 from tqdm import tqdm
+from collections import Counter
+from prettytable import PrettyTable
 
 # --- Project/system ---
 from dataclasses import dataclass
@@ -27,19 +27,8 @@ class NGramConfig:
 
 class NGramAnalyzer:
     
-    def __init__(self, language: str = 'english'):
-        try:
-            nltk.data.find('tokenizers/punkt')
-        except LookupError:
-            nltk.download('punkt')
-
-        try:
-            nltk.data.find('corpora/stopwords')
-        except LookupError:
-            nltk.download('stopwords')
-            
+    def __init__(self, language: str = 'english'):       
         self.url_regex = re.compile(r'http\S+')
-        self.stopwords = set(nltk.corpus.stopwords.words(language))
     
     def analyze(self, config: NGramConfig) -> dict:
         normalized_sentences = self._normalize_sentences(config.data)
@@ -51,8 +40,8 @@ class NGramAnalyzer:
       
     def _normalize_sentences(self, text: str) -> list:
         return [
-            text_normalizer(sentence, self.stopwords) 
-            for sentence in tqdm(nltk.sent_tokenize(text))
+            text_normalizer(sentence, set())
+            for sentence in tqdm(re.split(r'[.!?]\s+', text))
         ]
     
     def _build_ngram_tables(self, sentences: list, max_ngram: int, nrows_per_table: int) -> dict:
@@ -67,8 +56,8 @@ class NGramAnalyzer:
         }
     
     def _get_top_ngrams(self, corpus: list[str], ngram_val: int = 1, limit: int = 10, nrows: int = 5) -> pd.DataFrame:
-        tokens = nltk.word_tokenize(self._flatten_sentences(corpus))
-        ngrams_freq = nltk.FreqDist(self._generate_ngrams(tokens, ngram_val))
+        tokens = re.findall(r'\b\w+\b', self._flatten_sentences(corpus))
+        ngrams_freq = Counter(self._generate_ngrams(tokens, ngram_val))
         return self._format_ngrams_table(ngrams_freq, limit, nrows)
     
     def _flatten_sentences(self, corpus: list[str]) -> str:

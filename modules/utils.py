@@ -5,16 +5,14 @@
 # =============================================================================
 import os, shutil, json, re
 import pandas as pd
+from time import time
 from unidecode import unidecode   
 
 # =============================================================================
 # FILE OPERATIONS
 # =============================================================================
 def remove_temp_files(folders: str | list[str], files_to_remove: list[str] = None) -> None:
-    print("Cleaning temporary folders")
-    if isinstance(folders, str):
-        folders = [folders]
-
+    start_time = time()
     for folder in folders:
         if os.path.exists(folder):
             for filename in os.listdir(folder):
@@ -32,6 +30,8 @@ def remove_temp_files(folders: str | list[str], files_to_remove: list[str] = Non
                     print(f"Error deleting {file_path}: {e}")
         else:
             print(f"Folder does not exist: {folder}")
+    print(f"Temporary folders cleaned in {round(time() - start_time, 4)} seconds.")
+    # print(f"Temporary folders cleaned in {time() - start_time} seconds.")
         
 def job_duration() -> None:
     days_per_month, days_per_year = 30, 365
@@ -47,7 +47,7 @@ def job_duration() -> None:
     return f"{months} {month_text}" if years == 0 else f"{years} {year_text} {months} {month_text}"
   
 def read_json(path: str) -> None:
-    return json.load(open(path, 'r'))
+    return json.load(open(path, 'r', encoding='utf-8'))
 
 def write_json(data: pd.DataFrame, path: str) -> None:
     with open(path, 'w') as f:
@@ -61,7 +61,7 @@ def write_txt(content: str, path: str) -> None:
 # TEXT PROCESSING
 # =============================================================================
 def text_normalizer(text: str, stopwords: set = None, min_word_len: int = 2) -> str:
-    
+  
     def _reduce_repeated_chars(text: str) -> str:
         return re.sub(r'[^a-zA-Z0-9\s]', _count_rep_char, text)
   
@@ -69,14 +69,14 @@ def text_normalizer(text: str, stopwords: set = None, min_word_len: int = 2) -> 
         return match.group(0)[0]
       
     return transform_words(
-          text=_reduce_repeated_chars(text.lower()),
-          fn=unidecode,
-          condition=lambda w: (
-              w not in stopwords
-              and not re.compile(r'http\S+').match(w)
-              and len(w) > min_word_len
-          )
-      )
+        text=_reduce_repeated_chars(text.lower()),
+        fn=unidecode,
+        condition=lambda w: (
+            w not in stopwords
+            and not re.compile(r'http\S+').match(w)
+            and len(w) > min_word_len
+        )
+    )
 
 def transform_words(text: str, fn=lambda x: x, condition=lambda x: True) -> str:
     return ' '.join(fn(word) for word in text.split() if condition(word))

@@ -3,7 +3,7 @@
 # =============================================================================
 import os
 import pandas as pd
-from modules.utils import read_json, write_json
+from modules.utils import read_json
 from modules.world_bank import WorldBankModule
 
 # =============================================================================

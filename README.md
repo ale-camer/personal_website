@@ -11,6 +11,8 @@
   ├── whatsapp.py  # Contain functions for WhatsApp functionality.
   ├── world_bank.py  # Contain classes for World Bank functionality.
   └── world_bank_utils.py  # No comment available
+├── requirements.txt
+├── roadmap_app_deployment.txt
 ├── static/  # Contain static files (CSS, JS and images).
   ├── css/  # Contain CSS main script.
     ├── index.css  # Home Page Stylesheet File
@@ -29,6 +31,7 @@
     └── world_bank.js  # World Bank Functionalities
   ├── json/  # Contain JSON files.
     ├── config.json
+    ├── stopwords.json
     └── world_administrative_boundaries.json
   ├── keyphrase/
   ├── seasonality/

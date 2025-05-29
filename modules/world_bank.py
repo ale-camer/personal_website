@@ -30,11 +30,11 @@ HTML_FOLIUM = 'html_folium'
 TEMPORARY_FILES_FOLDER = 'static/world_bank/'
 
 # --- Configuration file path ---
-CONFIG_FILE_PATH = os.path.join(
+CONFIG_PATH = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
     'static', 'json', 'config.json'
 )
-STRINGS_TO_EXCLUDE = read_json(CONFIG_FILE_PATH)["strings_to_exclude"]
+STRINGS_TO_EXCLUDE = read_json(CONFIG_PATH)["strings_to_exclude"]
 
 # =============================================================================
 # DATA

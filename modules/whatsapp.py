@@ -7,9 +7,9 @@
 import base64
 import io
 import re
+import os
 
 # --- Third-party ---
-import nltk
 import pandas as pd
 import seaborn as sns
 import textblob as tb
@@ -19,7 +19,16 @@ from wordcloud import WordCloud
 
 # --- Project/system ---
 from dataclasses import dataclass
-from modules.utils import text_normalizer
+from modules.utils import text_normalizer, read_json
+
+# =============================================================================
+# PATHS
+# =============================================================================
+STOPWORDS_PATH = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+    'static', 'json', 'stopwords.json'
+)
+STOPWORDS = read_json(STOPWORDS_PATH)
 
 # =============================================================================
 # DASHBOAR
@@ -79,6 +88,7 @@ class WhatsAppModule:
         content = parser.parse()
         df = parser.group(content)
         self.current_data = WhatsAppConfig(df=df, content=content, language=language)
+        print(self.current_data.language)
         return self.current_data
     
     def filter_chat(self, issuer: str) -> tuple:
@@ -96,11 +106,9 @@ class WhatsAppModule:
         filtered_messages = self.current_data.content[issuer_filter]
         combined_text = ' '.join(filtered_messages['MESSAGE'].astype(str))
         
-        nltk.download('stopwords', quiet=True)
-        stopwords = set(nltk.corpus.stopwords.words(self.current_data.language))
         issuer_messages = text_normalizer(
             text=combined_text,
-            stopwords=stopwords
+            stopwords=STOPWORDS[self.current_data.language]
         )
       
         return filtered_df, issuer_messages, is_general
