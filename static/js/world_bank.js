@@ -324,55 +324,6 @@ function downloadDataAsCSV() {
     document.body.removeChild(link);
 }
 
-// async function showInteractiveGraph() {
-    // if (!selectedIndicator || !selectedType || !selectedOptionValue) {
-        // alert('Please make sure all selections are made before requesting the graph.');
-        // return;
-    // }
-
-    // const originalButtonText = document.getElementById('interactiveGraphBtn')?.innerHTML;
-    // if (document.getElementById('interactiveGraphBtn')) {
-        // document.getElementById('interactiveGraphBtn').innerHTML = 'Generating...';
-        // document.getElementById('interactiveGraphBtn').disabled = true;
-    // }
-
-
-    // const formData = new FormData();
-    // formData.append('indicator', selectedIndicator);
-    // formData.append('type', selectedType);
-    // formData.append('option', selectedOptionValue);
-
-    // try {
-        // const response = await fetch('/plot_graph', {
-            // method: 'POST',
-            // body: formData,
-        // });
-
-        // if (document.getElementById('interactiveGraphBtn') && originalButtonText) {
-            // document.getElementById('interactiveGraphBtn').innerHTML = originalButtonText;
-            // document.getElementById('interactiveGraphBtn').disabled = false;
-        // }
-
-        // if (!response.ok) {
-            // const errorText = await response.text();
-            // throw new Error(`Graph generation request failed (${response.status}): ${errorText || response.statusText}`);
-        // }
-
-        // const responseText = await response.text();
-        // console.log('Server response for graph:', responseText);
-
-        // alert(responseText + "\n\nIf a new tab/window with the graph did not open, please ensure your browser allows pop-ups from this site or check your local server environment if running locally.");
-
-    // } catch (error) {
-        // console.error('Error requesting interactive graph:', error);
-        // alert(`Error: ${error.message}`);
-        // if (document.getElementById('interactiveGraphBtn') && originalButtonText) {
-            // document.getElementById('interactiveGraphBtn').innerHTML = originalButtonText;
-            // document.getElementById('interactiveGraphBtn').disabled = false;
-        // }
-    // }
-// }
-
 async function showInteractiveGraph() {
     if (!selectedIndicator || !selectedType || !selectedOptionValue) {
         alert('Please make sure all selections are made before requesting the graph.');
@@ -403,11 +354,11 @@ async function showInteractiveGraph() {
             throw new Error(`Graph generation request failed (${response.status}): ${errorText || response.statusText}`);
         }
 
-        const data = await response.json(); // Parsear la respuesta como JSON
+        const data = await response.json();
         console.log('Server response for graph:', data);
 
         if (data.plot_url) {
-            window.open(data.plot_url, '_blank'); // Abrir la URL del gráfico en una nueva pestaña
+            window.open(data.plot_url, '_blank');
             alert(data.message + "\n\nThe graph should open in a new tab. If not, please check your browser's pop-up blocker.");
         } else {
             alert(data.message || "Graph generated, but no URL provided to open.");

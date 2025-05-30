@@ -4,10 +4,7 @@
 # IMPORTS
 # =============================================================================
 # --- Standard library ---
-import base64
-import io
-import re
-import os
+import base64, io, re, os
 
 # --- Third-party ---
 import pandas as pd

@@ -1,133 +1,273 @@
 """Generate README.md file."""
 
-import os
 from time import time
-from modules.utils import read_json
+from pathlib import Path
+from dataclasses import dataclass
+from abc import ABC, abstractmethod
+from modules.utils import read_json, read_file, write_file
 
-NO_COMMENT_STRING = "No comment available"
-OUTPUT_FILE = "README.md"
+# =============================================================================
+# CONFIG
+# =============================================================================
+@dataclass
+class TreeConfig:
+    comments: dict[str, str]
+    ignore_items: set = None
+    ignore_files: set = None
 
-def _read_file_content(file_path: str) -> str:
-    with open(file_path, 'r', encoding='utf-8') as file:
-        return file.read()
+    def __post_init__(self):
+        if self.ignore_items is None:
+            self.ignore_items = {
+                '.git', '.vscode', '__pycache__', 'venv', '.DS_Store',
+                'node_modules', '.pytest_cache', '.idea', '*.pyc',
+                '*.swp', '*.log', 'dist', 'build', '*.egg-info', 'migrations'
+            }
+        if self.ignore_files is None:
+            self.ignore_files = {'generate_readme.py', 'roadmap_app_deployment.txt'}
 
-def _write_readme_file(content: str, file_name: str = OUTPUT_FILE) -> None:
-    with open(file_name, "w", encoding="utf-8") as f:
-        f.write(content)
-        
-def get_first_python_docstring(file_path: str) -> str:
-    content = _read_file_content(file_path)
-    lines = content.splitlines()
+# =============================================================================
+# EXTRACTORS
+# =============================================================================
+class CommentExtractor(ABC):
 
-    docstring = ""
-    in_docstring = False
-    for line in lines:
-        if line.strip().startswith('"""') and not in_docstring:
-            in_docstring = True
-            if line.strip().endswith('"""') and len(line.strip()) > 3 and line.strip() != '"""':  # single-line docstring
-                docstring += line.strip()[3:-3].strip() + " "
-                break
-            if not (line.strip().endswith('"""') and len(line.strip()) == 3):  # multi-line docstring
-                current_line_content = line.strip()[3:]
-                if current_line_content:
-                    docstring += current_line_content.strip() + " "
-            continue
+    NO_COMMENT = ""
 
-        if in_docstring:  # accumulate docstring content
-            if line.strip().endswith('"""'):
-                current_line_content = line.strip()[:-3]
-                if current_line_content:
-                    docstring += current_line_content.strip() + " "
-                break
-            docstring += line.strip() + " "
+    @abstractmethod
+    def extract(self, content: str) -> str:
+        pass
 
-    return docstring.strip() if docstring.strip() else NO_COMMENT_STRING
+    def extract_from_file(self, file_path: Path) -> str:
+        content = read_file(str(file_path))
+        if not content:
+            return self.NO_COMMENT
 
-def get_first_css_comment(file_path: str) -> str:
-    content = _read_file_content(file_path)
-    if "/*" in content and "*/" in content:
-        return content.split("/*")[1].split("*/")[0].strip().replace("\n", " ")
-    return NO_COMMENT_STRING
+        result = self.extract(content)
+        return result.strip() if result and result.strip() else self.NO_COMMENT
 
-def get_first_js_comment(file_path: str) -> str:
-    content = _read_file_content(file_path)
-    lines = content.splitlines()
+class PythonCommentExtractor(CommentExtractor):
 
-    comment = ""
-    in_comment = False
-    for line in lines:
-        stripped_line = line.strip()
-        if stripped_line.startswith('//') and not in_comment:  # single-line comment 
-            comment += stripped_line.lstrip('/').strip() + " "
-            return comment.strip() if comment.strip() else NO_COMMENT_STRING
+    def extract(self, content: str) -> str:
+        lines = content.splitlines()
+        docstring_lines = []
+        in_docstring = False
+        quote_type = None
 
-        elif stripped_line.startswith('/*'):  # start multi-line comment
-            in_comment = True
-            if stripped_line.endswith('*/'):
-                comment += stripped_line[2:-2].strip() + " "
-                break
-            comment += stripped_line[2:].strip() + " "
-        elif in_comment and stripped_line.endswith('*/'): # end multi-line comment
-            comment += stripped_line[:-2].strip() + " "
-            break
-        elif in_comment: # accumulate block content
-            comment += stripped_line + " "
+        for line in lines:
+            stripped = line.strip()
 
-    return comment.strip() if comment.strip() else NO_COMMENT_STRING
+            if stripped.startswith('"""') or stripped.startswith("'''"):
+                current_quote = stripped[:3]
 
-def get_first_html_comment(file_path: str) -> str:
-    content = _read_file_content(file_path)
-    lines = content.splitlines()
+                if stripped.endswith(current_quote) and len(stripped) > 6:
+                    return stripped[3:-3].strip()
 
-    for line in lines:
-        if line.strip().startswith("<!--"): # start html comment
-            stripped_line = line.strip()
-            if stripped_line.endswith("-->"): # one-line comment
-                comment_content = stripped_line[4:-3].strip()
-            else: # unclosed comment (partial)
-                comment_content = stripped_line[4:].strip()
-            return comment_content if comment_content else NO_COMMENT_STRING
-    return NO_COMMENT_STRING
+                if not in_docstring:
+                    in_docstring = True
+                    quote_type = current_quote
+                    if len(stripped) > 3:
+                        docstring_lines.append(stripped[3:].strip())
+                elif stripped.endswith(quote_type):
+                    if len(stripped) > 3:
+                        docstring_lines.append(stripped[:-3].strip())
+                    break
+            elif in_docstring:
+                docstring_lines.append(stripped)
 
-def get_file_comment(file_path: str) -> str:
-    if file_path.endswith(".py"): return get_first_python_docstring(file_path)
-    elif file_path.endswith(".css"): return get_first_css_comment(file_path)
-    elif file_path.endswith(".js"): return get_first_js_comment(file_path)
-    elif file_path.endswith(".html"): return get_first_html_comment(file_path)
-    return ""
+        return " ".join(filter(None, docstring_lines)).strip()
 
-def generate_tree(directory: str, dir_comments: dict, indent: int = 0, tree_str: str = "", last_item: bool = False) -> str:
-    items = sorted([
-        item for item in os.listdir(directory)
-        if not item.startswith('.') and not item.startswith('_')
-    ])
+class CSSCommentExtractor(CommentExtractor):
 
-    for i, item in enumerate(items):
-        item_path = os.path.join(directory, item)
-        is_last = (i == len(items) - 1)
-        prefix = "  " * indent + ("└── " if is_last else "├── ")
+    def extract(self, content: str) -> str:
+        start = content.index("/*") + 2
+        end = content.index("*/", start)
+        return ' '.join(content[start:end].strip().split())
 
-        if os.path.isdir(item_path):
-            comment = dir_comments.get(item, "")
+class JavaScriptCommentExtractor(CommentExtractor):
+
+    def extract(self, content: str) -> str:
+        try:
+            start = content.index("/*") + 2
+            end = content.index("*/", start)
+            return ' '.join(content[start:end].strip().split())
+        except ValueError:
+            pass
+
+        for line in content.splitlines():
+            stripped = line.strip()
+            if stripped.startswith('//'):
+                return stripped[2:].strip()
+
+        return self.NO_COMMENT
+
+class HTMLCommentExtractor(CommentExtractor):
+
+    def extract(self, content: str) -> str:
+        start = content.index("<!--") + 4
+        end = content.index("-->", start)
+        return ' '.join(content[start:end].strip().split())
+
+class CommentExtractorFactory:
+
+    _extractors = {
+        '.py': PythonCommentExtractor(),
+        '.css': CSSCommentExtractor(),
+        '.js': JavaScriptCommentExtractor(),
+        '.html': HTMLCommentExtractor(),
+        '.htm': HTMLCommentExtractor(),
+    }
+
+    @classmethod
+    def get_comment(cls, file_path: Path) -> str:
+        extractor = cls._extractors.get(file_path.suffix.lower())
+        return extractor.extract_from_file(file_path) if extractor else CommentExtractor.NO_COMMENT
+
+# =============================================================================
+# TREE
+# =============================================================================
+class DirectoryTreeGenerator:
+
+    def __init__(self, config: TreeConfig):
+        self.config = config
+        self.comment_factory = CommentExtractorFactory()
+
+    def generate(self, directory: Path, indent_level: int = 0, parent_prefix: str = "") -> str:
+        if indent_level == 0:
+            return self._generate_root_tree(directory)
+
+        return self._generate_subtree(directory, indent_level, parent_prefix)
+
+    def _generate_root_tree(self, directory: Path) -> str:
+        root_name = directory.name
+        root_comment = self._get_comment_for_item(root_name, directory)
+        comment_str = f"  # {root_comment}" if root_comment else ""
+
+        tree_parts = [f"{root_name}/{comment_str}\n"]
+        tree_parts.append(self._generate_subtree(directory, 1, ""))
+
+        return "".join(tree_parts)
+
+    def _generate_subtree(self, directory: Path, indent_level: int, parent_prefix: str) -> str:
+        items = self._get_filtered_items(directory)
+
+        tree_parts = []
+        for i, item_path in enumerate(items):
+            is_last = (i == len(items) - 1)
+            connector = "└── " if is_last else "├── "
+            line_prefix = parent_prefix + connector
+
+            comment = self._get_comment_for_item(item_path.name, item_path)
             comment_str = f"  # {comment}" if comment else ""
-            tree_str += f"{prefix}{item}/{comment_str}\n"
-            if item == 'images' and directory.endswith('static'): continue # skip images
-            tree_str = generate_tree(item_path, dir_comments, indent + 1, tree_str, is_last)
-        else:
-            comment = get_file_comment(item_path)
-            comment_str = f"  # {comment}" if comment else ""
-            tree_str += f"{prefix}{item}{comment_str}\n"
 
-    return tree_str
+            if item_path.is_dir():
+                tree_parts.append(f"{line_prefix}{item_path.name}/{comment_str}\n")
+                child_prefix = parent_prefix + ("    " if is_last else "│   ")
+                tree_parts.append(self._generate_subtree(item_path, indent_level + 1, child_prefix))
+            else:
+                tree_parts.append(f"{line_prefix}{item_path.name}{comment_str}\n")
 
-def generate_readme_file(path: str) -> str:
-    start_time = time()
-    config_file_path = os.path.join('static', 'json', 'config.json')
-    tree_comments = read_json(config_file_path)["tree_comments"]
-    tree = generate_tree(path, tree_comments)
-    markdown_tree = "```bash\n" + tree + "```"
-    _write_readme_file(markdown_tree)
-    print(f"{OUTPUT_FILE} file generated in {round(time() - start_time, 4)} seconds.")
+        return "".join(tree_parts)
 
-if __name__ == "__main__":
-    generate_readme_file(".")
+    def _get_filtered_items(self, directory: Path) -> list[Path]:
+        items = []
+        for item in directory.iterdir():
+            if not self._should_ignore_item(item):
+                items.append(item)
+        return sorted(items)
+
+    def _should_ignore_item(self, item: Path) -> bool:
+        if item.name in self.config.ignore_items or item.name in self.config.ignore_files:
+            return True
+
+        for pattern in self.config.ignore_items:
+            if '*' in pattern and pattern.replace('*', '') in item.name:
+                return True
+
+        return False
+
+    def _get_comment_for_item(self, item_name: str, item_path: Path) -> str:
+        script_path = Path(__file__).resolve()
+        project_root = script_path.parent.parent if script_path.parent.name == "modules" else script_path.parent
+
+        relative_path = item_path.relative_to(project_root).as_posix()
+
+        comment = self.config.comments.get(relative_path,
+                 self.config.comments.get(item_name, ""))
+
+        if item_path.is_dir() and not comment:
+            comment = self.config.comments.get(f"{item_name}/", "")
+
+        if not comment and item_path.is_file():
+            comment = self.comment_factory.get_comment(item_path)
+
+        return comment
+
+# =============================================================================
+# README
+# =============================================================================
+class ReadmeGenerator:
+
+    def __init__(self, output_file: str = "README.md"):
+        self.output_file = output_file
+
+        script_path = Path(__file__).resolve()
+        self.project_root = script_path.parent.parent if script_path.parent.name == "modules" else script_path.parent
+
+        self.read_json = read_json
+        self.read_file = read_file
+        self.write_file = write_file
+
+    def generate_readme_file(self) -> None:
+        start_time = time()
+
+        readme_data = self._load_readme_data()
+        markdown_content = self._build_markdown(readme_data)
+        output_path = self.project_root / self.output_file
+        self.write_file(markdown_content, str(output_path))
+
+        elapsed_time = round(time() - start_time, 4)
+        print(f"{self.output_file} generated in {elapsed_time} seconds.")
+
+    def _load_readme_data(self) -> dict:
+        json_path = self.project_root / 'static' / 'json' / 'readme.json'
+        return self.read_json(str(json_path))
+
+    def _build_markdown(self, data: dict) -> str:
+        parts = []
+        parts.append(data.get("title", "# Project Title"))
+        if "introduction" in data:
+            parts.append(data["introduction"])
+        if "live_demo" in data:
+            parts.extend(self._build_live_demo_section(data["live_demo"]))
+        parts.extend(self._build_main_sections(data.get("sections", {})))
+        return "\n\n".join(parts).strip()
+
+    def _build_live_demo_section(self, demo_data: dict) -> list[str]:
+        parts = [demo_data.get("title", "## Live Demo")]
+        if "content" in demo_data:
+            parts.append("\n".join(demo_data["content"]))
+        return parts
+
+    def _build_main_sections(self, sections: dict) -> list[str]:
+        section_order = [
+            "features", "installation", "usage", "technologies",
+            "key_files", "project_structure", "author", "license"
+        ]
+        parts = []
+        for section_key in section_order:
+            if section_key not in sections:
+                continue
+
+            section_data = sections[section_key]
+            parts.append(section_data.get("title", f"## {section_key.replace('_', ' ').title()}"))
+
+            if "content" in section_data:
+                parts.append("\n".join(section_data["content"]))
+
+            if section_key == "project_structure":
+                tree_config = TreeConfig(
+                    comments=sections.get("tree_comments", {})
+                )
+                tree_generator = DirectoryTreeGenerator(tree_config)
+                tree = tree_generator.generate(self.project_root)
+                parts.append(f"```bash\n{tree.strip()}\n```")
+        return parts

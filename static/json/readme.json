@@ -1,0 +1,102 @@
+{
+  "title": "# Personal Website - Data Projects",
+  "introduction": "Welcome! I am a data scientist and I've created this website so you can take a look at my resume and have fun with some of my toy projects. This portfolio is designed to showcase ideas and projects that I worked on and to learn a little bit of web development in the process of making the page :)",
+  "live_demo": {
+    "title": "## Live Demo",
+    "content": [
+      "You can see the site in action here: [https://personal-website-gz63.onrender.com/](https://personal-website-gz63.onrender.com/)"
+    ]
+  },
+  "sections": {
+    "features": {
+      "title": "## Key Features",
+      "content": [
+        "- Personal portfolio showcasing data projects and my CV.",
+        "- Interactive tools for:",
+        "  - Extracting keyphrases from text",
+        "  - Predicting seasonal trends",
+        "  - Analyzing WhatsApp conversations",
+        "  - Accessing and visualizing World Bank API data",
+        "- Analytical articles and visual insights on:",
+        "  - Data science job market trends",
+        "  - Macroeconomics",
+        "  - Mathematics",
+        "  - Algorithmic trading"
+      ]
+    },
+    "installation": {
+      "title": "## Installation",
+      "content": [
+        "1. Clone the repository: `git clone https://github.com/ale-camer/personal_website.git`",
+        "2. Create a virtual environment: `python -m venv venv`",
+        "3. Activate the environment:",
+        "   - On Windows: `venv\\Scripts\\activate`",
+        "   - On Unix/MacOS: `source venv/bin/activate`",
+        "4. Install dependencies: `pip install -r requirements.txt`",
+        "5. Run the app: `python main.py`"
+      ]
+    },
+    "usage": {
+      "title": "## Usage",
+      "content": [
+        "Once the application is running (after step 5 of Installation):",
+        "1. Open your web browser and navigate to `http://127.0.0.1:5000/` (or the address shown in your console, typically `http://localhost:PORT` where PORT is specified by your environment, e.g., 5000).",
+        "2. Explore the different sections and interactive tools available through the navigation menu."
+      ]
+    },
+    "technologies": {
+      "title": "## Technologies Used",
+      "content": [
+        "**Frontend**:",
+        "- HTML, SCSS, JavaScript",
+        "",
+        "**Backend & Data**:",
+        "- Python (Flask, Dash)",
+        "- Data manipulation and visualization: pandas, numpy, seaborn, matplotlib, plotly",
+        "- Text processing: TextBlob, NLTK, unidecode, regex",
+        "- Web and API tools: requests, tqdm, prettytable, folium, branca",
+        "- Utility modules and structured programming: dataclasses, abc, os, re, zipfile, time"
+      ]
+    },
+    "key_files": {
+      "title": "## Key Files",
+      "content": [
+        "- `main.py`: Main application script (entry point, configures and runs the Flask app).",
+        "- `app.py`: Defines the Flask application instance and core web routes (imported by `main.py`).",
+        "- `modules/dash_app.py`: Contains Dash applications for interactive data visualizations.",
+        "- `modules/`: Directory for custom Python modules (utilities, text processing, specific functionalities).",
+        "- `static/`: Stores static assets (CSS, JavaScript, images) and user-uploaded files.",
+        "- `templates/`: Contains HTML templates for the web interface."
+      ]
+    },
+    "project_structure": {
+      "title": "## Project Structure",
+      "content": [
+        "The project directory tree with comments is shown below:"
+      ]
+    },
+    "author": {
+        "title": "## Author",
+        "content": [
+          "**Alejandro Camerlengo**",
+          "- LinkedIn: [https://www.linkedin.com/in/alejandro-camerlengo/](https://www.linkedin.com/in/alejandro-camerlengo/)"
+        ]
+    },
+    "tree_comments": {
+      "modules": "Contain Python modules.",
+      "static": "Contain static files (CSS, JS and images).",
+      "templates": "Contain HTML templates.",
+      "css": "Contain CSS main script.",
+      "js": "Contain JavaScript scripts.",
+      "seasonality": "Contain Seasonality Prediction functionality temporary files.",
+      "keyphrase": "Contain Keyphrase Extraction functionality temporary files.",
+      "world_bank": "Contain World Bank functionality temporary files.",
+      "json": "Contain JSON files.",
+      "images": "Contain images for the UI.",
+      "mi_cv.html": "My CV Template",
+      "app.py": "Web App project file (Flask instance and routes).",
+      "main.py": "Main project file (entry point to run the application).",
+      "modules/dash_app.py": "Dash App project file."
+    }
+  }
+}

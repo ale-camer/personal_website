@@ -1,4 +1,4 @@
-"""Custom project functions."""
+"""Auxiliary functions."""
 
 # =============================================================================
 # IMPORTS
@@ -49,8 +49,16 @@ def job_duration() -> None:
     
     return f"{months} {month_text}" if years == 0 else f"{years} {year_text} {months} {month_text}"
   
+def read_file(file_path: str) -> str:
+    with open(file_path, 'r', encoding='utf-8') as file:
+        return file.read()
+
 def read_json(path: str) -> None:
     return json.load(open(path, 'r', encoding='utf-8'))
+
+def write_file(content: str, file_name: str) -> None:
+    with open(file_name, "w", encoding="utf-8") as f:
+        f.write(content)
 
 def write_json(data: pd.DataFrame, path: str) -> None:
     os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -60,7 +68,7 @@ def write_json(data: pd.DataFrame, path: str) -> None:
 def write_txt(content: str, path: str) -> None:
     with open(path, 'w', encoding='utf-8') as f:
         f.write(content)
-      
+              
 # =============================================================================
 # TEXT PROCESSING
 # =============================================================================

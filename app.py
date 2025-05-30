@@ -126,34 +126,6 @@ def download_keyphrases(output_filename: str = "keyphrases.txt"):
 # =============================================================================
 # SEASONALITY
 # =============================================================================
-# @app.route('/predict_seasonality', methods=['POST'])
-# def predict_seasonality():
-
-    # template = 'seasonality.html'
-    # file = request.files.get('file')
-    # periodicity = int(request.form.get('periodicity'))
-    # processor = SeasonalityModule(file, periodicity)
-
-    # error = processor.is_empty
-    # if error:
-        # return render_template(template, error_message=error)
-
-    # try:
-        # forecast = processor.forecast()
-        # return render_template(
-            # template,
-            # forecast=forecast,
-            # existing_plots=config["plot_names"],
-            # enumerate=enumerate
-        # )
-
-    # except:
-        # error_message = processor.validation
-        # return render_template(template, error_message=error_message)
-        
-import traceback
-import logging
-
 @app.route('/predict_seasonality', methods=['POST'])
 def predict_seasonality():
     template = 'seasonality.html'
@@ -161,13 +133,9 @@ def predict_seasonality():
     periodicity = int(request.form.get('periodicity'))
     
     processor = SeasonalityModule(file, periodicity)
-    # error = processor.is_empty
-    # if error:
-        # return render_template(template, error_message=error)
-    error = processor.validate
+    error = processor.is_empty
     if error:
         return render_template(template, error_message=error)
-
 
     try:
         forecast = processor.forecast()
@@ -177,21 +145,8 @@ def predict_seasonality():
             existing_plots=config["plot_names"],
             enumerate=enumerate
         )
-    except Exception as e:
-        # Loggeo del error
-        logging.error("Error en predict_seasonality", exc_info=True)
-        
-        # Info adicional útil para diagnosticar en Render
-        if file:
-            logging.error(f"Nombre del archivo subido: {file.filename}")
-            logging.error(f"Tipo MIME del archivo: {file.mimetype}")
-        else:
-            logging.error("No se recibió ningún archivo en la request.")
-
-        # Mostrar mensaje de error en el template
-        error_message = f"Ocurrió un error al procesar la predicción: {e}"
-        return render_template(template, error_message=error_message)
-
+    except:
+        return render_template(template, error_message=processor.validation)
 
 @app.route('/download_predictions', methods=['GET'])
 def download_predictions():
@@ -220,74 +175,24 @@ def show_data():
     args = request.args
     data = wb_ut.load_data(args.get('indicator'), args.get('type'), args.get('option'))  
     return data.drop('ISO_CODE', axis=1).to_dict(orient='records')
-
-# @app.route('/plot_graph', methods=['POST'])
-# def plot_graph():
-    # form = request.form
-    # indicator, type_selected, option = form.get('indicator'), form.get('type'), form.get('option')
-    # df = wb_ut.load_data(indicator, type_selected, option)
-    # title = f'{option} - {INDICATOR_NAMES.get(indicator)}' if type_selected == 'country' else None
-    # wb_manager.create_visualization(df, type_selected, title=title)
-    # return "Interactive graph generated."
     
 @app.route('/plot_graph', methods=['POST'])
 def plot_graph():
     form = request.form
     indicator, type_selected, option = form.get('indicator'), form.get('type'), form.get('option')
-    logging.info(f"Received request to plot graph with indicator={indicator}, type={type_selected}, option={option}")
-
-    # Asumo que wb_ut y INDICATOR_NAMES están definidos y accesibles
     df = wb_ut.load_data(indicator, type_selected, option) 
     title = f'{option} - {INDICATOR_NAMES.get(indicator)}' if type_selected == 'country' else None
-    
-    logging.info("Creating visualization...")
+
     filepath = wb_manager.create_visualization(df, type_selected, title=title)
-    # filepath es, por ejemplo, "static/world_bank/heatmap.html", asumimos relativa al directorio raíz del proyecto.
-
-    # --- Información de depuración (puedes eliminarla después) ---
-    logging.debug(f"Raw filepath from module: {filepath}")
-    logging.debug(f"app.static_folder: {app.static_folder}")
-    logging.debug(f"app.static_url_path: {app.static_url_path}")
-    logging.debug(f"Current working directory: {os.getcwd()}")
-    # --- Fin de información de depuración ---
-
-    abs_filepath = os.path.abspath(filepath) # Ruta absoluta al archivo guardado.
-                                             # Ej: /opt/render/project/src/static/world_bank/heatmap.html
-
-    filename_for_url = None
-
-    if app.static_folder == '':
-        # Si static_folder es '', Flask sirve archivos desde la raíz del proyecto (os.getcwd()).
-        # filepath (ej: "static/world_bank/heatmap.html") ya es relativo a la raíz del proyecto.
-        filename_for_url = filepath
-    elif app.static_folder is None:
-        logging.error("Flask app's static_folder is None. This is unusual. Cannot generate URL for static file.")
-        return jsonify({'message': 'Server error: static folder not configured.', 'plot_url': None}), 500
-    else:
-        # app.static_folder es una ruta (ej: 'static' o '/opt/render/project/src/static').
-        # Necesitamos la ruta del archivo relativa a esta carpeta estática.
-        abs_static_path = os.path.abspath(app.static_folder)
-        
-        if not abs_filepath.startswith(abs_static_path):
-            logging.error(f"File {abs_filepath} is not located within the app's static folder {abs_static_path}. "
-                          f"Check TEMPORARY_FILES_FOLDER in world_bank.py ('{TEMPORARY_FILES_FOLDER}') "
-                          f"and Flask's static_folder configuration.")
-            return jsonify({'message': 'Server error: generated file location is outside the static serving directory.', 'plot_url': None}), 500
-        
-        filename_for_url = os.path.relpath(abs_filepath, abs_static_path)
-
-    if filename_for_url is None: # Por si acaso alguna lógica anterior no asigna
-        logging.error("Could not determine the filename for url_for.")
-        return jsonify({'message': 'Server error: Could not determine static file URL path.', 'plot_url': None}), 500
-
-    # url_for espera separadores de ruta con '/', independientemente del SO.
-    filename_for_url = filename_for_url.replace(os.sep, '/')
-    
-    plot_url = url_for('static', filename=filename_for_url)
-    
-    logging.info(f"Interactive graph generated. Accessible at: {plot_url}")
+    plot_url = url_for(
+        'static', 
+        filename=os.path.relpath(
+            os.path.abspath(filepath), 
+            os.path.abspath(app.static_folder)
+        )
+    )
     return jsonify({'message': 'Interactive graph generated.', 'plot_url': plot_url})
-
+    
 # =============================================================================
 # WHATSAPP
 # =============================================================================

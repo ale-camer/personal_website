@@ -229,24 +229,12 @@ class SeasonalityModule:
         self.serie = None
         self.file = file
         self.periodicity = periodicity
-        # self.plotter = SeasonalityPlotter(plot_config)
-        # self.predictor = SeasonalityPredictor(self.periodicity)
         self.config = plot_config or PlotConfig()
         self.plotter = SeasonalityPlotter(self.config)
         self.predictor = SeasonalityPredictor(self.config, self.periodicity)
 
-        
-    # @property
-    # def is_empty(self) -> None:
-      
-        # self.df = pd.read_excel(self.file)
-        # if self.df.empty:
-            # return "The file is empty"
-        # self.serie = self.df.iloc[:, 0]
-        # return None
-
     @property
-    def validate(self) -> str | None:
+    def is_empty(self) -> str | None:
         self.df = pd.read_excel(self.file)
         if self.df.empty:
             return "The file is empty"

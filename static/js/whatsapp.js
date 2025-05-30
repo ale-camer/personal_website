@@ -2,12 +2,15 @@
 
 let LANGUAGES_DATA = [];
 const DEFAULT_LANGUAGE = "english";
-const JSONfilePath = 'static/json/config.json';
+const JSONfilePath = 'static/json/stopwords.json';
 
 fetch(JSONfilePath)
     .then(response => response.json())
     .then(data => {
-        LANGUAGES_DATA = data["languagues-to-choose"];
+        LANGUAGES_DATA = Object.keys(data).map(key => ({
+            value: key,
+            text: capitalizeFirstLetter(key)
+        }));
 
         setupLanguageSelection('language', 'selected_language', LANGUAGES_DATA, DEFAULT_LANGUAGE);
     })
@@ -43,6 +46,10 @@ function setupLanguageSelection(selectId, hiddenInputId, languages, defaultLang)
     selectElement.addEventListener('change', function () {
         hiddenInputElement.value = this.value;
     });
+}
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 function setupFormValidation(formSelector, fileInputId, fileErrorId) {
@@ -81,6 +88,5 @@ function setupFormValidation(formSelector, fileInputId, fileErrorId) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    setupLanguageSelection('language', 'selected_language', LANGUAGES_DATA, DEFAULT_LANGUAGE);
     setupFormValidation('form.project-form', 'file', 'fileError');
 });
