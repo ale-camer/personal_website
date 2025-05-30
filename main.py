@@ -20,7 +20,7 @@ g = ReadmeGenerator(output_file="README.md")
 # RUN
 # =============================================================================
 def main():
-    g.generate_readme_file()
+    # g.generate_readme_file()
     remove_temp_files(temp_folders_to_clean)
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=False)
     # app.run(debug=True)
