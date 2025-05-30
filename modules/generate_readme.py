@@ -102,9 +102,12 @@ class JavaScriptCommentExtractor(CommentExtractor):
 class HTMLCommentExtractor(CommentExtractor):
 
     def extract(self, content: str) -> str:
-        start = content.index("<!--") + 4
-        end = content.index("-->", start)
-        return ' '.join(content[start:end].strip().split())
+        try:
+            start = content.index("<!--") + 4
+            end = content.index("-->", start)
+            return ' '.join(content[start:end].strip().split())
+        except ValueError:
+            return self.NO_COMMENT
 
 class CommentExtractorFactory:
 
