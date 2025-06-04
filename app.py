@@ -5,7 +5,6 @@
 # =============================================================================
 # --- Standard library ---
 import os
-import warnings
 
 # --- Third-party ---
 from flask import Flask, render_template, request, redirect, send_file, jsonify, url_for
@@ -14,12 +13,10 @@ from flask import Flask, render_template, request, redirect, send_file, jsonify,
 import modules.utils as ut
 import modules.world_bank_utils as wb_ut
 from modules.dash_app import init_dash_app
-from modules.keyphrase import NGramModule, get_tables_string
+from modules.keyphrase import NGramModule, get_tables_string, progress
 from modules.seasonality import SeasonalityModule, download_forecast
 from modules.whatsapp import layout, WhatsAppModule
 from modules.world_bank import WorldBankModule
-
-warnings.filterwarnings("ignore")
 
 # =============================================================================
 # PATHS
@@ -115,6 +112,10 @@ def extract_keyphrases():
     result = ngrams.analyze()
     ut.write_json(ngrams.summary, KEYPHRASE_INPUT_PATH)
     return render_template('keyphrase.html', results=result)
+
+@app.route('/progress')
+def get_progress():
+    return jsonify(progress)
 
 @app.route('/download_keyphrases')
 def download_keyphrases(output_filename: str = "keyphrases.txt"):

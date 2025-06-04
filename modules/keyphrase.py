@@ -19,6 +19,9 @@ from modules.utils import text_normalizer, transform_words
 # =============================================================================
 # TOP NGRAMS
 # =============================================================================
+import time
+progress = {"value": 0}
+
 @dataclass
 class NGramConfig:
     data: str
@@ -31,18 +34,23 @@ class NGramAnalyzer:
         self.url_regex = re.compile(r'http\S+')
     
     def analyze(self, config: NGramConfig) -> dict:
+        global progress
+        progress["value"] = 0
         normalized_sentences = self._normalize_sentences(config.data)
         return self._build_ngram_tables(
           normalized_sentences, 
           config.max_ngrams, 
           config.num_nrows
         )
-      
+        
     def _normalize_sentences(self, text: str) -> list:
-        return [
-            text_normalizer(sentence, set())
-            for sentence in tqdm(re.split(r'[.!?]\s+', text))
-        ]
+        sentences = re.split(r'[.!?]\s+', text)
+        normalized = []
+        total = len(sentences)
+        for i, sentence in enumerate(tqdm(sentences, desc="Normalizing sentences", bar_format="{l_bar}{bar} {n:,}/{total:,}")):
+            normalized.append(text_normalizer(sentence, set()))
+            progress["value"] = int((i + 1) / total * 100)
+        return normalized
     
     def _build_ngram_tables(self, sentences: list, max_ngram: int, nrows_per_table: int) -> dict:
         return {

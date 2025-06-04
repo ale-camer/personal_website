@@ -1,4 +1,4 @@
-//Keyphrase Extraction Functionalities
+// Keyphrase Extraction Functionalities
 
 document.addEventListener('DOMContentLoaded', () => {
     const fileInput = document.getElementById('file');
@@ -6,14 +6,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const downloadBtn = document.getElementById('downloadBtn');
     const submitBtn = document.getElementById('submitBtn');
     const resultSection = document.getElementById('result-section');
+    const loadingSection = document.getElementById('loading-section');
+    const firstSection = document.getElementById('first-container');
+    const form = document.getElementById('inputForm');
     const hasResultsDisplayed = resultSection && resultSection.querySelector('table');
 
-    if (submitBtn) {
-        submitBtn.addEventListener('click', (event) => {
+    if (submitBtn && form) {
+        form.addEventListener('submit', (event) => {
             fileError.textContent = '';
             if (!fileInput.files.length) {
                 fileError.textContent = 'Please select a .txt file to upload.';
                 event.preventDefault();
+                return;
+            }
+
+            if (loadingSection) {
+                loadingSection.style.display = 'flex';
+                loadingSection.style.flexDirection = 'column';
+                loadingSection.style.alignItems = 'center';
+                firstSection.style.display = 'none';
+                if (resultSection) resultSection.style.display = 'none';
+                
+                setTimeout(() => {
+                    updateProgress();
+                }, 100);
             }
         });
     }
@@ -43,3 +59,25 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("URL reemplazada en el historial a:", cleanUrl);
     }
 });
+
+function updateProgress() {
+    const progressBar = document.getElementById('progress-bar');
+    const progressPercentage = document.getElementById('progress-percentage');
+    
+    if (!progressBar || !progressPercentage) return;
+    
+    fetch('/progress')
+        .then(response => response.json())
+        .then(data => {
+            progressBar.style.width = data.value + '%';
+            progressPercentage.textContent = data.value + '%';
+
+            if (data.value < 100) {
+                setTimeout(updateProgress, 500);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching progress:', error);
+            setTimeout(updateProgress, 1000);
+        });
+}
