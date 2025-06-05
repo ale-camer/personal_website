@@ -32,10 +32,10 @@ document.addEventListener("DOMContentLoaded", function () {
     if (downloadBtn) {
         downloadBtn.addEventListener('click', function () {
             if (fileError) fileError.textContent = '';
-            const hasContentInResults = resultSection && resultSection.innerHTML.trim() !== "";
-            if ((!fileInput || !fileInput.files.length) && !hasContentInResults) {
+            const hasForecastResults = document.getElementById('result-section-forecast') !== null;
+            if ((!fileInput || !fileInput.files.length) && !hasForecastResults) {
                 if (fileError) fileError.textContent = 'Please select a file and calculate predictions first.';
-            } else if (!hasContentInResults && (fileInput && fileInput.files.length > 0)){
+            } else if (!hasForecastResults && (fileInput && fileInput.files.length > 0)) {
                 if (fileError) fileError.textContent = 'Please calculate prediction before downloading.';
             }
             else {

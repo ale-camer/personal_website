@@ -8,66 +8,81 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.png') }}">
-    <title>Alejandro Camerlengo</title>
+    <title data-translate-key="header_title">{{ texts['header_title'] }}</title>
 </head>
 
 <body>
     <!-- LANGUAGE -->
     <div class="language-selector">
         <select id="select-language">
+            {% for l in available_langs %}
+            <option value="{{ l }}" {% if l==selected_lang %}selected{% endif %}>{{ l.title() }}</option>
+            {% endfor %}
         </select>
     </div>
 
     <!-- NAVIGATION BAR -->
     <nav class="navbar">
         <a href="{{ url_for('index') }}" class="navbar-title-link" title="Home Page">
-            <h2 class="navbar-title">Home</h2>
+            <h2 class="navbar-title" data-translate-key="home">{{ texts['home'] }}</h2>
         </a>
 
         <ul class="navbar-list">
             <li class="dropdown">
                 <a class="dropdown-toggle" tabindex="0" role="button" aria-expanded="false" aria-controls="cv-menu"
-                    href="{{ url_for('mi_cv') }}" title="Read My CV">My CV</a>
+                    href="{{ url_for('mi_cv') }}" title="Read My CV" data-translate-key="mi_cv">{{ texts['mi_cv'] }}</a>
                 <ul class="dropdown-menu" id="cv-menu">
-                    <li><a href="{{ url_for('mi_cv') }}#work-experience">Work Experience</a></li>
-                    <li><a href="{{ url_for('mi_cv') }}#technologies">Technologies</a></li>
-                    <li><a href="{{ url_for('mi_cv') }}#education">Education</a></li>
-                    <li><a href="{{ url_for('mi_cv') }}#languages">Languages</a></li>
-                    <li><a href="{{ url_for('mi_cv') }}#interests">Interests</a></li>
+                    <li><a href="{{ url_for('mi_cv') }}#work-experience" data-translate-key="work_exp">{{
+                            texts['work_exp'] }}</a>
+                    </li>
+                    <li><a href="{{ url_for('mi_cv') }}#technologies" data-translate-key="tech">{{ texts['tech'] }}</a>
+                    </li>
+                    <li><a href="{{ url_for('mi_cv') }}#education" data-translate-key="edu">{{ texts['edu'] }}</a></li>
+                    <li><a href="{{ url_for('mi_cv') }}#languages" data-translate-key="lang">{{ texts['lang'] }}</a>
+                    </li>
+                    <li><a href="{{ url_for('mi_cv') }}#interests" data-translate-key="int">{{ texts['int'] }}</a></li>
                 </ul>
             </li>
 
             <li class="dropdown">
                 <a class="dropdown-toggle" tabindex="0" role="button" aria-expanded="false"
-                    aria-controls="projects-menu" title="Choose a project">Have fun</a>
+                    aria-controls="projects-menu" title="Choose a project" data-translate-key="have_fun">{{
+                    texts['have_fun'] }}</a>
                 <ul class="dropdown-menu">
-                    <li><a href="{{ url_for('keyphrase_extraction') }}">Keyphrase Extraction</a></li>
-                    <li><a href="{{ url_for('seasonality_prediction') }}">Seasonality Prediction</a></li>
-                    <li><a href="{{ url_for('whatsapp') }}">WhatsApp Analysis</a></li>
-                    <li><a href="{{ url_for('world_bank') }}">World Bank Database</a></li>
+                    <li><a href="{{ url_for('keyphrase_extraction') }}" data-translate-key="keyphrase">{{
+                            texts['keyphrase'] }}</a>
+                    </li>
+                    <li><a href="{{ url_for('seasonality_prediction') }}" data-translate-key="seasonality">{{
+                            texts['seasonality'] }}</a>
+                    </li>
+                    <li><a href="{{ url_for('whatsapp') }}" data-translate-key="whatsapp">{{ texts['whatsapp'] }}</a>
+                    </li>
+                    <li><a href="{{ url_for('world_bank') }}" data-translate-key="world_bank">{{ texts['world_bank']
+                            }}</a></li>
                 </ul>
             </li>
 
             <li class="dropdown">
                 <a class="dropdown-toggle" tabindex="0" role="button" aria-expanded="false"
-                    aria-controls="projects-menu" title="Choose a project">Read</a>
+                    aria-controls="projects-menu" title="Choose a project" data-translate-key="read">{{ texts['read']
+                    }}</a>
                 <ul class="dropdown-menu">
-                    <li><a href="{{ url_for('algorithmic_trading') }}" target="_blank" title="Description">Algorithmic
-                            Trading</a></li>
-                    <li><a href="{{ url_for('linear_algebra') }}" target="_blank" title="Description">Linear Algebra</a>
+                    <li><a href="{{ url_for('algorithmic_trading') }}" target="_blank" title="Description"
+                            data-translate-key="algo_trad">{{ texts['algo_trad'] }}</a></li>
+                    <li><a href="{{ url_for('linear_algebra') }}" target="_blank" title="Description"
+                            data-translate-key="lin_alg">{{ texts['lin_alg'] }}</a>
                     </li>
-                    <li><a href="{{ url_for('arg_macro_spanish') }}" target="_blank" title="Description">Macro &
-                            Employment (Spanish)</a>
-                    </li>
-                    <li><a href="{{ url_for('arg_macro_english') }}" target="_blank" title="Description">Macro &
-                            Employment (English)</a>
-                    </li>
-                    <li><a href="{{ url_for('ds_trends') }}" target="_blank" title="Description">Trends in Data
-                            Science</a></li>
-                    <li><a href="{{ url_for('vector_norms') }}" target="_blank" title="Description">Vector Norms</a>
-                    </li>
-                </ul>
             </li>
+            <li><a href="{{ url_for('arg_macro') }}" target="_blank" title="Description" data-translate-key="macro">{{
+                    texts['macro'] }}</a>
+            </li>
+            <li><a href="{{ url_for('ds_trends') }}" target="_blank" title="Description"
+                    data-translate-key="ds_trends">{{texts['ds_trends'] }}</a></li>
+            <li><a href="{{ url_for('vector_norms') }}" target="_blank" title="Description"
+                    data-translate-key="vector_norms">{{texts['vector_norms'] }}</a>
+            </li>
+        </ul>
+        </li>
         </ul>
     </nav>
 
@@ -89,57 +104,7 @@
 
     <!-- Scripts -->
     <script src="{{ url_for('static', filename='js/base.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/translation-system.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/language_selection.js') }}"></script>
 </body>
-
-<style>
-    .language-selector {
-        position: fixed;
-        top: 0;
-        right: 0;
-        width: clamp(100px, 10vw, 10vw);
-        z-index: 1000;
-        border-radius: 5px;
-        border: black solid 2px;
-
-        select {
-            width: 100%;
-            padding: 0.3rem;
-            font-size: clamp(0.8rem, 1vw, 1vw);
-            border-radius: 4px;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            background: white;
-            cursor: pointer;
-
-            &:focus {
-                outline: none;
-                border-color: #007bff;
-                box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-            }
-        }
-    }
-
-    [dir="rtl"] {
-        text-align: right;
-    }
-
-    [dir="rtl"] .navbar-list {
-        flex-direction: row-reverse;
-    }
-
-    [dir="rtl"] .language-selector {
-        left: 0;
-        right: auto;
-    }
-
-    .fade-transition {
-        transition: opacity 0.3s ease-in-out;
-    }
-
-    .fade-out {
-        opacity: 0.5;
-    }
-</style>
 
 </html>

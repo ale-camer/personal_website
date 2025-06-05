@@ -9,10 +9,10 @@
 
 <div class="main-project-container">
     <div class="project-container">
-        <h1>Seasonality Prediction</h1>
+        <h1 data-translate-key="title">{{ texts['title'] }}</h1>
         <div>
-            <p id="intro-paragraph">
-                Upload the spreadsheet to forecast.
+            <p id="intro-paragraph" data-translate-key="intro">
+                {{ texts['intro'] }}
             </p>
         </div>
 
@@ -20,32 +20,34 @@
             <form action="{{ url_for('predict_seasonality') }}" method="post" enctype="multipart/form-data"
                 class="project-form" id="predictionForm">
                 <div class="form-group">
-                    <label for="file">Upload Excel File:</label><br>
+                    <label for="file" data-translate-key="upload_label">{{ texts['upload_label'] }}</label><br>
                     <input type="file" name="file" id="file" accept=".xlsx,.xls">
                     <span id="fileError" style="color: red;"></span>
                 </div>
                 <div class="form-group">
-                    <label for="periodicity">Periodicity:</label><br>
+                    <label for="periodicity" data-translate-key="periodicity_label">{{ texts['periodicity_label']
+                        }}</label><br>
                     <input type="number" name="periodicity" id="periodicity" min="2" max="100" value="4" required
-                        title="Choose periodicity of time serie">
+                        title="{{ texts['periodicity_title'] }}" data-translate-key-title="periodicity_title">
                 </div>
                 <div class="button-row">
-                    <button type="submit">Calculate <br>Prediction</button>
-                    <button type="button" id="downloadBtn">Download <br>Predictions</button>
+                    <button type="submit" data-translate-key="submit_button">{{ texts['submit_button']|safe }}</button>
+                    <button type="button" id="downloadBtn" data-translate-key="download_button">{{
+                        texts['download_button']|safe }}</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Display forecast if available -->
+    <!-- if forecast -->
     {% if forecast %}
-    <div class="project-container" id="result-section">
-        <h2>Next Period Predictions</h2>
+    <div class="project-container" id="result-section-forecast">
+        <h2 data-translate-key="forecast_title">{{ texts['forecast_title'] }}</h2>
         <table id="seasonality-table">
             <thead>
                 <tr>
-                    <th>Period</th>
-                    <th>Forecast</th>
+                    <th data-translate-key="forecast_period">{{ texts['forecast_period'] }}</th>
+                    <th data-translate-key="forecast_value">{{ texts['forecast_value'] }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -60,18 +62,26 @@
     </div>
     {% endif %}
 
-    <!-- Display error if available -->
+    <!-- if empty error -->
     {% if error_message %}
-    <div class="project-container" id="result-section">
-        <h2>Error Details</h2>
-        <p>{{ error_message|safe }}</p>
+    <div class="project-container" id="result-section-error">
+        <h2 data-translate-key="error_title">{{ texts['error_title'] }}</h2>
+        <p data-translate-key="error_message">{{ error_message|safe }}</p>
     </div>
     {% endif %}
 
-    <!-- Display plots if available -->
-    {% if existing_plots %}
-    <div class="project-container" id="result-section">
-        <h2>Plots</h2>
+    <!-- if validation error -->
+    {% if val_message %}
+    <div class="project-container" id="result-section-error">
+        <h2 data-translate-key="error_title">{{ texts['error_title'] }}</h2>
+        <p data-translate-key="validation">{{ val_message|safe }}</p>
+    </div>
+    {% endif %}
+
+    <!-- if plots -->
+    {% if existing_plots and existing_plots|length > 0 %}
+    <div class="project-container" id="result-section-plots">
+        <h2 data-translate-key="plots_title">{{ texts['plots_title'] }}</h2>
         <div class="plot-container">
             {% if 'original_data.png' in existing_plots %}
             <img src="{{ url_for('static', filename='seasonality/original_data.png') }}">
@@ -84,7 +94,7 @@
             {% endif %}
         </div>
     </div>
+    {% endif %}
 </div>
-{% endif %}
 
 {% endblock %}

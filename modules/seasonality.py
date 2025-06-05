@@ -16,12 +16,17 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
+# --- Project/system ---
+from modules.utils import read_json
+
+def temp_lang_json(lang: str):
+    return read_json(os.path.join('static', 'json', 'lang', f'{lang}.json'))
+
 # =============================================================================
 # PREDICTION
 # =============================================================================
 @dataclass
 class PlotConfig:    
-    # save_dir: str = 'static\\seasonality'
     save_dir: str = os.path.join('static', 'seasonality')
     fig_size: tuple = (10, 5)
     y_fontsize: int = 15
@@ -233,11 +238,11 @@ class SeasonalityModule:
         self.plotter = SeasonalityPlotter(self.config)
         self.predictor = SeasonalityPredictor(self.config, self.periodicity)
 
-    @property
-    def is_empty(self) -> str | None:
+    def is_empty(self, lang: str = 'en') -> str | None:
         self.df = pd.read_excel(self.file)
         if self.df.empty:
-            return "The file is empty"
+            error_message = temp_lang_json(lang)["predict_seasonality"]["error_message"]
+            return error_message
         self.serie = self.df.iloc[:, 0]
         return None
         
@@ -255,18 +260,8 @@ class SeasonalityModule:
         )
         return forecasted_next_period
 
-    @property
-    def validation(self) -> str:
-        remainder = len(self.serie) % self.periodicity
-        details = [
-            f"<li>Data format: {'OK' if pd.api.types.is_numeric_dtype(self.serie) else 'Not OK. Data is not numeric.'}</li>",
-            # f"<li>Number of columns: {'OK' if self.df.shape[1] == 1 else f'Not OK. There are {self.serie.shape[1]} columns instead of one.'}</li>",
-            f"<li>Number of columns: {'OK' if self.df.shape[1] == 1 else f'Not OK. There are {self.df.shape[1]} columns instead of one.'}</li>",
-            f"<li>Series length: {len(self.serie)}</li>",
-            f"<li>Periodicity: {'OK' if self.periodicity > 1 else f'Not OK. The value of the periodicity is {self.periodicity} and has to be higher than one and when dividing the length of the serie the reminder must be zero.'}</li>",
-            f"<li>Remainder: {'OK' if remainder == 0 else f'Not OK. The value of the reminder is {remainder} instead of zero.'}</li>"
-        ]
-        return f"<ul>{''.join(details)}</ul>"
+    def validation(self, lang: str) -> str:
+        return temp_lang_json(lang)["predict_seasonality"]["validation"]
       
 # =============================================================================
 # DOWNLOAD PREDICTIONS
@@ -281,8 +276,3 @@ def download_forecast(config: PlotConfig = PlotConfig(), zip_filename: str = 'pr
                     file_path = os.path.join(root, file)
                     f.write(file_path, os.path.relpath(file_path, base_dir))
     return zip_path, zip_filename
-  
-  
-  
-  
-

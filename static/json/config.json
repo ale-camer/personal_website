@@ -150,5 +150,24 @@
       "wp_df": null,
       "wp_content": null,
       "whatsapp_language": null
+  },
+  "languages_to_translate" : {
+      "spanish": "es",
+      "mandarin": "zh",
+      "french": "fr",
+      "arabic": "ar",
+      "portuguese": "pt-pt",
+      "russian": "ru",
+      "japanese": "ja",
+      "korean": "ko",
+      "italian": "it",
+      "greek": "el",
+      "turkish": "tr",
+      "dutch": "nl",
+      "swedish": "sv",
+      "finnish": "fi",
+      "norwegian": "no",
+      "danish": "da",
+      "german": "de"
   }
 }

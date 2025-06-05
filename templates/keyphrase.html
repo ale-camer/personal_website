@@ -9,47 +9,45 @@
 
 <div class="main-project-container">
     <div class="project-container" id="first-container">
-        <h1>Keyphrase Extraction</h1>
+        <h1 data-translate-key="keyphrase_title">{{ texts['keyphrase_title'] }}</h1>
         <div>
-            <p id="intro-paragraph">
-                Upload the text you want the keyphrases from.
-            </p>
+            <p id="intro-paragraph" data-translate-key="intro">{{ texts['keyphrase_title'] }}</p>
         </div>
         <div class="upload-form">
             <form class="project-form" action="/extract_keyphrases" method="post" enctype="multipart/form-data"
                 id="inputForm">
 
                 <div class="form-group">
-                    <label for="file">Upload your text file (only .txt files allowed):</label><br>
+                    <label for="file" data-translate-key="intruction">{{ texts['instruction'] }}</label><br>
                     <input type="file" id="file" name="file" accept=".txt">
                     <span id="fileError" style="color: red;"></span>
                 </div>
 
                 <div class="form-group">
-                    <label for="num_tables">Number of N-grams:</label>
+                    <label for="num_tables" data-translate-key="ngrams">{{ texts['ngrams'] }}</label>
                     <input type="number" id="num_tables" name="num_tables" min="1" max="10" value="5" required
                         title="Choose number of words associated">
                 </div>
 
                 <div class="form-group">
-                    <label for="num_rows">Results per N-gram:</label>
+                    <label for="num_rows" data-translate-key="rgrams">{{ texts['rgrams'] }}</label>
                     <input type="number" id="num_rows" name="num_rows" min="1" max="10" value="5" required
                         title="Choose number of rows per N-gram">
                 </div>
 
                 <div class="button-row">
-                    <button type="submit" id="submitBtn">Extract <br>Keyphrases</button>
-                    <button type="button" id="downloadBtn">Download <br>Keyphrases</button>
+                    <button type="submit" id="submitBtn" data-translate-key="button_1">{{ texts['button_1'] }}</button>
+                    <button type="button" id="downloadBtn" data-translate-key="button_2">{{ texts['button_2'] }}</button>
                 </div>
             </form>
         </div>
     </div>
 
     <div class="project-container" id="loading-section" style="display: none;">
-        <p id="progress-text">Progress...</p>
+        <p id="progress-text" data-translate-key="prog">{{ texts['prog'] }}</p>
         <div id="progress-container">
             <div id="progress-bar"></div>
-            <div id="progress-percentage">0%</div>
+            <div id="progress-percentage" data-translate-key="perc">{{ texts['perc'] }}</div>
         </div>
     </div>
 
@@ -62,8 +60,8 @@
                 <table id="keyphrases-table">
                     <thead>
                         <tr>
-                            <th>Keywords</th>
-                            <th># Appearances</th>
+                            <th data-translate-key="keywords">{{ texts['keywords'] }}</th>
+                            <th data-translate-key="napp">{{ texts['napp'] }}</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -7,7 +7,7 @@
 import os
 
 # --- Third-party ---
-from flask import Flask, render_template, request, redirect, send_file, jsonify, url_for
+from flask import Flask, render_template, request, redirect, send_file, jsonify, url_for, g
 
 # --- Project/system ---
 import modules.utils as ut
@@ -30,6 +30,7 @@ JSON_DIR = os.path.join(STATIC_DIR, 'json')
 
 CONFIG_PATH = os.path.join(JSON_DIR, 'config.json')
 GEO_DATA_PATH = os.path.join(JSON_DIR, 'world_administrative_boundaries.json')
+LANG_PATH = os.path.join(JSON_DIR, 'lang')
 
 KEYPHRASE_INPUT_PATH = os.path.join(KEYPHRASE_DIR, 'raw_keyphrases_results.json')
 KEYPHRASE_OUTPUT_PATH = os.path.join(KEYPHRASE_DIR, 'processed_keyphrases_results.txt')
@@ -47,7 +48,12 @@ MONTHS = {int(k): v for k, v in config["months"].items()}
 # APPs Instantiation
 # =============================================================================
 app = Flask(__name__)
+app.before_request(ut.load_language_texts)
+app.context_processor(ut.inject_texts_and_languages)
 
+with app.app_context():
+    selected_lang = ut.inject_texts_and_languages()['selected_lang']
+    
 # =============================================================================
 # STATIC PAGES
 # =============================================================================
@@ -71,12 +77,8 @@ def algorithmic_trading():
 def ds_trends():
     return render_template('trends_in_data_science_labour_market.html')
 
-@app.route('/arg_macro_spanish')
-def arg_macro_spanish():
-    return render_template('macro_n_employment_spanish.html')
-
-@app.route('/arg_macro_english')
-def arg_macro_english():
+@app.route('/arg_macro')
+def arg_macro():
     return render_template('macro_n_employment_english.html')
 
 @app.route('/mi_cv')
@@ -90,7 +92,7 @@ def keyphrase_extraction():
 @app.route('/seasonality_prediction')
 def seasonality_prediction():
     return render_template('seasonality.html')
-  
+
 @app.route('/world_bank')
 def world_bank():
     return render_template('world_bank.html', indicators=INDICATORS)
@@ -127,14 +129,18 @@ def download_keyphrases(output_filename: str = "keyphrases.txt"):
 # =============================================================================
 # SEASONALITY
 # =============================================================================
-@app.route('/predict_seasonality', methods=['POST'])
+@app.route('/predict_seasonality', methods=['GET', 'POST'])
 def predict_seasonality():
+    
+    if request.method == 'GET': # refresh
+        return render_template('seasonality.html')
+        
     template = 'seasonality.html'
     file = request.files.get('file')
     periodicity = int(request.form.get('periodicity'))
     
     processor = SeasonalityModule(file, periodicity)
-    error = processor.is_empty
+    error = processor.is_empty(selected_lang)
     if error:
         return render_template(template, error_message=error)
 
@@ -147,8 +153,11 @@ def predict_seasonality():
             enumerate=enumerate
         )
     except:
-        return render_template(template, error_message=processor.validation)
-
+        return render_template(
+            template,
+            val_message=processor.validation(selected_lang)
+        )
+    
 @app.route('/download_predictions', methods=['GET'])
 def download_predictions():
     file_path, file_name = download_forecast()

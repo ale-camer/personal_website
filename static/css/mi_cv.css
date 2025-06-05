@@ -22,7 +22,7 @@
     padding: 0 0 0.01% 0.5%;
     background: rgba(0, 0, 0, 0.7);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
+    border-radius: .5rem;
     color: white;
 
     h3 {
@@ -45,15 +45,30 @@
         padding: 0.5% 0 0 0;
         margin: 0 0 0.5% 1%;
     }
+
+    #tech_backend,
+    #tech_AI,
+    #tech_ing,
+    #tech_ing,
+    #tech_viz,
+    #tech_misc {
+        text-align: center;
+    }
 }
 
 /* TECHNOLOGIES */
 .skills-grid {
     display: grid;
-    grid-auto-flow: column;
-    grid-template-rows: repeat(10, auto);
+    grid-template-columns: 1fr;
     gap: clamp(0px, 20px, 20px);
     padding: 1%;
+}
+
+.skill-item {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 10px;
+    align-items: center;
 }
 
 .skill-name {
@@ -62,55 +77,88 @@
 
 .progress-bar-container {
     display: flex;
-    height: 3vh;
-    width: 95%;
-    background-color: #ddd;
-    overflow: hidden;
-    gap: clamp(0px, 20px, 20px);
+    height: 5vh;
+    width: 100%;
+    background-color: rgba(128, 128, 128, 0.2);
+    border: 2.5px solid #FFFFFF;
+    position: relative;
 }
 
 .progress-bar {
     height: 100%;
     transition: width 1s ease-in-out;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: relative;
+}
+
+.progress-bar::after {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
     color: white;
     font-size: clamp(10px, 1.25vw, 1.25vw);
+    white-space: nowrap;
+    font-weight: bold;
 }
 
 .basic {
     width: 25%;
-    background-color: #e74c3c;
+    background-color: rgba(231, 76, 60, 1);
 }
 
-.label {
-    white-space: nowrap;
-    width: 50%;
-    font-size: clamp(10px, 1.25vw, 1.25vw);
-    color: black;
-    z-index: 2;
+.basic::after {
+    content: "Basic";
+    left: 200%;
+    transform: translateX(-50%) translateY(-50%);
 }
 
 .intermediate {
     width: 50%;
-    min-width: max-content;
-    background-color: #f39c12;
+    background-color: rgba(230, 126, 34, 1);
+}
+
+.intermediate::after {
+    content: "Intermediate";
+    left: 100%;
+    transform: translateX(-50%) translateY(-50%);
 }
 
 .advanced {
     width: 75%;
-    background-color: #3498db;
+    background-color: rgba(52, 152, 219, 1);
+}
+
+.advanced::after {
+    content: "Advanced";
+    left: 66.67%;
+    transform: translateX(-50%) translateY(-50%);
 }
 
 .expert {
     width: 100%;
-    background-color: #2ecc71;
+    background-color: rgba(39, 174, 96, 1);
+}
+
+.expert::after {
+    content: "Expert";
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+}
+
+.native {
+    width: 100%;
+    background-color: rgba(39, 174, 96, 1);
+}
+
+.native::after {
+    content: "Native";
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
 }
 
 /* EDUCATION & INTERESTS */
 .education-list,
 .interests-list {
     margin: 1.5% 0 0 1%;
-    padding: 1%
+    padding: 1%;
+    font-size: clamp(12.5px, 1.5vw, 1.5vw);
 }

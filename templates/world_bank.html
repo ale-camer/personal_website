@@ -10,15 +10,15 @@
 <div class="main-project-container">
     <div class="project-container">
 
-        <h1>World Bank</h1>
+        <h1 data-translate-key="wb_title">{{ texts['wb_title'] }}</h1>
         <div>
-            <p id="intro-paragraph">Select the categories of the data that you want to visualize.</p>
+            <p id="intro-paragraph" data-translate-key="intro">{{ texts['intro'] }}</p>
         </div>
 
         <div class="wb-group">
-            <label for="indicators">Select an indicator:</label>
+            <label for="indicators" data-translate-key="instr_ord">{{ texts['instr_ord'] }}</label>
             <div class="wb-topics">
-                <button class="wb-button" id="dropdownButton">Indicator</button>
+                <button class="wb-button" id="dropdownButton" data-translate-key="ind">{{ texts['ind'] }}</button>
                 <div class="wb-content" id="dropdownMenu">
                     {% for key in indicators %}
                     <a href="#" onclick="selectIndicator(event, '{{ key }}', '{{ indicators[key] }}')">{{ key }}</a>
@@ -28,23 +28,22 @@
         </div>
 
         <div class="wb-group">
-            <label for="type">Select type:</label>
+            <label for="type" data-translate-key="type_ord">{{ texts['type_ord'] }}</label>
             <div class="wb-topics">
-                <button class="wb-button" id="typeButton">Data Type</button>
+                <button class="wb-button" id="typeButton" data-translate-key="type">{{ texts['type'] }}</button>
                 <div class="wb-content" id="typeMenu">
-                    <a href="#" onclick="selectType(event, 'country')">Country</a>
-                    <a href="#" onclick="selectType(event, 'year')">Year</a>
+                    <a href="#" onclick="selectType(event, 'country')" data-translate-key="country">{{ texts['country'] }}</a>
+                    <a href="#" onclick="selectType(event, 'year')" data-translate-key="year">{{ texts['year'] }}</a>
                 </div>
             </div>
         </div>
 
         <div class="wb-group">
-            <label for="options">Select an option:</label>
+            <label for="options" data-translate-key="opt_ord">{{ texts['opt_ord'] }}</label>
             <div class="wb-topics">
-                <button class="wb-button" id="optionsButton">Country/Year</button>
+                <button class="wb-button" id="optionsButton" data-translate-key="opt">{{ texts['opt'] }}</button>
                 <div class="wb-content" id="optionsMenu">
-                    <a href="#" style="font-size: 1vw;">First choose an indicator and type and wait a second that we are
-                        downloading the options</a>
+                    <a href="#" style="font-size: 1vw;" data-translate-key="first_warning">{{ texts['first_warning'] }}</a>
                 </div>
             </div>
         </div>
@@ -52,30 +51,29 @@
         <div class="upload-form">
             <div class="project-form">
                 <div class="button-row" id="wb-button-row">
-                    <button type="submit">Show <br>Results</button>
-                    <button type="button" id="downloadCSVBtn">Download <br>CSV</button>
-                    <button type="button" id="interactiveGraphBtn">Interactive <br>Graph</button>
+                    <button type="submit" data-translate-key="first_button">{{ texts['first_button'] }}</button>
+                    <button type="button" id="downloadCSVBtn" data-translate-key="second_button">{{ texts['second_button'] }}</button>
+                    <button type="button" id="interactiveGraphBtn" data-translate-key="third_button">{{ texts['third_button'] }}</button>
                 </div>
             </div>
         </div>
-        <p class="side-note">Note: it takes 3 seconds apporixmately to open the interactive graph since you clicked the
-            button.</p>
+        <p class="side-note" data-translate-key="second_warning">{{ texts['second_warning'] }}</p>
     </div>
 
     <div class="project-container" id="wb-results">
         <table class="wb-table">
             <thead>
                 <tr>
-                    <th class="sortable">
-                        Country
+                    <th class="sortable" data-translate-key="country">
+                        {{ texts['country'] }}
                         <span class="sort-icon">&#8597;</span>
                     </th>
-                    <th class="sortable">
-                        Date
+                    <th class="sortable" data-translate-key="date">
+                        {{ texts['date'] }}
                         <span class="sort-icon">&#8597;</span>
                     </th>
-                    <th class="sortable">
-                        Value
+                    <th class="sortable" data-translate-key="value">
+                        {{ texts['value'] }}
                         <span class="sort-icon">&#8597;</span>
                     </th>
                 </tr>

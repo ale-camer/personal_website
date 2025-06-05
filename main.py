@@ -7,8 +7,6 @@ import os, warnings
 from app import app
 from modules.utils import read_json, remove_temp_files
 from modules.generate_readme import ReadmeGenerator
-from modules.html_texts import get_html_texts
-from modules.translations import main as get_translations
 
 warnings.filterwarnings("ignore")
 
@@ -29,10 +27,8 @@ g = ReadmeGenerator(output_file="README.md")
 # =============================================================================
 def main():
     remove_temp_files(temp_folders_to_clean)
-    # get_html_texts(TEMPLATE_FOLDER, TEXTS_FILE_PATH)
-    # get_translations()
-
     # g.generate_readme_file()
+
     app.run(debug=True)
     # app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=False)
 
