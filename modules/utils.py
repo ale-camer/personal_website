@@ -3,19 +3,48 @@
 # =============================================================================
 # IMPORTS
 # =============================================================================
-import os, shutil, json, re
-import pandas as pd
+# --- Standard library ---
+import json
+import os
+import re
+import shutil
 from time import time
-from unidecode import unidecode
-from flask import g, request
 
+# --- Third-party ---
+import pandas as pd
+from flask import g, request
+from unidecode import unidecode
+
+# =============================================================================
+# CONSTANTS
+# =============================================================================
 BASE_DIR = os.path.dirname(__file__)
 PARENT_DIR = os.path.dirname(BASE_DIR)
 LANG_PATH = os.path.join(PARENT_DIR, 'static', 'json', 'lang')
 
 # =============================================================================
-# FILE OPERATIONS
+# FILES
 # =============================================================================
+def read_file(file_path: str) -> None:
+    with open(file_path, 'r', encoding='utf-8') as file:
+        return file.read()
+
+def read_json(path: str) -> None:
+    return json.load(open(path, 'r', encoding='utf-8'))
+
+def write_file(content: str, file_name: str) -> None:
+    with open(file_name, "w", encoding="utf-8") as f:
+        f.write(content)
+
+def write_json(data: pd.DataFrame, path: str) -> None:
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+def write_txt(content: str, path: str) -> None:
+    with open(path, 'w', encoding='utf-8') as f:
+        f.write(content)
+
 def remove_temp_files(folders: str | list[str], files_to_remove: list[str] = None, protected_folders: list[str] = None) -> None:
     start_time = time()
     if isinstance(folders, str):
@@ -39,9 +68,22 @@ def remove_temp_files(folders: str | list[str], files_to_remove: list[str] = Non
                     print(f"Error deleting {file_path}: {e}")
         else:
             print(f"Folder does not exist: {folder}")
-    print(f"Temporary folders cleaned in {round(time() - start_time, 4)} seconds.")
 
-def job_duration() -> None:
+# =============================================================================
+# TIME
+# =============================================================================
+def timed_run(func, *args, in_seconds: bool = False, decimals: int = 4, process_str: str, **kwargs):
+    start = time()
+    result = func(*args, **kwargs)
+    duration = time() - start
+    if in_seconds:
+        print(f"{process_str} in: {duration:.4f} seconds")
+    else:
+        minutes = duration / 60
+        print(f"{process_str} in: {minutes:.{decimals}f} minutes")
+    return result
+
+def job_duration() -> str:
     days_per_month, days_per_year = 30, 365
     today, job_start_date = pd.Timestamp.now(), pd.Timestamp(2025, 2, 1)
     elapsed_days = (today - job_start_date).days
@@ -54,41 +96,12 @@ def job_duration() -> None:
 
     return f"{months} {month_text}" if years == 0 else f"{years} {year_text} {months} {month_text}"
 
-def read_file(file_path: str) -> str:
-    with open(file_path, 'r', encoding='utf-8') as file:
-        return file.read()
-
-def read_json(path: str) -> None:
-    return json.load(open(path, 'r', encoding='utf-8'))
-
-def write_file(content: str, file_name: str) -> None:
-    with open(file_name, "w", encoding="utf-8") as f:
-        f.write(content)
-
-def write_json(data: pd.DataFrame, path: str) -> None:
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path, 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-
-def write_txt(content: str, path: str) -> None:
-    with open(path, 'w', encoding='utf-8') as f:
-        f.write(content)
-
-def timed_run(func, *args, **kwargs):
-    start = time()
-    result = func(*args, **kwargs)
-    duration = time() - start
-    print(f"Duration: {int(duration // 60)}.{str(int(duration % 60)).zfill(2)} minutes")
-    return result
-
+# =============================================================================
+# LANGUAGES
+# =============================================================================
 def load_texts(lang: str = 'english', section: str = None) -> dict:
-
-    path = os.path.join('lang', f'{lang}.json')
-    if not os.path.exists(path):
-        path = os.path.join(BASE_DIR, '..', 'static', 'json', 'lang', f'{lang}.json')
-
-    texts = read_json(path)
-    return texts.get(section, {}) if section else texts
+    path = os.path.join('lang', f'{lang}.json') if os.path.exists(os.path.join('lang', f'{lang}.json')) else os.path.join(BASE_DIR, '..', 'static', 'json', 'lang', f'{lang}.json')
+    return read_json(path).get(section, {}) if section else read_json(path)
 
 def load_language_texts():
     g.lang = request.args.get('lang', 'english')
@@ -103,7 +116,7 @@ def inject_texts_and_languages():
     )
 
 # =============================================================================
-# TEXT PROCESSING
+# TEXT
 # =============================================================================
 def text_normalizer(text: str, stopwords: set = None, min_word_len: int = 2) -> str:
 

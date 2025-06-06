@@ -5,8 +5,9 @@
 # =============================================================================
 import os, warnings
 from app import app
-from modules.utils import read_json, remove_temp_files
+from modules.utils import read_json, remove_temp_files, timed_run
 from modules.generate_readme import ReadmeGenerator
+from modules.generate_translations import main as generate_translations
 
 warnings.filterwarnings("ignore")
 
@@ -26,11 +27,12 @@ g = ReadmeGenerator(output_file="README.md")
 # RUN
 # =============================================================================
 def main():
-    remove_temp_files(temp_folders_to_clean)
+    timed_run(remove_temp_files, temp_folders_to_clean, in_seconds=True, process_str="Temporary folders cleaned")
     # g.generate_readme_file()
-
-    app.run(debug=True)
+    # generate_translations()
+    
     # app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=False)
+    app.run(debug=True)
 
 if __name__ == '__main__':
     main()

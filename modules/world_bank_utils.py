@@ -3,8 +3,13 @@
 # =============================================================================
 # IMPORTS
 # =============================================================================
+# --- Standard library ---
 import os
+
+# --- Third-party ---
 import pandas as pd
+
+# --- Project/system ---
 from modules.utils import read_json
 from modules.world_bank import WorldBankModule
 

@@ -1,9 +1,12 @@
 """Generate README.md file."""
 
+# --- Standard library ---
 from time import time
 from pathlib import Path
 from dataclasses import dataclass
 from abc import ABC, abstractmethod
+
+# --- Project/system ---
 from modules.utils import read_json, read_file, write_file
 
 # =============================================================================

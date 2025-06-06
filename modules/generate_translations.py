@@ -1,14 +1,18 @@
 # =============================================================================
 # IMPORTS
 # =============================================================================
+# --- Standard library ---
 import time
 from os import getenv
+from os.path import join, dirname, exists
+
+# --- Third-party ---
 from tqdm import tqdm
 from dotenv import load_dotenv
-from os.path import join, dirname, exists
-from utils import read_json, write_json, timed_run
-
 from deepl import Translator, TooManyRequestsException
+
+# --- Project/system ---
+from modules.utils import read_json, write_json, timed_run
 
 # =============================================================================
 # CONSTANTS
@@ -69,6 +73,3 @@ def main() -> None:
             translate_and_save(lang_name, lang_code)
         except Exception as e:
             print(f"Error translating {lang_name} ({lang_code}): {type(e).__name__}: {e}")
-
-if __name__ == "__main__":
-    # timed_run(main)
