@@ -20,6 +20,52 @@
     "vector_norms": "Normas vectoriales",
     "lin_alg": "Álgebra lineal"
   },
+  "projects-description": {
+    "explanation": {
+      "keyphrase-extraction": "Ayuda a identificar y extraer términos y frases importantes de los textos resumiendo el contenido principal.",
+      "seasonality-prediction": "Previsión de valores de series temporales en función de sus patrones estacionales.",
+      "whatsapp": "Genere un cuadro de mandos con visualizaciones clave para analizar tanto los chats individuales como los de grupo.",
+      "world-bank": "Utilizar los datos recogidos por el Banco Mundial.",
+      "algorithmic-trading": "Backtesting de la estrategia de comprar y mantener empresas de Fortune 500 seleccionándolas con clusterización.",
+      "trends-data-science": "Análisis de las ofertas de empleo en Ciencia de Datos de timesjobs.com y flexjobs.com en 2022.",
+      "macro-employment": "Visualice las tendencias y perspectivas económicas del Banco Mundialasdadal.",
+      "linear-algebra": "Explicación teórica del uso de conceptos de álgebra lineal en la ciencia de datos.",
+      "vector-norms": "Usos prácticos de herramientas de álgebra lineal en tareas habituales de ciencia de datos."
+    },
+    "utility": {
+      "keyphrase-extraction": "Analizar documentos, optimizar los resultados de los motores de búsqueda o resumir contenidos.",
+      "seasonality-prediction": "Cualquier serie de tiempo con patrón estacional.",
+      "whatsapp": "Encontrar patrones de comunicación y sentimientos.",
+      "world-bank": "Visualice los datos del Banco Mundial para explorar las tendencias y perspectivas económicas mundiales.",
+      "algorithmic-trading": "Seleccionar acciones automáticamente para un fondo de acciones que se reequilibra periódicamente.",
+      "trends-data-science": "Visualizar las prioridades del mercado.",
+      "macro-employment": "Comprender las consecuencias de las políticas económicas en el PIB y, por tanto, en el mercado laboral.",
+      "linear-algebra": "Aprende lo básico sobre el tema.",
+      "vector-norms": "Aprenda cómo influyen algunas matemáticas en las tareas de la ciencia de datos."
+    },
+    "howTo": {
+      "keyphrase-extraction": "Cargue un archivo de texto, especifique el número de N-gramas (secuencia de n elementos) y resultados (filas) por N-grama y pulse el botón \"Extraer frases clave\".",
+      "seasonality-prediction": "Cargue un archivo Excel con una sola columna de datos numéricos y un encabezado, seleccione la periodicidad (por ejemplo, 4 para datos trimestrales) y pulse el botón \"Calcular predicción\".",
+      "whatsapp": "Exporta el chat de WhatsApp haciendo clic en los tres puntos de la esquina superior derecha de la pantalla del teléfono en la conversación, selecciona 'Más' y luego 'Exportar chat'. A continuación, carga el archivo de texto, selecciona el idioma en el que se mantuvo la conversación y pulsa el botón \"Analizar chat\".",
+      "world-bank": "Seleccione: indicador (por ejemplo, PIB per cápita), tipo de datos y el año o país en función del tipo de datos elegido y pulse el botón \"Mostrar resultados\". A continuación, si desea los datos sin procesar, pulse el botón \"Descargar CSV\" y/o si desea un gráfico interactivo, pulse el botón \"Gráfico interactivo\".",
+      "algorithmic-trading": "Ábrelo y léelo.",
+      "trends-data-science": "Ábrelo y léelo.",
+      "macro-employment": "Ábrelo y léelo. Está la versión española y la inglesa.",
+      "linear-algebra": "Ábrelo y léelo.",
+      "vector-norms": "Ábrelo y léelo."
+    },
+    "output": {
+      "keyphrase-extraction": "Tablas con los N-gramas más repetidos.",
+      "seasonality-prediction": "Tabla con la previsión para el próximo ciclo y gráficos de: serie temporal original, comparando la predicción del último ciclo y el último ciclo real y la serie temporal junto con la previsión del próximo ciclo.",
+      "whatsapp": "Cuadro de mandos interactivo.",
+      "world-bank": "Tabla con los datos solicitados, opción de descargar la tabla en formato CSV y un gráfico interactivo.",
+      "algorithmic-trading": "Ninguna.",
+      "trends-data-science": "Ninguna.",
+      "macro-employment": "Ninguna.",
+      "linear-algebra": "Ninguna.",
+      "vector-norms": "Ninguna."
+    }
+  },
   "seasonality_prediction": {
     "title": "Predicción de estacionalidad",
     "intro": "Sube la hoja de cálculo a previsión.",

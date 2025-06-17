@@ -20,6 +20,52 @@
     "vector_norms": "벡터 규범",
     "lin_alg": "선형 대수학"
   },
+  "projects-description": {
+    "explanation": {
+      "keyphrase-extraction": "주요 내용을 요약한 텍스트에서 중요한 용어와 구문을 식별하고 추출하는 데 도움이 됩니다.",
+      "seasonality-prediction": "계절별 패턴을 기반으로 시계열의 값을 예측합니다.",
+      "whatsapp": "개인 및 그룹 채팅을 모두 분석하기 위해 주요 시각화가 포함된 대시보드를 생성합니다.",
+      "world-bank": "세계은행에서 수집한 데이터를 배포합니다.",
+      "algorithmic-trading": "클러스터화를 통해 포춘 500대 기업을 선정하여 바이 앤 홀드 전략의 백테스팅을 수행합니다.",
+      "trends-data-science": "2022년 timesjobs.com과 flexjobs.com의 데이터 과학 채용공고 분석.",
+      "macro-employment": "세계 은행의 경제 동향과 인사이트를 시각화하세요.",
+      "linear-algebra": "데이터 과학에서 사용되는 선형 대수 개념에 대한 이론적 설명입니다.",
+      "vector-norms": "일반 데이터 과학 작업에서 선형 대수 도구의 실제 사용 사례."
+    },
+    "utility": {
+      "keyphrase-extraction": "문서 분석, 검색 엔진 결과 최적화 또는 콘텐츠 요약.",
+      "seasonality-prediction": "계절별 패턴의 애니타임 시리즈.",
+      "whatsapp": "커뮤니케이션 패턴과 감성을 찾아보세요.",
+      "world-bank": "세계은행 데이터를 시각화하여 글로벌 경제 동향과 인사이트를 탐색하세요.",
+      "algorithmic-trading": "정기적으로 리밸런싱하는 주식 펀드의 종목을 자동으로 선택합니다.",
+      "trends-data-science": "시장의 우선순위를 시각화하세요.",
+      "macro-employment": "경제 정책이 GDP와 노동 시장에 미치는 영향을 이해합니다.",
+      "linear-algebra": "주제에서 기본 사항을 알아보세요.",
+      "vector-norms": "데이터 과학 작업에서 수학이 어떤 영향을 미치는지 알아보세요."
+    },
+    "howTo": {
+      "keyphrase-extraction": "텍스트 파일을 업로드하고, N-그램(n개의 요소 시퀀스)과 N-그램당 결과(행)의 개수를 지정한 후 '키프레이즈 추출' 버튼을 누릅니다.",
+      "seasonality-prediction": "숫자 데이터의 한 열과 헤더만 있는 Excel 파일을 업로드하고 주기(예: 분기별 데이터의 경우 4)를 선택한 다음 '예측 계산' 버튼을 누릅니다.",
+      "whatsapp": "대화에서 휴대폰 화면 오른쪽 상단에 있는 점 3개를 클릭하고 '더보기'를 선택한 다음 '채팅 내보내기'를 선택하여 WhatsApp 채팅을 내보냅니다. 그런 다음 텍스트 파일을 업로드하고 대화가 진행된 언어를 선택한 후 '채팅 분석' 버튼을 누릅니다.",
+      "world-bank": "선택한 데이터 유형에 따라 지표(예: 1인당 GDP), 데이터 유형, 연도 또는 국가를 선택한 후 '결과 표시' 버튼을 누릅니다. 그런 다음 원시 데이터를 원하면 'CSV 다운로드' 버튼을, 대화형 그래프를 원하면 '대화형 그래프' 버튼을 누릅니다.",
+      "algorithmic-trading": "열어 읽어보세요.",
+      "trends-data-science": "열어 읽어보세요.",
+      "macro-employment": "열어 읽어보세요. 스페인어 버전과 영어 버전이 있습니다.",
+      "linear-algebra": "열어 읽어보세요.",
+      "vector-norms": "열어 읽어보세요."
+    },
+    "output": {
+      "keyphrase-extraction": "반복되는 N-그램이 가장 많은 테이블입니다.",
+      "seasonality-prediction": "다음 주기에 대한 예측과 그래프가 포함된 표: 원래 시간 시리즈, 지난 주기의 예측과 실제 지난 주기 및 시간 시리즈와 다음 주기 예측을 비교합니다.",
+      "whatsapp": "대화형 대시보드.",
+      "world-bank": "요청된 데이터가 포함된 테이블, CSV 형식으로 테이블을 다운로드하는 옵션 및 대화형 그래프가 표시됩니다.",
+      "algorithmic-trading": "없음.",
+      "trends-data-science": "없음.",
+      "macro-employment": "없음.",
+      "linear-algebra": "없음.",
+      "vector-norms": "없음."
+    }
+  },
   "seasonality_prediction": {
     "title": "계절성 예측",
     "intro": "예측할 스프레드시트를 업로드합니다.",

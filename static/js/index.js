@@ -1,9 +1,14 @@
-// Home Page Functionalities - Versión Corregida
+// Home Page Functionalities
 
-const JSONfilePath = 'static/json/config.json';
+// const JSONfilePath = 'static/json/lang/english.json';
 
 function initializeProjectInteraction() {
+    // const projectItems = document.querySelectorAll(".back-content p");
+
+    const currentLang = localStorage.getItem('preferredLang') || 'english'; 
+    const JSONfilePath = `static/json/lang/${currentLang}.json`;
     const projectItems = document.querySelectorAll(".back-content p");
+
     const dynamicContainer = document.getElementById("dynamic-project-container");
     const detailElements = {
         explanation: document.getElementById("dynamic-text-explanation"),

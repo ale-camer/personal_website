@@ -20,6 +20,52 @@
     "vector_norms": "Norme vettoriali",
     "lin_alg": "Algebra lineare"
   },
+  "projects-description": {
+    "explanation": {
+      "keyphrase-extraction": "Aiuta a identificare ed estrarre termini e frasi importanti dai testi riassumendone il contenuto principale.",
+      "seasonality-prediction": "Previsione dei valori delle serie temporali in base ai loro modelli stagionali.",
+      "whatsapp": "Generare una dashboard con visualizzazioni chiave per analizzare le chat individuali e di gruppo.",
+      "world-bank": "Utilizzare i dati raccolti dalla Banca Mondiale.",
+      "algorithmic-trading": "Backtesting della strategia buy-and-hold delle società Fortune 500 selezionandole con la clusterizzazione.",
+      "trends-data-science": "Analisi degli annunci di lavoro in Data Science di timesjobs.com e flexjobs.com nel 2022.",
+      "macro-employment": "Visualizzare le tendenze e gli approfondimenti economici della Banca Mondiale.",
+      "linear-algebra": "Spiegazione teorica dei concetti di algebra lineare utilizzati nella scienza dei dati.",
+      "vector-norms": "Usi pratici degli strumenti di algebra lineare nelle normali attività di scienza dei dati."
+    },
+    "utility": {
+      "keyphrase-extraction": "Analizzare i documenti, ottimizzare i risultati dei motori di ricerca o riassumere i contenuti.",
+      "seasonality-prediction": "Serie a tempo con schema stagionale.",
+      "whatsapp": "Trovare schemi di comunicazione e sentimenti.",
+      "world-bank": "Visualizzate i dati della Banca Mondiale per esplorare le tendenze e gli approfondimenti economici globali.",
+      "algorithmic-trading": "Selezionare automaticamente i titoli di un fondo azionario che si ribilancia regolarmente.",
+      "trends-data-science": "Visualizzare le priorità del mercato.",
+      "macro-employment": "Comprendere le conseguenze delle politiche economiche sul PIL e quindi sul mercato del lavoro.",
+      "linear-algebra": "Imparate le basi dell'argomento.",
+      "vector-norms": "Imparare a conoscere l'impatto della matematica nelle attività di scienza dei dati."
+    },
+    "howTo": {
+      "keyphrase-extraction": "Caricate un file di testo, specificate il numero di N-grammi (sequenza di n elementi) e di risultati (righe) per N-gramma e premete il pulsante \"Estrai frasi chiave\".",
+      "seasonality-prediction": "Caricare un file Excel con una sola colonna di dati numerici e un'intestazione, selezionare la periodicità (ad esempio, 4 per i dati trimestrali) e premere il pulsante \"Calcola previsione\".",
+      "whatsapp": "Esportare la chat di WhatsApp cliccando sui tre puntini nell'angolo superiore destro dello schermo del telefono durante la conversazione, selezionare \"Altro\" e poi \"Esporta chat\". Successivamente, caricare il file di testo, selezionare la lingua in cui si è svolta la conversazione e premere il pulsante \"Analizza chat\".",
+      "world-bank": "Selezionare: l'indicatore (ad esempio, il PIL pro capite), il tipo di dati e l'anno o il paese a seconda del tipo di dati scelto e premere il pulsante \"Mostra risultati\". Successivamente, se si desiderano i dati grezzi, premere il pulsante \"Scarica CSV\" e/o se si desidera un grafico interattivo, premere il pulsante \"Grafico interattivo\".",
+      "algorithmic-trading": "Aprire e leggere.",
+      "trends-data-science": "Aprire e leggere.",
+      "macro-employment": "Aprire e leggere. C'è la versione spagnola e quella inglese.",
+      "linear-algebra": "Aprire e leggere.",
+      "vector-norms": "Aprire e leggere."
+    },
+    "output": {
+      "keyphrase-extraction": "Tabelle con il maggior numero di N-grammi ripetuti.",
+      "seasonality-prediction": "Tabella con previsione del prossimo ciclo e grafici di: serie temporale originale, confronto tra la previsione dell'ultimo ciclo e l'ultimo ciclo reale e serie temporale con previsione del prossimo ciclo.",
+      "whatsapp": "Cruscotto interattivo.",
+      "world-bank": "Tabella con i dati richiesti, possibilità di scaricare la tabella in formato CSV e un grafico interattivo.",
+      "algorithmic-trading": "Nessuno.",
+      "trends-data-science": "Nessuno.",
+      "macro-employment": "Nessuno.",
+      "linear-algebra": "Nessuno.",
+      "vector-norms": "Nessuno."
+    }
+  },
   "seasonality_prediction": {
     "title": "Previsione della stagionalità",
     "intro": "Caricare il foglio di calcolo in previsione.",
@@ -48,7 +94,7 @@
     "error_title": "Dettagli sull'errore",
     "plots_title": "Trame",
     "error_message": "Il file è vuoto",
-    "validation": "Controllare: <br><br> 1. Formato dei dati (numerico) <br> 2. Numero di colonne (= 1) <br> 3. Periodicità (> 1) <br> 4. Resto (lunghezza serie % periodicità = 0). Rimanenza (lunghezza serie % periodicità = 0)"
+    "validation": "Controllare: <br><br> 1. Formato dei dati (numerico) <br> 2. Numero di colonne (= 1) Numero di colonne (= 1) <br> 3. Periodicità (> 1) <br> 4. Resto (lunghezza serie % periodicità = 0). Rimanenza (lunghezza serie % periodicità = 0)"
   },
   "mi_cv": {
     "work_title": "Esperienza di lavoro nei dati",
@@ -154,7 +200,7 @@
   "keyphrase_extraction": {
     "keyphrase_title": "Estrazione delle frasi chiave",
     "intro": "Caricate il testo da cui volete ricavare le frasi chiave.",
-    "instruction": "Caricare il file di testo (sono ammessi solo file .txt):",
+    "instruction": "Caricate il vostro file di testo (sono ammessi solo file .txt):",
     "ngrams": "Numero di N-grammi:",
     "rgrams": "Risultati per N-grammi:",
     "button_1": "Estrarre <br>Frasi chiave",

@@ -111,7 +111,7 @@ def extract_keyphrases():
       max_ngrams=int(request.form.get('num_tables', 1)),
       num_nrows=int(request.form.get('num_rows', 1))
     )
-    result = ngrams.analyze()
+    result = ut.timed_run(ngrams.analyze, process_str="Keyphrases extracted")
     ut.write_json(ngrams.summary, KEYPHRASE_INPUT_PATH)
     return render_template('keyphrase.html', results=result)
 

@@ -3,36 +3,41 @@
 # =============================================================================
 # IMPORTS
 # =============================================================================
-import os, warnings
+# --- Standard library ---
+import os
+import warnings
+
+# --- Third-party ---
+from dotenv import load_dotenv
+
+# --- Project/system ---
 from app import app
 from modules.utils import read_json, remove_temp_files, timed_run
-from modules.generate_readme import ReadmeGenerator
-from modules.generate_translations import main as generate_translations
 
+# =============================================================================
+# CONFIGURATION
+# =============================================================================
+load_dotenv()
 warnings.filterwarnings("ignore")
 
-# =============================================================================
-# VARIABLES
-# =============================================================================
-TEMPLATE_FOLDER = 'templates'
+IS_DEV = os.environ.get('FLASK_ENV') == 'development'
+
 CONFIG_FILE_PATH = os.path.join('static', 'json', 'config.json')
-TEXTS_FILE_PATH = os.path.join('static', 'json', 'texts_en.json')
-
 config = read_json(CONFIG_FILE_PATH)
-temp_folders_to_clean = config["temporary_folders"]
-
-g = ReadmeGenerator(output_file="README.md")
+TEMP_FOLDERS_TO_CLEAN = config["temporary_folders"]
 
 # =============================================================================
 # RUN
 # =============================================================================
-def main():
-    timed_run(remove_temp_files, temp_folders_to_clean, in_seconds=True, process_str="Temporary folders cleaned")
-    # g.generate_readme_file()
-    # generate_translations()
-    
-    # app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=False)
-    app.run(debug=True)
-
 if __name__ == '__main__':
-    main()
+    timed_run(
+        remove_temp_files, 
+        TEMP_FOLDERS_TO_CLEAN, 
+        in_seconds=True, 
+        process_str="Temporary folders cleaned"
+    )
+    app.run(
+        debug=IS_DEV,
+        host='0.0.0.0' if not IS_DEV else None,
+        port=int(os.environ.get("PORT", 5000)) if not IS_DEV else 5000
+    )

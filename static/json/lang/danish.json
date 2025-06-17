@@ -20,6 +20,52 @@
     "vector_norms": "Vektor-normer",
     "lin_alg": "Lineær algebra"
   },
+  "projects-description": {
+    "explanation": {
+      "keyphrase-extraction": "Hjælper med at identificere og uddrage vigtige termer og sætninger fra tekster, der opsummerer hovedindholdet.",
+      "seasonality-prediction": "Forudsig værdier for tidsserier baseret på deres sæsonmønstre.",
+      "whatsapp": "Opret et dashboard med vigtige visualiseringer for at analysere både individuelle chats og gruppechats.",
+      "world-bank": "Brug data indsamlet af Verdensbanken.",
+      "algorithmic-trading": "Backtest af køb-og-hold-strategi for Fortune 500-virksomheder ved at udvælge dem med klyngedannelse.",
+      "trends-data-science": "Analyse af data science-jobopslag fra timesjobs.com og flexjobs.com i 2022.",
+      "macro-employment": "Visualiser Verdensbankens økonomiske tendenser og indsigt.",
+      "linear-algebra": "Teoretisk forklaring af lineær algebra-koncepter til brug i datavidenskab.",
+      "vector-norms": "Praktisk brug af lineære algebraværktøjer i almindelige datavidenskabelige opgaver."
+    },
+    "utility": {
+      "keyphrase-extraction": "Analyse af dokumenter, optimering af søgemaskineresultater eller opsummering af indhold.",
+      "seasonality-prediction": "Enhver tidsserie med sæsonbestemt mønster.",
+      "whatsapp": "Find kommunikationsmønstre og følelser.",
+      "world-bank": "Visualiser Verdensbankens data for at udforske globale økonomiske tendenser og indsigter.",
+      "algorithmic-trading": "Vælg aktier automatisk til en aktiefond, der rebalancerer regelmæssigt.",
+      "trends-data-science": "Visualiser markedets prioriteter.",
+      "macro-employment": "Forstå konsekvenserne af den økonomiske politik på BNP og dermed på arbejdsmarkedet.",
+      "linear-algebra": "Lær det grundlæggende i emnet.",
+      "vector-norms": "Lær, hvordan matematik påvirker datavidenskabelige opgaver."
+    },
+    "howTo": {
+      "keyphrase-extraction": "Upload en tekstfil, angiv antallet af N-grammer (sekvens af n elementer) og resultater (rækker) pr. N-gram, og tryk på knappen \"Uddrag nøglefraser\".",
+      "seasonality-prediction": "Upload en Excel-fil med kun én kolonne med numeriske data og en overskrift, vælg periodicitet (f.eks. 4 for kvartalsdata), og tryk på knappen \"Beregn forudsigelse\".",
+      "whatsapp": "Eksporter WhatsApp-chat ved at klikke på de tre prikker i øverste højre hjørne af telefonskærmen i samtalen, vælg 'Mere' og derefter 'Eksporter chat'. Herefter skal du uploade tekstfilen, vælge det sprog, som samtalen foregik på, og trykke på knappen \"Analyser chat\".",
+      "world-bank": "Vælg: indikator (f.eks. BNP pr. indbygger), datatype og år eller land afhængigt af den valgte datatype, og tryk på knappen \"Vis resultater\". Hvis du derefter vil have de rå data, skal du trykke på knappen \"Download CSV\", og/eller hvis du vil have en interaktiv graf, skal du trykke på knappen \"Interaktiv graf\".",
+      "algorithmic-trading": "Åbn og læs den.",
+      "trends-data-science": "Åbn og læs den.",
+      "macro-employment": "Åbn og læs den. Der er en spansk og en engelsk version.",
+      "linear-algebra": "Åbn og læs den.",
+      "vector-norms": "Åbn og læs den."
+    },
+    "output": {
+      "keyphrase-extraction": "Tabeller med flest gentagne N-grammer.",
+      "seasonality-prediction": "Tabel med prognose for næste cyklus og grafer over: oprindelig tidsserie, sammenligning af forudsigelse af sidste cyklus og reel sidste cyklus og tidsserie sammen med prognose for næste cyklus.",
+      "whatsapp": "Interaktivt dashboard.",
+      "world-bank": "Tabel med de ønskede data, mulighed for at downloade tabellen i et CSV-format og et interaktivt diagram.",
+      "algorithmic-trading": "Ingen.",
+      "trends-data-science": "Ingen.",
+      "macro-employment": "Ingen.",
+      "linear-algebra": "Ingen.",
+      "vector-norms": "Ingen."
+    }
+  },
   "seasonality_prediction": {
     "title": "Forudsigelse af sæsonudsving",
     "intro": "Upload regnearket til forecast.",
@@ -77,7 +123,7 @@
     "resp_1_abinbev": "Opdagelse af svindel: Identificerede uregelmæssigheder i køb, enheder, konti og kuponbrug af slutbrugere samt butikker og leveringsoperationer ved hjælp af teknikker som isolationsskove, klyngedannelse og eksplorativ dataanalyse.",
     "resp_2_abinbev": "Prisstrategi: Analyserede brugeradfærd ved hjælp af både interne og eksterne variabler for at udføre eksperimenter, der havde til formål at øge volumen eller margin på tværs af forskellige produkt- og geografiske segmenter gennem eksplorativ analyse og regressionsmodeller.",
     "resp_3_abinbev": "Rapportering og ad hoc-analyse: Leverede dataundersøgelser og analyserapporter til svindel- og prisinitiativer eller anmodninger fra forskellige lande.",
-    "resp_4_abinbev": "Databasestyring: Oprettede og vedligeholdt svindelrelaterede databasetabeller og sikrede nøjagtighed og rettidige opdateringer for at lette den smidige drift af algoritmer til afsløring af svindel.",
+    "resp_4_abinbev": "Databasestyring: Oprettede og vedligeholdt svindelrelaterede databasetabeller og sikrede nøjagtighed og rettidige opdateringer for at gøre det lettere for algoritmerne til afsløring af svindel at fungere problemfrit.",
     "skill_1_abinbev": "Programmering: Python, Spark, DAX",
     "skill_2_abinbev": "Rammeværk: Pandas, Numpy, Sklearn, Seaborn, Plotly, Scipy",
     "skill_3_abinbev": "Database: SQL, Azure Cosmos DB",

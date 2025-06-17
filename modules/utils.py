@@ -8,6 +8,7 @@ import json
 import os
 import re
 import shutil
+import psutil
 from time import time
 
 # --- Third-party ---
@@ -46,7 +47,6 @@ def write_txt(content: str, path: str) -> None:
         f.write(content)
 
 def remove_temp_files(folders: str | list[str], files_to_remove: list[str] = None, protected_folders: list[str] = None) -> None:
-    start_time = time()
     if isinstance(folders, str):
         folders = [folders]
     for folder in folders:
@@ -72,15 +72,21 @@ def remove_temp_files(folders: str | list[str], files_to_remove: list[str] = Non
 # =============================================================================
 # TIME
 # =============================================================================
-def timed_run(func, *args, in_seconds: bool = False, decimals: int = 4, process_str: str, **kwargs):
-    start = time()
+def timed_run(func, *args, in_seconds: bool = False, decimals: int = 4, process_str: str = "", **kwargs):
+
+    process = psutil.Process(os.getpid())
+    get_time = lambda: time()
+    get_memory = lambda: process.memory_info().rss / (1024 ** 2)
+    delta = lambda after, before: after - before
+
+    memory_before, time_before = get_memory(), get_time()
     result = func(*args, **kwargs)
-    duration = time() - start
-    if in_seconds:
-        print(f"{process_str} in: {duration:.4f} seconds")
-    else:
-        minutes = duration / 60
-        print(f"{process_str} in: {minutes:.{decimals}f} minutes")
+    memory_after, time_after = get_memory(), get_time()
+    memory_delta, time_delta = delta(memory_after, memory_before), delta(time_after, time_before)
+
+    time_msg = f"{time_delta:.4f} seconds" if in_seconds else f"{time_delta / 60:.{decimals}f} minutes"
+    print(f"{process_str} in {time_msg} and with {memory_delta:.4f} MB of memory used.")
+
     return result
 
 def job_duration() -> str:

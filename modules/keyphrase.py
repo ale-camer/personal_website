@@ -19,8 +19,18 @@ from modules.utils import text_normalizer, transform_words
 # =============================================================================
 # TOP NGRAMS
 # =============================================================================
-import time
+from modules.utils import timed_run
+from sklearn.feature_extraction.text import CountVectorizer
+
 progress = {"value": 0}
+
+def timed_method(process_str=None):
+    def decorator(fn):
+        def wrapper(self, *args, **kwargs):
+            name = process_str or fn.__name__
+            return timed_run(lambda: fn(self, *args, **kwargs), process_str=name)
+        return wrapper
+    return decorator
 
 @dataclass
 class NGramConfig:
@@ -33,6 +43,7 @@ class NGramAnalyzer:
     def __init__(self, language: str = 'english'):       
         self.url_regex = re.compile(r'http\S+')
     
+    @timed_method("Analyze")
     def analyze(self, config: NGramConfig) -> dict:
         global progress
         progress["value"] = 0
@@ -43,6 +54,7 @@ class NGramAnalyzer:
           config.num_nrows
         )
         
+    @timed_method("Normalize sentences")
     def _normalize_sentences(self, text: str) -> list:
         sentences = re.split(r'[.!?]\s+', text)
         normalized = []
@@ -52,6 +64,7 @@ class NGramAnalyzer:
             progress["value"] = int((i + 1) / total * 100)
         return normalized
     
+    @timed_method("Build ngram tables")
     def _build_ngram_tables(self, sentences: list, max_ngram: int, nrows_per_table: int) -> dict:
         return {
             f"N-Gram Value: {n}": self._get_top_ngrams(
@@ -63,17 +76,23 @@ class NGramAnalyzer:
             for n in range(1, max_ngram + 1)
         }
     
+    @timed_method("Get top ngrams")
     def _get_top_ngrams(self, corpus: list[str], ngram_val: int = 1, limit: int = 10, nrows: int = 5) -> pd.DataFrame:
         tokens = re.findall(r'\b\w+\b', self._flatten_sentences(corpus))
         ngrams_freq = Counter(self._generate_ngrams(tokens, ngram_val))
         return self._format_ngrams_table(ngrams_freq, limit, nrows)
     
+    @timed_method("Flatten sentences")
     def _flatten_sentences(self, corpus: list[str]) -> str:
         return transform_words('  '.join(corpus), fn=lambda w: w.strip())
         
+    @timed_method("Generate ngrams")
     def _generate_ngrams(self, tokens: list[str], n: int) -> list[tuple]:
-        return list(zip(*(tokens[i:] for i in range(n))))
-    
+        length = len(tokens)
+        for i in range(length - n + 1):
+            yield tuple(tokens[i:i + n])
+                
+    @timed_method("Format ngrams tables")
     def _format_ngrams_table(self, ngrams_freq: dict[tuple, int], limit: int, nrows: int) -> pd.DataFrame:
         top_ngrams = sorted(ngrams_freq.items(), key=lambda x: x[1], reverse=True)[:limit]
         top_ngrams_formatted = [(' '.join(ngram), freq) for ngram, freq in top_ngrams][:nrows]

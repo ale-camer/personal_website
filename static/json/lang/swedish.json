@@ -20,6 +20,52 @@
     "vector_norms": "Vektornormer",
     "lin_alg": "Linjär algebra"
   },
+  "projects-description": {
+    "explanation": {
+      "keyphrase-extraction": "Hjälper till att identifiera och extrahera viktiga termer och fraser från texter som sammanfattar huvudinnehållet.",
+      "seasonality-prediction": "Prognostisera värden för tidsserier baserat på deras säsongsmönster.",
+      "whatsapp": "Skapa en instrumentpanel med viktiga visualiseringar för att analysera både enskilda chattar och gruppchattar.",
+      "world-bank": "Använda data som samlats in av Världsbanken.",
+      "algorithmic-trading": "Backtesting av buy-and-hold-strategi för Fortune 500-företag genom att välja ut dem med hjälp av klustring.",
+      "trends-data-science": "Analys av jobbannonser inom Data Science från timesjobs.com och flexjobs.com under 2022.",
+      "macro-employment": "Visualisera Världsbankensasdadal ekonomiska trender och insikter.",
+      "linear-algebra": "Teoretisk förklaring av begrepp inom linjär algebra som används inom datavetenskap.",
+      "vector-norms": "Praktisk användning av verktyg för linjär algebra i vanliga datavetenskapliga uppgifter."
+    },
+    "utility": {
+      "keyphrase-extraction": "Analysera dokument, optimera sökmotorresultat eller sammanfatta innehåll.",
+      "seasonality-prediction": "Varje tidsserie med säsongsmönster.",
+      "whatsapp": "Hitta kommunikationsmönster och känslor.",
+      "world-bank": "Visualisera data från Världsbanken för att utforska globala ekonomiska trender och insikter.",
+      "algorithmic-trading": "Välj aktier automatiskt för en aktiefond som ombalanseras regelbundet.",
+      "trends-data-science": "Visualisera marknadens prioriteringar.",
+      "macro-employment": "Förstå konsekvenserna av den ekonomiska politiken för BNP och därmed för arbetsmarknaden.",
+      "linear-algebra": "Lär dig grunderna i ämnet.",
+      "vector-norms": "Lär dig hur viss matematik påverkar datavetenskapliga uppgifter."
+    },
+    "howTo": {
+      "keyphrase-extraction": "Ladda upp en textfil, ange antalet N-gram (sekvens av n element) och resultat (rader) per N-gram och tryck på knappen \"Extrahera nyckelfraser\".",
+      "seasonality-prediction": "Ladda upp en Excel-fil med bara en kolumn med numeriska data och en rubrik, välj periodicitet (t.ex. 4 för kvartalsdata) och tryck på knappen \"Beräkna prediktion",
+      "whatsapp": "Exportera WhatsApp-chatt genom att klicka på de tre punkterna i det övre högra hörnet av telefonskärmen i konversationen, välj \"Mer\" och sedan \"Exportera chatt\". Efter det laddar du upp textfilen, väljer det språk som konversationen hölls på och trycker på knappen \"Analysera chatt\".",
+      "world-bank": "Välj: indikator (t.ex. BNP per capita), datatyp och år eller land beroende på vilken datatyp som valts och tryck på knappen \"Show Results\". Om du sedan vill ha rådata klickar du på knappen \"Download CSV\" och/eller om du vill ha ett interaktivt diagram klickar du på knappen \"Interactive Graph\".",
+      "algorithmic-trading": "Öppna och läs den.",
+      "trends-data-science": "Öppna och läs den.",
+      "macro-employment": "Öppna och läs den. Det finns en spansk och en engelsk version.",
+      "linear-algebra": "Öppna och läs den.",
+      "vector-norms": "Öppna och läs den."
+    },
+    "output": {
+      "keyphrase-extraction": "Tabeller med de mest upprepade N-grammen.",
+      "seasonality-prediction": "Tabell med prognos för nästa cykel och grafer över: ursprunglig tidsserie, jämförelse av prognos för senaste cykeln och verklig senaste cykel och tidsserie tillsammans med prognos för nästa cykel.",
+      "whatsapp": "Interaktiv instrumentpanel.",
+      "world-bank": "Tabell med begärda data, möjlighet att ladda ner tabellen i CSV-format och en interaktiv graf.",
+      "algorithmic-trading": "Ingen.",
+      "trends-data-science": "Ingen.",
+      "macro-employment": "Ingen.",
+      "linear-algebra": "Ingen.",
+      "vector-norms": "Ingen."
+    }
+  },
   "seasonality_prediction": {
     "title": "Förutsägelse av säsongsvariationer",
     "intro": "Ladda upp kalkylbladet till forecast.",

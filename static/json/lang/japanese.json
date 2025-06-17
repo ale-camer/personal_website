@@ -20,6 +20,52 @@
     "vector_norms": "ベクトル規範",
     "lin_alg": "線形代数"
   },
+  "projects-description": {
+    "explanation": {
+      "keyphrase-extraction": "主な内容を要約したテキストから、重要な用語やフレーズを特定し、抽出するのに役立ちます。",
+      "seasonality-prediction": "季節的パターンに基づいて時系列の値を予測する。",
+      "whatsapp": "個人チャットとグループチャットの両方を分析するために、主要な視覚化されたダッシュボードを生成します。",
+      "world-bank": "世界銀行が収集したデータを導入する。",
+      "algorithmic-trading": "フォーチュン500社のバイ・アンド・ホールド戦略のバックテスト。",
+      "trends-data-science": "2022年におけるtimesjobs.comとflexjobs.comのデータサイエンス求人情報の分析。",
+      "macro-employment": "世界銀行の経済動向と洞察を可視化します。",
+      "linear-algebra": "データサイエンスにおける線形代数概念の理論的説明。",
+      "vector-norms": "通常のデータサイエンス・タスクにおける線形代数ツールの実用的な使用法。"
+    },
+    "utility": {
+      "keyphrase-extraction": "文書の分析、検索エンジンの検索結果の最適化、コンテンツの要約。",
+      "seasonality-prediction": "季節柄のあるシリーズ。",
+      "whatsapp": "コミュニケーションのパターンや感情を見つける。",
+      "world-bank": "世界銀行のデータを視覚化して、世界経済のトレンドや洞察を探る。",
+      "algorithmic-trading": "定期的にリバランスを行う株式ファンドの銘柄を自動的に選択する。",
+      "trends-data-science": "市場の優先順位を可視化する。",
+      "macro-employment": "GDP、ひいては労働市場における経済政策の結果を理解する。",
+      "linear-algebra": "このトピックで基本を学ぶ。",
+      "vector-norms": "データサイエンスのタスクで数学がどのように影響するかを学ぶ。"
+    },
+    "howTo": {
+      "keyphrase-extraction": "テキストファイルをアップロードし、N-gram（n個の要素の並び）の数とN-gramごとの結果（行）を指定し、「Extract Keyphrases」ボタンを押す。",
+      "seasonality-prediction": "数値データ1列とヘッダーだけのエクセルファイルをアップロードし、周期性（例えば四半期データなら4）を選択し、「予測計算」ボタンを押す。",
+      "whatsapp": "WhatsAppチャットをエクスポートするには、会話中の電話画面右上にある3つの点をクリックし、'その他'、'チャットのエクスポート'の順に選択します。テキストファイルをアップロードし、会話の言語を選択し、「チャットを分析」ボタンをクリック。",
+      "world-bank": "指標（例：一人当たりGDP）、データ・タイプ、選択したデータ・タイプに応じて年または国を選択し、「結果を表示」ボタンをクリックする。生データが必要な場合は「Download CSV」ボタンを、インタラクティブなグラフが必要な場合は「Interactive Graph」ボタンをクリックしてください。",
+      "algorithmic-trading": "開いて読んでください。",
+      "trends-data-science": "開いて読んでください。",
+      "macro-employment": "開いて読んでみてください。スペイン語版と英語版があります。",
+      "linear-algebra": "開いて読んでください。",
+      "vector-norms": "開いて読んでください。"
+    },
+    "output": {
+      "keyphrase-extraction": "繰り返しN-gramが多い表。",
+      "seasonality-prediction": "次のサイクルの予測表と、元の時系列、前サイクルの予測と実際の前サイクルの比較、次のサイクルの予測に沿った時系列のグラフ。",
+      "whatsapp": "インタラクティブなダッシュボード。",
+      "world-bank": "要求されたデータの表、CSVフォーマットで表をダウンロードするオプション、およびインタラクティブなグラフ。",
+      "algorithmic-trading": "いない。",
+      "trends-data-science": "いない。",
+      "macro-employment": "いない。",
+      "linear-algebra": "いない。",
+      "vector-norms": "いない。"
+    }
+  },
   "seasonality_prediction": {
     "title": "季節性予測",
     "intro": "スプレッドシートを予測にアップロードする。",
@@ -65,7 +111,7 @@
     "region_siemens": "グローバル",
     "sector_siemens": "エンジニアリング",
     "resp_1_siemens": "マース社の財務レポート自動化自動化されたデータ処理と可視化システムの開発により、経営陣（CFO、CEO、オーナー）のプロセスを合理化。",
-    "skill_1_siemens": "プログラミング: DAX",
+    "skill_1_siemens": "プログラミング： DAX",
     "skill_2_siemens": "データベース：SQL",
     "skill_3_siemens": "可視化Power BI",
     "skill_4_siemens": "クラウド：Microsoft Azure",
@@ -99,7 +145,7 @@
     "region_balanz": "アルゼンチン",
     "sector_balanz": "アルゴリズム取引",
     "resp_1_balanz": "データサイエンスLSTMアルゴリズムを用いて一変量および多変量の金融時系列を予測。",
-    "resp_2_balanz": "データ分析：金融、企業、経済データを対象に、回帰やクラスタリングの手法を用いた探索的分析や多変量解析を行い、トレーディング戦略のための知見を得る。",
+    "resp_2_balanz": "データ分析：金融、企業、経済データについて、回帰やクラスタリングの手法を用いた探索的分析や多変量解析を行い、トレーディング戦略のための知見を得る。",
     "resp_3_balanz": "アルゴリズム取引：アルゼンチンおよび米国資本市場の取引戦略を開発し、バックテストを実施。",
     "resp_4_balanz": "視覚化：ボラティリティ・サーフェスやボラティリティ・スマイルなど、トレーダー向けの主要なビジュアライゼーションを制作。",
     "skill_1_balanz": "プログラミングPython、R",

@@ -20,6 +20,52 @@
     "vector_norms": "Vectornormen",
     "lin_alg": "Lineaire algebra"
   },
+  "projects-description": {
+    "explanation": {
+      "keyphrase-extraction": "Helpt bij het identificeren en extraheren van belangrijke termen en zinnen uit teksten die de hoofdinhoud samenvatten.",
+      "seasonality-prediction": "Waarden van tijdreeksen voorspellen op basis van seizoenspatronen.",
+      "whatsapp": "Genereer een dashboard met belangrijke visualisaties om zowel individuele als groepschats te analyseren.",
+      "world-bank": "Gebruik gegevens verzameld door de Wereldbank.",
+      "algorithmic-trading": "Backtesting van buy-and-hold strategie van Fortune 500 bedrijven door ze te selecteren met clusterisatie.",
+      "trends-data-science": "Analyse van Data Science-vacatures van timesjobs.com en flexjobs.com in 2022.",
+      "macro-employment": "Visualiseer economische trends en inzichten van de Wereldbankasdadal.",
+      "linear-algebra": "Theoretische uitleg van lineaire algebra concepten voor gebruik in data science.",
+      "vector-norms": "Praktisch gebruik van hulpmiddelen voor lineaire algebra in reguliere datawetenschapstaken."
+    },
+    "utility": {
+      "keyphrase-extraction": "Documenten analyseren, zoekmachineresultaten optimaliseren of inhoud samenvatten.",
+      "seasonality-prediction": "Elke tijdserie met seizoenspatroon.",
+      "whatsapp": "Vind communicatiepatronen en sentimenten.",
+      "world-bank": "Visualiseer gegevens van de Wereldbank om wereldwijde economische trends en inzichten te onderzoeken.",
+      "algorithmic-trading": "Selecteer automatisch aandelen voor een aandelenfonds dat regelmatig opnieuw in evenwicht wordt gebracht.",
+      "trends-data-science": "Visualiseer de prioriteiten van de markt.",
+      "macro-employment": "De gevolgen van het economisch beleid op het BBP en dus op de arbeidsmarkt begrijpen.",
+      "linear-algebra": "Leer de basis van dit onderwerp.",
+      "vector-norms": "Leer hoe wiskunde van invloed is op data science-taken."
+    },
+    "howTo": {
+      "keyphrase-extraction": "Upload een tekstbestand, geef het aantal N-grammen (opeenvolging van n elementen) en resultaten (rijen) per N-gram op en klik op de knop 'Extract Keyphrases'.",
+      "seasonality-prediction": "Upload een Excel-bestand met slechts één kolom numerieke gegevens en een koptekst, selecteer de periodiciteit (bijvoorbeeld 4 voor kwartaalgegevens) en druk op de knop 'Voorspelling berekenen'.",
+      "whatsapp": "Exporteer WhatsApp-chat door in het gesprek op de drie puntjes in de rechterbovenhoek van het telefoonscherm te klikken, 'Meer' te selecteren en vervolgens 'Chat exporteren'. Daarna upload je het tekstbestand, selecteer je de taal waarin het gesprek werd gevoerd en klik je op de knop 'Chat analyseren'.",
+      "world-bank": "Selecteer: indicator (bijv. BBP per hoofd), gegevenstype en het jaar of land afhankelijk van het gekozen gegevenstype en klik op de knop 'Resultaten weergeven'. Klik hierna op de knop 'Download CSV' als je de ruwe gegevens wilt zien en/of op de knop 'Interactieve grafiek' als je een interactieve grafiek wilt.",
+      "algorithmic-trading": "Open het en lees het.",
+      "trends-data-science": "Open het en lees het.",
+      "macro-employment": "Open het en lees het. Er is een Spaanse en een Engelse versie.",
+      "linear-algebra": "Open het en lees het.",
+      "vector-norms": "Open het en lees het."
+    },
+    "output": {
+      "keyphrase-extraction": "Tabellen met meest herhaalde N-grammen.",
+      "seasonality-prediction": "Tabel met voorspelling voor de volgende cyclus en grafieken van: originele tijdreeks, vergelijking van voorspelling van laatste cyclus en echte laatste cyclus en tijdreeks samen met voorspelling voor de volgende cyclus.",
+      "whatsapp": "Interactief dashboard.",
+      "world-bank": "Tabel met gevraagde gegevens, optie om de tabel te downloaden in CSV-formaat en een interactieve grafiek.",
+      "algorithmic-trading": "Geen.",
+      "trends-data-science": "Geen.",
+      "macro-employment": "Geen.",
+      "linear-algebra": "Geen.",
+      "vector-norms": "Geen."
+    }
+  },
   "seasonality_prediction": {
     "title": "Seizoensvoorspelling",
     "intro": "Upload de spreadsheet naar de voorspelling.",

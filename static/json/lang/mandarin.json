@@ -20,6 +20,52 @@
     "vector_norms": "矢量规范",
     "lin_alg": "线性代数"
   },
+  "projects-description": {
+    "explanation": {
+      "keyphrase-extraction": "帮助从概述主要内容的文本中识别和提取重要术语和短语。",
+      "seasonality-prediction": "根据季节性模式预测时间序列的数值。",
+      "whatsapp": "生成具有关键可视化功能的仪表板，以便分析个人和群组聊天。",
+      "world-bank": "利用世界银行收集的数据。",
+      "algorithmic-trading": "通过聚类选择《财富》500 强公司，对买入并持有策略进行回溯测试。",
+      "trends-data-science": "分析 2022 年 timesjobs.com 和 flexjobs.com 上的数据科学招聘信息。",
+      "macro-employment": "可视化世界银行的经济趋势和见解。",
+      "linear-algebra": "数据科学中使用的线性代数概念的理论解释。",
+      "vector-norms": "在常规数据科学任务中实际使用线性代数工具。"
+    },
+    "utility": {
+      "keyphrase-extraction": "分析文件、优化搜索引擎结果或总结内容。",
+      "seasonality-prediction": "任何具有季节性模式的时间序列。",
+      "whatsapp": "找到沟通模式和情感。",
+      "world-bank": "可视化世界银行数据，探索全球经济趋势和见解。",
+      "algorithmic-trading": "为定期重新平衡的股票基金自动选择股票。",
+      "trends-data-science": "直观了解市场的优先事项。",
+      "macro-employment": "了解经济政策对国内生产总值以及劳动力市场的影响。",
+      "linear-algebra": "学习该主题的基础知识。",
+      "vector-norms": "了解一些数学知识对数据科学任务的影响。"
+    },
+    "howTo": {
+      "keyphrase-extraction": "上传文本文件，指定每个 N-gram（n 个元素的序列）和结果（行）的数量，然后点击 \"提取关键词 \"按钮。",
+      "seasonality-prediction": "上传一个只有一列数字数据和一个标题的 Excel 文件，选择周期（例如，季度数据为 4），然后点击 \"计算预测 \"按钮",
+      "whatsapp": "在对话中点击手机屏幕右上角的三个点，选择 \"更多\"，然后点击 \"导出聊天记录\"，即可导出 WhatsApp 聊天记录。然后上传文本文件，选择对话使用的语言，点击 \"分析聊天 \"按钮。",
+      "world-bank": "选择：指标（如人均国内生产总值）、数据类型、年份或国家（取决于所选数据类型），然后点击 \"显示结果 \"按钮。之后，如果您想要原始数据，请点击 \"下载 CSV \"按钮；如果您想要交互式图表，请点击 \"交互式图表 \"按钮。",
+      "algorithmic-trading": "打开并阅读。",
+      "trends-data-science": "打开并阅读。",
+      "macro-employment": "打开阅读。有西班牙语版和英语版。",
+      "linear-algebra": "打开并阅读。",
+      "vector-norms": "打开并阅读。"
+    },
+    "output": {
+      "keyphrase-extraction": "重复 N-grams 最多的表格。",
+      "seasonality-prediction": "下一周期预测表以及下列图表：原始时间序列、上一周期预测与实际上一周期的比较、时间序列以及下一周期预测。",
+      "whatsapp": "交互式仪表板。",
+      "world-bank": "包含所需数据的表格、以 CSV 格式下载表格的选项以及交互式图表。",
+      "algorithmic-trading": "无。",
+      "trends-data-science": "无。",
+      "macro-employment": "无。",
+      "linear-algebra": "无。",
+      "vector-norms": "无。"
+    }
+  },
   "seasonality_prediction": {
     "title": "季节性预测",
     "intro": "将电子表格上传到预测系统。",
@@ -99,7 +145,7 @@
     "region_balanz": "阿根廷",
     "sector_balanz": "算法交易",
     "resp_1_balanz": "数据科学：使用 LSTM 算法预测单变量和多变量金融时间序列。",
-    "resp_2_balanz": "数据分析：利用回归和聚类技术对金融、企业和经济数据进行探索性和多变量分析，为交易策略提供见解。",
+    "resp_2_balanz": "数据分析：使用回归和聚类技术对金融、企业和经济数据进行探索性和多变量分析，为交易策略提供见解。",
     "resp_3_balanz": "算法交易：为阿根廷和美国资本市场开发交易策略并进行回溯测试。",
     "resp_4_balanz": "可视化：为交易者制作重要的可视化工具，包括波动率曲面和波动率微笑。",
     "skill_1_balanz": "编程：Python, R",

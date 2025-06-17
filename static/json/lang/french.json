@@ -20,6 +20,52 @@
     "vector_norms": "Normes vectorielles",
     "lin_alg": "Algèbre linéaire"
   },
+  "projects-description": {
+    "explanation": {
+      "keyphrase-extraction": "Permet d'identifier et d'extraire les termes et phrases importants de textes résumant le contenu principal.",
+      "seasonality-prediction": "Prévision des valeurs d'une série temporelle sur la base de ses tendances saisonnières.",
+      "whatsapp": "Générer un tableau de bord avec des visualisations clés afin d'analyser les chats individuels et de groupe.",
+      "world-bank": "Déployer des données collectées par la Banque mondiale.",
+      "algorithmic-trading": "Backtesting de la stratégie buy-and-hold des entreprises du Fortune 500 en les sélectionnant avec la clusterisation.",
+      "trends-data-science": "Analyse des offres d'emploi en science des données de timesjobs.com et flexjobs.com en 2022.",
+      "macro-employment": "Visualiser les tendances et les informations économiques de la Banque mondiale.",
+      "linear-algebra": "Explication théorique des concepts d'algèbre linéaire utilisés dans la science des données.",
+      "vector-norms": "Utilisation pratique des outils d'algèbre linéaire dans les tâches courantes de la science des données."
+    },
+    "utility": {
+      "keyphrase-extraction": "Analyser des documents, optimiser les résultats des moteurs de recherche ou résumer du contenu.",
+      "seasonality-prediction": "Série temporelle à caractère saisonnier.",
+      "whatsapp": "Trouver des modèles de communication et des sentiments.",
+      "world-bank": "Visualisez les données de la Banque mondiale pour explorer les tendances économiques mondiales.",
+      "algorithmic-trading": "Sélectionner automatiquement les actions d'un fonds d'actions régulièrement rééquilibré.",
+      "trends-data-science": "Visualiser les priorités du marché.",
+      "macro-employment": "Comprendre les conséquences des politiques économiques sur le PIB et donc sur le marché du travail.",
+      "linear-algebra": "Apprenez les bases du sujet.",
+      "vector-norms": "Découvrez l'impact des mathématiques sur les tâches liées à la science des données."
+    },
+    "howTo": {
+      "keyphrase-extraction": "Téléchargez un fichier texte, indiquez le nombre de N-grammes (séquence de n éléments) et de résultats (lignes) par N-gramme et cliquez sur le bouton \"Extraire les phrases-clés\".",
+      "seasonality-prediction": "Téléchargez un fichier Excel avec une seule colonne de données numériques et un en-tête, sélectionnez la périodicité (par exemple, 4 pour des données trimestrielles) et cliquez sur le bouton \"Calculer la prédiction\".",
+      "whatsapp": "Exportez le chat WhatsApp en cliquant sur les trois points dans le coin supérieur droit de l'écran du téléphone dans la conversation, sélectionnez \"Plus\" puis \"Exporter le chat\". Téléchargez ensuite le fichier texte, sélectionnez la langue dans laquelle la conversation s'est déroulée et cliquez sur le bouton \"Analyser le chat\".",
+      "world-bank": "Sélectionnez : l'indicateur (par exemple, le PIB par habitant), le type de données et l'année ou le pays en fonction du type de données choisi et cliquez sur le bouton \"Afficher les résultats\". Ensuite, si vous voulez les données brutes, cliquez sur le bouton \"Télécharger CSV\" et/ou si vous voulez un graphique interactif, cliquez sur le bouton \"Graphique interactif\".",
+      "algorithmic-trading": "Ouvrez-le et lisez-le.",
+      "trends-data-science": "Ouvrez-le et lisez-le.",
+      "macro-employment": "Ouvrez-le et lisez-le. Il existe une version espagnole et une version anglaise.",
+      "linear-algebra": "Ouvrez-le et lisez-le.",
+      "vector-norms": "Ouvrez-le et lisez-le."
+    },
+    "output": {
+      "keyphrase-extraction": "Tableaux contenant le plus grand nombre de N-grammes répétés.",
+      "seasonality-prediction": "Tableau avec prévisions pour le prochain cycle et graphiques : série chronologique originale, comparaison entre les prévisions du dernier cycle et le dernier cycle réel, et série chronologique avec prévisions pour le prochain cycle.",
+      "whatsapp": "Tableau de bord interactif.",
+      "world-bank": "Tableau avec les données demandées, option de téléchargement du tableau au format CSV et graphique interactif.",
+      "algorithmic-trading": "Aucun.",
+      "trends-data-science": "Aucun.",
+      "macro-employment": "Aucun.",
+      "linear-algebra": "Aucun.",
+      "vector-norms": "Aucun."
+    }
+  },
   "seasonality_prediction": {
     "title": "Prévision de la saisonnalité",
     "intro": "Téléchargez la feuille de calcul dans le système de prévision.",
@@ -48,7 +94,7 @@
     "error_title": "Détails de l'erreur",
     "plots_title": "Parcelles",
     "error_message": "Le fichier est vide",
-    "validation": "Vérification : <br><br> 1. Format des données (numérique) <br> 2. Nombre de colonnes (= 1) <br> 3. périodicité (> 1) <br> 4. Reste (longueur de la série % périodicité = 0)"
+    "validation": "Vérifier : <br><br> 1. Format des données (numérique) <br> 2. Nombre de colonnes (= 1) <br> 3. périodicité (> 1) <br> 4. Reste (longueur de la série % périodicité = 0)"
   },
   "mi_cv": {
     "work_title": "Expérience professionnelle dans le domaine des données",

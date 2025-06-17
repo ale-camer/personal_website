@@ -20,6 +20,52 @@
     "vector_norms": "Vektor-Normen",
     "lin_alg": "Lineare Algebra"
   },
+  "projects-description": {
+    "explanation": {
+      "keyphrase-extraction": "Hilft beim Erkennen und Extrahieren wichtiger Begriffe und Phrasen aus Texten, die den Hauptinhalt zusammenfassen.",
+      "seasonality-prediction": "Vorhersage der Werte von Zeitreihen auf der Grundlage ihrer saisonalen Muster.",
+      "whatsapp": "Erstellen Sie ein Dashboard mit wichtigen Visualisierungen, um sowohl Einzel- als auch Gruppenchats zu analysieren.",
+      "world-bank": "Verwendung der von der Weltbank erhobenen Daten.",
+      "algorithmic-trading": "Backtesting der Buy-and-Hold-Strategie von Fortune-500-Unternehmen durch deren Auswahl mittels Clusterisierung.",
+      "trends-data-science": "Analyse der Stellenausschreibungen für Data Science von timesjobs.com und flexjobs.com im Jahr 2022.",
+      "macro-employment": "Visualisieren Sie die wirtschaftlichen Trends und Erkenntnisse der Weltbank.",
+      "linear-algebra": "Theoretische Erklärung von Konzepten der linearen Algebra für die Datenwissenschaft.",
+      "vector-norms": "Praktische Anwendungen von Werkzeugen der linearen Algebra in regulären datenwissenschaftlichen Aufgaben."
+    },
+    "utility": {
+      "keyphrase-extraction": "Analysieren von Dokumenten, Optimieren von Suchmaschinenergebnissen oder Zusammenfassen von Inhalten.",
+      "seasonality-prediction": "Beliebige Zeitserie mit saisonalem Muster.",
+      "whatsapp": "Finden Sie Kommunikationsmuster und Stimmungen.",
+      "world-bank": "Visualisieren Sie die Daten der Weltbank, um globale Wirtschaftstrends und Erkenntnisse zu erkunden.",
+      "algorithmic-trading": "Automatische Auswahl von Aktien für einen Aktienfonds, der regelmäßig neu gewichtet wird.",
+      "trends-data-science": "Machen Sie sich ein Bild von den Prioritäten des Marktes.",
+      "macro-employment": "die Auswirkungen der Wirtschaftspolitik auf das BIP und damit auf den Arbeitsmarkt zu verstehen.",
+      "linear-algebra": "Lernen Sie die Grundlagen zu diesem Thema.",
+      "vector-norms": "Erfahren Sie, wie sich die Mathematik auf datenwissenschaftliche Aufgaben auswirkt."
+    },
+    "howTo": {
+      "keyphrase-extraction": "Laden Sie eine Textdatei hoch, geben Sie die Anzahl der N-Gramme (Folge von n Elementen) und die Ergebnisse (Zeilen) pro N-Gramm an und klicken Sie auf die Schaltfläche \"Schlüsselwörter extrahieren\".",
+      "seasonality-prediction": "Laden Sie eine Excel-Datei mit nur einer Spalte mit numerischen Daten und einer Kopfzeile hoch, wählen Sie die Periodizität (z. B. 4 für vierteljährliche Daten) und klicken Sie auf die Schaltfläche \"Vorhersage berechnen\".",
+      "whatsapp": "Exportieren Sie den WhatsApp-Chat, indem Sie in der Unterhaltung auf die drei Punkte in der oberen rechten Ecke des Telefondisplays klicken, \"Mehr\" und dann \"Chat exportieren\" auswählen. Danach laden Sie die Textdatei hoch, wählen die Sprache, in der das Gespräch geführt wurde, und klicken auf die Schaltfläche \"Chat analysieren\".",
+      "world-bank": "Wählen Sie: den Indikator (z. B. BIP pro Kopf), den Datentyp und das Jahr oder das Land, je nach gewähltem Datentyp, und klicken Sie auf die Schaltfläche \"Ergebnisse anzeigen\". Wenn Sie die Rohdaten wünschen, klicken Sie auf die Schaltfläche \"CSV herunterladen\", und wenn Sie eine interaktive Grafik wünschen, klicken Sie auf die Schaltfläche \"Interaktive Grafik\".",
+      "algorithmic-trading": "Öffnen und lesen Sie ihn.",
+      "trends-data-science": "Öffnen und lesen Sie ihn.",
+      "macro-employment": "Öffnen und lesen Sie es. Es gibt die spanische und die englische Version.",
+      "linear-algebra": "Öffnen und lesen Sie ihn.",
+      "vector-norms": "Öffnen und lesen Sie ihn."
+    },
+    "output": {
+      "keyphrase-extraction": "Tabellen mit den meisten wiederholten N-Grammen.",
+      "seasonality-prediction": "Tabelle mit Vorhersage für den nächsten Zyklus und Diagramme: ursprüngliche Zeitreihe, Vergleich der Vorhersage des letzten Zyklus mit dem tatsächlichen letzten Zyklus und der Zeitreihe zusammen mit der Vorhersage des nächsten Zyklus.",
+      "whatsapp": "Interaktives Dashboard.",
+      "world-bank": "Tabelle mit den angeforderten Daten, Möglichkeit zum Herunterladen der Tabelle im CSV-Format und eine interaktive Grafik.",
+      "algorithmic-trading": "Keine.",
+      "trends-data-science": "Keine.",
+      "macro-employment": "Keine.",
+      "linear-algebra": "Keine.",
+      "vector-norms": "Keine."
+    }
+  },
   "seasonality_prediction": {
     "title": "Vorhersage der Saisonalität",
     "intro": "Laden Sie die Kalkulationstabelle in die Prognose hoch.",

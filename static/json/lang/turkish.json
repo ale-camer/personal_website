@@ -20,6 +20,52 @@
     "vector_norms": "Vektör Normları",
     "lin_alg": "Doğrusal Cebir"
   },
+  "projects-description": {
+    "explanation": {
+      "keyphrase-extraction": "Ana içeriği özetleyen metinlerden önemli terimleri ve ifadeleri belirlemeye ve çıkarmaya yardımcı olur.",
+      "seasonality-prediction": "Zaman serilerinin mevsimsel modellerine dayalı tahmin değerleri.",
+      "whatsapp": "Hem bireysel hem de grup sohbetlerini analiz etmek için önemli görselleştirmeler içeren bir gösterge tablosu oluşturun.",
+      "world-bank": "Dünya Bankası tarafından toplanan verileri kullanın.",
+      "algorithmic-trading": "Fortune 500 şirketlerinin kümeleme ile seçilerek al ve tut stratejisinin geriye dönük test edilmesi.",
+      "trends-data-science": "timesjobs.com ve flexjobs.com'da 2022 yılında yayınlanan Veri Bilimi iş ilanlarının analizi.",
+      "macro-employment": "Dünya Bankasdadal ekonomik trendleri ve içgörüleri görselleştirin.",
+      "linear-algebra": "Veri biliminde kullanılan lineer cebir kavramlarının teorik açıklaması.",
+      "vector-norms": "Normal veri bilimi görevlerinde doğrusal cebir araçlarının pratik kullanımları."
+    },
+    "utility": {
+      "keyphrase-extraction": "Belgeleri analiz etme, arama motoru sonuçlarını optimize etme veya içeriği özetleme.",
+      "seasonality-prediction": "Mevsimsel desenli herhangi bir zaman serisi.",
+      "whatsapp": "İletişim kalıplarını ve duyguları bulun.",
+      "world-bank": "Küresel ekonomik trendleri ve içgörüleri keşfetmek için Dünya Bankası verilerini görselleştirin.",
+      "algorithmic-trading": "Düzenli olarak yeniden dengelenen bir hisse senedi fonu için hisse senetlerini otomatik olarak seçin.",
+      "trends-data-science": "Pazarın önceliklerini görselleştirin.",
+      "macro-employment": "Ekonomi politikalarının GSYH ve dolayısıyla işgücü piyasası üzerindeki sonuçlarını anlamak.",
+      "linear-algebra": "Konuyla ilgili temel bilgileri öğrenin.",
+      "vector-norms": "Veri bilimi görevlerinde bazı matematik etkilerinin nasıl olduğunu öğrenin."
+    },
+    "howTo": {
+      "keyphrase-extraction": "Bir metin dosyası yükleyin, N-gram sayısını (n öğe dizisi) ve N-gram başına sonuçları (satır) belirtin ve Anahtar İfadeleri Çıkar' düğmesine basın.",
+      "seasonality-prediction": "Sadece bir sütun sayısal veri ve bir başlık içeren bir Excel dosyası yükleyin, dönemselliği seçin (örneğin, üç aylık veriler için 4) ve 'Tahmini Hesapla' düğmesine basın",
+      "whatsapp": "Konuşma sırasında telefon ekranının sağ üst köşesindeki üç noktaya tıklayarak WhatsApp sohbetini dışa aktarın, 'Diğer'i ve ardından 'Sohbeti Dışa Aktar'ı seçin. Bundan sonra metin dosyasını yükleyin, konuşmanın yapıldığı dili seçin ve 'Sohbeti Analiz Et' düğmesine basın.",
+      "world-bank": "Göstergeyi (örneğin Kişi Başına GSYİH), veri türünü ve seçilen veri türüne bağlı olarak yılı veya ülkeyi seçin ve 'Sonuçları Göster' düğmesine basın. Bundan sonra, ham verileri istiyorsanız 'CSV İndir' düğmesine ve/veya interaktif bir grafik istiyorsanız 'İnteraktif Grafik' düğmesine basın.",
+      "algorithmic-trading": "Aç ve oku.",
+      "trends-data-science": "Aç ve oku.",
+      "macro-employment": "Aç ve oku. İspanyolca ve İngilizce versiyonları var.",
+      "linear-algebra": "Aç ve oku.",
+      "vector-norms": "Aç ve oku."
+    },
+    "output": {
+      "keyphrase-extraction": "En çok tekrarlanan N-gramları içeren tablolar.",
+      "seasonality-prediction": "Bir sonraki döngü için tahmin içeren tablo ve aşağıdakilerin grafikleri: orijinal zaman serisi, son döngü tahmini ile gerçek son döngü ve zaman serisinin bir sonraki döngü tahmini ile karşılaştırılması.",
+      "whatsapp": "Etkileşimli gösterge tablosu.",
+      "world-bank": "Talep edilen verileri içeren tablo, tabloyu CSV formatında indirme seçeneği ve etkileşimli grafik.",
+      "algorithmic-trading": "Yok.",
+      "trends-data-science": "Yok.",
+      "macro-employment": "Yok.",
+      "linear-algebra": "Yok.",
+      "vector-norms": "Yok."
+    }
+  },
   "seasonality_prediction": {
     "title": "Mevsimsellik Tahmini",
     "intro": "Elektronik tabloyu tahmine yükleyin.",
@@ -176,7 +222,7 @@
     "intro": "Görselleştirmek istediğiniz verilerin kategorilerini seçin.",
     "instr_ord": "Bir gösterge seçin:",
     "ind": "Gösterge",
-    "type_ord": "Tür seçin:",
+    "type_ord": "Türü seçin:",
     "type": "Veri türü",
     "country": "Ülke",
     "year": "Yıl",

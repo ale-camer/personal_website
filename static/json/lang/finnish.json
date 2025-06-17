@@ -20,6 +20,52 @@
     "vector_norms": "Vektorinormit",
     "lin_alg": "Lineaarialgebra"
   },
+  "projects-description": {
+    "explanation": {
+      "keyphrase-extraction": "Auttaa tunnistamaan ja poimimaan tärkeitä termejä ja lauseita teksteistä, joissa tiivistetään tekstin pääsisältö.",
+      "seasonality-prediction": "Aikasarjan arvojen ennustaminen sen kausikuvioiden perusteella.",
+      "whatsapp": "Luo kojelauta, jossa on keskeisiä visualisointeja sekä yksittäisten että ryhmäkeskustelujen analysoimiseksi.",
+      "world-bank": "Käyttää Maailmanpankin keräämiä tietoja.",
+      "algorithmic-trading": "Fortune 500 -yhtiöiden osta ja pidä -strategian takaisintestaaminen valitsemalla ne klusterointia käyttäen.",
+      "trends-data-science": "Analyysi timesjobs.comin ja flexjobs.comin datatieteen työpaikkailmoituksista vuonna 2022.",
+      "macro-employment": "Visualisoi Maailmanpankasdadalin taloudelliset suuntaukset ja näkemykset.",
+      "linear-algebra": "Lineaarialgebran käsitteiden teoreettinen selitys datatieteessä.",
+      "vector-norms": "Lineaarialgebran työkalujen käytännön käyttö tavanomaisissa datatieteen tehtävissä."
+    },
+    "utility": {
+      "keyphrase-extraction": "Asiakirjojen analysointi, hakukonetulosten optimointi tai sisällön tiivistäminen.",
+      "seasonality-prediction": "Mikä tahansa aikasarja, jossa on kausikuvio.",
+      "whatsapp": "Löydä viestintäkuviot ja tunteet.",
+      "world-bank": "Visualisoi Maailmanpankin tietoja ja tutki maailmanlaajuisia taloussuuntauksia ja näkemyksiä.",
+      "algorithmic-trading": "Valitse osakkeet automaattisesti säännöllisesti tasapainotettavaan osakerahastoon.",
+      "trends-data-science": "Visualisoi markkinoiden painopisteet.",
+      "macro-employment": "Ymmärtää talouspolitiikan vaikutukset BKT:hen ja siten työmarkkinoihin.",
+      "linear-algebra": "Opi aiheen perusteet.",
+      "vector-norms": "Opi, miten matematiikka vaikuttaa datatieteen tehtäviin."
+    },
+    "howTo": {
+      "keyphrase-extraction": "Lataa tekstitiedosto, määritä N-grammien (n elementin sarja) ja tulosten (rivien) määrä N-grammaa kohti ja paina Extract Keyphrases (poimi avainsanat) -painiketta.",
+      "seasonality-prediction": "Lataa Excel-tiedosto, jossa on vain yksi sarake numeerisia tietoja ja otsikko, valitse jaksotus (esim. 4 neljännesvuosittaisille tiedoille) ja paina 'Calculate Prediction' -painiketta.",
+      "whatsapp": "Vie WhatsApp-keskustelu napsauttamalla puhelimen näytön oikeassa yläkulmassa olevaa kolmea pistettä keskustelussa, valitsemalla \"Lisää\" ja sitten \"Vie keskustelu\". Tämän jälkeen lataa tekstitiedosto, valitse kieli, jolla keskustelu käytiin, ja paina 'Analysoi keskustelu' -painiketta.",
+      "world-bank": "Valitse: indikaattori (esim. BKT asukasta kohti), tietotyyppi ja vuosi tai maa valitusta tietotyypistä riippuen ja paina 'Näytä tulokset' -painiketta. Jos haluat raakatiedot, paina 'Download CSV' -painiketta ja/tai jos haluat interaktiivisen kuvaajan, paina 'Interactive Graph' -painiketta.",
+      "algorithmic-trading": "Avaa ja lue se.",
+      "trends-data-science": "Avaa ja lue se.",
+      "macro-employment": "Avaa ja lue se. Siitä on espanjankielinen ja englanninkielinen versio.",
+      "linear-algebra": "Avaa ja lue se.",
+      "vector-norms": "Avaa ja lue se."
+    },
+    "output": {
+      "keyphrase-extraction": "Taulukot, joissa on eniten toistuvia N-grammeja.",
+      "seasonality-prediction": "Taulukko, jossa on seuraavan syklin ennuste ja seuraavat kuvaajat: alkuperäinen aikasarja, viimeisen syklin ennusteen ja todellisen viimeisen syklin ja aikasarjan vertailu sekä seuraavan syklin ennuste.",
+      "whatsapp": "Interaktiivinen kojelauta.",
+      "world-bank": "Taulukko, jossa on pyydetyt tiedot, mahdollisuus ladata taulukko CSV-muodossa ja interaktiivinen kaavio.",
+      "algorithmic-trading": "Ei mitään.",
+      "trends-data-science": "Ei mitään.",
+      "macro-employment": "Ei mitään.",
+      "linear-algebra": "Ei mitään.",
+      "vector-norms": "Ei mitään."
+    }
+  },
   "seasonality_prediction": {
     "title": "Kausiluonteisuuden ennuste",
     "intro": "Lataa laskentataulukko ennusteeseen.",
@@ -89,7 +135,7 @@
     "sector_lumen": "Rahoitus",
     "resp_1_lumen": "Yritysrahoitus: Ennustetut laskujen laiminlyönnit satunnaismetsäluokittelijoiden avulla ja ennustetut maksusummat kullekin laskulle satunnaismetsäregressoreiden avulla. Ennustanut myös kassavirtaa regressiotekniikoiden avulla.",
     "resp_2_lumen": "Henkilöstöhallinto: Analysoi kyselytutkimuksista saatuja työntekijöiden poistumistietoja ymmärtääkseen lähdön syitä, hyödyntäen NLP-tekniikoita ja muita merkityksellisiä tietoja työntekijän työsuhteen kestosta.",
-    "resp_3_lumen": "ETL-prosessit: Luonut tietokantaan ad-hoc-taulukoita liiketoiminnan erityistarpeisiin käyttäen tallennettuja menettelyjä ja esikäsittelytekniikoita Pythonilla.",
+    "resp_3_lumen": "ETL-prosessit: Luonut tietokantaan ad-hoc-taulukoita liiketoiminnan erityistarpeita varten käyttäen tallennettuja menettelyjä ja esikäsittelytekniikoita Pythonilla.",
     "resp_4_lumen": "End-to-End-automaatio: Automaattiset raportointiprosessit, laskujen luominen, sähköposti-ilmoitukset ja visualisoinnit Power BI:ssä eri osastojen vaatimusten perusteella.",
     "skill_1_lumen": "Ohjelmointi: Python, DAX",
     "skill_2_lumen": "Puitteet: Nltk, Seaborn, Sklearn.",
