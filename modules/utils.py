@@ -144,3 +144,14 @@ def text_normalizer(text: str, stopwords: set = None, min_word_len: int = 2) -> 
 
 def transform_words(text: str, fn=lambda x: x, condition=lambda x: True) -> str:
     return ' '.join(fn(word) for word in text.split() if condition(word))
+
+# =============================================================================
+# TEST
+# =============================================================================
+def performance_analyzer(process_str=None):
+    def decorator(fn):
+        def wrapper(self, *args, **kwargs):
+            name = process_str or fn.__name__
+            return timed_run(lambda: fn(self, *args, **kwargs), process_str=name, in_seconds=True, decimals=1)
+        return wrapper
+    return decorator

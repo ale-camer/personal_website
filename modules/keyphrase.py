@@ -5,113 +5,98 @@
 # =============================================================================
 # --- Standard library ---
 import re
+import heapq
+from operator import itemgetter
+from itertools import islice, chain
+from collections import Counter
+from dataclasses import dataclass
 
 # --- Third-party ---
 import pandas as pd
 from tqdm import tqdm
-from collections import Counter
 from prettytable import PrettyTable
 
 # --- Project/system ---
-from dataclasses import dataclass
-from modules.utils import text_normalizer, transform_words
+from modules.utils import text_normalizer, performance_analyzer
 
 # =============================================================================
 # TOP NGRAMS
 # =============================================================================
-from modules.utils import timed_run
-from sklearn.feature_extraction.text import CountVectorizer
-
 progress = {"value": 0}
-
-def timed_method(process_str=None):
-    def decorator(fn):
-        def wrapper(self, *args, **kwargs):
-            name = process_str or fn.__name__
-            return timed_run(lambda: fn(self, *args, **kwargs), process_str=name)
-        return wrapper
-    return decorator
 
 @dataclass
 class NGramConfig:
     data: str
     max_ngrams: int = 5
     num_nrows: int = 5
+    chunk_size: int = int(1e6)
+
+    @property
+    def words(self) -> list:
+        return self.data.split()
+
+    @property
+    def total_chunks(self) -> int:
+        return (len(self.words) + self.chunk_size - 1) // self.chunk_size
 
 class NGramAnalyzer:
-    
-    def __init__(self, language: str = 'english'):       
+    def __init__(self, config: NGramConfig):
+        self.config = config
         self.url_regex = re.compile(r'http\S+')
-    
-    @timed_method("Analyze")
-    def analyze(self, config: NGramConfig) -> dict:
-        global progress
-        progress["value"] = 0
-        normalized_sentences = self._normalize_sentences(config.data)
-        return self._build_ngram_tables(
-          normalized_sentences, 
-          config.max_ngrams, 
-          config.num_nrows
-        )
-        
-    @timed_method("Normalize sentences")
+        self._tokens = None
+
+    @performance_analyzer("Generating ngrams")
+    def generate_ngrams(self) -> dict:
+        self._tokens = list(chain.from_iterable(self._token_generator()))
+        return self._build_ngram_tables()
+
+    def _chunk_generator(self):
+        for i in range(0, len(self.config.words), self.config.chunk_size):
+            yield ' '.join(islice(self.config.words, i, i + self.config.chunk_size))
+
+    def _token_generator(self):
+        pbar = tqdm(self._chunk_generator(), total=self.config.total_chunks, desc="Normalizing sentences")
+        for chunk in pbar:
+            normalized = self._normalize_sentences(chunk)
+            tokens = self._tokenize_corpus(normalized)
+            progress["value"] = int(pbar.n / pbar.total * 100)
+            yield tokens
+
     def _normalize_sentences(self, text: str) -> list:
         sentences = re.split(r'[.!?]\s+', text)
-        normalized = []
-        total = len(sentences)
-        for i, sentence in enumerate(tqdm(sentences, desc="Normalizing sentences", bar_format="{l_bar}{bar} {n:,}/{total:,}")):
-            normalized.append(text_normalizer(sentence, set()))
-            progress["value"] = int((i + 1) / total * 100)
-        return normalized
-    
-    @timed_method("Build ngram tables")
-    def _build_ngram_tables(self, sentences: list, max_ngram: int, nrows_per_table: int) -> dict:
-        return {
-            f"N-Gram Value: {n}": self._get_top_ngrams(
-                corpus=sentences, 
-                ngram_val=n, 
-                limit=10, 
-                nrows=nrows_per_table
-            )
-            for n in range(1, max_ngram + 1)
-        }
-    
-    @timed_method("Get top ngrams")
-    def _get_top_ngrams(self, corpus: list[str], ngram_val: int = 1, limit: int = 10, nrows: int = 5) -> pd.DataFrame:
-        tokens = re.findall(r'\b\w+\b', self._flatten_sentences(corpus))
-        ngrams_freq = Counter(self._generate_ngrams(tokens, ngram_val))
-        return self._format_ngrams_table(ngrams_freq, limit, nrows)
-    
-    @timed_method("Flatten sentences")
-    def _flatten_sentences(self, corpus: list[str]) -> str:
-        return transform_words('  '.join(corpus), fn=lambda w: w.strip())
+        return [text_normalizer(sentence, set()) for sentence in sentences]
+
+    def _tokenize_corpus(self, sentences: list):
+        for sentence in sentences:
+            for word in re.findall(r'\b\w+\b', sentence.strip()):
+                yield word
+
+    def _build_ngram_tables(self) -> dict:
+        tables = {}
+        sliced_tokens = [self._tokens[i:] for i in range(self.config.max_ngrams)]
         
-    @timed_method("Generate ngrams")
-    def _generate_ngrams(self, tokens: list[str], n: int) -> list[tuple]:
-        length = len(tokens)
-        for i in range(length - n + 1):
-            yield tuple(tokens[i:i + n])
-                
-    @timed_method("Format ngrams tables")
-    def _format_ngrams_table(self, ngrams_freq: dict[tuple, int], limit: int, nrows: int) -> pd.DataFrame:
-        top_ngrams = sorted(ngrams_freq.items(), key=lambda x: x[1], reverse=True)[:limit]
-        top_ngrams_formatted = [(' '.join(ngram), freq) for ngram, freq in top_ngrams][:nrows]
-        return pd.DataFrame(top_ngrams_formatted, columns=['Keywords', '# Appearances'])
+        for n in range(1, self.config.max_ngrams + 1):
+            ngrams = zip(*sliced_tokens[:n])
+            ngram_counts = Counter(ngrams)
+            top_ngrams = heapq.nlargest(self.config.num_nrows, ngram_counts.items(), key=itemgetter(1))
+            tables[f"N-Gram Value: {n}"] = pd.DataFrame(
+                ((" ".join(ng), f"{freq:,}") for ng, freq in top_ngrams),
+                columns=["Keywords", "# Appearances"]
+            )
+        return tables
 
 class NGramModule:
-    def __init__(self, raw_text: str, max_ngrams: int = 5, num_nrows: int = 5):
-        self.config = NGramConfig(data=raw_text, max_ngrams=max_ngrams, num_nrows=num_nrows)
-        self.analyzer = NGramAnalyzer()
+    def __init__(self, raw_text: str, **kwargs):
+        self.config = NGramConfig(data=raw_text, **kwargs)
+        self.analyzer = NGramAnalyzer(self.config)
         self._ngram_tables = None
 
-    def analyze(self) -> None:
-        self._ngram_tables = self.analyzer.analyze(self.config)
+    def analyze(self) -> dict:
+        self._ngram_tables = self.analyzer.generate_ngrams()
         return self._ngram_tables
 
     @property
     def summary(self) -> dict:
-        if self._ngram_tables is None:
-            raise RuntimeError("Must call `analyze()` before accessing the summary.")
         return {
             ngram_label: df.to_dict(orient='records')
             for ngram_label, df in self._ngram_tables.items()
@@ -126,7 +111,7 @@ def get_tables_string(data: dict) -> str:
         for title, records in data.items()
         for df in [pd.DataFrame(records)]
     ) + "\n\n"
-  
+
 def _create_table(df: pd.DataFrame, title: str, cols: list) -> PrettyTable:
     table = PrettyTable(field_names=cols)
     table.title = title

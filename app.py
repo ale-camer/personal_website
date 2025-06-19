@@ -7,7 +7,7 @@
 import os
 
 # --- Third-party ---
-from flask import Flask, render_template, request, redirect, send_file, jsonify, url_for, g
+from flask import Flask, render_template, request, redirect, send_file, jsonify, url_for
 
 # --- Project/system ---
 import modules.utils as ut
@@ -53,7 +53,7 @@ app.context_processor(ut.inject_texts_and_languages)
 
 with app.app_context():
     selected_lang = ut.inject_texts_and_languages()['selected_lang']
-    
+
 # =============================================================================
 # STATIC PAGES
 # =============================================================================
@@ -100,18 +100,19 @@ def world_bank():
 @app.route('/whatsapp')
 def whatsapp():
     return render_template('whatsapp.html')
-  
+
 # =============================================================================
 # KEYPHRASE
 # =============================================================================
 @app.route('/extract_keyphrases', methods=['POST'])
 def extract_keyphrases():
+    progress["value"] = 0
     ngrams = NGramModule(
       raw_text=request.files.get('file').read().decode('utf-8'),
       max_ngrams=int(request.form.get('num_tables', 1)),
       num_nrows=int(request.form.get('num_rows', 1))
     )
-    result = ut.timed_run(ngrams.analyze, process_str="Keyphrases extracted")
+    result = ngrams.analyze()
     ut.write_json(ngrams.summary, KEYPHRASE_INPUT_PATH)
     return render_template('keyphrase.html', results=result)
 
@@ -131,14 +132,14 @@ def download_keyphrases(output_filename: str = "keyphrases.txt"):
 # =============================================================================
 @app.route('/predict_seasonality', methods=['GET', 'POST'])
 def predict_seasonality():
-    
+
     if request.method == 'GET': # refresh
         return render_template('seasonality.html')
-        
+
     template = 'seasonality.html'
     file = request.files.get('file')
     periodicity = int(request.form.get('periodicity'))
-    
+
     processor = SeasonalityModule(file, periodicity)
     error = processor.is_empty(selected_lang)
     if error:
@@ -157,7 +158,7 @@ def predict_seasonality():
             template,
             val_message=processor.validation(selected_lang)
         )
-    
+
 @app.route('/download_predictions', methods=['GET'])
 def download_predictions():
     file_path, file_name = download_forecast()
@@ -171,10 +172,10 @@ wb_manager = WorldBankModule(GEO_DATA_PATH)
 @app.route('/download_data')
 def download_data():
     indicator = request.args.get('indicator')
-    data = wb_manager.indicator(indicator)    
+    data = wb_manager.indicator(indicator)
     ut.write_json(data, wb_ut.get_file_path(indicator))
     return jsonify({'message': 'Data saved successfully', 'file': wb_ut.get_file_path(indicator)})
-      
+
 @app.route('/show_options')
 def show_options():
     data = wb_ut.load_data(request.args.get('indicator'))
@@ -183,26 +184,26 @@ def show_options():
 @app.route('/show_data')
 def show_data():
     args = request.args
-    data = wb_ut.load_data(args.get('indicator'), args.get('type'), args.get('option'))  
+    data = wb_ut.load_data(args.get('indicator'), args.get('type'), args.get('option'))
     return data.drop('ISO_CODE', axis=1).to_dict(orient='records')
-    
+
 @app.route('/plot_graph', methods=['POST'])
 def plot_graph():
     form = request.form
     indicator, type_selected, option = form.get('indicator'), form.get('type'), form.get('option')
-    df = wb_ut.load_data(indicator, type_selected, option) 
+    df = wb_ut.load_data(indicator, type_selected, option)
     title = f'{option} - {INDICATOR_NAMES.get(indicator)}' if type_selected == 'country' else None
 
     filepath = wb_manager.create_visualization(df, type_selected, title=title)
     plot_url = url_for(
-        'static', 
+        'static',
         filename=os.path.relpath(
-            os.path.abspath(filepath), 
+            os.path.abspath(filepath),
             os.path.abspath(app.static_folder)
         )
     )
     return jsonify({'message': 'Interactive graph generated.', 'plot_url': plot_url})
-    
+
 # =============================================================================
 # WHATSAPP
 # =============================================================================

@@ -10,13 +10,15 @@ import base64, io, re, os
 import pandas as pd
 import seaborn as sns
 import textblob as tb
+from tqdm import tqdm
 from dash import dcc, html
+from datetime import datetime
 import plotly.graph_objects as go
 from wordcloud import WordCloud
 
 # --- Project/system ---
 from dataclasses import dataclass
-from modules.utils import text_normalizer, read_json
+from modules.utils import text_normalizer, read_json, performance_analyzer
 
 # =============================================================================
 # PATHS
@@ -75,19 +77,20 @@ class WhatsAppConfig:
     language: str
 
 class WhatsAppModule:
+    ISSUER = 'ISSUER'
     
     def __init__(self):
         self.current_data = None
-        self.ISSUER = 'ISSUER'
-    
+
+    @performance_analyzer("Parsing chat")
     def parse_chat(self, file, language: str) -> WhatsAppConfig:
         parser = WhatsAppParser(file)
         content = parser.parse()
         df = parser.group(content)
         self.current_data = WhatsAppConfig(df=df, content=content, language=language)
-        print(self.current_data.language)
         return self.current_data
     
+    @performance_analyzer("Filtering chat")
     def filter_chat(self, issuer: str) -> tuple:
         is_general = issuer == 'GENERAL'
         
@@ -114,77 +117,89 @@ class WhatsAppModule:
 # PARSER
 # =============================================================================
 class WhatsAppParser:
-  
-    def __init__(self, file: str):
-        self.file = file
-        self.COLS_TO_GROUP = ['HOUR', 'dow', 'dom', 'month']
-        self.RAW_DATA = 'RAW_DATA'
-        self.MESSAGE = 'MESSAGE'
-        self.ISSUER = 'ISSUER'
-        self.DATE = 'DATE'
-        self.HOUR = 'HOUR'
-       
-    def group(self, df: pd.DataFrame) -> pd.DataFrame:
-        group_and_count = lambda cols: df.groupby(cols)[self.MESSAGE].count().reset_index()
-        return (
-            pd.concat([
-                group_and_count([self.ISSUER] + self.COLS_TO_GROUP),
-                group_and_count(self.COLS_TO_GROUP).assign(ISSUER='GENERAL')
-            ])
-        )      
-      
-    def parse(self) -> pd.DataFrame:
-        chat = self._read_file()
-        messages = self._split_messages(chat)
-        return self._parse_messages(messages)      
-      
-    def _read_file(self):
-        return self.file.read().decode('utf-8').splitlines()
-      
-    def _split_messages(self, lines: list[str], pattern: str = r".*\/.*\/.*,.*:.* - .*") -> list:
-        messages = []
-        for current_line in lines:
-            if re.match(pattern, current_line): 
-                messages.append(current_line)
-            elif messages: 
-                messages[-1] += ' ' + current_line
-        return messages
+    CHUNK_SIZE = int(1e6)
+    RAW_DATA = 'RAW_DATA'
+    DATE = 'DATE'
+    HOUR = 'HOUR'
+    ISSUER = 'ISSUER'
+    MESSAGE = 'MESSAGE'
+    COLS_TO_GROUP = ['HOUR', 'dow', 'dom', 'month']
+    COLUMNS = [DATE, HOUR, ISSUER, MESSAGE, 'dow', 'dom', 'month', 'len_message']
     
-    def _parse_messages(self, messages: list[str]) -> pd.DataFrame:
-        return (
-            pd.DataFrame(messages, columns=[self.RAW_DATA])
-            .loc[lambda df: df[self.RAW_DATA].str.contains(': ') & ~df[self.RAW_DATA].str.contains('Multimedia')]
-            .assign(
-                DATE=lambda df: pd.to_datetime(df[self.RAW_DATA].str.split(',', expand=True)[0], dayfirst=True),
-                HOUR=lambda df: df[self.RAW_DATA].str.split(',', expand=True)[1].str.split('-', expand=True)[0].str.strip(),
-                ISSUER=lambda df: df[self.RAW_DATA].str.split('- ', expand=True)[1].str.split(':', expand=True)[0],
-                MESSAGE=lambda df: df[self.RAW_DATA].str.split(': ', n=1, expand=True)[1],
-            )
-            .drop(self.RAW_DATA, axis=1)
-            .assign(
-                dow=lambda df: df[self.DATE].dt.dayofweek,
-                dom=lambda df: df[self.DATE].dt.day,
-                month=lambda df: df[self.DATE].dt.month,
-                HOUR=lambda df: df[self.HOUR].apply(lambda h: int(h.split(':')[0])),
-                len_message=lambda df: df[self.MESSAGE].apply(lambda msg: len(msg.split()))
-            )
-        )
+    _split_pattern = re.compile(r".*\/.*\/.*,.*:.* - .*")
+    _parse_pattern = re.compile(r'^(\d{1,2}/\d{1,2}/\d{2,4}), ([^ ]+) - ([^:]+): (.+)$')
 
+    def __init__(self, file):
+        self.file = file
+    
+    def parse(self) -> pd.DataFrame:
+        parsed = []
+        raw_lines = self.file.read().decode('utf-8').splitlines()
+        for i in tqdm(range(0, len(raw_lines), self.CHUNK_SIZE)):
+            chunk_lines = raw_lines[i:i+self.CHUNK_SIZE]
+            raw_messages = list(self._split_messages(chunk_lines))
+            parsed_chunk = self._parse_all_messages(raw_messages)
+            parsed.append(parsed_chunk)
+        return pd.concat(parsed, ignore_index=True)
+
+    def group(self, df: pd.DataFrame) -> pd.DataFrame:
+        by_issuer = self._group_and_count(df, [self.ISSUER] + self.COLS_TO_GROUP)
+        general = self._group_and_count(df, self.COLS_TO_GROUP).assign(ISSUER='GENERAL')
+        return pd.concat([by_issuer, general], ignore_index=True)
+
+    def _group_and_count(self, df: pd.DataFrame, group_columns: list) -> pd.DataFrame:
+        return df.groupby(group_columns)[self.MESSAGE].count().reset_index()
+
+    def _split_messages(self, raw_lines: list):
+        buffer = []
+        for line in raw_lines:
+            if self._split_pattern.match(line):
+                if buffer:
+                    yield ' '.join(buffer)
+                buffer = [line]
+            else:
+                buffer.append(line)
+        if buffer:
+            yield ' '.join(buffer)
+
+    def _parse_all_messages(self, messages: list) -> pd.DataFrame:
+        parsed = list(filter(None, map(self._parse_single_message, messages)))
+        return pd.DataFrame(parsed, columns=self.COLUMNS)
+
+    def _parse_single_message(self, message: str):
+        match = self._parse_pattern.match(message)
+        if 'Multimedia' in message or not match:
+            return None
+        else:
+            date_str, time_str, issuer, message_text = match.groups()
+            dt = datetime.strptime(date_str, "%d/%m/%Y")
+            return (
+                dt,
+                int(time_str[:2]),
+                issuer.strip(),
+                message_text.strip(),
+                dt.weekday(),
+                dt.day,
+                dt.month,
+                message_text.count(" ") + 1
+            )
+    
 # =============================================================================
 # PLOTTING
 # =============================================================================
 class ChartGenerator:
+    LEN_MESSAGE = 'len_message'
+    DATA = 'data'
+    LAYOUT = 'layout'
+    COUNT = 'COUNT'
+    SCORE = 'score'
+    ISSUER = 'ISSUER'
+    MESSAGE = 'MESSAGE'
+    GENERAL = 'GENERAL'
+    GRAPH_STYLE = {'width': '48%', 'display': 'inline-block'}
 
     def __init__(self):
-        self.LEN_MESSAGE = 'len_message'
-        self.DATA = 'data'
-        self.LAYOUT = 'layout'
-        self.COUNT = 'COUNT'
-        self.SCORE = 'score'
-        self.ISSUER = 'ISSUER'
-        self.MESSAGE = 'MESSAGE'
-        self.GENERAL = 'GENERAL'
-        self.GRAPH_STYLE = {'width': '48%', 'display': 'inline-block'}
+        pass
       
     def all_charts(
             self,
