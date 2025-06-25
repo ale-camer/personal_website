@@ -3,6 +3,20 @@
 /* MAIN */
 * {
     box-sizing: border-box;
+    font-family: 'Poppins', sans-serif !important;
+}
+
+*:not(script):not(style):not(input):not(textarea):not(select):not(option) {
+  transition:
+    background-color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    fill 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    stroke 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    text-decoration-color 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 html {
@@ -15,7 +29,6 @@ html {
         padding: 0;
         width: 100%;
         overflow-x: hidden;
-        font-family: 'Inter', sans-serif;
         background-size: cover;
         display: flex;
         flex-direction: row;
@@ -42,7 +55,7 @@ html {
     justify-content: center;
     margin-top: 1%;
     width: 95%;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.5);
     padding: 30px;
     border-radius: 2rem;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -71,7 +84,7 @@ html {
     top: 0;
     left: 0;
     width: 25%;
-    background-color: rgba(135, 206, 235, 0.7);
+    background-color: rgba(0, 0, 0, 0.5);
     padding: 30px 0;
     height: 100vh;
     overflow-y: auto;
@@ -106,15 +119,15 @@ html {
     }
 
     .navbar-title {
-        color: #135c7d;
+        color: white;
         text-align: center;
         margin: 0;
         padding: 2.5% 0;
         font-size: clamp(20px, 2vw, 2vw);
 
         &:hover {
-            color: rgba(135, 206, 235, 0.7);
-            background-color: #135c7d;
+            color: #fff;
+            background-color: 135c7d;
         }
     }
 

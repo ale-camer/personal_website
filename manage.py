@@ -14,6 +14,7 @@ from app import app
 from modules.utils import timed_run
 from modules.generate_readme import ReadmeGenerator
 from modules.generate_translations import main as generate_translations
+from modules.generate_requirements import main as generate_requirements
 
 # =============================================================================
 # RUN
@@ -29,6 +30,9 @@ def run_dev_tasks():
         
     if input("Do you want to generate translations? (y/n): ").strip().lower() == 'y':
         timed_run(generate_translations, process_str="Translations generated")
+
+    if input("Do you want to generate requirements.txt? (y/n): ").strip().lower() == 'y':
+        timed_run(generate_requirements, process_str="requirements.txt generated")
 
 if __name__ == '__main__':
     if os.environ.get('FLASK_ENV') == 'development':
