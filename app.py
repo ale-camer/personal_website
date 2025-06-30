@@ -14,7 +14,7 @@ import modules.utils as ut
 import modules.world_bank_utils as wb_ut
 from modules.dash_app import init_dash_app
 from modules.keyphrase import NGramModule, get_tables_string, progress
-from modules.seasonality import SeasonalityModule, download_forecast
+from modules.seasonality_extended import SeasonalityModule, download_forecast
 from modules.whatsapp import layout, WhatsAppModule
 from modules.world_bank import WorldBankModule
 
@@ -139,25 +139,28 @@ def predict_seasonality():
     template = 'seasonality.html'
     file = request.files.get('file')
     periodicity = int(request.form.get('periodicity'))
+    nlags = int(request.form.get('nlags'))
 
-    processor = SeasonalityModule(file, periodicity)
+    processor = SeasonalityModule(file, periodicity, nlags)
     error = processor.is_empty(selected_lang)
     if error:
         return render_template(template, error_message=error)
 
-    try:
-        forecast = processor.forecast()
-        return render_template(
-            template,
-            forecast=forecast,
-            existing_plots=config["plot_names"],
-            enumerate=enumerate
-        )
-    except:
-        return render_template(
-            template,
-            val_message=processor.validation(selected_lang)
-        )
+    # try:
+    forecast, acf, pacf = processor.forecast()
+    return render_template(
+        template,
+        forecast=forecast,
+        acf=acf,
+        pacf=pacf,
+        existing_plots=config["plot_names"],
+        enumerate=enumerate
+    )
+    # except:
+    #     return render_template(
+    #         template,
+    #         val_message=processor.validation(selected_lang)
+    #     )
 
 @app.route('/download_predictions', methods=['GET'])
 def download_predictions():

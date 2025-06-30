@@ -24,12 +24,19 @@
                     <input type="file" name="file" id="file" accept=".xlsx,.xls">
                     <span id="fileError" style="color: red;"></span>
                 </div>
+
                 <div class="form-group">
                     <label for="periodicity" data-translate-key="periodicity_label">{{ texts['periodicity_label']
                         }}</label><br>
                     <input type="number" name="periodicity" id="periodicity" min="2" max="100" value="4" required
                         title="{{ texts['periodicity_title'] }}" data-translate-key-title="periodicity_title">
+
+                    <label for="nlags" data-translate-key="nlags"># Lags:</label><br>
+                    <input type="number" name="nlags" id="nlags" min="2" max="100" value="10" required
+                        title="Choose the number of lags that you want. If it's higher than the length of the serie it will be halved."
+                        data-translate-key-title="nlags">
                 </div>
+
                 <div class="button-row">
                     <button type="submit" data-translate-key="submit_button">{{ texts['submit_button']|safe }}</button>
                     <button type="button" id="downloadBtn" data-translate-key="download_button">{{
@@ -38,6 +45,22 @@
             </form>
         </div>
     </div>
+
+    <!-- if empty error -->
+    {% if error_message %}
+    <div class="project-container" id="result-section-error">
+        <h2 data-translate-key="error_title">{{ texts['error_title'] }}</h2>
+        <p data-translate-key="error_message">{{ error_message|safe }}</p>
+    </div>
+    {% endif %}
+
+    <!-- if validation error -->
+    {% if val_message %}
+    <div class="project-container" id="result-section-error">
+        <h2 data-translate-key="error_title">{{ texts['error_title'] }}</h2>
+        <p data-translate-key="validation">{{ val_message|safe }}</p>
+    </div>
+    {% endif %}
 
     <!-- if forecast -->
     {% if forecast %}
@@ -62,26 +85,10 @@
     </div>
     {% endif %}
 
-    <!-- if empty error -->
-    {% if error_message %}
-    <div class="project-container" id="result-section-error">
-        <h2 data-translate-key="error_title">{{ texts['error_title'] }}</h2>
-        <p data-translate-key="error_message">{{ error_message|safe }}</p>
-    </div>
-    {% endif %}
-
-    <!-- if validation error -->
-    {% if val_message %}
-    <div class="project-container" id="result-section-error">
-        <h2 data-translate-key="error_title">{{ texts['error_title'] }}</h2>
-        <p data-translate-key="validation">{{ val_message|safe }}</p>
-    </div>
-    {% endif %}
-
-    <!-- if plots -->
-    {% if existing_plots and existing_plots|length > 0 %}
+    <!-- if prediction plots -->
+    {% if existing_plots and existing_plots | length > 0 %}
     <div class="project-container" id="result-section-plots">
-        <h2 data-translate-key="plots_title">{{ texts['plots_title'] }}</h2>
+        <h2>Prediction</h2>
         <div class="plot-container">
             {% if 'original_data.png' in existing_plots %}
             <img src="{{ url_for('static', filename='seasonality/original_data.png') }}">
@@ -91,6 +98,67 @@
             {% endif %}
             {% if 'historic_and_prediction_data.png' in existing_plots %}
             <img src="{{ url_for('static', filename='seasonality/historic_and_prediction_data.png') }}">
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- if acf -->
+    {% if acf %}
+    <div class="project-container" id="result-section-forecast">
+        <h2>Autocorrelation</h2>
+        <table id="seasonality-table">
+            <thead>
+                <tr>
+                    <th># Lag</th>
+                    <th>Correlation</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i, value in enumerate(acf) %}
+                <tr>
+                    <td>{{ i + 1 }}</td>
+                    <td>{{ value }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <!-- if pacf -->
+    {% if pacf %}
+    <div class="project-container" id="result-section-forecast">
+        <h2>Partial Autocorrelation</h2>
+        <table id="seasonality-table">
+            <thead>
+                <tr>
+                    <th># Lag</th>
+                    <th>Correlation</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i, value in enumerate(pacf) %}
+                <tr>
+                    <td>{{ i + 1 }}</td>
+                    <td>{{ value }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <!-- if description plots -->
+    {% if existing_plots and existing_plots | length > 0 %}
+    <div class="project-container" id="result-section-plots">
+        <h2>Description</h2>
+        <div class="plot-container">
+            {% if 'historic_and_prediction_data.png' in existing_plots %}
+            <img src="{{ url_for('static', filename='seasonality/data_decomposition.png') }}">
+            {% endif %}
+            {% if 'historic_and_prediction_data.png' in existing_plots %}
+            <img src="{{ url_for('static', filename='seasonality/autocorrelation_data.png') }}">
             {% endif %}
         </div>
     </div>
