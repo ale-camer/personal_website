@@ -216,20 +216,13 @@ function makeTableSortable() {
     const table = document.querySelector('.wb-table');
     if (!table) return;
     const headers = table.querySelectorAll('th.sortable');
-
-    const columnKeys = {
-        'Country': 'COUNTRY',
-        'Date': 'DATE',
-        'Value': 'VALUE'
-    };
     let sortStates = {};
 
     headers.forEach(header => {
-        const columnTextClean = header.childNodes[0].nodeValue.trim();
-        const dataKey = columnKeys[columnTextClean];
-
+        const dataKey = header.getAttribute('data-translate-key').toUpperCase();
+        
         if (!dataKey) {
-            console.warn(`No data key mapped for header: ${columnTextClean}`);
+            console.warn(`Header sin el atributo data-translate-key requerido.`);
             return;
         }
 

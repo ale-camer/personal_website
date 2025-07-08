@@ -15,7 +15,7 @@ import requests
 from branca.colormap import linear
 
 # --- Project/system ---
-from modules.utils import read_json
+from modules.utils import read_json, get_valid_countries
 
 # =============================================================================
 # CONSTANTS
@@ -28,36 +28,26 @@ HTML_PLOTLY = 'html_plotly'
 HTML_FOLIUM = 'html_folium'
 TEMPORARY_FILES_FOLDER = 'static/world_bank/'
 
-# --- Configuration file path ---
-CONFIG_PATH = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-    'static', 'json', 'config.json'
-)
-STRINGS_TO_EXCLUDE = read_json(CONFIG_PATH)["strings_to_exclude"]
-
 # =============================================================================
 # DATA
 # =============================================================================
 class WorldBankDataHandler:
 
-    def __init__(self):
-        self.strings_to_exclude = STRINGS_TO_EXCLUDE
+    VALID_COUNTRIES = get_valid_countries()
 
     def indicator(self, indicator_id: str) -> list | None:
 
         url = f'https://api.worldbank.org/v2/country/all/indicator/{indicator_id}'
-        params = {'format': 'json', DATE_STR: '1960:2024', 'per_page': 20000}
-        try:
-            response = requests.get(url, params=params)
-            data = response.json()
-            return [
-                entry for entry in data[1]
-                if entry[COUNTRY_STR][VALUE_STR] not in self.strings_to_exclude
-                and entry[VALUE_STR] is not None
-            ]
-        except Exception as e:
-            print(f"Error fetching data for indicator {indicator_id}: {e}")
-            return None
+        params = {'format': 'json', DATE_STR: f'1960:{pd.to_datetime("today").year}', 'per_page': 20000}
+        
+        response = requests.get(url, params=params)
+        data = response.json()
+
+        return [
+            entry for entry in data[1]
+            if entry.get(VALUE_STR) is not None
+            and entry.get(COUNTRY_STR, {}).get(VALUE_STR) in self.VALID_COUNTRIES
+        ]
 
     def results(self, data: list, type_selected: str, option_selected: str) -> pd.DataFrame:
         filtered_data = [

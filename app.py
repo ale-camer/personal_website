@@ -146,21 +146,21 @@ def predict_seasonality():
     if error:
         return render_template(template, error_message=error)
 
-    # try:
-    forecast, acf, pacf = processor.forecast()
-    return render_template(
-        template,
-        forecast=forecast,
-        acf=acf,
-        pacf=pacf,
-        existing_plots=config["plot_names"],
-        enumerate=enumerate
-    )
-    # except:
-    #     return render_template(
-    #         template,
-    #         val_message=processor.validation(selected_lang)
-    #     )
+    try:
+        forecast, acf, pacf = processor.forecast()
+        return render_template(
+            template,
+            forecast=forecast,
+            acf=acf,
+            pacf=pacf,
+            existing_plots=config["plot_names"],
+            enumerate=enumerate
+        )
+    except:
+        return render_template(
+            template,
+            val_message=processor.validation(selected_lang)
+        )
 
 @app.route('/download_predictions', methods=['GET'])
 def download_predictions():
@@ -198,13 +198,12 @@ def plot_graph():
     title = f'{option} - {INDICATOR_NAMES.get(indicator)}' if type_selected == 'country' else None
 
     filepath = wb_manager.create_visualization(df, type_selected, title=title)
-    plot_url = url_for(
-        'static',
-        filename=os.path.relpath(
-            os.path.abspath(filepath),
-            os.path.abspath(app.static_folder)
-        )
+    relative_path = os.path.relpath(
+        os.path.abspath(filepath),
+        os.path.abspath(app.static_folder)
     )
+    plot_url = url_for('static', filename=relative_path.replace(os.sep, '/'))
+
     return jsonify({'message': 'Interactive graph generated.', 'plot_url': plot_url})
 
 # =============================================================================

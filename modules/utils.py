@@ -9,6 +9,7 @@ import os
 import re
 import shutil
 import psutil
+import requests
 from time import time
 
 # --- Third-party ---
@@ -155,3 +156,20 @@ def performance_analyzer(process_str=None):
             return timed_run(lambda: fn(self, *args, **kwargs), process_str=name, in_seconds=True, decimals=1)
         return wrapper
     return decorator
+
+# =============================================================================
+# WORLD BANK API
+# =============================================================================
+def get_valid_countries() -> set:
+    countries_set = set()
+    url = 'https://api.worldbank.org/v2/country'
+    params = {'format': 'json', 'per_page': 500}
+
+    response = requests.get(url, params=params)
+    data = response.json()
+
+    if data and len(data) > 1:
+        for country_data in data[1]:
+            if country_data.get('region', {}).get('value') != 'Aggregates':
+                countries_set.add(country_data['name'])
+        return countries_set
