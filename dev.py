@@ -31,9 +31,6 @@ def run_dev_tasks():
     if input("Do you want to generate translations? (y/n): ").strip().lower() == 'y':
         timed_run(generate_translations, process_str="Translations generated")
 
-    if input("Do you want to generate requirements.txt? (y/n): ").strip().lower() == 'y':
-        timed_run(generate_requirements, process_str="requirements.txt generated")
-
 if __name__ == '__main__':
     if os.environ.get('FLASK_ENV') == 'development':
         run_dev_tasks()

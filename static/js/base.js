@@ -1,6 +1,6 @@
 //Project-wise Functionalities
 
-document.addEventListener('DOMContentLoaded', function() { // navbar behavior
+document.addEventListener('DOMContentLoaded', function() {
     const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
     dropdownToggles.forEach(toggle => {
         toggle.addEventListener('click', function(event) {
@@ -26,4 +26,25 @@ document.addEventListener('DOMContentLoaded', function() { // navbar behavior
             dropdown.classList.remove('open');
         });
     }
+    const cvAnchorLinks = document.querySelectorAll('#cv-menu a[href*="#"]');
+    cvAnchorLinks.forEach(link => {
+        link.addEventListener('click', function(event) {
+            const linkUrl = new URL(link.href);
+            const currentUrl = new URL(window.location.href);
+
+            if (linkUrl.pathname === currentUrl.pathname) {
+                event.preventDefault();
+                const targetId = link.getAttribute('href').split('#')[1];
+                const targetElement = document.getElementById(targetId);
+
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+                closeAllDropdowns();
+            }
+        });
+    });
 });
