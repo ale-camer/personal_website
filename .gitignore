@@ -9,3 +9,6 @@ modules/ts_clustering_eda.py
 modules/meteorology.py
 modules/finance.py
 modules/twitter.py
+__pycache__/
+*.pyc
+nohup.out
