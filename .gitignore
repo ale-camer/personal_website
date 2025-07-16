@@ -1,4 +1,4 @@
-.env
+.venv
 my-aws-key.pem
 venv/
 templates/Statistics.ipynb
