@@ -1,14 +1,5 @@
-.venv
+.env
 my-aws-key.pem
 venv/
-templates/Statistics.ipynb
-templates/Interactive_Projects.ipynb
-templates/Intro_to_Calculus_for_Data_Science.ipynb
-templates/Intro_to_Optimization_for_Data_Science.ipynb
-modules/ts_clustering_eda.py
-modules/meteorology.py
-modules/finance.py
-modules/twitter.py
 __pycache__/
 *.pyc
-nohup.out

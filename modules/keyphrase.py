@@ -17,7 +17,7 @@ from tqdm import tqdm
 from prettytable import PrettyTable
 
 # --- Project/system ---
-from modules.utils import text_normalizer, performance_analyzer
+from modules.utils import text_normalizer
 
 # =============================================================================
 # TOP NGRAMS
@@ -45,7 +45,6 @@ class NGramAnalyzer:
         self.url_regex = re.compile(r'http\S+')
         self._tokens = None
 
-    @performance_analyzer("Generating ngrams")
     def generate_ngrams(self) -> dict:
         self._tokens = list(chain.from_iterable(self._token_generator()))
         return self._build_ngram_tables()

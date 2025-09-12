@@ -1,0 +1,9 @@
+NEXT STEPS
+
+1. Abstraer y pensar qué objetos se necesitan.
+2. No llamar directamente a toda una libreria, solo los objetos necesarios.
+3. Migrar todo lo que se pueda a lenguaje nativo.
+4. En lo posible hacer sólo uso de librerías estandar.
+5. Hacer unit testing a partir de Big O Notation.
+6. Agregar asincronización.
+7. Pasar todo a fastapi.

@@ -44,7 +44,8 @@
     "Forest area (% of land area)": "AG.LND.FRST.ZS",
     "Land area (sq. km)": "AG.LND.TOTL.K2",
     "Access to electricity (% of population)": "EG.ELC.ACCS.ZS",
-    "Alternative and nuclear energy (% of total energy use)": "EG.USE.COMM.CL.ZS"
+    "Alternative and nuclear energy (% of total energy use)": "EG.USE.COMM.CL.ZS",
+	"Homicides (per 100,000 people)": "VC.IHR.PSRC.P5"
   },
   "plot_names": [
     "original_data.png",

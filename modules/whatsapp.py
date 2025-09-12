@@ -30,7 +30,7 @@ STOPWORDS_PATH = os.path.join(
 STOPWORDS = read_json(STOPWORDS_PATH)
 
 # =============================================================================
-# DASHBOAR
+# DASHBOARD
 # =============================================================================
 def layout(df: pd.DataFrame = None) -> html.Div:
   
@@ -82,7 +82,6 @@ class WhatsAppModule:
     def __init__(self):
         self.current_data = None
 
-    @performance_analyzer("Parsing chat")
     def parse_chat(self, file, language: str) -> WhatsAppConfig:
         parser = WhatsAppParser(file)
         content = parser.parse()
@@ -90,7 +89,6 @@ class WhatsAppModule:
         self.current_data = WhatsAppConfig(df=df, content=content, language=language)
         return self.current_data
     
-    @performance_analyzer("Filtering chat")
     def filter_chat(self, issuer: str) -> tuple:
         is_general = issuer == 'GENERAL'
         
