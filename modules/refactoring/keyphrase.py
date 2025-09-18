@@ -6,14 +6,6 @@ whatsapp_chunk = re.findall(whatsapp_pattern, clean_chunk)
 print(whatsapp_chunk)
 """
 
-"""
-tareas:
-
-    1. agregar plots
-    2. separar logica
-    3. armar politica
-"""
-
 # standard
 import itertools
 from collections import deque, Counter
