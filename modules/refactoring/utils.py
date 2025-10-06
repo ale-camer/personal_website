@@ -72,32 +72,6 @@ def read_excel(xlsx_file: str) -> dict:
             ]
         return workbook_data
 
-def clean_excel_input(workbook_data: dict) -> dict:
-
-    def parse_ref(ref):
-        match = re.match(r"([A-Z]+)([0-9]+)", ref)
-        if match: col, row = match.groups(); return col, int(row)
-        return None, None
-
-    def build_cols_and_max(cells):
-        cols, max_row = defaultdict(dict), 0
-        for c in cells:
-            col, row = parse_ref(c["ref"])
-            if col is None or row is None:
-                continue
-            cols[col][row] = c["value"]
-        return cols, max(max_row, row)
-
-    cleaned = {}
-    for sheet, cells in workbook_data.items():
-        cols, max_row = build_cols_and_max(cells)
-        cleaned[sheet] = [
-            [cols[col].get(row, None) for row in range(1, max_row + 1)]
-            for col in sorted(cols.keys())
-        ]
-
-    return cleaned
-
 class TextCleaner:
 
     _PUNCTUATION_PATTERN = f"[{re.escape(string.punctuation)}]"

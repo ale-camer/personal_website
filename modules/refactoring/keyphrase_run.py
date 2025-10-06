@@ -1,3 +1,7 @@
+"""
+falta deployar el tester y correrlo en app
+"""
+
 from keyphrase_pipeline import input_params, pipeline
 import validations as val
 from utils import get_input, FileExporter

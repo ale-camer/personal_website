@@ -1,13 +1,10 @@
 from deployment import Deployment
 import keyphrase_pipeline as params
-
-def get_input(func, *args, **kwargs):
-    return func(*args, **kwargs)
+from utils import get_input
 
 def main():
-    input_data = get_input(**params.input_params)
-    params.deploy_params["input_data"] = input_data
-    return Deployment(**params.deploy_params).run()
+    params.tester_params["input_data"] = get_input(**params.input_params)
+    return Deployment(**params.tester_params).run()
 
 if __name__ == "__main__":
     for _ in range(3):
