@@ -1,12 +1,3 @@
-r"""
-results = Ngrams(data).run()
-
-whatsapp_pattern = r'(\d{1,2}/\d{1,2}/\d{4}, \d{2}:\d{2} .*?)(?=\d{1,2}/\d{1,2}/\d{4}, \d{2}:\d{2}|$)'
-whatsapp_chunk = re.findall(whatsapp_pattern, clean_chunk)
-print(whatsapp_chunk)
-"""
-
-# standard
 import itertools
 from collections import deque, Counter
 

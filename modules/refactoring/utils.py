@@ -3,6 +3,12 @@ from collections import defaultdict
 from unidecode import unidecode
 from zipfile import ZipFile as zipf
 import xml.etree.ElementTree as ET
+from prettytable import PrettyTable as pt
+from tabulate import tabulate
+from fpdf import FPDF
+
+def get_input(func, *args, **kwargs):
+    return func(*args, **kwargs)
 
 def get_chunks(iterable: iter, size: int = 100_000, start: int = 0) -> iter:
     if not hasattr(iterable, "__iter__") or not hasattr(iterable, "__len__"):
@@ -153,3 +159,61 @@ def validate_upload_size(uploaded_file, limit_mb: int = 10):
             f"The file is too big ({file_size_mb:.2f} MB). "
             f"The limit is {limit_mb} MB."
         )
+
+class FileExporter:
+    def __init__(self, results: dict, cols: list[str], filename: str):
+        self.results = results
+        self.cols = cols
+        self.filename = filename
+
+    # strings
+    def to_txt_string(self) -> str:
+        tables = []
+        for k, v in self.results.items():
+            table = pt(title=k, field_names=self.cols)
+            table.add_rows([[' '.join(ngram), count] for ngram, count in v])
+            tables.append(str(table))
+        return "\n\n".join(tables)
+
+    def to_md_string(self) -> str:
+        md_tables = []
+        for k, v in self.results.items():
+            table_data = [[' '.join(ngram), count] for ngram, count in v]
+            md_tables.append(f"## {k}\n" + tabulate(table_data, headers=self.cols, tablefmt="github"))
+        return "\n\n".join(md_tables)
+
+    # exports
+    def export_txt(self):
+        txt_string = self.to_txt_string()
+        with open(self.filename + '.txt', "w", encoding="utf-8") as f:
+            f.write(txt_string)
+        print(f"TXT saved as {self.filename + '.txt'}")
+
+    def export_md(self):
+        md_string = self.to_md_string()
+        with open(self.filename + '.md', "w", encoding="utf-8") as f:
+            f.write(md_string)
+        print(f"Markdown saved as {self.filename + '.md'}")
+
+    def export_pdf(self):
+        pdf = FPDF()
+        pdf.set_auto_page_break(auto=True, margin=15)
+        pdf.add_page()
+        pdf.set_font("Arial", "", 14)
+
+        for k, v in self.results.items():
+            pdf.cell(0, 10, k, ln=True)
+            pdf.set_font("Arial", "", 12)
+            # Encabezado de tabla
+            pdf.cell(80, 8, self.cols[0], border=1)
+            pdf.cell(30, 8, self.cols[1], border=1)
+            pdf.ln()
+            # Filas de tabla
+            for ngram, count in v:
+                pdf.cell(80, 8, ' '.join(ngram), border=1)
+                pdf.cell(30, 8, str(count), border=1)
+                pdf.ln()
+            pdf.ln(5)
+
+        pdf.output(self.filename + '.pdf')
+        print(f"PDF saved as {self.filename + '.pdf'}")

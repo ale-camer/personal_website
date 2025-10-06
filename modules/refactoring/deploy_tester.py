@@ -1,4 +1,3 @@
-import os, sys
 from deployment import Deployment
 import keyphrase_pipeline as params
 

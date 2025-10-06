@@ -26,7 +26,7 @@ input_params = {
     "filename": "whatsapp_chat.txt"
 }
 
-deploy_params = {
+tester_params = {
     "worker": pipeline,
     "combine_fn": get_ngrams_output,
     "input_data": None
