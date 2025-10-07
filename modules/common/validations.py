@@ -35,12 +35,15 @@ def validate_data_type(data):
     else:
         print("The data type of the values is OK")
 
-class FileTooBig(Exception):
+class FileTooBigError(Exception):
     pass
 
-def validate_file_size(filename: str, max_size_mb: float = 10):
-    file_size_mb = os.path.getsize(filename) / (1024 * 1024)
+def validate_stream_size(stream, max_size_mb: float = 10):
+
+    current_position = stream.tell()
+    stream.seek(0, os.SEEK_END)
+    stream.seek(current_position, os.SEEK_SET)
+
+    file_size_mb = stream.tell() / (1024 * 1024)
     if file_size_mb > max_size_mb:
-        raise FileTooBig(f"The file can't be bigger than {max_size_mb} MB")
-    else:
-        print("File size is OK")
+        raise FileTooBigError(f"The file can't be bigger than {max_size_mb} MB")

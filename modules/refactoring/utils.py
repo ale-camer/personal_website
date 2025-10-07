@@ -191,3 +191,60 @@ class FileExporter:
 
         pdf.output(self.filename + '.pdf')
         print(f"PDF saved as {self.filename + '.pdf'}")
+
+def get_first_sheet_name(data):
+    return list(data.keys())[0]
+
+def get_sheet_values(data, sheet_name):
+    return [d for d in data[sheet_name][0] if d is not None]
+
+def clean_excel_input(workbook_data: dict) -> dict:
+
+    def parse_ref(ref):
+        match = re.match(r"([A-Z]+)([0-9]+)", ref)
+        if match: col, row = match.groups(); return col, int(row)
+        return None, None
+
+    def build_cols_and_max(cells):
+        cols, max_row = defaultdict(dict), 0
+        for c in cells:
+            col, row = parse_ref(c["ref"])
+            if col is None or row is None:
+                continue
+            cols[col][row] = c["value"]
+        return cols, max(max_row, row)
+
+    cleaned = {}
+    for sheet, cells in workbook_data.items():
+        cols, max_row = build_cols_and_max(cells)
+        cleaned[sheet] = [
+            [cols[col].get(row, None) for row in range(1, max_row + 1)]
+            for col in sorted(cols.keys())
+        ]
+
+    return cleaned
+
+def data_to_numeric(data):
+    return [float(d) for d in data]
+
+def get_mean(data: list) -> float:
+    return sum(data) / len(data)
+
+def groupby_lists(list1: list, list2: list) -> dict:
+    grouped = defaultdict(list)
+    for k, v in [(str(l1), l2) for l1, l2 in zip(list1, list2)]:
+        grouped[k].append(v)
+    return {k: get_mean(v) for k, v in grouped.items()}
+
+def multiply_lists(list1: list, list2: list) -> list:
+    return [l1 * l2 for l1, l2 in zip(list1, list2)]
+
+def divide_lists(list1: list, list2: list) -> list:
+    return [a / b for a, b in zip(list1, list2)]
+
+def rolling_mean(serie, window):
+    n, results = len(serie), []
+    for i in range(n - window + 1):
+        mean = sum(serie[i:i+window]) / window
+        results.append(mean)
+    return results

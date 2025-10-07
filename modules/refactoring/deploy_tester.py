@@ -1,5 +1,5 @@
 from deployment import Deployment
-import keyphrase_pipeline as params
+import world_bank_pipeline as params
 from utils import get_input
 
 def main():

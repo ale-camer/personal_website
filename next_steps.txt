@@ -1,12 +1,10 @@
 NEXT STEPS
 
-Sobre cada módulo:
-	1. Abstraer y pensar qué objetos se necesitan.
-	2. No llamar directamente a toda una libreria, solo los objetos necesarios.
-	3. Migrar todo lo que se pueda a lenguaje nativo.
-	4. En lo posible hacer sólo uso de librerías estandar.
-	5. Hacer unit testing a partir de Big O Notation.
-	6. Agregar asincronización.
-
 Sobre su orquestación:
-	1. Pasar todo a fastapi.
+	1. Agregar asincronización para I/O.
+	2. Pasar todo a fastapi.
+
+keyphrase: multiprocessing
+seasonality: secuencial
+whatsapp: multiprocessing
+world_bank: secuencial

@@ -2,9 +2,7 @@ import itertools
 from collections import deque, Counter
 
 def get_top_ngrams(
-        tokens_iterator: list[str],
-        has_stream: bool = True,
-        top_k: int = 3,
+        tokens_iterator: list[str], has_stream: bool = True, top_k: int = 3,
         max_n: int = 3
     ) -> dict:
 

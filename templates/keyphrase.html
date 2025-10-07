@@ -10,6 +10,14 @@
 <div class="main-project-container">
     <div class="project-container" id="first-container">
         <h1 data-translate-key="keyphrase_title">{{ texts['keyphrase_title'] }}</h1>
+
+        {% if error %}
+        <div class="error-message"
+            style="color: red; background-color: #ffe0e0; border: 1px solid red; padding: 10px; margin-bottom: 15px; border-radius: 5px;">
+            {{ error }}
+        </div>
+        {% endif %}
+
         <div>
             <p id="intro-paragraph" data-translate-key="intro">{{ texts['keyphrase_title'] }}</p>
         </div>
@@ -37,8 +45,8 @@
 
                 <div class="button-row">
                     <button type="submit" id="submitBtn" data-translate-key="button_1">{{ texts['button_1'] }}</button>
-                    <button type="button" id="downloadBtn" data-translate-key="button_2">{{ texts['button_2']
-                        }}</button>
+                    <!-- <button type="button" id="downloadBtn" data-translate-key="button_2">{{ texts['button_2']
+                        }}</button> -->
                 </div>
             </form>
         </div>
@@ -66,7 +74,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for row in data.values %}
+                        {% for row in data %}
                         <tr>
                             <td id="keyword">{{ row[0] }}</td>
                             <td id="n-appearances">{{ row[1] }}</td>
@@ -80,6 +88,25 @@
             {% endif %}
             {% endfor %}
         </div>
+
+        <div class="project-container" id="download-form-section" style="padding-top: 0;">
+            <form action="/download_keyphrases" method="get" target="_blank">
+                <h3>Descargar Resultados</h3>
+                <div class="download-options">
+                    <label>
+                        <input type="radio" name="format" value="txt" checked> TXT
+                    </label>
+                    <label>
+                        <input type="radio" name="format" value="md"> Markdown
+                    </label>
+                    <label>
+                        <input type="radio" name="format" value="pdf"> PDF
+                    </label>
+                </div>
+                <button type="submit" id="downloadBtn" data-translate-key="button_2">{{ texts['button_2'] }}</button>
+            </form>
+        </div>
+
         {% else %}
         <div></div>
     </div>

@@ -3,7 +3,7 @@ falta deployar el tester y correrlo en app
 """
 
 from keyphrase_pipeline import input_params, pipeline
-import validations as val
+import modules.common.validations as val
 from utils import get_input, FileExporter
 
 val.validate_file_size(input_params["filename"])

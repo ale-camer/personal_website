@@ -33,9 +33,15 @@ def clean_message(data: str) -> iter:
 
     yield from (parse_line(d) for d in data if is_valid(d))
 
+class WhatsappFileError(Exception):
+    pass
+
 def parse_messages(data):
     MESSAGE = "Cleaning messages"
-    return [msg for msg in tqdm(clean_message(data), desc=MESSAGE)]
+    cleaned = [msg for msg in tqdm(clean_message(data), desc=MESSAGE)]
+    if not cleaned:
+        raise WhatsappFileError("Invalid file format")
+    return cleaned
 
 def groupby_dict(data):
     return Counter(
@@ -44,6 +50,6 @@ def groupby_dict(data):
         for prefix, idxs in [("", [2,1,4,5,6]), ("GENERAL_", [1,4,5,6])]
     )
 
-data = read_txt("whatsapp_chat.txt").splitlines()
-cleaned_data = parse_messages(data)
-grouped_data = groupby_dict(cleaned_data)
+# data = read_txt("whatsapp_chat.txt").splitlines()
+# cleaned_data = parse_messages(data)
+# grouped_data = groupby_dict(cleaned_data)

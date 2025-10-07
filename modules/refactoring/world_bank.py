@@ -1,4 +1,4 @@
-import requests, json, subprocess
+import requests, json
 from datetime import datetime
 
 def read_csv(filename, encoding: str = "utf-8"):
@@ -23,40 +23,19 @@ def call_api(url: str, params: dict) -> json:
 def get_countries(data: list) -> list:
     return [d['name'] for d in data if d.get('region').get('value') != 'Aggregates']
 
-def main(config: dict):
-
-    url_indicator = config["urls"]["indicator"].format(indicator_id=config["indicator_id"])
-
-    raw_countries = call_api(config["urls"]["countries"], config["params"]["countries"])[1]
-    countries = get_countries(raw_countries)
-    raw_data = call_api(url_indicator, config["params"]["indicator"])[1]
-
-    write_json(raw_data, config["paths"]["input_json"])
-    write_txt_list(countries, config["paths"]["country_list"])
-
-    command = [
-        'java', '-jar', config["paths"]["scala_jar"],
-        config["paths"]["input_json"],
-        config["paths"]["country_list"],
-        config["paths"]["output_csv"],
-        config["type"],
-        config["option"]
+def subset_raw_data(data: list) -> list:
+    return [
+        (d['country']['value'], d['date'], d['value'])
+        for d in data
+        if filters[config["type"]](d)
+        and d['country']['value'] in countries
+        and d['value'] is not None
     ]
 
-    subprocess.run(command, check=True, capture_output=True, text=True)
-    data_requested = read_csv(config["paths"]["output_csv"])
-    return [d.split(",") for d in data_requested]
-
-CONFIG = {
+config = {
     "indicator_id": "NY.GDP.MKTP.CD",
     "type": "date", # 'country' o 'date'
-    "option": "2021", # country or year
-    "paths": {
-        "input_json": "temp_data_for_scala.json",
-        "country_list": "temp_country_list.txt",
-        "output_csv": "wb_results.csv",
-        "scala_jar": "DataProcessor.jar"
-    },
+    "option": "2000", # country or year
     "urls": {
         "countries": "https://api.worldbank.org/v2/country",
         "indicator": "https://api.worldbank.org/v2/country/all/indicator/{indicator_id}"
@@ -70,34 +49,14 @@ CONFIG = {
         }
     }
 }
+filters = {
+    "country": lambda d: d["country"]["value"] == config["option"],
+    "date":    lambda d: d["date"] == config["option"]
+}
 
-if __name__ == "__main__":
-    df = main(CONFIG)
-    # print(df)
+url_indicator = config["urls"]["indicator"].format(indicator_id=config["indicator_id"])
 
-#%% otros
-
-# def get_countries_data(data: dict, included_items) -> list:
-#     return [d for d in data if d.get('value') is not None and d.get('country', {}).get('value') in included_items]
-
-# def get_output_data(data) -> df:
-
-#     filters = {
-#         "country": lambda d: d["country"]["value"] == OPTION,
-#         "date":    lambda d: d["date"] == OPTION
-#     }
-#     data_requested = [
-#         (d['country']['value'], d['date'], d['value'])
-#         for d in data if filters[TYPE](d)
-#     ]
-#     return (
-#         df(data_requested, columns=['COUNTRY', 'YEAR', 'VALUE'])
-#         .sort_values(by=['COUNTRY', 'YEAR'], ascending=[True, False])
-#         .drop_duplicates()
-#         .dropna()
-#     )
-
-# write_json(raw_data, "raw_data.json")
-# data_countries = get_countries_data(raw_data, countries) # pasar a spark
-# data_requested = get_output_data(data_countries)
-# print(data_requested)
+raw_countries = call_api(config["urls"]["countries"], config["params"]["countries"])[1]
+countries = get_countries(raw_countries)
+raw_data = call_api(url_indicator, config["params"]["indicator"])[1]
+requested_data = subset_raw_data(raw_data)

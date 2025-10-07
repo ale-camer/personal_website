@@ -13,7 +13,7 @@ from flask import Flask, render_template, request, redirect, send_file, jsonify,
 import modules.utils as ut
 import modules.world_bank_utils as wb_ut
 from modules.dash_app import init_dash_app
-from modules.keyphrase import NGramModule, get_tables_string, progress
+# from modules.keyphrase_OLD import NGramModule, get_tables_string, progress
 from modules.seasonality_extended import SeasonalityModule, download_forecast
 from modules.whatsapp import layout, WhatsAppModule
 from modules.world_bank import WorldBankModule
@@ -104,28 +104,52 @@ def whatsapp():
 # =============================================================================
 # KEYPHRASE
 # =============================================================================
+import modules.keyphrase as kp
+from modules.common import write_json, validate_file_size, FileExporter, read_results
+from flask import make_response
+
+progress = {"value": 0}
+
 @app.route('/extract_keyphrases', methods=['POST'])
-def extract_keyphrases():
-    progress["value"] = 0
-    ngrams = NGramModule(
-      raw_text=request.files.get('file').read().decode('utf-8'),
-      max_ngrams=int(request.form.get('num_tables', 1)),
-      num_nrows=int(request.form.get('num_rows', 1))
+@validate_file_size(template_on_error='keyphrase.html')
+def extract_keyphrases(uploaded_file):
+
+    results = kp.pipeline(
+        raw_text=uploaded_file.read().decode('utf-8'),
+        progress=progress,
+        top_k=int(request.form.get('num_rows', 1)),
+        max_n=int(request.form.get('num_tables', 1))
     )
-    result = ngrams.analyze()
-    ut.write_json(ngrams.summary, KEYPHRASE_INPUT_PATH)
-    return render_template('keyphrase.html', results=result)
+
+    summary = {
+        label: [{"Keywords": d[0], "# Appearances": d[1]} for d in data]
+        for label, data in results.items()
+    }
+
+    write_json(summary, KEYPHRASE_INPUT_PATH)
+    return render_template('keyphrase.html', results=results)
 
 @app.route('/progress')
 def get_progress():
     return jsonify(progress)
 
-@app.route('/download_keyphrases')
-def download_keyphrases(output_filename: str = "keyphrases.txt"):
-    data = ut.read_json(KEYPHRASE_INPUT_PATH)
-    keyphrases_string = get_tables_string(data)
-    ut.write_txt(keyphrases_string, KEYPHRASE_OUTPUT_PATH)
-    return send_file(KEYPHRASE_OUTPUT_PATH, as_attachment=True, download_name=output_filename)
+@app.route('/download_keyphrases', methods=['GET'])
+def download_keyphrases():
+    
+    results_data = read_results(KEYPHRASE_INPUT_PATH)    
+    exporter = FileExporter(results_data, cols=["Keywords", "# Appearances"])
+    
+    file_format = request.args.get('format', 'txt')
+    match file_format:
+        case 'txt': output_content = exporter.to_txt_string()
+        case 'md': output_content = exporter.to_md_string()
+        case 'pdf': output_content = exporter.to_pdf_bytes()
+    
+    response = make_response(output_content)
+    response.headers['Content-Type'] = f"application/{file_format}" if file_format == 'pdf' else f"text/{file_format}"
+    response.headers['Content-Disposition'] = f'attachment; filename={f"keyphrase_results.{file_format}"}'
+    
+    return response
 
 # =============================================================================
 # SEASONALITY

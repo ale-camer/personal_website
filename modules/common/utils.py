@@ -50,6 +50,7 @@ def write_json(data: pd.DataFrame, path: str) -> None:
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
+    print(f"JSON file saved successfully in: {path}")
 
 def write_txt(content: str, path: str) -> None:
     with open(path, 'w', encoding='utf-8') as f:
@@ -322,63 +323,63 @@ def validate_upload_size(uploaded_file, limit_mb: int = 10):
             f"The limit is {limit_mb} MB."
         )
 
-class FileExporter:
-    def __init__(self, results: dict, cols: list[str], filename: str):
-        self.results = results
-        self.cols = cols
-        self.filename = filename
+# class FileExporter:
+#     def __init__(self, results: dict, cols: list[str], filename: str):
+#         self.results = results
+#         self.cols = cols
+#         self.filename = filename
 
-    # strings
-    def to_txt_string(self) -> str:
-        tables = []
-        for k, v in self.results.items():
-            table = pt(title=k, field_names=self.cols)
-            table.add_rows([[' '.join(ngram), count] for ngram, count in v])
-            tables.append(str(table))
-        return "\n\n".join(tables)
+#     # strings
+#     def to_txt_string(self) -> str:
+#         tables = []
+#         for k, v in self.results.items():
+#             table = pt(title=k, field_names=self.cols)
+#             table.add_rows([[' '.join(ngram), count] for ngram, count in v])
+#             tables.append(str(table))
+#         return "\n\n".join(tables)
 
-    def to_md_string(self) -> str:
-        md_tables = []
-        for k, v in self.results.items():
-            table_data = [[' '.join(ngram), count] for ngram, count in v]
-            md_tables.append(f"## {k}\n" + tabulate(table_data, headers=self.cols, tablefmt="github"))
-        return "\n\n".join(md_tables)
+#     def to_md_string(self) -> str:
+#         md_tables = []
+#         for k, v in self.results.items():
+#             table_data = [[' '.join(ngram), count] for ngram, count in v]
+#             md_tables.append(f"## {k}\n" + tabulate(table_data, headers=self.cols, tablefmt="github"))
+#         return "\n\n".join(md_tables)
 
-    # exports
-    def export_txt(self):
-        txt_string = self.to_txt_string()
-        with open(self.filename + '.txt', "w", encoding="utf-8") as f:
-            f.write(txt_string)
-        print(f"TXT saved as {self.filename + '.txt'}")
+#     # exports
+#     def export_txt(self):
+#         txt_string = self.to_txt_string()
+#         with open(self.filename + '.txt', "w", encoding="utf-8") as f:
+#             f.write(txt_string)
+#         print(f"TXT saved as {self.filename + '.txt'}")
 
-    def export_md(self):
-        md_string = self.to_md_string()
-        with open(self.filename + '.md', "w", encoding="utf-8") as f:
-            f.write(md_string)
-        print(f"Markdown saved as {self.filename + '.md'}")
+#     def export_md(self):
+#         md_string = self.to_md_string()
+#         with open(self.filename + '.md', "w", encoding="utf-8") as f:
+#             f.write(md_string)
+#         print(f"Markdown saved as {self.filename + '.md'}")
 
-    def export_pdf(self):
-        pdf = FPDF()
-        pdf.set_auto_page_break(auto=True, margin=15)
-        pdf.add_page()
-        pdf.set_font("Arial", "", 14)
+#     def export_pdf(self):
+#         pdf = FPDF()
+#         pdf.set_auto_page_break(auto=True, margin=15)
+#         pdf.add_page()
+#         pdf.set_font("Arial", "", 14)
 
-        for k, v in self.results.items():
-            pdf.cell(0, 10, k, ln=True)
-            pdf.set_font("Arial", "", 12)
-            # Encabezado de tabla
-            pdf.cell(80, 8, self.cols[0], border=1)
-            pdf.cell(30, 8, self.cols[1], border=1)
-            pdf.ln()
-            # Filas de tabla
-            for ngram, count in v:
-                pdf.cell(80, 8, ' '.join(ngram), border=1)
-                pdf.cell(30, 8, str(count), border=1)
-                pdf.ln()
-            pdf.ln(5)
+#         for k, v in self.results.items():
+#             pdf.cell(0, 10, k, ln=True)
+#             pdf.set_font("Arial", "", 12)
+#             # Encabezado de tabla
+#             pdf.cell(80, 8, self.cols[0], border=1)
+#             pdf.cell(30, 8, self.cols[1], border=1)
+#             pdf.ln()
+#             # Filas de tabla
+#             for ngram, count in v:
+#                 pdf.cell(80, 8, ' '.join(ngram), border=1)
+#                 pdf.cell(30, 8, str(count), border=1)
+#                 pdf.ln()
+#             pdf.ln(5)
 
-        pdf.output(self.filename + '.pdf')
-        print(f"PDF saved as {self.filename + '.pdf'}")
+#         pdf.output(self.filename + '.pdf')
+#         print(f"PDF saved as {self.filename + '.pdf'}")
 
 def get_first_sheet_name(data):
     return list(data.keys())[0]
@@ -436,3 +437,91 @@ def rolling_mean(serie, window):
         mean = sum(serie[i:i+window]) / window
         results.append(mean)
     return results
+
+# common/utils.py
+
+# --- Asumo que ya tienes estos imports ---
+import json
+from prettytable import PrettyTable
+from tabulate import tabulate
+from fpdf import FPDF
+import io # Necesario para enviar archivos desde memoria
+
+class FileExporter:
+    def __init__(self, results_data: dict, cols: list[str]):
+        """
+        La clase ahora espera los datos ya preparados.
+        `results_data` es un diccionario como:
+        {'N-Gram 1': [['keyword', 'count'], ...]}
+        """
+        self.results = results_data
+        self.cols = cols
+
+    def to_txt_string(self) -> str:
+        """Genera una representación de texto plano de los resultados."""
+        tables = []
+        for title, data in self.results.items():
+            table = PrettyTable(title=title, field_names=self.cols)
+            table.add_rows(data)
+            tables.append(str(table))
+        return "\n\n".join(tables)
+
+    def to_md_string(self) -> str:
+        """Genera una representación Markdown de los resultados."""
+        md_tables = []
+        for title, data in self.results.items():
+            md_tables.append(f"## {title}\n" + tabulate(data, headers=self.cols, tablefmt="github"))
+        return "\n\n".join(md_tables)
+
+    # En modules/common/utils.py, dentro de la clase ResultExporter
+
+    def to_pdf_bytes(self) -> bytes:
+        """
+        Genera el contenido de un PDF como un objeto de bytes.
+        Esta versión es genérica y simple, presentando los datos como una lista vertical.
+        """
+        pdf = FPDF()
+        pdf.set_auto_page_break(auto=True, margin=15)
+        pdf.add_page()
+        
+        # Itera sobre cada tabla de resultados (ej. "N-Gram Value: 1", "N-Gram Value: 2", etc.)
+        for title, data in self.results.items():
+            # Escribe el título de la sección
+            pdf.set_font("Arial", size=14, style='B')
+            pdf.cell(0, 10, title, ln=True, align='L')
+            pdf.ln(2) # Un pequeño espacio después del título
+
+            # Itera sobre cada fila de datos (ej. ['palabra clave', '50'])
+            for row in data:
+                # Configura la fuente para los datos
+                pdf.set_font("Arial", size=11)
+                
+                # Obtiene el nombre de la columna y el valor de forma genérica
+                keyword_label = self.cols[0]
+                keyword_value = row[0]
+                
+                count_label = self.cols[1]
+                count_value = str(row[1])
+
+                # Escribe la primera línea (Keyword)
+                # w=0 significa que usa el ancho completo de la página
+                pdf.multi_cell(0, 7, f"{keyword_label}: {keyword_value}")
+
+                # Escribe la segunda línea (Count)
+                pdf.multi_cell(0, 7, f"{count_label}: {count_value}")
+                
+                # Añade un espacio entre cada entrada para mayor claridad
+                pdf.ln(3)
+
+            # Añade un espacio más grande antes de la siguiente tabla de N-Grams
+            pdf.ln(8)
+
+        # Retorna el PDF como bytes, listo para ser enviado en la respuesta de Flask
+        return pdf.output(dest='S').encode('latin-1')
+
+def read_results(json_path: str) -> dict:
+    summary_data = read_json(json_path)
+    return {
+        title: [[row['Keywords'], row['# Appearances']] for row in rows]
+        for title, rows in summary_data.items()
+    }

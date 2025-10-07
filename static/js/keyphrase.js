@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 loadingSection.style.alignItems = 'center';
                 firstSection.style.display = 'none';
                 if (resultSection) resultSection.style.display = 'none';
-                
+
                 setTimeout(() => {
                     updateProgress();
                 }, 100);
@@ -37,14 +37,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (downloadBtn) {
         downloadBtn.addEventListener('click', function (event) {
             fileError.textContent = '';
-
             const hasResultsDisplayed = resultSection && resultSection.querySelector('table');
-            if (!fileInput.files.length && !hasResultsDisplayed) {
-                fileError.textContent = 'Please upload a .txt file and extract keyphrases first.';
-            } else if (!hasResultsDisplayed) {
-                fileError.textContent = 'Please extract keyphrases first to see results and later download them.';
-            } else {
-                window.location.href = "/download_keyphrases";
+            let isValid = true;
+
+            if (!hasResultsDisplayed) {
+                fileError.textContent = 'Por favor, procesa un archivo primero para poder descargar los resultados.';
+                isValid = false;
+            }
+
+            if (!isValid) {
+                event.preventDefault(); // ¡Esta es la línea clave!
             }
         });
     }
@@ -63,9 +65,9 @@ document.addEventListener('DOMContentLoaded', () => {
 function updateProgress() {
     const progressBar = document.getElementById('progress-bar');
     const progressPercentage = document.getElementById('progress-percentage');
-    
+
     if (!progressBar || !progressPercentage) return;
-    
+
     fetch('/progress')
         .then(response => response.json())
         .then(data => {
