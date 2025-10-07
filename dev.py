@@ -14,7 +14,7 @@ from app import app
 from modules.utils import timed_run
 from modules.generate_readme import ReadmeGenerator
 from modules.generate_translations import main as generate_translations
-from modules.generate_requirements import main as generate_requirements
+from modules.generate_requirements_TO_DELETE import main as generate_requirements
 
 # =============================================================================
 # RUN

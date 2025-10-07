@@ -446,6 +446,7 @@ from prettytable import PrettyTable
 from tabulate import tabulate
 from fpdf import FPDF
 import io # Necesario para enviar archivos desde memoria
+import zipfile as zf
 
 class FileExporter:
     def __init__(self, results_data: dict, cols: list[str]):
@@ -525,3 +526,13 @@ def read_results(json_path: str) -> dict:
         title: [[row['Keywords'], row['# Appearances']] for row in rows]
         for title, rows in summary_data.items()
     }
+
+def export_zip(save_dir, filename: str = 'predictions.zip'):
+    zip_path = os.path.join(save_dir, filename)
+    with zf.ZipFile(zip_path, 'w', zf.ZIP_DEFLATED) as f:
+        for root, _, files in os.walk(save_dir):
+            for file in files:
+                if file != filename:
+                    file_path = os.path.join(root, file)
+                    f.write(file_path, os.path.relpath(file_path, save_dir))
+    return zip_path, filename

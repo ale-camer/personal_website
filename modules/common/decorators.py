@@ -1,5 +1,3 @@
-# common/decorators.py
-
 from functools import wraps
 from flask import request, render_template
 from .validations import validate_stream_size, FileTooBigError

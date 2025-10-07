@@ -6,17 +6,25 @@
 # --- Standard library ---
 import os
 
-# --- Third-party ---
-from flask import Flask, render_template, request, redirect, send_file, jsonify, url_for
+# --- External Library ---
+from flask import (
+    Flask, render_template, request, redirect, send_file, jsonify, url_for, 
+    make_response
+)
 
-# --- Project/system ---
+# --- Project Modules ---
 import modules.utils as ut
 import modules.world_bank_utils as wb_ut
 from modules.dash_app import init_dash_app
-# from modules.keyphrase_OLD import NGramModule, get_tables_string, progress
-from modules.seasonality_extended import SeasonalityModule, download_forecast
 from modules.whatsapp import layout, WhatsAppModule
 from modules.world_bank import WorldBankModule
+
+import modules.keyphrase as kp
+import modules.seasonality as seas
+
+import modules.common.utils as ut1
+import modules.common.validations as val1
+import modules.common.decorators as dec1
 
 # =============================================================================
 # PATHS
@@ -25,6 +33,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
 KEYPHRASE_DIR = os.path.join(STATIC_DIR, 'keyphrase')
+SEASONALITY_DIR = os.path.join(STATIC_DIR, 'seasonality')
 WORLD_BANK_DIR = os.path.join(STATIC_DIR, 'world_bank')
 JSON_DIR = os.path.join(STATIC_DIR, 'json')
 
@@ -104,14 +113,10 @@ def whatsapp():
 # =============================================================================
 # KEYPHRASE
 # =============================================================================
-import modules.keyphrase as kp
-from modules.common import write_json, validate_file_size, FileExporter, read_results
-from flask import make_response
-
 progress = {"value": 0}
 
 @app.route('/extract_keyphrases', methods=['POST'])
-@validate_file_size(template_on_error='keyphrase.html')
+@dec1.validate_file_size(template_on_error='keyphrase.html')
 def extract_keyphrases(uploaded_file):
 
     results = kp.pipeline(
@@ -126,7 +131,7 @@ def extract_keyphrases(uploaded_file):
         for label, data in results.items()
     }
 
-    write_json(summary, KEYPHRASE_INPUT_PATH)
+    ut1.write_json(summary, KEYPHRASE_INPUT_PATH)
     return render_template('keyphrase.html', results=results)
 
 @app.route('/progress')
@@ -136,8 +141,8 @@ def get_progress():
 @app.route('/download_keyphrases', methods=['GET'])
 def download_keyphrases():
     
-    results_data = read_results(KEYPHRASE_INPUT_PATH)    
-    exporter = FileExporter(results_data, cols=["Keywords", "# Appearances"])
+    results_data = ut1.read_results(KEYPHRASE_INPUT_PATH)    
+    exporter = ut1.FileExporter(results_data, cols=["Keywords", "# Appearances"])
     
     file_format = request.args.get('format', 'txt')
     match file_format:
@@ -157,38 +162,33 @@ def download_keyphrases():
 @app.route('/predict_seasonality', methods=['GET', 'POST'])
 def predict_seasonality():
 
-    if request.method == 'GET': # refresh
+    if request.method == 'GET':  # refresh
         return render_template('seasonality.html')
 
-    template = 'seasonality.html'
     file = request.files.get('file')
-    periodicity = int(request.form.get('periodicity'))
-    nlags = int(request.form.get('nlags'))
+    periodicity = int(request.form.get('periodicity', 12))
+    nlags = int(request.form.get('nlags', 10))
 
-    processor = SeasonalityModule(file, periodicity, nlags)
-    error = processor.is_empty(selected_lang)
-    if error:
-        return render_template(template, error_message=error)
+    upload_path = os.path.join(SEASONALITY_DIR, file.filename)
+    os.makedirs(os.path.dirname(upload_path), exist_ok=True)
+    file.save(upload_path)
 
-    try:
-        forecast, acf, pacf = processor.forecast()
-        return render_template(
-            template,
-            forecast=forecast,
-            acf=acf,
-            pacf=pacf,
-            existing_plots=config["plot_names"],
-            enumerate=enumerate
-        )
-    except:
-        return render_template(
-            template,
-            val_message=processor.validation(selected_lang)
-        )
+    print("\n=== STARTING SEASONALITY PIPELINE ===")
+    forecast, acf, pacf = seas.pipeline(
+        upload_path, p=periodicity, nlags=nlags, save_dir=SEASONALITY_DIR
+    )
+    return render_template(
+        'seasonality.html',
+        forecast=forecast,
+        acf= acf,
+        pacf= pacf,
+        existing_plots=['forecast_plot.png', 'acf_pacf_plot.png'],
+        enumerate=enumerate
+    )
 
 @app.route('/download_predictions', methods=['GET'])
 def download_predictions():
-    file_path, file_name = download_forecast()
+    file_path, file_name = ut1.export_zip(SEASONALITY_DIR)
     return send_file(file_path, as_attachment=True, download_name=file_name)
 
 # =============================================================================

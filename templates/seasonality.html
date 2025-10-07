@@ -54,14 +54,6 @@
     </div>
     {% endif %}
 
-    <!-- if validation error -->
-    {% if val_message %}
-    <div class="project-container" id="result-section-error">
-        <h2 data-translate-key="error_title">{{ texts['error_title'] }}</h2>
-        <p data-translate-key="validation">{{ val_message|safe }}</p>
-    </div>
-    {% endif %}
-
     <!-- if forecast -->
     {% if forecast %}
     <div class="project-container" id="result-section-forecast">
@@ -90,14 +82,8 @@
     <div class="project-container" id="result-section-plots">
         <h2>Prediction</h2>
         <div class="plot-container">
-            {% if 'original_data.png' in existing_plots %}
-            <img src="{{ url_for('static', filename='seasonality/original_data.png') }}">
-            {% endif %}
-            {% if 'all_periods_data.png' in existing_plots %}
-            <img src="{{ url_for('static', filename='seasonality/all_periods_data.png') }}">
-            {% endif %}
-            {% if 'historic_and_prediction_data.png' in existing_plots %}
-            <img src="{{ url_for('static', filename='seasonality/historic_and_prediction_data.png') }}">
+            {% if 'forecast_plot.png' in existing_plots %}
+            <img src="{{ url_for('static', filename='seasonality/forecast_plot.png') }}">
             {% endif %}
         </div>
     </div>
@@ -149,16 +135,13 @@
     </div>
     {% endif %}
 
-    <!-- if description plots -->
+    <!-- if correlation plot -->
     {% if existing_plots and existing_plots | length > 0 %}
     <div class="project-container" id="result-section-plots">
         <h2>Description</h2>
         <div class="plot-container">
-            {% if 'historic_and_prediction_data.png' in existing_plots %}
-            <img src="{{ url_for('static', filename='seasonality/data_decomposition.png') }}">
-            {% endif %}
-            {% if 'historic_and_prediction_data.png' in existing_plots %}
-            <img src="{{ url_for('static', filename='seasonality/autocorrelation_data.png') }}">
+            {% if 'acf_pacf_plot.png' in existing_plots %}
+            <img src="{{ url_for('static', filename='seasonality/acf_pacf_plot.png') }}">
             {% endif %}
         </div>
     </div>
