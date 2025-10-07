@@ -11,7 +11,7 @@ import pandas as pd
 
 # --- Project/system ---
 from modules.utils import read_json
-from modules.world_bank import WorldBankModule
+from modules.world_bank_OLD import WorldBankModule
 
 # =============================================================================
 # DIRECTORIES

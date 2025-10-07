@@ -1,10 +1,6 @@
 import requests, json
 from datetime import datetime
 
-def read_csv(filename, encoding: str = "utf-8"):
-    with open(filename, encoding=encoding) as f:
-        return f.readlines()
-
 def write_json(data: json, path: str) -> None:
     with open(path, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
@@ -60,3 +56,7 @@ raw_countries = call_api(config["urls"]["countries"], config["params"]["countrie
 countries = get_countries(raw_countries)
 raw_data = call_api(url_indicator, config["params"]["indicator"])[1]
 requested_data = subset_raw_data(raw_data)
+print(requested_data)
+
+#%% pipeline
+

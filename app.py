@@ -14,13 +14,12 @@ from flask import (
 
 # --- Project Modules ---
 import modules.utils as ut
-import modules.world_bank_utils as wb_ut
 from modules.dash_app import init_dash_app
 from modules.whatsapp import layout, WhatsAppModule
-from modules.world_bank import WorldBankModule
 
 import modules.keyphrase as kp
 import modules.seasonality as seas
+import modules.world_bank as wb
 
 import modules.common.utils as ut1
 import modules.common.validations as val1
@@ -194,40 +193,58 @@ def download_predictions():
 # =============================================================================
 # WORLD BANK
 # =============================================================================
-wb_manager = WorldBankModule(GEO_DATA_PATH)
+def get_params():
+    return (
+        request.args.get('indicator') or request.form.get('indicator') or None, 
+        request.args.get('type') or request.form.get('type') or None, 
+        request.args.get('option') or request.form.get('option') or None
+    )
+
+def get_data_downloaded(indicator):
+    return ut1.read_json(os.path.join(WORLD_BANK_DIR, f'{indicator}.json'))
+
+def get_filtered_data(data, type, option):
+    return wb.filter_data(data, type, option)
 
 @app.route('/download_data')
 def download_data():
-    indicator = request.args.get('indicator')
-    data = wb_manager.indicator(indicator)
-    ut.write_json(data, wb_ut.get_file_path(indicator))
-    return jsonify({'message': 'Data saved successfully', 'file': wb_ut.get_file_path(indicator)})
+    indicator = get_params()[0]
+    data = wb.download_indicator_data(indicator)
+    ut.write_json(data, os.path.join(WORLD_BANK_DIR, f'{indicator}.json'))
+    return jsonify({'message': 'Data saved successfully'})
 
 @app.route('/show_options')
 def show_options():
-    data = wb_ut.load_data(request.args.get('indicator'))
-    return wb_ut.extract_options(data, request.args.get('type'))
+    indicator, type, _ = get_params()
+    data = get_data_downloaded(indicator)
+    options = wb.extract_options(data, type)
+    return jsonify(options)
 
 @app.route('/show_data')
 def show_data():
-    args = request.args
-    data = wb_ut.load_data(args.get('indicator'), args.get('type'), args.get('option'))
-    return data.drop('ISO_CODE', axis=1).to_dict(orient='records')
+    indicator, type, option = get_params()
+    data = get_data_downloaded(indicator)
+    filtered_data = get_filtered_data(data, type, option)
+    return jsonify(filtered_data)
 
 @app.route('/plot_graph', methods=['POST'])
 def plot_graph():
-    form = request.form
-    indicator, type_selected, option = form.get('indicator'), form.get('type'), form.get('option')
-    df = wb_ut.load_data(indicator, type_selected, option)
-    title = f'{option} - {INDICATOR_NAMES.get(indicator)}' if type_selected == 'country' else None
+    indicator, type, option = get_params()
+    data = get_data_downloaded(indicator)
+    filtered_data = get_filtered_data(data, type, option)
 
-    filepath = wb_manager.create_visualization(df, type_selected, title=title)
-    relative_path = os.path.relpath(
+    country_map = wb.create_country_iso_map(data) # refactorizar
+    title = f'{option} - {INDICATOR_NAMES.get(indicator)}' if type == 'country' else None
+    filepath = wb.create_visualization(
+        filtered_data, type, GEO_DATA_PATH, country_map, title=title
+    )
+
+    relative_path = os.path.relpath( # refactorizar
         os.path.abspath(filepath),
         os.path.abspath(app.static_folder)
     )
     plot_url = url_for('static', filename=relative_path.replace(os.sep, '/'))
-
+        
     return jsonify({'message': 'Interactive graph generated.', 'plot_url': plot_url})
 
 # =============================================================================
