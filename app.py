@@ -1,4 +1,6 @@
-"""Web App project file."""
+"""
+VER INPUTS Y PRINTS
+"""
 
 # =============================================================================
 # IMPORTS
@@ -8,7 +10,7 @@ import os
 
 # --- External Library ---
 from flask import (
-    Flask, render_template, request, redirect, send_file, jsonify, url_for, 
+    Flask, render_template, request, redirect, send_file, jsonify, url_for,
     make_response
 )
 
@@ -18,9 +20,10 @@ import modules.utils as ut
 import modules.keyphrase as kp
 import modules.seasonality as seas
 import modules.world_bank as wb
+import modules.whatsapp as wp
 
 import modules.common.utils as ut1
-import modules.common.validations as val1
+# import modules.common.validations as val1
 import modules.common.decorators as dec1
 
 # =============================================================================
@@ -137,20 +140,20 @@ def get_progress():
 
 @app.route('/download_keyphrases', methods=['GET'])
 def download_keyphrases():
-    
-    results_data = ut1.read_results(KEYPHRASE_INPUT_PATH)    
+
+    results_data = ut1.read_results(KEYPHRASE_INPUT_PATH)
     exporter = ut1.FileExporter(results_data, cols=["Keywords", "# Appearances"])
-    
+
     file_format = request.args.get('format', 'txt')
     match file_format:
         case 'txt': output_content = exporter.to_txt_string()
         case 'md': output_content = exporter.to_md_string()
         case 'pdf': output_content = exporter.to_pdf_bytes()
-    
+
     response = make_response(output_content)
     response.headers['Content-Type'] = f"application/{file_format}" if file_format == 'pdf' else f"text/{file_format}"
     response.headers['Content-Disposition'] = f'attachment; filename={f"keyphrase_results.{file_format}"}'
-    
+
     return response
 
 # =============================================================================
@@ -193,8 +196,8 @@ def download_predictions():
 # =============================================================================
 def get_params():
     return (
-        request.args.get('indicator') or request.form.get('indicator') or None, 
-        request.args.get('type') or request.form.get('type') or None, 
+        request.args.get('indicator') or request.form.get('indicator') or None,
+        request.args.get('type') or request.form.get('type') or None,
         request.args.get('option') or request.form.get('option') or None
     )
 
@@ -227,23 +230,22 @@ def show_data():
 
 @app.route('/plot_graph', methods=['POST'])
 def plot_graph():
-    indicator, _type, option = get_params()    
+    indicator, _type, option = get_params()
     data = get_downloaded_data(indicator)
     filtered_data = get_filtered_data(data, _type, option)
-    
+
     title = f'{INDICATOR_NAMES.get(indicator)} - {option}'
     relative_path = wb.plot(filtered_data, _type, GEO_DATA_PATH, title=title)
     plot_url = url_for('static', filename=f'world_bank/{relative_path}')
-    return jsonify({'message': 'Interactive graph generated.', 'plot_url': plot_url})
+    return jsonify(
+        {'message': 'Interactive graph generated.', 'plot_url': plot_url}
+    )
 
 # =============================================================================
 # WHATSAPP
 # =============================================================================
-from modules.dash_app import init_dash_app
-from modules.whatsapp import layout, WhatsAppModule
-
-whatsapp_service = WhatsAppModule()
-dash_app = init_dash_app(app, whatsapp_service, WEEK_DAYS, MONTHS)
+whatsapp_service = wp.ChatSession()
+dash_app = wp.init_dash(app, whatsapp_service, WEEK_DAYS, MONTHS)
 
 @app.route('/whatsapp_dashboard', methods=['POST'])
 def whatsapp_dashboard():
@@ -251,5 +253,5 @@ def whatsapp_dashboard():
         request.files.get('file'),
         request.form.get('selected_language')
     )
-    dash_app.layout = layout(data.grouped_data)
+    dash_app.layout = wp.layout(data.grouped_data)
     return redirect('/dashboard/')

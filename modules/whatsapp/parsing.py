@@ -3,6 +3,7 @@
 # =============================================================================
 # --- Standard Library ---
 import re
+import os
 from datetime import datetime
 from collections import Counter
 
@@ -11,20 +12,24 @@ from tqdm import tqdm
 
 # --- Project ---
 from modules.common.validations import WhatsappFileError
+from modules.common.utils import read_json, text_normalizer
 
 # =============================================================================
 # GLOBAL CONSTANTS
 # =============================================================================
 _SPLIT_STR = r'^(\d{1,2}/\d{1,2}/\d{2,4}), ([^ ]+) - ([^:]+): (.+)$'
-_PARSE_STR = r".*/.*/,.*:.* - .*"
 _SPLIT_PATTERN = re.compile(_SPLIT_STR)
-_PARSE_PATTERN = re.compile(_PARSE_STR)
+
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.path.join(CURRENT_DIR, '..', '..'))
+STOPWORDS_PATH = os.path.join(PROJECT_ROOT, 'static', 'json', 'stopwords.json')
+STOPWORDS = read_json(STOPWORDS_PATH)
 
 # =============================================================================
 # PRIVATE HELPERS
 # =============================================================================
 def _is_valid(line: str) -> bool:
-    if not (_PARSE_PATTERN.match(line) and (m := _SPLIT_PATTERN.match(line))):
+    if not (m := _SPLIT_PATTERN.match(line)):
         return False
     if (msg := m.group(4).strip()).startswith("<") and msg.endswith(">"):
         return False
@@ -48,6 +53,7 @@ def _clean(data: list[str]) -> iter:
 # PUBLIC INTERFACE
 # =============================================================================
 def parse_messages(data: list[str]) -> list:
+
     cleaned = list(tqdm(_clean(data), desc="Cleaning messages"))
     if not cleaned:
         raise WhatsappFileError("Invalid file format")
@@ -61,3 +67,19 @@ def groupby_dict(data: list[tuple]) -> Counter:
             f"GENERAL_{row[1]}_{row[4]}_{row[5]}_{row[6]}",
         )
     )
+
+def filter_chat(data: dict, issuer: str) -> tuple[dict, str, bool, str]:
+    is_general = issuer == 'GENERAL'
+    prefix = "GENERAL_" if is_general else f"{issuer}_"
+    filtered_counts = {
+        k: v for k, v in data.grouped_data.items() if k.startswith(prefix)
+    }
+
+    if is_general: msg = [row[3] for row in data.parsed_data]
+    else: msg = [row[3] for row in data.parsed_data if row[2] == issuer]
+
+    norm_text = text_normalizer(
+        text=' '.join(msg), stopwords=STOPWORDS[data.language]
+    )
+
+    return filtered_counts, norm_text, is_general, msg

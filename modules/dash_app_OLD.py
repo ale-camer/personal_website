@@ -1,13 +1,3 @@
-"""
-cambios a realizar:
-
-    - los objetos dentro del decorador deberian estar fuera del mismo
-    - whatsapp_service.current_date es llamado dos veces
-    - los mappers van a ser siempre los mismos, deberian ir por defecto
-    - el layout se actualiza a partir de los datos nuevos
-    - el path es reutilizado en el orquestador
-"""
-
 # =============================================================================
 # IMPORTS
 # =============================================================================
