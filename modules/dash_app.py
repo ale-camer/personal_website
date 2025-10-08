@@ -13,14 +13,13 @@ cambios a realizar:
 # =============================================================================
 from dash import Dash, Input, Output
 from modules.whatsapp import layout, ChartGenerator
-from modules.utils import performance_analyzer
 
 # =============================================================================
 # INIT
 # =============================================================================
 def init_dash_app(server, whatsapp_service, weekdays_mapper, months_mapper):
-    dash_app = Dash(__name__, server=server, url_base_pathname='/dashboard/') # inicializa dashboard
-    dash_app.layout = layout(whatsapp_service.current_data) # define interfaz
+    dash_app = Dash(__name__, server=server, url_base_pathname='/dashboard/')
+    dash_app.layout = layout(whatsapp_service.current_data)
 
     @dash_app.callback( # actualiza graficos
         [Output('general-charts', 'children'),

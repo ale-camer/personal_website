@@ -47,3 +47,6 @@ def validate_stream_size(stream, max_size_mb: float = 10):
     file_size_mb = stream.tell() / (1024 * 1024)
     if file_size_mb > max_size_mb:
         raise FileTooBigError(f"The file can't be bigger than {max_size_mb} MB")
+
+class WhatsappFileError(Exception):
+    pass     

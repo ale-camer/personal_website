@@ -14,8 +14,6 @@ from flask import (
 
 # --- Project Modules ---
 import modules.utils as ut
-from modules.dash_app import init_dash_app
-from modules.whatsapp import layout, WhatsAppModule
 
 import modules.keyphrase as kp
 import modules.seasonality as seas
@@ -241,6 +239,9 @@ def plot_graph():
 # =============================================================================
 # WHATSAPP
 # =============================================================================
+from modules.dash_app import init_dash_app
+from modules.whatsapp import layout, WhatsAppModule
+
 whatsapp_service = WhatsAppModule()
 dash_app = init_dash_app(app, whatsapp_service, WEEK_DAYS, MONTHS)
 
@@ -250,5 +251,5 @@ def whatsapp_dashboard():
         request.files.get('file'),
         request.form.get('selected_language')
     )
-    dash_app.layout = layout(data.df)
+    dash_app.layout = layout(data.grouped_data)
     return redirect('/dashboard/')
