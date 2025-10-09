@@ -23,24 +23,24 @@
 
     <!-- NAVIGATION BAR -->
     <nav class="navbar">
-        <a href="{{ url_for('index') }}" class="navbar-title-link" title="Home Page">
+        <a href="{{ url_for('static_pages.index') }}" class="navbar-title-link" title="Home Page">
             <h2 class="navbar-title" data-translate-key="home">{{ texts['home'] }}</h2>
         </a>
 
         <ul class="navbar-list">
             <li class="dropdown">
                 <a class="dropdown-toggle" tabindex="0" role="button" aria-expanded="false" aria-controls="cv-menu"
-                    href="{{ url_for('mi_cv') }}" title="Read My CV" data-translate-key="mi_cv">{{ texts['mi_cv'] }}</a>
+                    href="{{ url_for('static_pages.mi_cv') }}" title="Read My CV" data-translate-key="mi_cv">{{ texts['mi_cv'] }}</a>
                 <ul class="dropdown-menu" id="cv-menu">
-                    <li><a href="{{ url_for('mi_cv') }}#work-experience" data-translate-key="work_exp">{{
+                    <li><a href="{{ url_for('static_pages.mi_cv') }}#work-experience" data-translate-key="work_exp">{{
                             texts['work_exp'] }}</a>
                     </li>
-                    <li><a href="{{ url_for('mi_cv') }}#technologies" data-translate-key="tech">{{ texts['tech'] }}</a>
+                    <li><a href="{{ url_for('static_pages.mi_cv') }}#technologies" data-translate-key="tech">{{ texts['tech'] }}</a>
                     </li>
-                    <li><a href="{{ url_for('mi_cv') }}#education" data-translate-key="edu">{{ texts['edu'] }}</a></li>
-                    <li><a href="{{ url_for('mi_cv') }}#languages" data-translate-key="lang">{{ texts['lang'] }}</a>
+                    <li><a href="{{ url_for('static_pages.mi_cv') }}#education" data-translate-key="edu">{{ texts['edu'] }}</a></li>
+                    <li><a href="{{ url_for('static_pages.mi_cv') }}#languages" data-translate-key="lang">{{ texts['lang'] }}</a>
                     </li>
-                    <li><a href="{{ url_for('mi_cv') }}#interests" data-translate-key="int">{{ texts['int'] }}</a></li>
+                    <li><a href="{{ url_for('static_pages.mi_cv') }}#interests" data-translate-key="int">{{ texts['int'] }}</a></li>
                 </ul>
             </li>
 
@@ -49,15 +49,15 @@
                     aria-controls="projects-menu" title="Choose a project" data-translate-key="have_fun">{{
                     texts['have_fun'] }}</a>
                 <ul class="dropdown-menu">
-                    <li><a href="{{ url_for('keyphrase_extraction') }}" data-translate-key="keyphrase">{{
+                    <li><a href="{{ url_for('static_pages.keyphrase_extraction') }}" data-translate-key="keyphrase">{{
                             texts['keyphrase'] }}</a>
                     </li>
-                    <li><a href="{{ url_for('seasonality_prediction') }}" data-translate-key="seasonality">{{
+                    <li><a href="{{ url_for('static_pages.seasonality_prediction') }}" data-translate-key="seasonality">{{
                             texts['seasonality'] }}</a>
                     </li>
-                    <li><a href="{{ url_for('whatsapp') }}" data-translate-key="whatsapp">{{ texts['whatsapp'] }}</a>
+                    <li><a href="{{ url_for('static_pages.whatsapp') }}" data-translate-key="whatsapp">{{ texts['whatsapp'] }}</a>
                     </li>
-                    <li><a href="{{ url_for('world_bank') }}" data-translate-key="world_bank">{{ texts['world_bank']
+                    <li><a href="{{ url_for('static_pages.world_bank') }}" data-translate-key="world_bank">{{ texts['world_bank']
                             }}</a></li>
                 </ul>
             </li>
@@ -67,18 +67,18 @@
                     aria-controls="projects-menu" title="Choose a project" data-translate-key="read">{{ texts['read']
                     }}</a>
                 <ul class="dropdown-menu">
-                    <li><a href="{{ url_for('algorithmic_trading') }}" target="_blank" title="Description"
+                    <li><a href="{{ url_for('static_pages.algorithmic_trading') }}" target="_blank" title="Description"
                             data-translate-key="algo_trad">{{ texts['algo_trad'] }}</a></li>
-                    <li><a href="{{ url_for('linear_algebra') }}" target="_blank" title="Description"
+                    <li><a href="{{ url_for('static_pages.linear_algebra') }}" target="_blank" title="Description"
                             data-translate-key="lin_alg">{{ texts['lin_alg'] }}</a>
                     </li>
             </li>
-            <li><a href="{{ url_for('arg_macro') }}" target="_blank" title="Description" data-translate-key="macro">{{
+            <li><a href="{{ url_for('static_pages.arg_macro') }}" target="_blank" title="Description" data-translate-key="macro">{{
                     texts['macro'] }}</a>
             </li>
-            <li><a href="{{ url_for('ds_trends') }}" target="_blank" title="Description"
+            <li><a href="{{ url_for('static_pages.ds_trends') }}" target="_blank" title="Description"
                     data-translate-key="ds_trends">{{texts['ds_trends'] }}</a></li>
-            <li><a href="{{ url_for('vector_norms') }}" target="_blank" title="Description"
+            <li><a href="{{ url_for('static_pages.vector_norms') }}" target="_blank" title="Description"
                     data-translate-key="vector_norms">{{texts['vector_norms'] }}</a>
             </li>
         </ul>

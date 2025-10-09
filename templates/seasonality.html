@@ -2,14 +2,20 @@
 
 {% block content %}
 
-<!-- Seasonality Prediction Functionality Template -->
-
 <link rel="stylesheet" href="{{ url_for('static', filename='css/seasonality.css') }}">
 <script src="{{ url_for('static', filename='js/seasonality.js') }}"></script>
 
 <div class="main-project-container">
     <div class="project-container">
         <h1 data-translate-key="title">{{ texts['title'] }}</h1>
+
+        {% if error %}
+        <div class="error-message"
+            style="color: red; background-color: #ffe0e0; border: 1px solid red; padding: 10px; margin-bottom: 15px; border-radius: 5px;">
+            {{ error }}
+        </div>
+        {% endif %}
+
         <div>
             <p id="intro-paragraph" data-translate-key="intro">
                 {{ texts['intro'] }}
@@ -17,7 +23,7 @@
         </div>
 
         <div class="upload-form">
-            <form action="{{ url_for('predict_seasonality') }}" method="post" enctype="multipart/form-data"
+            <form action="{{ url_for('seasonality.predict_seasonality') }}" method="post" enctype="multipart/form-data"
                 class="project-form" id="predictionForm">
                 <div class="form-group">
                     <label for="file" data-translate-key="upload_label">{{ texts['upload_label'] }}</label><br>

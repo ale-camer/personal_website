@@ -1,12 +1,25 @@
-from . import core
-import modules.common.utils as ut
-
+# =============================================================================
+# IMPORTS
+# =============================================================================
+# --- Standard library ---
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+# --- Third-party ---
+
+# --- Project ---
+from . import core
+import modules.common.utils as ut
+
+# =============================================================================
+# AUXILIARY FUNCTIONS
+# =============================================================================
 def _clean_chunk(text_chunk: str) -> list[str]:
     return list(ut.TextCleaner(text_chunk).clean(has_stream=True))
 
+# =============================================================================
+# CORE
+# =============================================================================
 def process(raw_text: str, progress: dict, chunk_size: int = 100_000) -> iter:
 
     print("\nINITIATING TEXT PROCESSING")
@@ -38,11 +51,11 @@ def pipeline(raw_text: str, progress: dict, top_k: int, max_n: int) -> dict:
 
     print("\nINITIATING PIPELINE EXECUTION")
     print("Cleaning and tokenizing text")
-    token_iterator = process(raw_text, progress)
+    token_it = process(raw_text, progress)
 
     print("Extracting top n-grams")
     raw_results = core.get_top_ngrams(
-        tokens_iterator=token_iterator, top_k=top_k, max_n=max_n
+        tokens_it=token_it, top_k=top_k, max_n=max_n
     )
 
     print("Formatting results")

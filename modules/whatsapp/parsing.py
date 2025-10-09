@@ -15,7 +15,7 @@ from modules.common.validations import WhatsappFileError
 from modules.common.utils import read_json, text_normalizer
 
 # =============================================================================
-# GLOBAL CONSTANTS
+# CONSTANTS
 # =============================================================================
 _SPLIT_STR = r'^(\d{1,2}/\d{1,2}/\d{2,4}), ([^ ]+) - ([^:]+): (.+)$'
 _SPLIT_PATTERN = re.compile(_SPLIT_STR)
@@ -26,7 +26,7 @@ STOPWORDS_PATH = os.path.join(PROJECT_ROOT, 'static', 'json', 'stopwords.json')
 STOPWORDS = read_json(STOPWORDS_PATH)
 
 # =============================================================================
-# PRIVATE HELPERS
+# AUXILIARY FUNCTIONS
 # =============================================================================
 def _is_valid(line: str) -> bool:
     if not (m := _SPLIT_PATTERN.match(line)):
@@ -50,9 +50,9 @@ def _clean(data: list[str]) -> iter:
             yield _parse(line)
 
 # =============================================================================
-# PUBLIC INTERFACE
+# CORE
 # =============================================================================
-def parse_messages(data: list[str]) -> list:
+def parse_messages(data: list[str]) -> list[tuple]:
     cleaned = list(tqdm(_clean(data), desc="Cleaning messages"))
     if not cleaned:
         raise WhatsappFileError("Invalid file format")

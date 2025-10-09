@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 from deepl import Translator, TooManyRequestsException
 
 # --- Project/system ---
-from modules.utils_OLD import read_json, write_json
+from modules.common.utils import read_json, write_json
 
 # =============================================================================
 # CONSTANTS
@@ -29,7 +29,7 @@ ORIGINAL_LANG = read_json(join(JSON_PATH, 'lang', 'english.json'))
 LANGUAGES = read_json(join(JSON_PATH, 'config.json'))["languages_to_translate"]
 
 # =============================================================================
-# AUXILIARIES
+# AUXILIARY FUNCTIONS
 # =============================================================================
 def translation_exists(lang_name: str) -> bool:
     path = join(JSON_PATH, 'lang', f"{lang_name}.json")
@@ -39,9 +39,11 @@ def translation_exists(lang_name: str) -> bool:
     return False
 
 # =============================================================================
-# TRANSLATION
+# CORE
 # =============================================================================
-def translate_text(text: str, target_lang: str, retries: int = 5, delay: float = .01) -> str:
+def translate_text(
+        text: str, target_lang: str, retries: int = 5, delay: float = .01
+    ) -> str:
     for i in range(retries):
         try:
             return translator.translate_text(text, target_lang=target_lang).text
@@ -63,7 +65,7 @@ def translate_and_save(lang_name: str, lang_code: str) -> None:
     write_json(translated, output_path)
 
 # =============================================================================
-# RUN
+# MAIN
 # =============================================================================
 def main() -> None:
     for lang_name, lang_code in LANGUAGES.items():
@@ -72,4 +74,9 @@ def main() -> None:
         try:
             translate_and_save(lang_name, lang_code)
         except Exception as e:
-            print(f"Error translating {lang_name} ({lang_code}): {type(e).__name__}: {e}")
+            print(
+                (
+                    f"Error translating {lang_name} ({lang_code}): ",
+                    "{type(e).__name__}: {e}"
+                )
+            )

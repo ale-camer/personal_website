@@ -2,13 +2,19 @@
 
 {% block content %}
 
-<!-- WhatsApp Functionality Template -->
-
 <script src="{{ url_for('static', filename='js/whatsapp.js') }}"></script>
 
 <div class="main-project-container">
     <div class="project-container">
         <h1 data-translate-key="whatsapp_title">{{ texts['whatsapp_title'] }}</h1>
+
+        {% if error %}
+        <div class="error-message"
+            style="color: red; background-color: #ffe0e0; border: 1px solid red; padding: 10px; margin-bottom: 15px; border-radius: 5px;">
+            {{ error }}
+        </div>
+        {% endif %}
+
         <div>
             <p id="intro-paragraph" data-translate-key="instruction">{{ texts['instruction'] }}</p>
         </div>

@@ -2,8 +2,6 @@
 
 {% block content %}
 
-<!-- Keyphrase Extraction Functionality Template -->
-
 <link rel="stylesheet" href="{{ url_for('static', filename='css/keyphrase.css') }}">
 <script src="{{ url_for('static', filename='js/keyphrase.js') }}"></script>
 
@@ -45,8 +43,8 @@
 
                 <div class="button-row">
                     <button type="submit" id="submitBtn" data-translate-key="button_1">{{ texts['button_1'] }}</button>
-                    <!-- <button type="button" id="downloadBtn" data-translate-key="button_2">{{ texts['button_2']
-                        }}</button> -->
+                    <button type="button" id="downloadBtn" data-translate-key="button_2">{{ texts['button_2']
+                        }}</button>
                 </div>
             </form>
         </div>

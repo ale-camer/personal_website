@@ -1,5 +1,3 @@
-"""Utility project tasks: translations and readme files generation."""
-
 # =============================================================================
 # IMPORTS
 # =============================================================================
@@ -7,29 +5,21 @@
 import os
 
 # --- Third-party ---
-from dotenv import load_dotenv
 
-# --- Project/system ---
-from app import app
-from modules.utils_OLD import timed_run
-from modules.generate_readme import ReadmeGenerator
+# --- Project ---
+from app_OLD import app
+import modules.common.utils as ut
 from modules.generate_translations import main as generate_translations
-from modules.generate_requirements_TO_DELETE import main as generate_requirements
 
 # =============================================================================
 # RUN
 # =============================================================================
-load_dotenv()
+ut.load_dotenv()
 
 def run_dev_tasks():
 
-    readme_generator = ReadmeGenerator()
-
-    if input("Do you want to generate readme file? (y/n): ").strip().lower() == 'y':
-        timed_run(readme_generator.generate_readme_file, process_str="Readme file generated")
-        
     if input("Do you want to generate translations? (y/n): ").strip().lower() == 'y':
-        timed_run(generate_translations, process_str="Translations generated")
+        ut.timed_run(generate_translations, process_str="Translations generated")
 
 if __name__ == '__main__':
     if os.environ.get('FLASK_ENV') == 'development':

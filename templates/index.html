@@ -2,8 +2,6 @@
 
 {% block content %}
 
-<!-- Home Page Template -->
-
 <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
 <script>window.projectTranslations = {{ texts.get('projects-description', {}) | tojson }};</script>
 <script src="{{ url_for('static', filename='js/index.js') }}"></script>

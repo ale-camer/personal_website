@@ -1,21 +1,32 @@
 # =============================================================================
 # IMPORTS
 # =============================================================================
-# --- Standard Libraries ---
-# from dataclasses import dataclass
+# --- Standard library ---
 import os
+from collections import Counter
 
-# --- Project/System ---
+# --- Third-party ---
+
+# --- Project ---
 from . import parsing as p
-from modules.common.utils import text_normalizer, read_json
+from modules.common.utils import text_normalizer, read_json, timed_run
 
+# =============================================================================
+# CONSTANTS
+# =============================================================================
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(CURRENT_DIR, '..', '..'))
 STOPWORDS_PATH = os.path.join(PROJECT_ROOT, 'static', 'json', 'stopwords.json')
 STOPWORDS = read_json(STOPWORDS_PATH)
 
+# =============================================================================
+# CORE
+# =============================================================================
 class Config:
-    def __init__(self, grouped_data, parsed_data, language, normalized_texts: dict):
+    def __init__(
+            self, grouped_data: Counter, parsed_data: list, language: str, 
+            normalized_texts: dict
+        ):
         self.grouped_data = grouped_data
         self.parsed_data = parsed_data
         self.language = language
@@ -26,7 +37,7 @@ class ChatSession:
     def __init__(self):
         self.current_data = None
 
-    def parse_chat(self, file, language: str) -> Config:
+    def parse_chat(self, file: str, language: str) -> Config:
 
         raw_lines = file.read().decode('utf-8').splitlines()
         parsed_data = p.parse_messages(raw_lines)
@@ -51,4 +62,4 @@ class ChatSession:
         return self.current_data
 
     def filter_chat(self, issuer: str) -> tuple:
-            return p.filter_chat(self.current_data, issuer)
+        return p.filter_chat(self.current_data, issuer)

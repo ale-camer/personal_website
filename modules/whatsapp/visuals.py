@@ -7,7 +7,6 @@ import base64
 from collections import Counter, defaultdict
 
 # --- Third-party ---
-# import seaborn as sns
 from textblob import TextBlob
 from dash import dcc, html
 from wordcloud import WordCloud
@@ -17,36 +16,17 @@ import plotly.express as px
 # --- Project ---
 from . import core
 
+# =============================================================================
+# CONSTANTS
+# =============================================================================
 _GRAPH_STYLE = {"width": "48%", "display": "inline-block"}
 _FULL_WIDTH_STYLE = {"width": "100%", "display": "inline-block"}
 _IMAGE_STYLE = {"width": "48%", "display": "inline-block", "vertical-align": "top"}
 _WC_STYLE = {'width': '100%', 'height': 'auto'}
 
-def layout(issuers: list = None) -> html.Div:
-    if issuers is None or not issuers:
-        return html.Div([
-            html.H1("Dashboard will be displayed after data upload."),
-            html.P("Please upload a file to view the dashboard.")
-        ])
-    return html.Div([
-        html.H1("Choose an issuer"),
-        dcc.Dropdown(
-            id='issuer-dropdown',
-            options=[{'label':i,'value':i} for i in ["GENERAL"]+issuers],
-            value="GENERAL" # initial value
-        ),
-        html.Div(id='general-charts', style=_FULL_WIDTH_STYLE),
-        html.Div([
-            html.Div(dcc.Graph(id='hour-chart'), style=_GRAPH_STYLE),
-            html.Div(dcc.Graph(id='dow-chart'), style=_GRAPH_STYLE),
-            html.Div(dcc.Graph(id='dom-chart'), style=_GRAPH_STYLE),
-            html.Div(dcc.Graph(id='month-chart'), style=_GRAPH_STYLE),
-            html.Div(dcc.Graph(id='sentiment-analysis'), style=_GRAPH_STYLE),
-            html.Div(html.Img(id='wordcloud', style=_WC_STYLE),
-            style=_IMAGE_STYLE)
-        ])
-    ])
-
+# =============================================================================
+# AUXILIARY FUNCTIONS
+# =============================================================================
 def create_wordcloud(text: str) -> str:
 
     wordcloud_inputs = {"width":800, "height":400, "background_color":"white"}
@@ -131,13 +111,40 @@ def create_bar_chart(
         y = [agg_counts[k] for k in sorted_keys]
         return x, y
 
-    # bar_colors = sns.color_palette("husl", n_colors=31).as_hex()
     bar_colors = px.colors.sample_colorscale("HSV", [i/30 for i in range(31)])
     x, y = get_values(aggregate_counts())
     return {
         'data': [go.Bar(x=x, y=y, marker={'color': bar_colors})],
         'layout': go.Layout(title=title.title())
     }
+
+# =============================================================================
+# CORE
+# =============================================================================
+def layout(issuers: list = None) -> html.Div:
+    if issuers is None or not issuers:
+        return html.Div([
+            html.H1("Dashboard will be displayed after data upload."),
+            html.P("Please upload a file to view the dashboard.")
+        ])
+    return html.Div([
+        html.H1("Choose an issuer"),
+        dcc.Dropdown(
+            id='issuer-dropdown',
+            options=[{'label':i,'value':i} for i in ["GENERAL"]+issuers],
+            value="GENERAL" # initial value
+        ),
+        html.Div(id='general-charts', style=_FULL_WIDTH_STYLE),
+        html.Div([
+            html.Div(dcc.Graph(id='hour-chart'), style=_GRAPH_STYLE),
+            html.Div(dcc.Graph(id='dow-chart'), style=_GRAPH_STYLE),
+            html.Div(dcc.Graph(id='dom-chart'), style=_GRAPH_STYLE),
+            html.Div(dcc.Graph(id='month-chart'), style=_GRAPH_STYLE),
+            html.Div(dcc.Graph(id='sentiment-analysis'), style=_GRAPH_STYLE),
+            html.Div(html.Img(id='wordcloud', style=_WC_STYLE),
+            style=_IMAGE_STYLE)
+        ])
+    ])
 
 def generate_charts(
         data: core.Config,
