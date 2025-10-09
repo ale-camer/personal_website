@@ -15,7 +15,7 @@ from flask import (
 )
 
 # --- Project Modules ---
-import modules.utils as ut
+import modules.utils_OLD as ut
 
 import modules.keyphrase as kp
 import modules.seasonality as seas
@@ -47,7 +47,7 @@ KEYPHRASE_OUTPUT_PATH = os.path.join(KEYPHRASE_DIR, 'processed_keyphrases_result
 # =============================================================================
 # CONSTANTS
 # =============================================================================
-config = ut.read_json(CONFIG_PATH)
+config = ut1.read_json(CONFIG_PATH)
 INDICATORS = dict(sorted(config["indicators"].items()))
 INDICATOR_NAMES = {v: k for k, v in INDICATORS.items()}
 WEEK_DAYS = {int(k): v for k, v in config["days_of_the_week"].items()}
@@ -57,11 +57,11 @@ MONTHS = {int(k): v for k, v in config["months"].items()}
 # APPs Instantiation
 # =============================================================================
 app = Flask(__name__)
-app.before_request(ut.load_language_texts)
-app.context_processor(ut.inject_texts_and_languages)
+app.before_request(ut1.load_language_texts)
+app.context_processor(ut1.inject_texts_and_languages)
 
 with app.app_context():
-    selected_lang = ut.inject_texts_and_languages()['selected_lang']
+    selected_lang = ut1.inject_texts_and_languages()['selected_lang']
 
 # =============================================================================
 # STATIC PAGES
@@ -92,7 +92,7 @@ def arg_macro():
 
 @app.route('/mi_cv')
 def mi_cv():
-    return render_template('mi_cv.html', delta_time_string=ut.job_duration())
+    return render_template('mi_cv.html', delta_time_string=ut1.job_duration())
 
 @app.route('/keyphrase_extraction')
 def keyphrase_extraction():
@@ -211,7 +211,7 @@ def get_filtered_data(data, _type, option):
 def download_data():
     indicator = get_params()[0]
     data = wb.download_data(indicator)
-    ut.write_json(data, os.path.join(WORLD_BANK_DIR, f'{indicator}.json'))
+    ut1.write_json(data, os.path.join(WORLD_BANK_DIR, f'{indicator}.json'))
     return jsonify({'message': 'Data saved successfully'})
 
 @app.route('/show_options')
@@ -253,5 +253,6 @@ def whatsapp_dashboard():
         request.files.get('file'),
         request.form.get('selected_language')
     )
-    dash_app.layout = wp.layout(data.grouped_data)
+    issuers = sorted(list(set(d[2] for d in data.parsed_data)))
+    dash_app.layout = wp.layout(issuers)
     return redirect('/dashboard/')

@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 
 # --- Project/system ---
 from app import app
-from modules.utils import read_json, remove_temp_files, timed_run
+from modules.common.utils import read_json, remove_temp_files, timed_run
 
 # =============================================================================
 # CONFIGURATION

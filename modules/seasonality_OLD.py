@@ -17,7 +17,7 @@ import pandas as pd
 import seaborn as sns
 
 # --- Project/system ---
-from modules.utils import read_json
+from modules.utils_OLD import read_json
 
 def temp_lang_json(lang: str):
     return read_json(os.path.join('static', 'json', 'lang', f'{lang}.json'))

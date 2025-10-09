@@ -18,7 +18,7 @@ from wordcloud import WordCloud
 
 # --- Project/system ---
 from dataclasses import dataclass
-from modules.utils import text_normalizer, read_json, performance_analyzer
+from modules.utils_OLD import text_normalizer, read_json, performance_analyzer
 
 # =============================================================================
 # PATHS

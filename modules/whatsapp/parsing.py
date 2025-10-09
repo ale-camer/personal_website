@@ -53,7 +53,6 @@ def _clean(data: list[str]) -> iter:
 # PUBLIC INTERFACE
 # =============================================================================
 def parse_messages(data: list[str]) -> list:
-
     cleaned = list(tqdm(_clean(data), desc="Cleaning messages"))
     if not cleaned:
         raise WhatsappFileError("Invalid file format")

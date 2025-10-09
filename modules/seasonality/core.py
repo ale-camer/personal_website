@@ -4,9 +4,46 @@ import modules.common.validations as val
 import numpy as np
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
-from statsmodels.tsa.stattools import acf, pacf
+# from statsmodels.tsa.stattools import acf, pacf
 
 import os
+
+import numpy as np
+
+def acf(x, nlags):
+    """Autocorrelation function sin usar statsmodels"""
+    x = np.asarray(x)
+    x = x - np.mean(x)
+    result = np.correlate(x, x, mode='full')
+    result = result[result.size // 2:]  # quedarse con la mitad positiva
+    result = result / result[0]         # normalizar
+    return result[:nlags + 1]
+
+def pacf(x, nlags):
+    """Partial autocorrelation usando el algoritmo de Levinson–Durbin"""
+    x = np.asarray(x)
+    acf_vals = acf_np(x, nlags)
+    pacf_vals = np.zeros(nlags + 1)
+    pacf_vals[0] = 1.0
+
+    phi = np.zeros((nlags + 1, nlags + 1))
+    phi[1, 1] = acf_vals[1]
+    pacf_vals[1] = acf_vals[1]
+
+    for k in range(2, nlags + 1):
+        num = acf_vals[k] - np.sum(phi[j, k - 1] * acf_vals[k - j] for j in range(1, k))
+        den = 1 - np.sum(phi[j, k - 1] * acf_vals[j] for j in range(1, k))
+        phi[k, k] = num / den
+        for j in range(1, k):
+            phi[j, k] = phi[j, k - 1] - phi[k, k] * phi[k - j, k - 1]
+        pacf_vals[k] = phi[k, k]
+
+    return pacf_vals
+
+# 👇 Reemplazo directo de tu código
+# acf_values = [int(v * 100) for v in acf_np(serie, nlags)]
+# pacf_values = [int(v * 100) for v in pacf_np(serie, nlags)]
+
 
 # =============================================================================
 # OPERATIONS
@@ -55,8 +92,8 @@ def forecast_time_serie(serie: list, periodicity: int) -> list:
 
 def autocorrelations(serie: list, nlags: int = 12) -> tuple[list, list]:
     if nlags > len(serie) / 2: nlags = int(len(serie) / 2)
-    acf_values = [int(v * 100) for v in acf(serie, nlags=nlags)]
-    pacf_values = [int(v * 100) for v in pacf(serie, nlags=nlags, method='ols')]
+    acf_values = [int(v * 100) for v in acf(serie, nlags)]
+    pacf_values = [int(v * 100) for v in pacf(serie, nlags)]
     return acf_values, pacf_values
 
 # =============================================================================

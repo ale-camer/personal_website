@@ -17,7 +17,7 @@ from tqdm import tqdm
 from prettytable import PrettyTable
 
 # --- Project/system ---
-from modules.utils import text_normalizer
+from modules.utils_OLD import text_normalizer
 
 # =============================================================================
 # TOP NGRAMS

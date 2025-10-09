@@ -7,11 +7,12 @@ import base64
 from collections import Counter, defaultdict
 
 # --- Third-party ---
-import seaborn as sns
+# import seaborn as sns
 from textblob import TextBlob
 from dash import dcc, html
 from wordcloud import WordCloud
 import plotly.graph_objects as go
+import plotly.express as px
 
 # --- Project ---
 from . import core
@@ -21,9 +22,8 @@ _FULL_WIDTH_STYLE = {"width": "100%", "display": "inline-block"}
 _IMAGE_STYLE = {"width": "48%", "display": "inline-block", "vertical-align": "top"}
 _WC_STYLE = {'width': '100%', 'height': 'auto'}
 
-def layout(data: dict = None) -> html.Div:
-    print(data)
-    if data is None or not data:
+def layout(issuers: list = None) -> html.Div:
+    if issuers is None or not issuers:
         return html.Div([
             html.H1("Dashboard will be displayed after data upload."),
             html.P("Please upload a file to view the dashboard.")
@@ -32,7 +32,7 @@ def layout(data: dict = None) -> html.Div:
         html.H1("Choose an issuer"),
         dcc.Dropdown(
             id='issuer-dropdown',
-            options=[{'label':i,'value':i} for i in ["GENERAL"]+sorted(data)],
+            options=[{'label':i,'value':i} for i in ["GENERAL"]+issuers],
             value="GENERAL" # initial value
         ),
         html.Div(id='general-charts', style=_FULL_WIDTH_STYLE),
@@ -131,7 +131,8 @@ def create_bar_chart(
         y = [agg_counts[k] for k in sorted_keys]
         return x, y
 
-    bar_colors = sns.color_palette("husl", n_colors=31).as_hex()
+    # bar_colors = sns.color_palette("husl", n_colors=31).as_hex()
+    bar_colors = px.colors.sample_colorscale("HSV", [i/30 for i in range(31)])
     x, y = get_values(aggregate_counts())
     return {
         'data': [go.Bar(x=x, y=y, marker={'color': bar_colors})],
@@ -147,7 +148,8 @@ def generate_charts(
 
     service = core.ChatSession()
     service.current_data = data
-    counts, text, is_general, msg = service.filter_chat(issuer)
+    counts, _, is_general, msg = service.filter_chat(issuer)
+    text = data.normalized_texts[issuer]
 
     hour_title = 'amount of messages per hour'
     dow_title = 'amount of messages per day of the week'

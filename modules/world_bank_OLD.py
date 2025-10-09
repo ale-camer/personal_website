@@ -15,7 +15,7 @@ import requests
 from branca.colormap import linear
 
 # --- Project/system ---
-from modules.utils import read_json, get_valid_countries
+from modules.utils_OLD import read_json, get_valid_countries
 
 # =============================================================================
 # CONSTANTS

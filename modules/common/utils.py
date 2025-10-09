@@ -12,14 +12,9 @@ import psutil
 import requests
 from time import time
 import logging
-from functools import wraps
-from typing import Any, Callable
-import threading
-from concurrent.futures import ThreadPoolExecutor
-import tracemalloc
+from datetime import datetime as dt
 
 # --- Third-party ---
-import pandas as pd
 from flask import g, request
 from unidecode import unidecode
 
@@ -27,8 +22,8 @@ from unidecode import unidecode
 # CONSTANTS
 # =============================================================================
 BASE_DIR = os.path.dirname(__file__)
-PARENT_DIR = os.path.dirname(BASE_DIR)
-LANG_PATH = os.path.join(PARENT_DIR, 'static', 'json', 'lang')
+PROJECT_ROOT = os.path.dirname(os.path.dirname(BASE_DIR))
+LANG_PATH = os.path.join(PROJECT_ROOT, 'static', 'json', 'lang')
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +41,7 @@ def write_file(content: str, file_name: str) -> None:
     with open(file_name, "w", encoding="utf-8") as f:
         f.write(content)
 
-def write_json(data: pd.DataFrame, path: str) -> None:
+def write_json(data, path: str) -> None:
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
@@ -101,7 +96,7 @@ def timed_run(func, *args, in_seconds: bool = False, decimals: int = 4, process_
 
 def job_duration() -> str:
     days_per_month, days_per_year = 30, 365
-    today, job_start_date = pd.Timestamp.now(), pd.Timestamp(2025, 2, 1)
+    today, job_start_date = dt.now(), dt(2025, 2, 1)
     elapsed_days = (today - job_start_date).days
 
     years = elapsed_days // days_per_year if elapsed_days > days_per_year else 0
@@ -115,9 +110,16 @@ def job_duration() -> str:
 # =============================================================================
 # LANGUAGES
 # =============================================================================
+# def load_texts(lang: str = 'english', section: str = None) -> dict:
+#     path = os.path.join('lang', f'{lang}.json') if os.path.exists(os.path.join('lang', f'{lang}.json')) else os.path.join(BASE_DIR, '..', 'static', 'json', 'lang', f'{lang}.json')
+#     return read_json(path).get(section, {}) if section else read_json(path)
+
 def load_texts(lang: str = 'english', section: str = None) -> dict:
-    path = os.path.join('lang', f'{lang}.json') if os.path.exists(os.path.join('lang', f'{lang}.json')) else os.path.join(BASE_DIR, '..', 'static', 'json', 'lang', f'{lang}.json')
-    return read_json(path).get(section, {}) if section else read_json(path)
+    path = os.path.join(LANG_PATH, f'{lang}.json')
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"No se encontró el archivo de idioma: {path}")
+    data = read_json(path)
+    return data.get(section, {}) if section else data
 
 def load_language_texts():
     g.lang = request.args.get('lang', 'english')

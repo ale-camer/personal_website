@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 from deepl import Translator, TooManyRequestsException
 
 # --- Project/system ---
-from modules.utils import read_json, write_json
+from modules.utils_OLD import read_json, write_json
 
 # =============================================================================
 # CONSTANTS
