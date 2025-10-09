@@ -12,46 +12,47 @@ PASOS
     4. se calcula sentimiento y nube de palabras
 """
 
-import re
+import re, sys, os
 from tqdm import tqdm
 from datetime import datetime
 from unidecode import unidecode
+from pathlib import Path
 
-from utils import read_txt
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+from common.utils import read_txt, read_json
+from common.validations import WhatsappFileError
 
-class WhatsappFileError(Exception):
-    pass
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.path.join(CURRENT_DIR, '..', '..'))
+STOPWORDS_PATH = os.path.join(PROJECT_ROOT, 'static', 'json', 'stopwords.json')
+STOPWORDS = read_json(STOPWORDS_PATH)["spanish"]
 
 def text_normalizer(text: str, stopwords: set = None, min_word_len: int = 2) -> str:
 
-    def _reduce_repeated_chars(text: str) -> str:
-        return re.sub(r'[^a-zA-Z0-9\s]', _count_rep_char, text)
+    def clean_word(word: str) -> str:
+        word = re.sub(r'[^\x00-\x7F]+', '', word) # remove non-ASCII / emojis
+        word = unidecode(word) # remove tildes
+        return re.sub(r'[^a-zA-Z]', '', word) # keep only letters
 
-    def _count_rep_char(match: str) -> str:
-        return match.group(0)[0]
-
-    return transform_words(
-        text=_reduce_repeated_chars(text.lower()),
-        fn=unidecode,
-        condition=lambda w: (
-            w not in stopwords
-            and not re.compile(r'http\S+').match(w)
-            and len(w) > min_word_len
+    def is_valid(text):
+        return not (
+            text in stopwords
+            or len(text) <= min_word_len
+            or delete_url.match(text)
         )
-    )
 
-def transform_words(text: str, fn=lambda x: x, condition=lambda x: True) -> str:
-    return ' '.join(fn(word) for word in text.split() if condition(word))
+    def normalize_words(words):
+        return [
+            cw for word in words
+            if is_valid(word) and (cw := clean_word(word))
+        ]
+
+    stopwords = stopwords if stopwords is not None else STOPWORDS
+    delete_url = re.compile(r'http\S+')
+    return ' '.join(normalize_words(text.lower().split()))
 
 def clean_message(data: str) -> iter:
-    """
-    si es valido:
-        1. tiene patron de mensaje o
-        2. tiene mas de una linea
-        3. no es multimedia
 
-    se devuelven datos del mensaje
-    """
     SPLIT_STR = r'^(\d{1,2}/\d{1,2}/\d{2,4}), ([^ ]+) - ([^:]+): (.+)$'
     PARSE_STR = r".*\/.*\/.*,.*:.* - .*"
 
@@ -78,17 +79,21 @@ def clean_message(data: str) -> iter:
 
     yield from (parse_line(d) for d in data if is_valid(d))
 
-def parse_messages(data):
-    """ ejecucion de limpieza """
+def parse_messages(data, stopwords: set = None):
+
     MESSAGE = "Cleaning messages"
     cleaned = [msg for msg in tqdm(clean_message(data), desc=MESSAGE)]
     if not cleaned:
         raise WhatsappFileError("Invalid file format")
-    return cleaned
 
+    normalized = []
+    for row in cleaned:
+        date, hour, issuer, msg, weekday, day, month, word_count = row
+        msg_norm = text_normalizer(msg, stopwords=stopwords)
+        normalized.append((date, hour, issuer, msg_norm, weekday, day, month, word_count))
+
+    return normalized
 
 data = read_txt("whatsapp_chat.txt").splitlines() # lectura
 cleaned_data = parse_messages(data) # limpieza
-
 print(f"Primeros diez mensajes: {[c[3] for c in cleaned_data[:10]]}")
-

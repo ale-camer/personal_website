@@ -136,27 +136,50 @@ def inject_texts_and_languages():
 # =============================================================================
 # TEXT
 # =============================================================================
+# def text_normalizer(text: str, stopwords: set = None, min_word_len: int = 2) -> str:
+
+    # def _reduce_repeated_chars(text: str) -> str:
+        # return re.sub(r'[^a-zA-Z0-9\s]', _count_rep_char, text)
+
+    # def _count_rep_char(match: str) -> str:
+        # return match.group(0)[0]
+
+    # return transform_words(
+        # text=_reduce_repeated_chars(text.lower()),
+        # fn=unidecode,
+        # condition=lambda w: (
+            # w not in stopwords
+            # and not re.compile(r'http\S+').match(w)
+            # and len(w) > min_word_len
+        # )
+    # )
+
+# def transform_words(text: str, fn=lambda x: x, condition=lambda x: True) -> str:
+    # return ' '.join(fn(word) for word in text.split() if condition(word))
+
 def text_normalizer(text: str, stopwords: set = None, min_word_len: int = 2) -> str:
 
-    def _reduce_repeated_chars(text: str) -> str:
-        return re.sub(r'[^a-zA-Z0-9\s]', _count_rep_char, text)
+    def clean_word(word: str) -> str:
+        word = re.sub(r'[^\x00-\x7F]+', '', word) # remove non-ASCII / emojis
+        word = unidecode(word) # remove tildes
+        return re.sub(r'[^a-zA-Z]', '', word) # keep only letters
 
-    def _count_rep_char(match: str) -> str:
-        return match.group(0)[0]
-
-    return transform_words(
-        text=_reduce_repeated_chars(text.lower()),
-        fn=unidecode,
-        condition=lambda w: (
-            w not in stopwords
-            and not re.compile(r'http\S+').match(w)
-            and len(w) > min_word_len
+    def is_valid(text):
+        return not (
+            text in stopwords
+            or len(text) <= min_word_len
+            or delete_url.match(text)
         )
-    )
 
-def transform_words(text: str, fn=lambda x: x, condition=lambda x: True) -> str:
-    return ' '.join(fn(word) for word in text.split() if condition(word))
+    def normalize_words(words):
+        return [
+            cw for word in words
+            if is_valid(word) and (cw := clean_word(word))
+        ]
 
+    stopwords = stopwords if stopwords is not None else stopwords
+    delete_url = re.compile(r'http\S+')
+    return ' '.join(normalize_words(text.lower().split()))
 # =============================================================================
 # TEST
 # =============================================================================
