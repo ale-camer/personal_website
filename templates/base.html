@@ -4,86 +4,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="X-UA-compatible" content="ie=edge">
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    
+    <!-- CSS Original Comentado -->
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}"> -->
+    
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon_ac.png') }}">
     <title data-translate-key="header_title">{{ texts['header_title'] }}</title>
+
+    <!-- Estilos personalizados para mantener el look & feel original -->
+    <style>
+        /* BASE */
+        body {
+            font-family: 'Poppins', sans-serif !important;
+            padding-top: 70px; /* Espacio para la navbar fija */
+            background: url("{{ url_for('static', filename='images/background.jpg') }}") no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+        }
+
+        /* NAVIGATION BAR */
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.75) !important;
+            font-size: clamp(15px, 1.5vw, 1.5vw);
+        }
+
+        .navbar .navbar-brand {
+            font-size: clamp(20px, 2vw, 2vw);
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        .navbar-dark .navbar-nav .nav-link:hover,
+        .navbar-dark .navbar-brand:hover {
+            background-color: #135c7d;
+            color: #fff;
+        }
+        
+        .dropdown-menu {
+            background-color: rgba(0, 0, 0, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .dropdown-menu .dropdown-item {
+            color: #fff;
+            font-size: clamp(12.5px, 1.25vw, 1.25vw);
+        }
+
+        .dropdown-menu .dropdown-item:hover {
+            background-color: #135c7d;
+            color: #fff;
+        }
+
+        /* LANGUAGE SELECTOR */
+        .language-selector select {
+            width: 100%;
+            padding: 0.3rem;
+            font-size: clamp(0.8rem, 1vw, 1vw);
+            border-radius: .25rem;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            background: white;
+            cursor: pointer;
+        }
+
+        .language-selector select:hover {
+            background-color: #a2daff;
+            color: black;
+        }
+        
+        /* FOOTER (para mantenerlo visible) */
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            padding: 10px 0;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .links {
+            display: flex;
+            justify-content: space-evenly;
+            margin-right: clamp(0%, 2.5%, 5%);
+            gap: 15px; /* Espacio entre iconos */
+        }
+        .links .image-footer img {
+            border-radius: 50%;
+            height: clamp(22.5px, 2.5vw, 35px);
+            width: clamp(22.5px, 2.5vw, 35px);
+            transition: transform 0.3s ease;
+        }
+        .links .image-footer img:hover {
+            transform: scale(1.5);
+        }
+
+        /* Contenido principal (para que no quede pegado a la navbar original) */
+        .main-project-container {
+            width: 90%;
+            margin: 2% auto;
+        }
+        
+        .project-container {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 30px;
+            border-radius: 2rem;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            color: white;
+            margin-top: 1%;
+        }
+
+        h1 { font-size: clamp(30px, 3vw, 3vw); }
+        h2 { font-size: clamp(25px, 2.5vw, 2.5vw); }
+        h3 { font-size: clamp(20px, 2vw, 2vw); }
+
+    </style>
 </head>
 
 <body>
-    <!-- LANGUAGE -->
-    <div class="language-selector">
-        <select id="select-language">
-            {% for l in available_langs %}
-            <option value="{{ l }}" {% if l==selected_lang %}selected{% endif %}>{{ l.title() }}</option>
-            {% endfor %}
-        </select>
-    </div>
-
     <!-- NAVIGATION BAR -->
-    <nav class="navbar">
-        <a href="{{ url_for('static_pages.index') }}" class="navbar-title-link" title="Home Page">
-            <h2 class="navbar-title" data-translate-key="home">{{ texts['home'] }}</h2>
-        </a>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top">
+        <div class="container-fluid">
+            <!-- Home (Izquierda) -->
+            <a class="navbar-brand" href="{{ url_for('static_pages.index') }}" title="Home Page">
+                <span data-translate-key="home">{{ texts['home'] }}</span>
+            </a>
 
-        <ul class="navbar-list">
-            <li class="dropdown">
-                <a class="dropdown-toggle" tabindex="0" role="button" aria-expanded="false" aria-controls="cv-menu"
-                    href="{{ url_for('static_pages.mi_cv') }}" title="Read My CV" data-translate-key="mi_cv">{{ texts['mi_cv'] }}</a>
-                <ul class="dropdown-menu" id="cv-menu">
-                    <li><a href="{{ url_for('static_pages.mi_cv') }}#work-experience" data-translate-key="work_exp">{{
-                            texts['work_exp'] }}</a>
+            <!-- Botón para menú desplegable en móvil -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Contenido de la Navbar -->
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <!-- Links Centrales -->
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="{{ url_for('static_pages.mi_cv') }}" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="Read My CV" data-translate-key="mi_cv">
+                            {{ texts['mi_cv'] }}
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('static_pages.mi_cv') }}#work-experience" data-translate-key="work_exp">{{ texts['work_exp'] }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('static_pages.mi_cv') }}#technologies" data-translate-key="tech">{{ texts['tech'] }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('static_pages.mi_cv') }}#education" data-translate-key="edu">{{ texts['edu'] }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('static_pages.mi_cv') }}#languages" data-translate-key="lang">{{ texts['lang'] }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('static_pages.mi_cv') }}#interests" data-translate-key="int">{{ texts['int'] }}</a></li>
+                        </ul>
                     </li>
-                    <li><a href="{{ url_for('static_pages.mi_cv') }}#technologies" data-translate-key="tech">{{ texts['tech'] }}</a>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="Choose a project" data-translate-key="have_fun">
+                            {{ texts['have_fun'] }}
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('static_pages.keyphrase_extraction') }}" data-translate-key="keyphrase">{{ texts['keyphrase'] }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('static_pages.seasonality_prediction') }}" data-translate-key="seasonality">{{ texts['seasonality'] }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('static_pages.whatsapp') }}" data-translate-key="whatsapp">{{ texts['whatsapp'] }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('static_pages.world_bank') }}" data-translate-key="world_bank">{{ texts['world_bank'] }}</a></li>
+                        </ul>
                     </li>
-                    <li><a href="{{ url_for('static_pages.mi_cv') }}#education" data-translate-key="edu">{{ texts['edu'] }}</a></li>
-                    <li><a href="{{ url_for('static_pages.mi_cv') }}#languages" data-translate-key="lang">{{ texts['lang'] }}</a>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="Choose a project" data-translate-key="read">
+                            {{ texts['read'] }}
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('static_pages.algorithmic_trading') }}" target="_blank" title="Description" data-translate-key="algo_trad">{{ texts['algo_trad'] }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('static_pages.linear_algebra') }}" target="_blank" title="Description" data-translate-key="lin_alg">{{ texts['lin_alg'] }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('static_pages.arg_macro') }}" target="_blank" title="Description" data-translate-key="macro">{{ texts['macro'] }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('static_pages.ds_trends') }}" target="_blank" title="Description" data-translate-key="ds_trends">{{texts['ds_trends'] }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('static_pages.vector_norms') }}" target="_blank" title="Description" data-translate-key="vector_norms">{{texts['vector_norms'] }}</a></li>
+                        </ul>
                     </li>
-                    <li><a href="{{ url_for('static_pages.mi_cv') }}#interests" data-translate-key="int">{{ texts['int'] }}</a></li>
                 </ul>
-            </li>
-
-            <li class="dropdown">
-                <a class="dropdown-toggle" tabindex="0" role="button" aria-expanded="false"
-                    aria-controls="projects-menu" title="Choose a project" data-translate-key="have_fun">{{
-                    texts['have_fun'] }}</a>
-                <ul class="dropdown-menu">
-                    <li><a href="{{ url_for('static_pages.keyphrase_extraction') }}" data-translate-key="keyphrase">{{
-                            texts['keyphrase'] }}</a>
-                    </li>
-                    <li><a href="{{ url_for('static_pages.seasonality_prediction') }}" data-translate-key="seasonality">{{
-                            texts['seasonality'] }}</a>
-                    </li>
-                    <li><a href="{{ url_for('static_pages.whatsapp') }}" data-translate-key="whatsapp">{{ texts['whatsapp'] }}</a>
-                    </li>
-                    <li><a href="{{ url_for('static_pages.world_bank') }}" data-translate-key="world_bank">{{ texts['world_bank']
-                            }}</a></li>
-                </ul>
-            </li>
-
-            <li class="dropdown">
-                <a class="dropdown-toggle" tabindex="0" role="button" aria-expanded="false"
-                    aria-controls="projects-menu" title="Choose a project" data-translate-key="read">{{ texts['read']
-                    }}</a>
-                <ul class="dropdown-menu">
-                    <li><a href="{{ url_for('static_pages.algorithmic_trading') }}" target="_blank" title="Description"
-                            data-translate-key="algo_trad">{{ texts['algo_trad'] }}</a></li>
-                    <li><a href="{{ url_for('static_pages.linear_algebra') }}" target="_blank" title="Description"
-                            data-translate-key="lin_alg">{{ texts['lin_alg'] }}</a>
-                    </li>
-            </li>
-            <li><a href="{{ url_for('static_pages.arg_macro') }}" target="_blank" title="Description" data-translate-key="macro">{{
-                    texts['macro'] }}</a>
-            </li>
-            <li><a href="{{ url_for('static_pages.ds_trends') }}" target="_blank" title="Description"
-                    data-translate-key="ds_trends">{{texts['ds_trends'] }}</a></li>
-            <li><a href="{{ url_for('static_pages.vector_norms') }}" target="_blank" title="Description"
-                    data-translate-key="vector_norms">{{texts['vector_norms'] }}</a>
-            </li>
-        </ul>
-        </li>
-        </ul>
+                
+                <!-- Selector de Idioma (Derecha) -->
+                <div class="language-selector mt-2 mt-md-0">
+                    <select id="select-language" class="form-select-sm">
+                        {% for l in available_langs %}
+                        <option value="{{ l }}" {% if l==selected_lang %}selected{% endif %}>{{ l.title() }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
     </nav>
 
     {% block content %}{% endblock %}
@@ -103,6 +211,8 @@
     </footer>
 
     <!-- Scripts -->
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="{{ url_for('static', filename='js/base.js') }}"></script>
     <script src="{{ url_for('static', filename='js/language_selection.js') }}"></script>
 </body>
