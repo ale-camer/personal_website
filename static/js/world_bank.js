@@ -380,7 +380,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     checkAndLoadOptions();
 
-    const showResultsButton = document.querySelector('.upload-form .project-form .button-row button[type="submit"]');
+    const showResultsButton = document.querySelector('.upload-form button[type="submit"]');
     if (showResultsButton) {
         showResultsButton.addEventListener('click', function (event) {
             event.preventDefault();

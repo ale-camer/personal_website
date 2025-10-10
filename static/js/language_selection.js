@@ -118,13 +118,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     async function initializeTranslations() {
-        populateLanguageSelector();
 
         const currentLang = getCurrentLang();
         document.documentElement.lang = currentLang;
 
         if (languageSelector) {
-            languageSelector.value = currentLang;
+            $('#select-language').val(currentLang);
+            $('#select-language').selectpicker('render');
         }
 
         updateUrlLangParam(currentLang);
@@ -133,12 +133,16 @@ document.addEventListener('DOMContentLoaded', function () {
     initializeTranslations();
 
     if (languageSelector) {
-        languageSelector.addEventListener('change', async function () {
+
+        $('#select-language').on('change', function () {
             const newLang = this.value;
+            console.log(`Language changed to: ${newLang}`);
             localStorage.setItem('preferredLang', newLang);
-            document.documentElement.lang = newLang;
-            updateUrlLangParam(newLang);
-            window.location.reload();
+
+            const params = new URLSearchParams(window.location.search);
+            params.set('lang', newLang);
+            
+            window.location.href = `${window.location.pathname}?${params.toString()}`;
         });
     }
 });

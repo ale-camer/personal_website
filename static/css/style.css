@@ -1,0 +1,407 @@
+/* BASE */
+body {
+    font-family: 'Poppins', sans-serif !important;
+    padding-top: 70px;
+    /* Espacio para la navbar fija */
+    background: url("../images/background.jpg") no-repeat center center fixed;
+    background-size: cover;
+    min-height: 100vh;
+    color: white;
+    opacity: 0;
+    animation: fadeInPage 0.5s ease-in-out forwards;
+}
+
+/* NAVIGATION BAR */
+.navbar {
+    background-color: rgba(0, 0, 0, 0.75) !important;
+    font-size: clamp(15px, 1.5vw, 1.5vw);
+}
+
+.navbar .navbar-brand {
+    font-size: clamp(20px, 2vw, 2vw);
+}
+
+.navbar-dark .navbar-nav .nav-link:hover,
+.navbar-dark .navbar-brand:hover {
+    background-color: #135c7d;
+    color: #fff;
+}
+
+.dropdown-menu {
+    background-color: rgba(0, 0, 0, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.dropdown-menu .dropdown-item {
+    color: #fff;
+    font-size: clamp(12.5px, 1.25vw, 1.25vw);
+}
+
+.dropdown-menu .dropdown-item:hover {
+    background-color: #135c7d;
+    color: #fff;
+}
+
+/* LANGUAGE SELECTOR */
+.language-selector select {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    color: #000;
+}
+
+.language-selector select:hover {
+    background-color: #a2daff;
+}
+
+/* FOOTER */
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    padding: 10px 0;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.links {
+    display: flex;
+    margin-right: clamp(1%, 2.5%, 5%);
+    gap: 15px;
+}
+
+.links .image-footer img {
+    border-radius: 50%;
+    height: clamp(25px, 2.5vw, 35px);
+    width: clamp(25px, 2.5vw, 35px);
+    transition: transform 0.3s ease;
+}
+
+.links .image-footer img:hover {
+    transform: scale(1.5);
+}
+
+/* CONTENIDO PRINCIPAL */
+.main-project-container,
+.mi-cv {
+    width: 90%;
+    max-width: 1200px;
+    margin: 2% auto;
+}
+
+.project-container,
+.job {
+    background: rgba(0, 0, 0, 0.65);
+    padding: 30px;
+    border-radius: 1rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    color: white;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    text-align: center;
+}
+
+h1 {
+    font-size: clamp(28px, 3vw, 3vw);
+}
+
+h2 {
+    font-size: clamp(24px, 2.5vw, 2.5vw);
+}
+
+h3 {
+    font-size: clamp(20px, 2vw, 2vw);
+}
+
+h4 {
+    font-size: clamp(18px, 1.5vw, 1.5vw);
+    color: #95a5a6;
+}
+
+hr {
+    border-top: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* FORMULARIOS */
+.upload-form .btn {
+    padding: 0.5rem 2rem;
+    border-radius: 5rem;
+    background-color: #3498db;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.upload-form .btn:hover {
+    background-color: white;
+    color: #3498db;
+    transform: scale(1.1);
+    border: 1px solid #3498db;
+}
+
+.form-label {
+    font-size: clamp(16px, 1.5vw, 1.5vw);
+}
+
+/* TABLAS */
+.table {
+    font-size: clamp(14px, 1.2vw, 1.2vw);
+}
+
+.table-dark {
+    --bs-table-bg: rgba(0, 0, 0, 0.2);
+}
+
+/* INDEX PAGE STYLES */
+.projects-type-container {
+    perspective: 1000px;
+}
+
+.project-type-container {
+    background-color: white;
+    color: black;
+    width: 100%;
+    margin: 0.5rem 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.8s, background-color 0.6s;
+    border-radius: 2rem;
+    padding: 5%;
+    min-height: 150px;
+}
+
+.project-type-container:hover {
+    transform: rotateY(180deg);
+    background-color: transparent;
+}
+
+.project-type-container:hover .project-type {
+    opacity: 0;
+}
+
+.project-type-container:hover .back-content {
+    opacity: 1;
+}
+
+.project-type {
+    font-family: "Times New Roman", serif;
+    text-decoration: none;
+    letter-spacing: 5px;
+    text-shadow: 1px 1px 1px black;
+    font-weight: bold;
+    text-align: center;
+    font-size: clamp(20px, 2.5vw, 2.5vw);
+    transition: opacity 0.25s;
+}
+
+.back-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    backface-visibility: hidden;
+    transform: rotateY(180deg);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.6s ease 0.2s;
+    padding: 10%;
+}
+
+.back-content p {
+    width: 100%;
+    padding: 5px;
+    text-align: center;
+    border-radius: 5rem;
+    background-color: white;
+    color: black;
+    cursor: pointer;
+    font-size: clamp(12px, 1.2vw, 1.2vw);
+    transition: all 0.3s ease;
+}
+
+.back-content p:hover {
+    background-color: aquamarine;
+    font-size: clamp(15px, 2.25vw, 2.25vw);
+}
+
+.back-content p.selected {
+    background-color: aquamarine;
+    font-size: clamp(15px, 2.25vw, 2.25vw);
+}
+
+.back-content p.not-selected {
+    opacity: 0.5;
+}
+
+/* MI_CV PAGE STYLES */
+.mi-cv ul {
+    padding-left: 2rem;
+}
+
+.mi-cv .job h3 {
+    color: #3498db;
+}
+
+.skills-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 1%;
+}
+
+.skill-item {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 10px;
+    align-items: center;
+}
+
+.skill-name {
+    font-size: clamp(12.5px, 1.25vw, 1.25vw);
+    text-align: left;
+}
+
+.progress-bar-container {
+    height: 5vh;
+    width: 100%;
+    background-color: rgba(128, 128, 128, 0.2);
+    border: 2.5px solid #FFFFFF;
+    position: relative;
+}
+
+.progress-bar {
+    height: 100%;
+    position: relative;
+}
+
+.progress-bar::after {
+    content: attr(data-level);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: clamp(10px, 1.25vw, 1.25vw);
+    white-space: nowrap;
+    font-weight: bold;
+}
+
+.basic {
+    width: 25%;
+    background-color: #e74c3c;
+}
+
+.intermediate {
+    width: 50%;
+    background-color: #e67e22;
+}
+
+.advanced {
+    width: 75%;
+    background-color: #3498db;
+}
+
+.native {
+    width: 100%;
+    background-color: #27ae60;
+}
+
+/* KEYPHRASE PAGE STYLES */
+#progress-container {
+    border-radius: 1rem;
+    width: 100%;
+    height: 25px;
+    background-color: #ddd;
+    overflow: hidden;
+    position: relative;
+}
+
+#progress-bar {
+    width: 0%;
+    height: 100%;
+    background-color: #4CAF50;
+    transition: width 0.3s ease;
+    border-radius: 1rem;
+}
+
+#progress-percentage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: black;
+    font-weight: bold;
+}
+
+/* WORLD BANK PAGE STYLES */
+.sortable {
+    cursor: pointer;
+}
+
+.sort-icon {
+    margin-left: 5px;
+}
+
+/* ANIMATIONS */
+@keyframes fadeInPage {
+    to {
+        opacity: 1;
+    }
+}
+
+/* ===== AÑADIR ESTOS ESTILOS A style.css ===== */
+
+/* Estilo para las banderitas dentro del selector */
+.flag-icon {
+    width: 20px;
+    height: auto;
+    border-radius: 3px;
+    vertical-align: middle;
+}
+
+/* --- Estilos para adaptar Bootstrap-Select a un tema oscuro --- */
+
+/* Contenedor principal del botón del selector */
+.bootstrap-select .btn.dropdown-toggle {
+    background-color: rgba(255, 255, 255, 0.9); /* Fondo blanco semi-transparente */
+    color: #000; /* Texto negro */
+    border: 1px solid #ccc;
+}
+
+/* Menú desplegable */
+.bootstrap-select .dropdown-menu {
+    background-color: rgba(0, 0, 0, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Opciones del menú */
+.bootstrap-select .dropdown-menu .dropdown-item {
+    color: #fff; /* Texto blanco para las opciones */
+}
+
+/* Opción activa o en hover */
+.bootstrap-select .dropdown-menu .dropdown-item:hover,
+.bootstrap-select .dropdown-menu .dropdown-item.active {
+    background-color: #135c7d; /* Color de hover que ya usas */
+    color: #fff;
+}
+
+/* Campo de búsqueda */
+.bootstrap-select .bs-searchbox .form-control {
+    background-color: #333;
+    color: #fff;
+    border: 1px solid #555;
+}
+
+.language-selector .dropdown-menu {
+  left: -30% !important;
+}

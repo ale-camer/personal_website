@@ -2,83 +2,83 @@
 
 {% block content %}
 
-<link rel="stylesheet" href="{{ url_for('static', filename='css/world_bank.css') }}">
+<!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/world_bank.css') }}"> -->
 <script src="{{ url_for('static', filename='js/world_bank.js') }}"></script>
 
 <div class="main-project-container">
-    <div class="project-container">
-
+    <div class="project-container mb-4">
         <h1 data-translate-key="wb_title">{{ texts['wb_title'] }}</h1>
-        <div>
-            <p id="intro-paragraph" data-translate-key="intro">{{ texts['intro'] }}</p>
-        </div>
+        <p id="intro-paragraph" data-translate-key="intro">{{ texts['intro'] }}</p>
 
-        <div class="wb-group">
-            <label for="indicators" data-translate-key="instr_ord">{{ texts['instr_ord'] }}</label>
-            <div class="wb-topics">
-                <button class="wb-button" id="dropdownButton" data-translate-key="ind">{{ texts['ind'] }}</button>
-                <div class="wb-content" id="dropdownMenu">
-                    {% for key in indicators %}
-                    <a href="#" onclick="selectIndicator(event, '{{ key }}', '{{ indicators[key] }}')">{{ key }}</a>
-                    {% endfor %}
+        <div class="row g-3 text-center">
+            <div class="col-md-4">
+                <label for="dropdownButton" class="form-label" data-translate-key="instr_ord">{{ texts['instr_ord'] }}</label>
+                <div class="dropdown">
+                    <button class="btn btn-light dropdown-toggle w-100" type="button" id="dropdownButton" data-bs-toggle="dropdown" aria-expanded="false" data-translate-key="ind">
+                        {{ texts['ind'] }}
+                    </button>
+                    <ul class="dropdown-menu w-100" id="dropdownMenu" style="max-height: 200px; overflow-y: auto;">
+                        {% for key in indicators %}
+                        <li><a class="dropdown-item" href="#" onclick="selectIndicator(event, '{{ key }}', '{{ indicators[key] }}')">{{ key }}</a></li>
+                        {% endfor %}
+                    </ul>
                 </div>
             </div>
-        </div>
-
-        <div class="wb-group">
-            <label for="type" data-translate-key="type_ord">{{ texts['type_ord'] }}</label>
-            <div class="wb-topics">
-                <button class="wb-button" id="typeButton" data-translate-key="type">{{ texts['type'] }}</button>
-                <div class="wb-content" id="typeMenu">
-                    <a href="#" onclick="selectType(event, 'country')" data-translate-key="country">{{ texts['country'] }}</a>
-                    <a href="#" onclick="selectType(event, 'year')" data-translate-key="year">{{ texts['year'] }}</a>
+            <div class="col-md-4">
+                <label for="typeButton" class="form-label" data-translate-key="type_ord">{{ texts['type_ord'] }}</label>
+                <div class="dropdown">
+                    <button class="btn btn-light dropdown-toggle w-100" type="button" id="typeButton" data-bs-toggle="dropdown" aria-expanded="false" data-translate-key="type">
+                        {{ texts['type'] }}
+                    </button>
+                    <ul class="dropdown-menu w-100" id="typeMenu">
+                        <li><a class="dropdown-item" href="#" onclick="selectType(event, 'country')" data-translate-key="country">{{ texts['country'] }}</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="selectType(event, 'year')" data-translate-key="year">{{ texts['year'] }}</a></li>
+                    </ul>
                 </div>
             </div>
-        </div>
-
-        <div class="wb-group">
-            <label for="options" data-translate-key="opt_ord">{{ texts['opt_ord'] }}</label>
-            <div class="wb-topics">
-                <button class="wb-button" id="optionsButton" data-translate-key="opt">{{ texts['opt'] }}</button>
-                <div class="wb-content" id="optionsMenu">
-                    <a href="#" style="font-size: 1vw;" data-translate-key="first_warning">{{ texts['first_warning'] }}</a>
+            <div class="col-md-4">
+                <label for="optionsButton" class="form-label" data-translate-key="opt_ord">{{ texts['opt_ord'] }}</label>
+                <div class="dropdown">
+                    <button class="btn btn-light dropdown-toggle w-100" type="button" id="optionsButton" data-bs-toggle="dropdown" aria-expanded="false" data-translate-key="opt">
+                        {{ texts['opt'] }}
+                    </button>
+                    <ul class="dropdown-menu w-100" id="optionsMenu">
+                         <li><a class="dropdown-item disabled" href="#" data-translate-key="first_warning">{{ texts['first_warning'] }}</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
 
         <div class="upload-form">
-            <div class="project-form">
-                <div class="button-row" id="wb-button-row">
-                    <button type="submit" data-translate-key="first_button">{{ texts['first_button'] }}</button>
-                    <button type="button" id="downloadCSVBtn" data-translate-key="second_button">{{ texts['second_button'] }}</button>
-                    <button type="button" id="interactiveGraphBtn" data-translate-key="third_button">{{ texts['third_button'] }}</button>
-                </div>
+            <div class="d-flex flex-wrap justify-content-center gap-3 mt-4" id="wb-button-row">
+                <button type="submit" class="btn btn-primary" data-translate-key="first_button">{{ texts['first_button'] }}</button>
+                <button type="button" class="btn btn-secondary" id="downloadCSVBtn" data-translate-key="second_button">{{ texts['second_button'] }}</button>
+                <button type="button" class="btn btn-info" id="interactiveGraphBtn" data-translate-key="third_button">{{ texts['third_button'] }}</button>
             </div>
         </div>
-        <p class="side-note" data-translate-key="second_warning">{{ texts['second_warning'] }}</p>
+        <p class="text-muted mt-3" style="font-size: 0.9rem;" data-translate-key="second_warning">{{ texts['second_warning'] }}</p>
     </div>
 
-    <div class="project-container" id="wb-results">
-        <table class="wb-table">
-            <thead>
-                <tr>
-                    <th class="sortable" data-translate-key="country" title="Click and sort.">
-                        {{ texts['country'] }}
-                        <span class="sort-icon">&#8597;</span>
-                    </th>
-                    <th class="sortable" data-translate-key="date" title="Click and sort.">
-                        {{ texts['date'] }}
-                        <span class="sort-icon">&#8597;</span>
-                    </th>
-                    <th class="sortable" data-translate-key="value" title="Click and sort.">
-                        {{ texts['value'] }}
-                        <span class="sort-icon">&#8597;</span>
-                    </th>
-                </tr>
-            </thead>
-            <tbody id="wb_tbody">
-            </tbody>
-        </table>
+    <div class="project-container" id="wb-results" style="display: none;">
+        <div class="table-responsive">
+            <table class="table table-dark table-striped table-hover wb-table">
+                <thead>
+                    <tr>
+                        <th class="sortable" data-translate-key="country" title="Click and sort.">
+                            {{ texts['country'] }} <span class="sort-icon">&#8597;</span>
+                        </th>
+                        <th class="sortable" data-translate-key="date" title="Click and sort.">
+                            {{ texts['date'] }} <span class="sort-icon">&#8597;</span>
+                        </th>
+                        <th class="sortable" data-translate-key="value" title="Click and sort.">
+                            {{ texts['value'] }} <span class="sort-icon">&#8597;</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="wb_tbody">
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 

@@ -2,154 +2,119 @@
 
 {% block content %}
 
-<link rel="stylesheet" href="{{ url_for('static', filename='css/seasonality.css') }}">
+<!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/seasonality.css') }}"> -->
 <script src="{{ url_for('static', filename='js/seasonality.js') }}"></script>
 
 <div class="main-project-container">
-    <div class="project-container">
+    <div class="project-container mb-4">
         <h1 data-translate-key="title">{{ texts['title'] }}</h1>
 
         {% if error %}
-        <div class="error-message"
-            style="color: red; background-color: #ffe0e0; border: 1px solid red; padding: 10px; margin-bottom: 15px; border-radius: 5px;">
+        <div class="alert alert-danger" role="alert">
             {{ error }}
         </div>
         {% endif %}
 
-        <div>
-            <p id="intro-paragraph" data-translate-key="intro">
-                {{ texts['intro'] }}
-            </p>
-        </div>
+        <p id="intro-paragraph" data-translate-key="intro">{{ texts['intro'] }}</p>
 
         <div class="upload-form">
-            <form action="{{ url_for('seasonality.predict_seasonality') }}" method="post" enctype="multipart/form-data"
-                class="project-form" id="predictionForm">
-                <div class="form-group">
-                    <label for="file" data-translate-key="upload_label">{{ texts['upload_label'] }}</label><br>
-                    <input type="file" name="file" id="file" accept=".xlsx,.xls">
-                    <span id="fileError" style="color: red;"></span>
+            <form action="{{ url_for('seasonality.predict_seasonality') }}" method="post" enctype="multipart/form-data" class="project-form text-center" id="predictionForm">
+                <div class="mb-3">
+                    <label for="file" class="form-label" data-translate-key="upload_label">{{ texts['upload_label'] }}</label>
+                    <input type="file" class="form-control" name="file" id="file" accept=".xlsx,.xls">
+                    <span id="fileError" class="text-danger"></span>
                 </div>
 
-                <div class="form-group">
-                    <label for="periodicity" data-translate-key="periodicity_label">{{ texts['periodicity_label']
-                        }}</label><br>
-                    <input type="number" name="periodicity" id="periodicity" min="2" max="100" value="4" required
-                        title="{{ texts['periodicity_title'] }}" data-translate-key-title="periodicity_title">
-
-                    <label for="nlags" data-translate-key="nlags"># Lags:</label><br>
-                    <input type="number" name="nlags" id="nlags" min="2" max="100" value="10" required
-                        title="Choose the number of lags that you want. If it's higher than the length of the serie it will be halved."
-                        data-translate-key-title="nlags">
+                <div class="row g-3 justify-content-center">
+                    <div class="col-md-5">
+                        <label for="periodicity" class="form-label" data-translate-key="periodicity_label">{{ texts['periodicity_label'] }}</label>
+                        <input type="number" class="form-control" name="periodicity" id="periodicity" min="2" max="100" value="4" required title="{{ texts['periodicity_title'] }}" data-translate-key-title="periodicity_title">
+                    </div>
+                    <div class="col-md-5">
+                        <label for="nlags" class="form-label" data-translate-key="nlags"># Lags:</label>
+                        <input type="number" class="form-control" name="nlags" id="nlags" min="2" max="100" value="10" required title="Choose the number of lags" data-translate-key-title="nlags">
+                    </div>
                 </div>
 
-                <div class="button-row">
-                    <button type="submit" data-translate-key="submit_button">{{ texts['submit_button']|safe }}</button>
-                    <button type="button" id="downloadBtn" data-translate-key="download_button">{{
-                        texts['download_button']|safe }}</button>
+                <div class="d-flex justify-content-center gap-3 mt-4">
+                    <button type="submit" class="btn btn-primary" data-translate-key="submit_button">{{ texts['submit_button']|safe }}</button>
+                    <button type="button" class="btn btn-secondary" id="downloadBtn" data-translate-key="download_button">{{ texts['download_button']|safe }}</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- if empty error -->
     {% if error_message %}
-    <div class="project-container" id="result-section-error">
+    <div class="project-container mb-4" id="result-section-error">
         <h2 data-translate-key="error_title">{{ texts['error_title'] }}</h2>
         <p data-translate-key="error_message">{{ error_message|safe }}</p>
     </div>
     {% endif %}
 
-    <!-- if forecast -->
     {% if forecast %}
-    <div class="project-container" id="result-section-forecast">
+    <div class="project-container mb-4" id="result-section-forecast">
         <h2 data-translate-key="forecast_title">{{ texts['forecast_title'] }}</h2>
-        <table id="seasonality-table">
-            <thead>
-                <tr>
-                    <th data-translate-key="forecast_period">{{ texts['forecast_period'] }}</th>
-                    <th data-translate-key="forecast_value">{{ texts['forecast_value'] }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for i, value in enumerate(forecast) %}
-                <tr>
-                    <td>{{ i + 1 }}</td>
-                    <td>{{ value }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table table-dark table-striped table-hover" id="seasonality-table">
+                <thead>
+                    <tr>
+                        <th data-translate-key="forecast_period">{{ texts['forecast_period'] }}</th>
+                        <th data-translate-key="forecast_value">{{ texts['forecast_value'] }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i, value in enumerate(forecast) %}
+                    <tr><td>{{ i + 1 }}</td><td>{{ value }}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
     {% endif %}
 
-    <!-- if prediction plots -->
-    {% if existing_plots and existing_plots | length > 0 %}
-    <div class="project-container" id="result-section-plots">
+    {% if existing_plots and 'forecast_plot.png' in existing_plots %}
+    <div class="project-container mb-4 text-center" id="result-section-plots">
         <h2>Prediction</h2>
-        <div class="plot-container">
-            {% if 'forecast_plot.png' in existing_plots %}
-            <img src="{{ url_for('static', filename='seasonality/forecast_plot.png') }}">
-            {% endif %}
-        </div>
+        <img src="{{ url_for('static', filename='seasonality/forecast_plot.png') }}" class="img-fluid rounded">
     </div>
     {% endif %}
 
-    <!-- if acf -->
     {% if acf %}
-    <div class="project-container" id="result-section-forecast">
-        <h2>Autocorrelation</h2>
-        <table id="seasonality-table">
-            <thead>
-                <tr>
-                    <th># Lag</th>
-                    <th>Correlation</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for i, value in enumerate(acf) %}
-                <tr>
-                    <td>{{ i + 1 }}</td>
-                    <td>{{ value }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% endif %}
-
-    <!-- if pacf -->
-    {% if pacf %}
-    <div class="project-container" id="result-section-forecast">
-        <h2>Partial Autocorrelation</h2>
-        <table id="seasonality-table">
-            <thead>
-                <tr>
-                    <th># Lag</th>
-                    <th>Correlation</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for i, value in enumerate(pacf) %}
-                <tr>
-                    <td>{{ i + 1 }}</td>
-                    <td>{{ value }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% endif %}
-
-    <!-- if correlation plot -->
-    {% if existing_plots and existing_plots | length > 0 %}
-    <div class="project-container" id="result-section-plots">
-        <h2>Description</h2>
-        <div class="plot-container">
-            {% if 'acf_pacf_plot.png' in existing_plots %}
-            <img src="{{ url_for('static', filename='seasonality/acf_pacf_plot.png') }}">
-            {% endif %}
+    <div class="project-container mb-4">
+        <h2 class="text-center">Autocorrelation</h2>
+        <div class="table-responsive">
+            <table class="table table-dark table-striped table-hover">
+                <thead><tr><th># Lag</th><th>Correlation</th></tr></thead>
+                <tbody>
+                    {% for i, value in enumerate(acf) %}
+                    <tr><td>{{ i + 1 }}</td><td>{{ value }}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
+    </div>
+    {% endif %}
+    
+    {% if pacf %}
+    <div class="project-container mb-4">
+        <h2 class="text-center">Partial Autocorrelation</h2>
+        <div class="table-responsive">
+            <table class="table table-dark table-striped table-hover">
+                <thead><tr><th># Lag</th><th>Correlation</th></tr></thead>
+                <tbody>
+                    {% for i, value in enumerate(pacf) %}
+                    <tr><td>{{ i + 1 }}</td><td>{{ value }}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if existing_plots and 'acf_pacf_plot.png' in existing_plots %}
+    <div class="project-container mb-4 text-center">
+        <h2>Description</h2>
+        <img src="{{ url_for('static', filename='seasonality/acf_pacf_plot.png') }}" class="img-fluid rounded">
     </div>
     {% endif %}
 </div>

@@ -2,46 +2,56 @@
 
 {% block content %}
 
-<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
-<script>window.projectTranslations = {{ texts.get('projects-description', {}) | tojson }};</script>
+<script id="project-translations" type="application/json">
+  {{ texts.get('projects-description', {}) | tojson | safe }}
+</script>
+<script>
+  window.projectTranslations = JSON.parse(
+    document.getElementById('project-translations').textContent
+  );
+</script>
+<!-- <script>window.projectTranslations = {{ texts.get('projects-description', {}) | tojson }};</script> -->
 <script src="{{ url_for('static', filename='js/index.js') }}"></script>
 
-<!-- INTRO -->
+<!-- CONTENT -->
 <div class="main-project-container">
 
-    <div class="project-container">
+    <div class="project-container mb-4">
         <div id="profile-container">
             <p data-translate-key="presentation_message">{{ texts['presentation_message'] }}</p>
         </div>
     </div>
 
-    <div class="project-container">
+    <div class="project-container mb-4">
         <h1 id="title" data-translate-key="project_title">{{ texts['project_title'] }}</h1>
-        <div class="projects-type-container">
-            <div class="project-type-container">
-                <p class="project-type" data-translate-key="wanna_fun">{{ texts['wanna_fun'] }}</p>
-                <div class="back-content">
-                    <p id="first_interactive_p" data-id="keyphrase-extraction" data-translate-key="keyphrase">{{ texts['keyphrase'] }}</p>
-                    <p id="second_interactive_p" data-id="seasonality-prediction" data-translate-key="seasonality">{{ texts['seasonality'] }}</p>
-                    <p id="third_interactive_p" data-id="whatsapp" data-translate-key="whatsapp">{{ texts['whatsapp'] }}</p>
-                    <p id="fourth_interactive_p" data-id="world-bank" data-translate-key="world_bank">{{ texts['world_bank'] }}</p>
+        <div class="row g-4 projects-type-container">
+            <div class="col-lg-6">
+                <div class="project-type-container">
+                    <p class="project-type" data-translate-key="wanna_fun">{{ texts['wanna_fun'] }}</p>
+                    <div class="back-content">
+                        <p id="first_interactive_p" data-id="keyphrase-extraction" data-translate-key="keyphrase">{{ texts['keyphrase'] }}</p>
+                        <p id="second_interactive_p" data-id="seasonality-prediction" data-translate-key="seasonality">{{ texts['seasonality'] }}</p>
+                        <p id="third_interactive_p" data-id="whatsapp" data-translate-key="whatsapp">{{ texts['whatsapp'] }}</p>
+                        <p id="fourth_interactive_p" data-id="world-bank" data-translate-key="world_bank">{{ texts['world_bank'] }}</p>
+                    </div>
                 </div>
             </div>
-            <div class="project-type-container">
-                <p class="project-type" data-translate-key="wanna_read">{{ texts['wanna_read'] }}</p>
-                <div class="back-content">
-                    <p id="first_descriptive_p" data-id="algorithmic-trading" data-translate-key="algo_trad">{{ texts['algo_trad'] }}</p>
-                    <p id="second_descriptive_p" data-id="trends-data-science" data-translate-key="ds_trends">{{ texts['ds_trends'] }}</p>
-                    <p id="third_descriptive_p" data-id="macro-employment" data-translate-key="macro">{{ texts['macro'] }}</p>
-                    <p id="fourth_descriptive_p" data-id="linear-algebra" data-translate-key="lin_alg">{{ texts['lin_alg'] }}</p>
-                    <p id="fifth_descriptive_p" data-id="vector-norms" data-translate-key="vector_norms">{{ texts['vector_norms'] }}</p>
+            <div class="col-lg-6">
+                <div class="project-type-container">
+                    <p class="project-type" data-translate-key="wanna_read">{{ texts['wanna_read'] }}</p>
+                    <div class="back-content">
+                        <p id="first_descriptive_p" data-id="algorithmic-trading" data-translate-key="algo_trad">{{ texts['algo_trad'] }}</p>
+                        <p id="second_descriptive_p" data-id="trends-data-science" data-translate-key="ds_trends">{{ texts['ds_trends'] }}</p>
+                        <p id="third_descriptive_p" data-id="macro-employment" data-translate-key="macro">{{ texts['macro'] }}</p>
+                        <p id="fourth_descriptive_p" data-id="linear-algebra" data-translate-key="lin_alg">{{ texts['lin_alg'] }}</p>
+                        <p id="fifth_descriptive_p" data-id="vector-norms" data-translate-key="vector_norms">{{ texts['vector_norms'] }}</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-
-    <div class="project-container" id="dynamic-project-container">
+    <div class="project-container" id="dynamic-project-container" style="display: none;">
         <h3 id="first-header" data-translate-key="expl">{{ texts['expl'] }}</h3>
         <p id="dynamic-text-explanation" data-translate-key="placeholder">{{ texts['placeholder'] }}</p>
         <h3 data-translate-key="useful">{{ texts['useful'] }}</h3>

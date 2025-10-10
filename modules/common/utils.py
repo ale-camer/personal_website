@@ -7,7 +7,6 @@ import os
 import re
 import shutil
 import psutil
-import string
 import xml.etree.ElementTree as ET
 import zipfile as zf
 from time import time
@@ -28,6 +27,7 @@ from fpdf import FPDF
 BASE_DIR = os.path.dirname(__file__)
 PROJECT_ROOT = os.path.dirname(os.path.dirname(BASE_DIR))
 LANG_PATH = os.path.join(PROJECT_ROOT, 'static', 'json', 'lang')
+LANG_OPTIONS_PATH = os.path.join(LANG_PATH, 'lang_options.json')
 
 # =============================================================================
 # FILE I/O - BASIC
@@ -408,19 +408,31 @@ def job_duration() -> str:
 # =============================================================================
 # FLASK UTILITIES
 # =============================================================================
+LANG_OPTIONS = read_json(LANG_OPTIONS_PATH)
+
 def load_language_texts():
-    g.lang = request.args.get('lang', 'english')
-    g.texts = load_texts(g.lang, section='home')
+    default_lang = list(LANG_OPTIONS.keys())[0]
+    g.lang = request.args.get('lang', default_lang)
+    g.texts = load_texts(g.lang)
 
 def inject_texts_and_languages():
-    available_langs = [
-        f.split('.')[0] for f in os.listdir(LANG_PATH) if f.endswith('.json')
+    available_lang_codes = [
+        f.split('.')[0] for f in os.listdir(LANG_PATH) 
+        if f.endswith('.json') and f != 'lang_options.json'
     ]
-    return dict(
-        texts=getattr(g, 'texts', {}),
-        selected_lang=getattr(g, 'lang', 'english'),
-        available_langs=available_langs
+    language_options_to_render = dict(
+        ((code, LANG_OPTIONS[code]) 
+         for code in available_lang_codes 
+         if code in LANG_OPTIONS)
     )
+    # print(language_options_to_render)
+    default_lang = next(iter(LANG_OPTIONS))
+    print(default_lang)
+    return {
+        'texts': getattr(g, 'texts', {}),
+        'selected_lang': getattr(g, 'lang', default_lang),
+        'language_options': language_options_to_render
+    }
 
 # =============================================================================
 # UTILITIES

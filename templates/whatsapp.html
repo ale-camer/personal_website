@@ -9,40 +9,34 @@
         <h1 data-translate-key="whatsapp_title">{{ texts['whatsapp_title'] }}</h1>
 
         {% if error %}
-        <div class="error-message"
-            style="color: red; background-color: #ffe0e0; border: 1px solid red; padding: 10px; margin-bottom: 15px; border-radius: 5px;">
+        <div class="alert alert-danger" role="alert">
             {{ error }}
         </div>
         {% endif %}
 
-        <div>
-            <p id="intro-paragraph" data-translate-key="instruction">{{ texts['instruction'] }}</p>
-        </div>
+        <p id="intro-paragraph" data-translate-key="instruction">{{ texts['instruction'] }}</p>
 
         <div class="upload-form">
-            <form class="project-form" action="/whatsapp_dashboard" method="post" enctype="multipart/form-data">
-
-                <div class="form-group">
-                    <label for="file" data-translate-key="first_step">{{ texts['first_step'] }}</label><br>
-                    <input type="file" id="file" name="file" accept=".txt">
-                    <span id="fileError" style="color: red;"></span>
+            <form class="project-form text-center" action="/whatsapp_dashboard" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="file" class="form-label" data-translate-key="first_step">{{ texts['first_step'] }}</label>
+                    <input type="file" class="form-control" id="file" name="file" accept=".txt">
+                    <span id="fileError" class="text-danger"></span>
                 </div>
 
-                <div class="form-group">
-                    <label for="language" data-translate-key="second_step">{{ texts['second_step'] }}</label>
-                    <select id="language" name="language"
-                        title="Select the language in which the conversation was hold"></select>
+                <div class="mb-3">
+                    <label for="language" class="form-label" data-translate-key="second_step">{{ texts['second_step'] }}</label>
+                    <select class="form-select" id="language" name="language" title="Select the language in which the conversation was held"></select>
                 </div>
 
                 <input type="hidden" id="selected_language" name="selected_language">
 
-                <div class="button-row">
-                    <button type="submit" data-translate-key="button">{{ texts['button'] }}</button>
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary" data-translate-key="button">{{ texts['button'] }}</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-
 
 {% endblock %}

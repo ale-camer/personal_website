@@ -1,0 +1,87 @@
+{
+    "english": {
+        "name": "English",
+        "flag": "en.svg",
+        "tokens": "english united kingdom usa"
+    },
+    "spanish": {
+        "name": "Español",
+        "flag": "es.svg",
+        "tokens": "español spanish spain"
+    },
+    "portuguese": {
+        "name": "Português",
+        "flag": "pt.svg",
+        "tokens": "português portuguese portugal brasil brazil"
+    },
+    "mandarin": {
+        "name": "中文 (Mandarin)",
+        "flag": "cn.svg",
+        "tokens": "chinese mandarin china cn"
+    },
+    "german": {
+        "name": "Deutsch",
+        "flag": "de.svg",
+        "tokens": "deutsch german germany de"
+    },
+    "danish": {
+        "name": "Dansk",
+        "flag": "dk.svg",
+        "tokens": "dansk danish denmark dk"
+    },
+    "finnish": {
+        "name": "Suomi",
+        "flag": "fi.svg",
+        "tokens": "suomi finnish finland fi"
+    },
+    "french": {
+        "name": "Français",
+        "flag": "fr.svg",
+        "tokens": "français french france fr"
+    },
+    "greek": {
+        "name": "Ελληνικά",
+        "flag": "gr.svg",
+        "tokens": "greek greece gr"
+    },
+    "italian": {
+        "name": "Italiano",
+        "flag": "it.svg",
+        "tokens": "italiano italian italy it"
+    },
+    "japanese": {
+        "name": "日本語",
+        "flag": "jp.svg",
+        "tokens": "japanese japan jp nihongo"
+    },
+    "korean": {
+        "name": "한국어",
+        "flag": "kr.svg",
+        "tokens": "korean south korea kr"
+    },
+    "dutch": {
+        "name": "Nederlands",
+        "flag": "nl.svg",
+        "tokens": "dutch nederlands netherlands nl"
+    },
+    "russian": {
+        "name": "Русский",
+        "flag": "ru.svg",
+        "tokens": "russian russia ru"
+    },
+    "arabic": {
+        "name": "العربية",
+        "flag": "sa.svg",
+        "tokens": "arabic saudi arabia sa"
+    },
+    "swedish": {
+        "name": "Svenska",
+        "flag": "se.svg",
+        "tokens": "svenska swedish sweden se"
+    },
+    "turkish": {
+        "name": "Türkçe",
+        "flag": "tr.svg",
+        "tokens": "türkçe turkish turkey tr"
+    }
+}

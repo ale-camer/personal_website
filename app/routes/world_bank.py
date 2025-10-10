@@ -53,6 +53,7 @@ def show_options():
 
 @bp.route('/show_data')
 def show_data():
+    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
     indicator, _type, option = get_params()
     data = get_downloaded_data(indicator)
     filtered_data = get_filtered_data(data, _type, option)
