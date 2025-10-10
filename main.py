@@ -8,18 +8,19 @@ import warnings
 # --- Third-party ---
 
 # --- Project ---
-# from app_OLD import app
-import modules.common.utils as ut
+from modules.common.utils import (
+    read_json, load_dotenv, timed_run, remove_temp_files
+)
 from app import create_app
 
 # =============================================================================
 # CONFIGURATION
 # =============================================================================
 app = create_app()
-ut.load_dotenv()
+load_dotenv()
 warnings.filterwarnings("ignore")
 
-config = ut.read_json(os.path.join('static', 'json', 'config.json'))
+config = read_json(os.path.join('static', 'json', 'config.json'))
 IS_DEV = os.environ.get('FLASK_ENV') == 'development'
 TEMP_FOLDERS_TO_CLEAN = config["temporary_folders"]
 
@@ -27,8 +28,8 @@ TEMP_FOLDERS_TO_CLEAN = config["temporary_folders"]
 # RUN
 # =============================================================================
 if __name__ == '__main__':
-    ut.timed_run(
-        ut.remove_temp_files, 
+    timed_run(
+        remove_temp_files, 
         TEMP_FOLDERS_TO_CLEAN, 
         in_seconds=True, 
         process_str="Temporary folders cleaned"

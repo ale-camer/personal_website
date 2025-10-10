@@ -7,7 +7,7 @@ import os
 # --- Third-party ---
 
 # --- Project ---
-import modules.common.utils as ut
+from modules.common.utils import  read_json
 
 # =============================================================================
 # ROUTES
@@ -29,7 +29,7 @@ KEYPHRASE_OUTPUT_PATH = os.path.join(KEYPHRASE_DIR, 'processed_keyphrases_result
 # =============================================================================
 # SETTINGS
 # =============================================================================
-config = ut.read_json(CONFIG_PATH)
+config = read_json(CONFIG_PATH)
 INDICATORS = dict(sorted(config["indicators"].items()))
 INDICATOR_NAMES = {v: k for k, v in INDICATORS.items()}
 WEEK_DAYS = {int(k): v for k, v in config["days_of_the_week"].items()}

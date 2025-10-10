@@ -1,1 +1,1 @@
-from .core import download_data, get_options, filter_data, plot
+from .core import download_wb_data, get_options, filter_data, plot

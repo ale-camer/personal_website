@@ -7,7 +7,7 @@
 from flask import Blueprint, render_template
 
 # --- Project ---
-import modules.common.utils as ut
+from modules.common.utils import job_duration
 
 # =============================================================================
 # CONFIGURATION
@@ -43,7 +43,7 @@ def arg_macro():
 
 @bp.route('/mi_cv')
 def mi_cv():
-    return render_template('mi_cv.html', delta_time_string=ut.job_duration())
+    return render_template('mi_cv.html', delta_time_string=job_duration())
 
 @bp.route('/keyphrase_extraction')
 def keyphrase_extraction():

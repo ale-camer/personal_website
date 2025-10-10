@@ -112,4 +112,3 @@ class HeatmapPlotter(WorldBankPlotter):
 
     def get_filename(self) -> str:
         return 'heatmap.html'
-   

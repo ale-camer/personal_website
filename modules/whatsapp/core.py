@@ -9,7 +9,7 @@ from collections import Counter
 
 # --- Project ---
 from . import parsing as p
-from modules.common.utils import text_normalizer, read_json, timed_run
+from modules.common.utils import read_json
 
 # =============================================================================
 # CONSTANTS
@@ -51,9 +51,7 @@ class ChatSession:
                 msg = [row[3] for row in parsed_data]
             else:
                 msg = [row[3] for row in parsed_data if row[2] == issuer]
-            norm_text = text_normalizer(
-                text=' '.join(msg), stopwords=STOPWORDS[language]
-            )
+            norm_text = p._process_text(msg, STOPWORDS[language])
             normalized_texts[issuer] = norm_text
 
         self.current_data = Config(

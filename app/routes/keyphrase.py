@@ -8,8 +8,8 @@ from flask import Blueprint, request, render_template, jsonify, make_response
 
 # --- Project ---
 from modules.common.decorators import validate_file_size
-import modules.common.utils as ut
-import modules.keyphrase as kp
+from modules.common.utils import FileExporter, write_json
+from modules.keyphrase import pipeline, read_kp_results
 from config import KEYPHRASE_INPUT_PATH
 
 # =============================================================================
@@ -25,7 +25,7 @@ progress = {"value": 0}
 @validate_file_size(template_on_error='keyphrase.html')
 def extract_keyphrases(uploaded_file):
     
-    results = kp.pipeline(
+    results = pipeline(
         raw_text=uploaded_file.read().decode('utf-8'),
         progress=progress,
         top_k=int(request.form.get('num_rows', 1)),
@@ -35,7 +35,7 @@ def extract_keyphrases(uploaded_file):
         label: [{"Keywords": d[0], "# Appearances": d[1]} for d in data]
         for label, data in results.items()
     }
-    ut.write_json(summary, KEYPHRASE_INPUT_PATH)
+    write_json(summary, KEYPHRASE_INPUT_PATH)
     return render_template('keyphrase.html', results=results)
 
 @bp.route('/progress')
@@ -44,8 +44,9 @@ def get_progress():
 
 @bp.route('/download_keyphrases', methods=['GET'])
 def download_keyphrases():
-    results_data = ut.read_results(KEYPHRASE_INPUT_PATH)
-    exporter = ut.FileExporter(results_data, cols=["Keywords", "# Appearances"])
+    print("AAAAAAAAAAAAAAAAAAAA")
+    results_data = read_kp_results(KEYPHRASE_INPUT_PATH)
+    exporter = FileExporter(results_data, cols=["Keywords", "# Appearances"])
 
     file_format = request.args.get('format', 'txt')
     match file_format:

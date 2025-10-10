@@ -8,14 +8,14 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 # --- Third-party ---
 
 # --- Project ---
-from . import core
-import modules.common.utils as ut
+from .core import get_top_ngrams
+from modules.common.utils import normalize_strings, get_chunks
 
 # =============================================================================
 # AUXILIARY FUNCTIONS
 # =============================================================================
 def _clean_chunk(text_chunk: str) -> list[str]:
-    return list(ut.TextCleaner(text_chunk).clean(has_stream=True))
+    return normalize_strings(text_chunk, has_stream=False)
 
 # =============================================================================
 # CORE
@@ -24,7 +24,7 @@ def process(raw_text: str, progress: dict, chunk_size: int = 100_000) -> iter:
 
     print("\nINITIATING TEXT PROCESSING")
     progress["value"] = 0
-    text_chunks = list(ut.get_chunks(raw_text, size=chunk_size))
+    text_chunks = list(get_chunks(raw_text, size=chunk_size))
     total_chunks = len(text_chunks)
     print(f"Total chunks to process: {total_chunks}")
 
@@ -54,7 +54,7 @@ def pipeline(raw_text: str, progress: dict, top_k: int, max_n: int) -> dict:
     token_it = process(raw_text, progress)
 
     print("Extracting top n-grams")
-    raw_results = core.get_top_ngrams(
+    raw_results = get_top_ngrams(
         tokens_it=token_it, top_k=top_k, max_n=max_n
     )
 

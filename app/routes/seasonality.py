@@ -8,8 +8,8 @@ import os
 from flask import Blueprint, request, render_template, send_file
 
 # --- Project ---
-import modules.seasonality as seas
-import modules.common.utils as ut
+from modules.seasonality import pipeline
+from modules.common.utils import export_zip
 from modules.common.decorators import validate_file_size
 from config import SEASONALITY_DIR
 
@@ -34,7 +34,7 @@ def predict_seasonality(uploaded_file):
 
     periodicity = int(request.form.get('periodicity', 12))
     nlags = int(request.form.get('nlags', 10))    
-    forecast, acf, pacf = seas.pipeline(
+    forecast, acf, pacf = pipeline(
         upload_path, p=periodicity, nlags=nlags, save_dir=SEASONALITY_DIR
     )
     
@@ -49,5 +49,5 @@ def predict_seasonality(uploaded_file):
 
 @bp.route('/download_predictions', methods=['GET'])
 def download_predictions():
-    file_path, file_name = ut.export_zip(SEASONALITY_DIR)
+    file_path, file_name = export_zip(SEASONALITY_DIR)
     return send_file(file_path, as_attachment=True, download_name=file_name)

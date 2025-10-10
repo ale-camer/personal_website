@@ -1,7 +1,0 @@
-# Dependencias para los scripts de desarrollo/herramientas
-
-# Requerido para las barras de progreso
-tqdm
-
-# Requerido como polyfill para versiones de Python anteriores a 3.8
-importlib-metadata; python_version < '3.8'

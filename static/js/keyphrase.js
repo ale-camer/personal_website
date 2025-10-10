@@ -1,5 +1,3 @@
-// Keyphrase Extraction Functionalities
-
 document.addEventListener('DOMContentLoaded', () => {
     const fileInput = document.getElementById('file');
     const fileError = document.getElementById('fileError');
@@ -30,23 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => {
                     updateProgress();
                 }, 100);
-            }
-        });
-    }
-
-    if (downloadBtn) {
-        downloadBtn.addEventListener('click', function (event) {
-            fileError.textContent = '';
-            const hasResultsDisplayed = resultSection && resultSection.querySelector('table');
-            let isValid = true;
-
-            if (!hasResultsDisplayed) {
-                fileError.textContent = 'Por favor, procesa un archivo primero para poder descargar los resultados.';
-                isValid = false;
-            }
-
-            if (!isValid) {
-                event.preventDefault(); // ¡Esta es la línea clave!
             }
         });
     }

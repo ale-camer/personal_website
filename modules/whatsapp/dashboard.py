@@ -33,7 +33,6 @@ def init_dash(
     ]
     issuers = [Input('issuer-dropdown', 'value')]
     @dash_app.callback(charts, issuers) # update
-
     def update_charts(selected_issuer: str) -> tuple:
         charts = generate_charts(
             whatsapp_service.current_data,

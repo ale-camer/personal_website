@@ -8,10 +8,18 @@ from collections import deque, Counter
 # --- Third-party ---
 
 # --- Project ---
+from modules.common.utils import read_json
 
 # =============================================================================
 # CORE
 # =============================================================================
+def read_kp_results(json_path: str) -> dict:
+    summary_data = read_json(json_path)
+    return {
+        title: [[row['Keywords'], row['# Appearances']] for row in rows]
+        for title, rows in summary_data.items()
+    }
+
 def get_top_ngrams(
         tokens_it: list[str], has_stream: bool = True, top_k: int = 3,
         max_n: int = 3

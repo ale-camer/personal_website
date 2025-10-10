@@ -14,7 +14,7 @@ import plotly.graph_objects as go
 import plotly.express as px
 
 # --- Project ---
-from . import core
+from .core import ChatSession, Config
 
 # =============================================================================
 # CONSTANTS
@@ -147,13 +147,13 @@ def layout(issuers: list = None) -> html.Div:
     ])
 
 def generate_charts(
-        data: core.Config,
+        data: Config,
         issuer: str,
         weekdays_mapper: dict,
         months_mapper: dict
     ) -> dict:
 
-    service = core.ChatSession()
+    service = ChatSession()
     service.current_data = data
     counts, _, is_general, msg = service.filter_chat(issuer)
     text = data.normalized_texts[issuer]

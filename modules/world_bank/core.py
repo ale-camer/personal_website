@@ -15,7 +15,8 @@ from .visuals import TimeSeriesPlotter, HeatmapPlotter
 # =============================================================================
 # CONSTANTS
 # =============================================================================
-url, params = "https://api.worldbank.org/v2/country", {"format": "json", "per_page": 500}
+url = "https://api.worldbank.org/v2/country"
+params = {"format": "json", "per_page": 500}
 
 # =============================================================================
 # AUXILIARY FUNCTIONS
@@ -39,7 +40,7 @@ def get_countries(data: list) -> list:
 raw_countries = call_api(url, params)[1]
 countries = get_countries(raw_countries)
 
-def download_data(indicator_id: str) -> list | None:
+def download_wb_data(indicator_id: str) -> list | None:
     url = f"https://api.worldbank.org/v2/country/all/indicator/{indicator_id}"
     params = {"format": "json", "date": f"1960:{datetime.now().year}", "per_page": 20000}
     raw_data = call_api(url, params)[1]

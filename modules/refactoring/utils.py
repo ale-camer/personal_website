@@ -4,7 +4,6 @@ from unidecode import unidecode
 from zipfile import ZipFile as zipf
 import xml.etree.ElementTree as ET
 from prettytable import PrettyTable as pt
-from tabulate import tabulate
 from fpdf import FPDF
 
 def get_input(func, *args, **kwargs):
@@ -93,7 +92,7 @@ class TextCleaner:
         remove_numbers: bool = False,
         filter_stopwords: bool = True,
         min_token_length: int = 3
-    ) -> list[str]:
+    ) -> "list[str] | iter":
 
         text = self.text
         if to_lowercase: text = text.lower()
@@ -140,31 +139,38 @@ class FileExporter:
         self.cols = cols
         self.filename = filename
 
-    # strings
-    def to_txt_string(self) -> str:
-        tables = []
-        for k, v in self.results.items():
-            table = pt(title=k, field_names=self.cols)
-            table.add_rows([[' '.join(ngram), count] for ngram, count in v])
-            tables.append(str(table))
-        return "\n\n".join(tables)
-
-    def to_md_string(self) -> str:
-        md_tables = []
-        for k, v in self.results.items():
-            table_data = [[' '.join(ngram), count] for ngram, count in v]
-            md_tables.append(f"## {k}\n" + tabulate(table_data, headers=self.cols, tablefmt="github"))
-        return "\n\n".join(md_tables)
-
-    # exports
     def export_txt(self):
-        txt_string = self.to_txt_string()
+
+        def to_txt_string(self) -> str:
+            tables = []
+            for k, v in self.results.items():
+                table = pt(title=k, field_names=self.cols)
+                table.add_rows([[' '.join(ngram), count] for ngram, count in v])
+                tables.append(str(table))
+            return "\n\n".join(tables)
+
+        txt_string = to_txt_string()
         with open(self.filename + '.txt', "w", encoding="utf-8") as f:
             f.write(txt_string)
         print(f"TXT saved as {self.filename + '.txt'}")
 
     def export_md(self):
-        md_string = self.to_md_string()
+
+        def to_md_string(self) -> str:
+            md_tables = []
+            for k, v in self.results.items():
+                table_data = [[' '.join(ngram), count] for ngram, count in v]
+                header = "| " + " | ".join(self.cols) + " |"
+                separator = "| " + " | ".join(["---"] * len(self.cols)) + " |"
+                rows = [
+                    "| " + " | ".join(map(str, row)) + " |"
+                    for row in table_data
+                ]
+                table = "\n".join([header, separator, *rows])
+                md_tables.append(f"## {k}\n{table}")
+            return "\n\n".join(md_tables)
+
+        md_string = to_md_string()
         with open(self.filename + '.md', "w", encoding="utf-8") as f:
             f.write(md_string)
         print(f"Markdown saved as {self.filename + '.md'}")
@@ -178,11 +184,9 @@ class FileExporter:
         for k, v in self.results.items():
             pdf.cell(0, 10, k, ln=True)
             pdf.set_font("Arial", "", 12)
-            # Encabezado de tabla
             pdf.cell(80, 8, self.cols[0], border=1)
             pdf.cell(30, 8, self.cols[1], border=1)
             pdf.ln()
-            # Filas de tabla
             for ngram, count in v:
                 pdf.cell(80, 8, ' '.join(ngram), border=1)
                 pdf.cell(30, 8, str(count), border=1)

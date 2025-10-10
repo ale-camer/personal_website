@@ -12,7 +12,7 @@ from tqdm import tqdm
 
 # --- Project ---
 from modules.common.validations import WhatsappFileError
-from modules.common.utils import read_json, text_normalizer
+from modules.common.utils import read_json, get_chunks, normalize_strings
 
 # =============================================================================
 # CONSTANTS
@@ -67,6 +67,21 @@ def groupby_dict(data: list[tuple]) -> Counter:
         )
     )
 
+def _process_text(messages: list[str], stopwords: set) -> str:
+    
+    normalized_chunks = []
+    for message_chunk in get_chunks(messages, size=5000):
+        text_block = ' '.join(message_chunk)
+        normalized_chunk = normalize_strings(
+            text=text_block,
+            stopwords=stopwords,
+            join_result=True,
+            clean_options={'only_letters': True}
+        )
+        if normalized_chunk:
+            normalized_chunks.append(normalized_chunk)
+    return ' '.join(normalized_chunks)
+    
 def filter_chat(data: dict, issuer: str) -> tuple[dict, str, bool, str]:
     is_general = issuer == 'GENERAL'
     prefix = "GENERAL_" if is_general else f"{issuer}_"
@@ -76,9 +91,6 @@ def filter_chat(data: dict, issuer: str) -> tuple[dict, str, bool, str]:
 
     if is_general: msg = [row[3] for row in data.parsed_data]
     else: msg = [row[3] for row in data.parsed_data if row[2] == issuer]
-
-    norm_text = text_normalizer(
-        text=' '.join(msg), stopwords=STOPWORDS[data.language]
-    )
+    norm_text = _process_text(msg, STOPWORDS[data.language])
 
     return filtered_counts, norm_text, is_general, msg

@@ -8,8 +8,9 @@ import os
 from flask import Blueprint, request, jsonify, url_for
 
 # --- Project ---
-import modules.world_bank as wb
-import modules.common.utils as ut
+from modules.world_bank import filter_data, get_options, plot, download_wb_data
+from modules.common.utils import read_json, write_json
+
 from config import WORLD_BANK_DIR, INDICATOR_NAMES, GEO_DATA_PATH
 
 # =============================================================================
@@ -28,10 +29,10 @@ def get_params():
     )
 
 def get_downloaded_data(indicator):
-    return ut.read_json(os.path.join(WORLD_BANK_DIR, f'{indicator}.json'))
+    return read_json(os.path.join(WORLD_BANK_DIR, f'{indicator}.json'))
 
 def get_filtered_data(data, _type, option):
-    return wb.filter_data(data, _type, option)
+    return filter_data(data, _type, option)
 
 # =============================================================================
 # ROUTES
@@ -39,15 +40,15 @@ def get_filtered_data(data, _type, option):
 @bp.route('/download_data')
 def download_data():
     indicator = get_params()[0]
-    data = wb.download_data(indicator)
-    ut.write_json(data, os.path.join(WORLD_BANK_DIR, f'{indicator}.json'))
+    data = download_wb_data(indicator)
+    write_json(data, os.path.join(WORLD_BANK_DIR, f'{indicator}.json'))
     return jsonify({'message': 'Data saved successfully'})
 
 @bp.route('/show_options')
 def show_options():
     indicator, _type, _ = get_params()
     data = get_downloaded_data(indicator)
-    options = wb.get_options(data, _type)
+    options = get_options(data, _type)
     return jsonify(options)
 
 @bp.route('/show_data')
@@ -64,7 +65,7 @@ def plot_graph():
     filtered_data = get_filtered_data(data, _type, option)
 
     title = f'{INDICATOR_NAMES.get(indicator)} - {option}'
-    relative_path = wb.plot(filtered_data, _type, GEO_DATA_PATH, title=title)
+    relative_path = plot(filtered_data, _type, GEO_DATA_PATH, title=title)
     plot_url = url_for('static', filename=f'world_bank/{relative_path}')
     return jsonify(
         {'message': 'Interactive graph generated.', 'plot_url': plot_url}

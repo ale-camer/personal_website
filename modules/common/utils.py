@@ -175,13 +175,6 @@ def clean_excel_input(workbook_data: dict) -> dict:
 # =============================================================================
 # FILE EXPORT
 # =============================================================================
-def read_results(json_path: str) -> dict:
-    summary_data = read_json(json_path)
-    return {
-        title: [[row['Keywords'], row['# Appearances']] for row in rows]
-        for title, rows in summary_data.items()
-    }
-
 def export_zip(save_dir, filename: str = 'predictions.zip'):
     zip_path = os.path.join(save_dir, filename)
     with zf.ZipFile(zip_path, 'w', zf.ZIP_DEFLATED) as f:
@@ -246,71 +239,65 @@ class FileExporter:
 # =============================================================================
 # TEXT PROCESSING
 # =============================================================================
-def text_normalizer(
-        text: str, stopwords: set = None, min_word_len: int = 2
-    ) -> str:
-    def clean_word(word: str) -> str:
-        word = re.sub(r'[^\x00-\x7F]+', '', word)
-        word = unidecode(word)
-        return re.sub(r'[^a-zA-Z]', '', word)
+EMOJI_PATTERN = r'[^\x00-\x7F]+'
+LETTER_PATTERN = r'[^a-zA-Z]+'
+LETTER_NUMBER_PATTERN = r'[^a-zA-Z0-9]+'
+URL_PATTERN = re.compile(r'https?://\S+')
 
-    def is_valid(text):
-        return not (
-            text in stopwords
-            or len(text) <= min_word_len
-            or delete_url.match(text)
-        )
+def clean_str(text: str, *, only_letters: bool = False) -> str:
+    text = re.sub(EMOJI_PATTERN, '', text)
+    text = unidecode(text.lower())
+    pattern = LETTER_PATTERN if only_letters else LETTER_NUMBER_PATTERN
+    return re.sub(pattern, '', text)
+  
+def is_valid(
+        text, 
+        *,
+        stopwords: set = None,
+        min_str_len: int = 3,
+        check_stopwords: bool = True,
+        check_length: bool = True,
+        check_urls: bool = True
+    ) -> bool:
 
-    def normalize_words(words):
-        return [
-            cw for word in words
-            if is_valid(word) and (cw := clean_word(word))
-        ]
+    def stopwords_check(t):
+        return stopwords is not None and t in stopwords
 
-    stopwords = stopwords if stopwords is not None else stopwords
-    delete_url = re.compile(r'http\S+')
-    return ' '.join(normalize_words(text.lower().split()))
+    def length_check(t):
+        return len(t) < min_str_len
 
-class TextCleaner:
-    _PUNCTUATION_PATTERN = f"[{re.escape(string.punctuation)}]"
-    _NUMBERS_PATTERN = r"\d+"
+    def urls_check(t):
+        return URL_PATTERN.match(t)
 
-    def __init__(self, text: str, stopwords: set[str] = None):
-        self.text = text
-        self.stopwords = stopwords if stopwords is not None else set()
+    checks = {
+        "stopwords": (check_stopwords, stopwords_check),
+        "length": (check_length, length_check),
+        "urls": (check_urls, urls_check),
+    }
+    return not any(func(text) for act, func in checks.values() if act)
 
-    def get_stopwords():
-        pass
-
-    def clean(
-        self,
+def normalize_strings(
+        text: str, 
+        *,
+        stopwords: set = None,
         has_stream: bool = True,
-        to_lowercase: bool = True,
-        rm_accents: bool = True,
-        rm_punctuation: bool = False,
-        rm_numbers: bool = False,
-        filter_stopwords: bool = True,
-        min_token_length: int = 3
-    ) -> iter:
+        join_result: bool = False,
+        clean_options: dict = None,
+        valid_options: dict = None
+    ) -> "str | list[str] | iter":
+    clean_opts = clean_options or {}
+    valid_opts = valid_options or {}
 
-        text = self.text
-        if to_lowercase: text = text.lower()
-        if rm_accents: text = unidecode(text)
-        if rm_punctuation: text = re.sub(self._PUNCTUATION_PATTERN, ' ', text)
-        if rm_numbers: text = re.sub(self._NUMBERS_PATTERN, ' ', text)
+    processed_tokens = (
+        cleaned_word for word in text.split()
+        if is_valid(word, stopwords=stopwords, **valid_opts)
+        and (cleaned_word := clean_str(word, **clean_opts).strip())
+        if cleaned_word # not empty
+    )
 
-        if has_stream:
-            yield from (
-                token for token in text.split()
-                if len(token) > min_token_length
-                and not (filter_stopwords and token in self.stopwords)
-            )
-        else:
-            return [
-                token for token in text.split()
-                if len(token) > min_token_length
-                and not (filter_stopwords and token in self.stopwords)
-            ]
+    if join_result:
+        return ' '.join(processed_tokens)
+    return processed_tokens if has_stream else list(processed_tokens)
 
 # =============================================================================
 # DATA PROCESSING

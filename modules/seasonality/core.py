@@ -7,7 +7,9 @@
 import numpy as np
 
 # --- Project ---
-import modules.common.utils as ut
+from modules.common.utils import (
+    rolling_mean, divide_lists, multiply_lists, get_mean, groupby_lists
+)
 
 # =============================================================================
 # AUXILIARY FUNCTIONS
@@ -54,21 +56,21 @@ def forecast_time_serie(serie: list, periodicity: int) -> list:
         return n_periods, half_p, next_periods, subperiods, periods
 
     def seasonal_decomposition(serie, n_periods, half_p, subperiods):
-        moving_avgs = ut.rolling_mean(ut.rolling_mean(serie, periodicity), 2)
-        irregulars = ut.divide_lists(serie[half_p : -half_p], moving_avgs)
+        moving_avgs = rolling_mean(rolling_mean(serie, periodicity), 2)
+        irregulars = divide_lists(serie[half_p : -half_p], moving_avgs)
         avg_irrs = list(dict(sorted(
-            ut.groupby_lists(subperiods, irregulars).items(),
+            groupby_lists(subperiods, irregulars).items(),
             key=lambda x: int(x[0])
         )).values())
-        seasonal_indices = [g / ut.get_mean(avg_irrs) for g in avg_irrs] * n_periods
-        unseasonal_serie = ut.divide_lists(serie, seasonal_indices)
+        seasonal_indices = [g / get_mean(avg_irrs) for g in avg_irrs] * n_periods
+        unseasonal_serie = divide_lists(serie, seasonal_indices)
         return seasonal_indices, unseasonal_serie
 
     def fit_trend(unseasonal_serie, periods):
-        unseas_mean, periods_mean = ut.get_mean(unseasonal_serie), ut.get_mean(periods)
+        unseas_mean, periods_mean = get_mean(unseasonal_serie), get_mean(periods)
         unseas_minus_mean = [e - unseas_mean for e in unseasonal_serie]
         period_minus_mean = [float(p - periods_mean) for p in periods]
-        num_serie = ut.multiply_lists(unseas_minus_mean, period_minus_mean)
+        num_serie = multiply_lists(unseas_minus_mean, period_minus_mean)
         den_serie = [float((p - periods_mean) ** 2) for p in periods]
         b1 = sum(num_serie) / sum(den_serie)
         b0 = unseas_mean - b1 * periods_mean
@@ -76,7 +78,7 @@ def forecast_time_serie(serie: list, periodicity: int) -> list:
 
     def make_forecast(b0, b1, next_periods, seasonal_indices):
         unseas_forecast = [b0 + b1 * p for p in next_periods]
-        seas_forecast = ut.multiply_lists(unseas_forecast, seasonal_indices)
+        seas_forecast = multiply_lists(unseas_forecast, seasonal_indices)
         return [round(float(v), 2) for v in seas_forecast]
 
     n_periods, half_p, next_periods, subperiods, periods = compute_indices()
