@@ -2,7 +2,6 @@
 body {
     font-family: 'Poppins', sans-serif !important;
     padding-top: 70px;
-    /* Espacio para la navbar fija */
     background: url("../images/background.jpg") no-repeat center center fixed;
     background-size: cover;
     min-height: 100vh;
@@ -19,6 +18,12 @@ body {
 
 .navbar .navbar-brand {
     font-size: clamp(20px, 2vw, 2vw);
+}
+
+.navbar-brand span {
+    font-family: "Dancing Script", cursive;
+    font-optical-sizing: auto;
+    font-style: normal;
 }
 
 .navbar-dark .navbar-nav .nav-link:hover,
@@ -42,6 +47,10 @@ body {
     color: #fff;
 }
 
+.collapse.navbar-collapse .dropdown-menu .dropdown-item {
+    text-align: center;
+}
+
 /* LANGUAGE SELECTOR */
 .language-selector select {
     background-color: #fff;
@@ -51,6 +60,34 @@ body {
 
 .language-selector select:hover {
     background-color: #a2daff;
+}
+
+.flag-icon {
+    width: 20px;
+    height: auto;
+    border-radius: 3px;
+    vertical-align: middle;
+}
+
+.bootstrap-select .btn.dropdown-toggle {
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #000;
+    border: 1px solid #ccc;
+}
+
+.bootstrap-select .dropdown-menu {
+    background-color: rgba(0, 0, 0, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.bootstrap-select .bs-searchbox .form-control {
+    background-color: #333;
+    color: #fff;
+    border: 1px solid #555;
+}
+
+.language-selector .dropdown-menu {
+    left: -30% !important;
 }
 
 /* FOOTER */
@@ -80,7 +117,7 @@ footer {
     transform: scale(1.5);
 }
 
-/* CONTENIDO PRINCIPAL */
+/* MAIN CONTENT & GENERAL STYLES */
 .main-project-container,
 .mi-cv {
     width: 90%;
@@ -125,7 +162,7 @@ hr {
     border-top: 1px solid rgba(255, 255, 255, 0.5);
 }
 
-/* FORMULARIOS */
+/* FORMS */
 .upload-form .btn {
     padding: 0.5rem 2rem;
     border-radius: 5rem;
@@ -145,13 +182,244 @@ hr {
     font-size: clamp(16px, 1.5vw, 1.5vw);
 }
 
-/* TABLAS */
+/* TABLES */
 .table {
     font-size: clamp(14px, 1.2vw, 1.2vw);
 }
 
 .table-dark {
     --bs-table-bg: rgba(0, 0, 0, 0.2);
+}
+
+/* PROFILE SECTION */
+.profile-header {
+    margin-bottom: 1rem;
+}
+
+.profile-image-container {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.profile-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    position: relative;
+    z-index: 1;
+}
+
+.profile-content {
+    text-align: center;
+    padding: 1rem;
+}
+
+.profile-content .lead-text {
+    margin-bottom: 1rem;
+    font-size: clamp(16px, 1.5vw, 1.5vw);
+    line-height: 1.4;
+    color: #fff
+}
+
+.skills-container {
+    margin: 1rem 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.skill-tag {
+    background-color: rgba(52, 152, 219, 0.2);
+    border: 1px solid rgba(52, 152, 219, 0.5);
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: clamp(12px, 1vw, 1vw);
+}
+
+#explore-projects-btn {
+    margin-top: 1rem;
+    padding: 0.5rem 1.5rem;
+    font-size: clamp(14px, 1.2vw, 1.2vw);
+}
+
+/* PROJECT SEARCH & FILTER */
+.project-search-container {
+    margin-bottom: 2rem;
+}
+
+.search-box {
+    position: relative;
+    max-width: 600px;
+    margin: 0 auto 1.5rem;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 1rem 3rem;
+    border: none;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 1.1rem;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.search-box input:focus {
+    background: rgba(255, 255, 255, 0.15);
+    outline: none;
+    box-shadow: 0 0 15px rgba(52, 152, 219, 0.3);
+}
+
+.search-box i {
+    position: absolute;
+    left: 1.2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.filter-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.filter-tag {
+    padding: 0.5rem 1.2rem;
+    border-radius: 25px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.filter-tag:hover,
+.filter-tag.active {
+    background: rgba(52, 152, 219, 0.3);
+    border-color: rgba(52, 152, 219, 0.5);
+    transform: translateY(-2px);
+}
+
+/* PROJECTS GRID */
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem;
+}
+
+.project-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+}
+
+.project-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.project-tag {
+    font-size: 0.8rem;
+    padding: 0.2rem 0.8rem;
+    border-radius: 15px;
+    background: rgba(52, 152, 219, 0.2);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.project-title {
+    font-size: 1.2rem;
+    margin-bottom: 0.8rem;
+    color: white;
+}
+
+.project-description {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 1rem;
+}
+
+/* PROJECT DETAILS MODAL */
+.project-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 800px;
+    background: rgba(0, 0, 0, 0.95);
+    border-radius: 20px;
+    padding: 2rem;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.modal-close:hover {
+    transform: rotate(90deg);
+}
+
+.modal-content {
+    max-height: 70vh;
+    overflow-y: auto;
+    padding-right: 1rem;
+}
+
+.modal-section {
+    margin-bottom: 2rem;
+}
+
+.modal-section h3 {
+    color: rgba(52, 152, 219, 0.9);
+    margin-bottom: 1rem;
+}
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    z-index: 999;
 }
 
 /* INDEX PAGE STYLES */
@@ -356,52 +624,4 @@ hr {
     to {
         opacity: 1;
     }
-}
-
-/* ===== AÑADIR ESTOS ESTILOS A style.css ===== */
-
-/* Estilo para las banderitas dentro del selector */
-.flag-icon {
-    width: 20px;
-    height: auto;
-    border-radius: 3px;
-    vertical-align: middle;
-}
-
-/* --- Estilos para adaptar Bootstrap-Select a un tema oscuro --- */
-
-/* Contenedor principal del botón del selector */
-.bootstrap-select .btn.dropdown-toggle {
-    background-color: rgba(255, 255, 255, 0.9); /* Fondo blanco semi-transparente */
-    color: #000; /* Texto negro */
-    border: 1px solid #ccc;
-}
-
-/* Menú desplegable */
-.bootstrap-select .dropdown-menu {
-    background-color: rgba(0, 0, 0, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-/* Opciones del menú */
-.bootstrap-select .dropdown-menu .dropdown-item {
-    color: #fff; /* Texto blanco para las opciones */
-}
-
-/* Opción activa o en hover */
-.bootstrap-select .dropdown-menu .dropdown-item:hover,
-.bootstrap-select .dropdown-menu .dropdown-item.active {
-    background-color: #135c7d; /* Color de hover que ya usas */
-    color: #fff;
-}
-
-/* Campo de búsqueda */
-.bootstrap-select .bs-searchbox .form-control {
-    background-color: #333;
-    color: #fff;
-    border: 1px solid #555;
-}
-
-.language-selector .dropdown-menu {
-  left: -30% !important;
 }

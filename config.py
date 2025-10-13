@@ -7,7 +7,7 @@ import os
 # --- Third-party ---
 
 # --- Project ---
-from modules.common.utils import  read_json
+from modules.common.utils import read_json
 
 # =============================================================================
 # ROUTES

@@ -10,58 +10,182 @@
     document.getElementById('project-translations').textContent
   );
 </script>
-<!-- <script>window.projectTranslations = {{ texts.get('projects-description', {}) | tojson }};</script> -->
 <script src="{{ url_for('static', filename='js/index.js') }}"></script>
 
-<!-- CONTENT -->
 <div class="main-project-container">
 
-    <div class="project-container mb-4">
-        <div id="profile-container">
-            <p data-translate-key="presentation_message">{{ texts['presentation_message'] }}</p>
+    <div class="project-container mb-4" id="intro-container">
+        <div id="profile-container" class="fade-in">
+            <div class="profile-header">
+                <div class="profile-image-container">
+                    <img src="{{ url_for('static', filename='images/profile.jpg') }}" alt="Profile" class="profile-image">
+                </div>
+            </div>
+            <div class="profile-content">
+                <p class="lead-text" data-translate-key="presentation_message">{{ texts['presentation_message'] }}</p>
+                <div class="skills-container">
+                    <span class="skill-tag">Python</span>
+                    <span class="skill-tag">Data Engineering</span>
+                    <span class="skill-tag">Machine Learning</span>
+                    <span class="skill-tag">Visualizations</span>
+                </div>
+                <button id="explore-projects-btn" class="modern-button">
+                    <span>View Portfolio</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
         </div>
     </div>
 
-    <div class="project-container mb-4">
+    <div class="project-container mb-4" id="projects-container" style="display: none;">
+        
+        <button id="back-to-intro-btn" class="btn btn-secondary mt-3">Back to Introduction</button>
         <h1 id="title" data-translate-key="project_title">{{ texts['project_title'] }}</h1>
-        <div class="row g-4 projects-type-container">
-            <div class="col-lg-6">
-                <div class="project-type-container">
-                    <p class="project-type" data-translate-key="wanna_fun">{{ texts['wanna_fun'] }}</p>
-                    <div class="back-content">
-                        <p id="first_interactive_p" data-id="keyphrase-extraction" data-translate-key="keyphrase">{{ texts['keyphrase'] }}</p>
-                        <p id="second_interactive_p" data-id="seasonality-prediction" data-translate-key="seasonality">{{ texts['seasonality'] }}</p>
-                        <p id="third_interactive_p" data-id="whatsapp" data-translate-key="whatsapp">{{ texts['whatsapp'] }}</p>
-                        <p id="fourth_interactive_p" data-id="world-bank" data-translate-key="world_bank">{{ texts['world_bank'] }}</p>
-                    </div>
-                </div>
+        
+        <div class="project-search-container">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="project-search" placeholder="Search projects...">
             </div>
-            <div class="col-lg-6">
-                <div class="project-type-container">
-                    <p class="project-type" data-translate-key="wanna_read">{{ texts['wanna_read'] }}</p>
-                    <div class="back-content">
-                        <p id="first_descriptive_p" data-id="algorithmic-trading" data-translate-key="algo_trad">{{ texts['algo_trad'] }}</p>
-                        <p id="second_descriptive_p" data-id="trends-data-science" data-translate-key="ds_trends">{{ texts['ds_trends'] }}</p>
-                        <p id="third_descriptive_p" data-id="macro-employment" data-translate-key="macro">{{ texts['macro'] }}</p>
-                        <p id="fourth_descriptive_p" data-id="linear-algebra" data-translate-key="lin_alg">{{ texts['lin_alg'] }}</p>
-                        <p id="fifth_descriptive_p" data-id="vector-norms" data-translate-key="vector_norms">{{ texts['vector_norms'] }}</p>
-                    </div>
-                </div>
+            
+            <div class="filter-tags">
+                <button class="filter-tag active" data-filter="all">All</button>
+                <button class="filter-tag" data-filter="play">Play</button>
+                <button class="filter-tag" data-filter="reading">Reading</button>
+                <button class="filter-tag" data-filter="visualization">Visualization</button>
+                <button class="filter-tag" data-filter="nlp">NLP</button>
+                <button class="filter-tag" data-filter="time series">Time Series</button>
+                <button class="filter-tag" data-filter="finance">Finance</button>
+                <button class="filter-tag" data-filter="economics">Economics</button>
+                <button class="filter-tag" data-filter="analysis">Analysis</button>
+                <button class="filter-tag" data-filter="math">Mathematics</button>
             </div>
         </div>
+
+        <div class="projects-grid">
+            <div class="project-card" data-tags="play,nlp" data-id="keyphrase-extraction">
+                <div class="project-tags">
+                    <span class="project-tag">Play</span>
+                    <span class="project-tag">NLP</span>
+                </div>
+                <h3 class="project-title">Keyphrase Extraction</h3>
+                <p class="project-description">Extract key terms from documents</p>
+            </div>
+            
+            <div class="project-card" data-tags="play,time series" data-id="seasonality-prediction">
+                <div class="project-tags">
+                    <span class="project-tag">Play</span>
+                    <span class="project-tag">Time Series</span>
+                </div>
+                <h3 class="project-title">Seasonality Forecast</h3>
+                <p class="project-description">Predict seasonal patterns</p>
+            </div>
+            
+            <div class="project-card" data-tags="play,visualization" data-id="whatsapp">
+                <div class="project-tags">
+                    <span class="project-tag">Play</span>
+                    <span class="project-tag">Visualization</span>
+                </div>
+                <h3 class="project-title">WhatsApp Analysis</h3>
+                <p class="project-description">Chat analysis dashboard</p>
+            </div>
+            
+            <div class="project-card" data-tags="play,visualization" data-id="world-bank">
+                <div class="project-tags">
+                    <span class="project-tag">Play</span>
+                    <span class="project-tag">Visualization</span>
+                </div>
+                <h3 class="project-title">World Bank Data</h3>
+                <p class="project-description">Explore economic indicators</p>
+            </div>
+            
+            <div class="project-card" data-tags="reading,finance" data-id="algorithmic-trading">
+                <div class="project-tags">
+                    <span class="project-tag">Reading</span>
+                    <span class="project-tag">Finance</span>
+                </div>
+                <h3 class="project-title">Algorithmic Trading</h3>
+                <p class="project-description">Cluster-based stock selection</p>
+            </div>
+            
+            <div class="project-card" data-tags="reading,math" data-id="linear-algebra">
+                <div class="project-tags">
+                    <span class="project-tag">Reading</span>
+                    <span class="project-tag">Mathematics</span>
+                </div>
+                <h3 class="project-title">Linear Algebra</h3>
+                <p class="project-description">Math for data science</p>
+            </div>
+            
+            <div class="project-card" data-tags="reading,economics" data-id="macro-employment">
+                <div class="project-tags">
+                    <span class="project-tag">Reading</span>
+                    <span class="project-tag">Economy</span>
+                </div>
+                <h3 class="project-title">Macro & Employment</h3>
+                <p class="project-description">Economic policy impacts</p>
+            </div>
+            
+            <div class="project-card" data-tags="reading,analysis" data-id="trends-data-science">
+                <div class="project-tags">
+                    <span class="project-tag">Reading</span>
+                    <span class="project-tag">Analysis</span>
+                </div>
+                <h3 class="project-title">Trends in Data Science</h3>
+                <p class="project-description">Job market analysis</p>
+            </div>
+            
+            <div class="project-card" data-tags="reading,math" data-id="vector-norms">
+                <div class="project-tags">
+                    <span class="project-tag">Reading</span>
+                    <span class="project-tag">Mathematics</span>
+                </div>
+                <h3 class="project-title">Vector Norms</h3>
+                <p class="project-description">Linear algebra applications</p>
+            </div>
+        </div>
+
     </div>
 
-    <div class="project-container" id="dynamic-project-container" style="display: none;">
-        <h3 id="first-header" data-translate-key="expl">{{ texts['expl'] }}</h3>
-        <p id="dynamic-text-explanation" data-translate-key="placeholder">{{ texts['placeholder'] }}</p>
-        <h3 data-translate-key="useful">{{ texts['useful'] }}</h3>
-        <p id="dynamic-text-utility" data-translate-key="placeholder">{{ texts['placeholder'] }}</p>
-        <h3 data-translate-key="howto">{{ texts['howto'] }}</h3>
-        <p id="dynamic-text-howto" data-translate-key="placeholder">{{ texts['placeholder'] }}</p>
-        <h3 data-translate-key="output">{{ texts['output'] }}</h3>
-        <p id="dynamic-text-output" data-translate-key="placeholder">{{ texts['placeholder'] }}</p>
+    <!-- Project Details Modal -->
+    <div class="modal-overlay"></div>
+    <div class="project-modal">
+        <div class="modal-header">
+            <h2 class="modal-title" id="dynamic-text-title"></h2>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-content">
+            <div class="modal-section">
+                <h3>Description</h3>
+                <p id="dynamic-text-explanation" data-translate-key="placeholder">{{ texts['placeholder'] }}</p>
+            </div>
+            <div class="modal-section">
+                <h3>Use Cases</h3>
+                <p id="dynamic-text-utility" data-translate-key="placeholder">{{ texts['placeholder'] }}</p>
+            </div>
+            <div class="modal-section">
+                <h3>How to Use</h3>
+                <p id="dynamic-text-howto" data-translate-key="placeholder">{{ texts['placeholder'] }}</p>
+            </div>
+            <div class="modal-section">
+                <h3>Output</h3>
+                <p id="dynamic-text-output" data-translate-key="placeholder">{{ texts['placeholder'] }}</p>
+            </div>
+        </div>
     </div>
 
 </div>
+
+<script>
+document.getElementById('explore-projects-btn').addEventListener('click', () => {
+    document.getElementById('intro-container').style.display = 'none';
+    document.getElementById('projects-container').style.display = 'block';
+});
+
+document.getElementById('back-to-intro-btn').addEventListener('click', () => {
+    document.getElementById('projects-container').style.display = 'none';
+    document.getElementById('intro-container').style.display = 'block';
+});
+</script>
 
 {% endblock %}

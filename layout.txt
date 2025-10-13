@@ -1,0 +1,17 @@
+NAVBAR
+
+Izquierda:
+
+	- mi nombre (o logo)
+	- Language dropdown
+
+Derecha:
+
+	- Play (algoritmos simples e interactivos)
+	- Read (notebooks para leer de ciencia de datos)
+	- My CV (con todas las secciones importantes)
+ 
+PORTADA 
+ 
+	- imagen mia
+	- mensaje adhoc (aca se me ocurre un mensaje que no solo sea como un about pero que al final te invite a explorar la pagina)

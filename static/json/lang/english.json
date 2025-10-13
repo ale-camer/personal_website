@@ -2,13 +2,13 @@
   "common": {
     "header_title": "Alejandro Camerlengo",
     "home": "Home",
-    "mi_cv": "My CV",
+    "mi_cv": "Résumé",
     "work_exp": "Work Experience",
     "tech": "Technologies",
     "edu": "Education",
     "lang": "Languages",
     "int": "Interests",
-    "have_fun": "Have Fun",
+    "have_fun": "Play",
     "keyphrase": "Keyphrase Extraction",
     "seasonality": "Seasonality Prediction",
     "whatsapp": "WhatsApp Analysis",
@@ -50,7 +50,7 @@
       "world-bank": "Select: indicator (e.g. GDP per Capita), data type and the year or country depending on the data type choosen and hit the 'Show Results' button. After this, if you want the raw data hit the 'Download CSV' button and/or if you want an interactive graph hit the 'Interactive Graph' button.",
       "algorithmic-trading": "Open and read it.",
       "trends-data-science": "Open and read it.",
-      "macro-employment": "Open and read it. There's the Spanish and the English version.",
+      "macro-employment": "Open and read it.",
       "linear-algebra": "Open and read it.",
       "vector-norms": "Open and read it."
     },
@@ -188,7 +188,7 @@
   },
   "home": {
     "placeholder": "Placeholder Text",
-    "presentation_message": "Welcome! I am data scientist and I've created this website so you can take a look to my resume and have fun with my toy projects.",
+    "presentation_message": "From Financial Analyst to Data Specialist - I enjoy working with data to solve real business problems. Here's a collection of personal projects that I wrote in my spare time in order to practice data and web development.",
     "project_title": "PROJECTS",
     "wanna_fun": "Wanna have fun?",
     "wanna_read": "Wanna read?",

@@ -134,15 +134,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (languageSelector) {
 
-        $('#select-language').on('change', function () {
+        $('#select-language').on('change', async function () {
             const newLang = this.value;
             console.log(`Language changed to: ${newLang}`);
             localStorage.setItem('preferredLang', newLang);
-
-            const params = new URLSearchParams(window.location.search);
-            params.set('lang', newLang);
-            
-            window.location.href = `${window.location.pathname}?${params.toString()}`;
+            updateUrlLangParam(newLang);
+            const success = await loadAndApplyTranslations(newLang);
+            if (success) {
+                document.documentElement.lang = newLang;
+            } else {
+                console.error(`Error al cargar las traducciones para: ${newLang}`);
+            }
         });
     }
 });

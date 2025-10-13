@@ -18,7 +18,6 @@ from zipfile import ZipFile as zipf
 from flask import g, request
 from unidecode import unidecode
 from prettytable import PrettyTable as pt
-from tabulate import tabulate
 from fpdf import FPDF
 
 # =============================================================================
@@ -185,6 +184,25 @@ def export_zip(save_dir, filename: str = 'predictions.zip'):
                     f.write(file_path, os.path.relpath(file_path, save_dir))
     return zip_path, filename
 
+def make_markdown_table(headers, rows):
+    # Convierte todos los valores a string
+    rows = [[str(cell) for cell in row] for row in rows]
+    headers = [str(h) for h in headers]
+
+    # Calcula el ancho máximo de cada columna
+    widths = [max(len(row[i]) for row in [headers] + rows) for i in range(len(headers))]
+
+    # Función para formatear una fila
+    def fmt_row(row):
+        return "| " + " | ".join(f"{cell:<{widths[i]}}" for i, cell in enumerate(row)) + " |"
+
+    # Arma la tabla Markdown tipo GitHub
+    header_line = fmt_row(headers)
+    separator_line = "| " + " | ".join("-" * w for w in widths) + " |"
+    data_lines = [fmt_row(r) for r in rows]
+
+    return "\n".join([header_line, separator_line] + data_lines)
+
 class FileExporter:
     def __init__(self, results_data: dict, cols: list[str]):
         self.results = results_data
@@ -202,9 +220,7 @@ class FileExporter:
         md_tables = []
         for title, data in self.results.items():
             md_tables.append(
-                f"## {title}\n" + tabulate(
-                    data, headers=self.cols, tablefmt="github"
-                    )
+                f"## {title}\n" + make_markdown_table(self.cols, data)
                 )
         return "\n\n".join(md_tables)
 
