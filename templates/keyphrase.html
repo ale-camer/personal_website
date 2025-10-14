@@ -2,12 +2,11 @@
 
 {% block content %}
 
-<!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/keyphrase.css') }}"> -->
 <script src="{{ url_for('static', filename='js/keyphrase.js') }}"></script>
 
 <div class="main-project-container">
     <div class="project-container mb-4" id="first-container">
-        <h1 data-translate-key="keyphrase_title">{{ texts['keyphrase_title'] }}</h1>
+        <h1 data-translate-key="keyphrase_title">{{ texts['keyphrase_title'] }}</h1><br>
 
         {% if error %}
         <div class="alert alert-danger" role="alert">
@@ -15,29 +14,47 @@
         </div>
         {% endif %}
 
-        <p id="intro-paragraph" data-translate-key="intro">{{ texts['intro'] }}</p>
-        
         <div class="upload-form">
-            <form class="project-form text-center" action="/extract_keyphrases" method="post" enctype="multipart/form-data" id="inputForm">
+            <form class="project-form text-center" action="/extract_keyphrases" method="post"
+                enctype="multipart/form-data" id="inputForm">
                 <div class="mb-3">
-                    <label for="file" class="form-label" data-translate-key="instruction">{{ texts['instruction'] }}</label>
+                    <label for="file" class="form-label" data-translate-key="instruction"
+                        style="text-align: left; display: block;">{{ texts['instruction'] }}</label>
                     <input type="file" class="form-control" id="file" name="file" accept=".txt">
                     <span id="fileError" class="text-danger"></span>
                 </div>
 
                 <div class="row g-3 justify-content-center">
                     <div class="col-md-5">
-                        <label for="num_tables" class="form-label" data-translate-key="ngrams">{{ texts['ngrams'] }}</label>
-                        <input type="number" class="form-control" id="num_tables" name="num_tables" min="1" max="10" value="5" required title="Choose number of words associated">
+                        <label for="num_tables" class="form-label" data-translate-key="ngrams">{{ texts['ngrams']
+                            }}</label>
+                        <div class="number-wrapper">
+                            <button type="button" class="value-control"
+                                onclick="document.getElementById('num_tables').stepDown()">-</button>
+                            <input type="number" class="value-input" id="num_tables" name="num_tables" min="1" max="10"
+                                value="5" required>
+                            <button type="button" class="value-control"
+                                onclick="document.getElementById('num_tables').stepUp()">+</button>
+                        </div>
                     </div>
+
                     <div class="col-md-5">
-                        <label for="num_rows" class="form-label" data-translate-key="rgrams">{{ texts['rgrams'] }}</label>
-                        <input type="number" class="form-control" id="num_rows" name="num_rows" min="1" max="10" value="5" required title="Choose number of rows per N-gram">
+                        <label for="num_rows" class="form-label" data-translate-key="rgrams">{{ texts['rgrams']
+                            }}</label>
+                        <div class="number-wrapper">
+                            <button type="button" class="value-control"
+                                onclick="document.getElementById('num_rows').stepDown()">-</button>
+                            <input type="number" class="value-input" id="num_rows" name="num_rows" min="1" max="10"
+                                value="5" required>
+                            <button type="button" class="value-control"
+                                onclick="document.getElementById('num_rows').stepUp()">+</button>
+                        </div>
                     </div>
                 </div>
 
                 <div class="mt-4">
-                    <button type="submit" class="btn btn-primary" id="submitBtn" data-translate-key="button_1">{{ texts['button_1'] }}</button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn" data-translate-key="button_1">{{
+                        texts['button_1'] }}</button>
                 </div>
             </form>
         </div>
@@ -52,7 +69,30 @@
     </div>
 
     {% if results %}
-    <div class="project-container" id="result-section">
+
+    <div class="project-container text-center mt-4" id="download-form-section">
+        <form action="/download_keyphrases" method="get" target="_blank">
+            <h3>Descargar Resultados</h3>
+            <div class="d-flex justify-content-center gap-3 my-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="format" id="fmt-txt" value="txt" checked>
+                    <label class="form-check-label" for="fmt-txt">TXT</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="format" id="fmt-md" value="md">
+                    <label class="form-check-label" for="fmt-md">Markdown</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="format" id="fmt-pdf" value="pdf">
+                    <label class="form-check-label" for="fmt-pdf">PDF</label>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-success" id="downloadBtn" data-translate-key="button_2">{{
+                texts['button_2'] }}</button>
+        </form>
+    </div>
+
+    <div class="project-container mt-4 text-center" id="result-section">
         {% for ngram_value, data in results.items() %}
         <div>
             <h2 class="text-center">{{ ngram_value }}</h2>
@@ -75,29 +115,10 @@
                 </table>
             </div>
         </div>
-        {% if not loop.last %}<hr class="my-4">{% endif %}
+        {% if not loop.last %}
+        <hr class="my-4">{% endif %}
         {% endfor %}
 
-        <div class="text-center mt-4" id="download-form-section">
-            <form action="/download_keyphrases" method="get" target="_blank">
-                <h3>Descargar Resultados</h3>
-                <div class="d-flex justify-content-center gap-3 my-3">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="format" id="fmt-txt" value="txt" checked>
-                        <label class="form-check-label" for="fmt-txt">TXT</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="format" id="fmt-md" value="md">
-                        <label class="form-check-label" for="fmt-md">Markdown</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="format" id="fmt-pdf" value="pdf">
-                        <label class="form-check-label" for="fmt-pdf">PDF</label>
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary" id="downloadBtn" data-translate-key="button_2">{{ texts['button_2'] }}</button>
-            </form>
-        </div>
     </div>
     {% endif %}
 </div>

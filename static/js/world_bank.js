@@ -118,6 +118,8 @@ function checkAndLoadOptions() {
                         optionValue = option;
                         optionText = option;
                     }
+                    // optionElement.innerText = optionText;
+                    optionElement.classList.add('dropdown-item', 'd-block', 'text-center', 'fs-6');
                     optionElement.innerText = optionText;
                     optionElement.onclick = (e) => selectOption(e, optionValue, optionText);
                     optionsMenu.appendChild(optionElement);

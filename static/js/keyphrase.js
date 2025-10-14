@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const fileInput = document.getElementById('file');
     const fileError = document.getElementById('fileError');
-    const downloadBtn = document.getElementById('downloadBtn');
+    const downloadBtn = document.getElementById('download-form-section');
     const submitBtn = document.getElementById('submitBtn');
     const resultSection = document.getElementById('result-section');
     const loadingSection = document.getElementById('loading-section');
@@ -32,8 +32,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (resultSection && resultSection.querySelector('table')) {
-        resultSection.scrollIntoView({ behavior: 'smooth' });
+    if (downloadBtn && resultSection.querySelector('table')) {
+        downloadBtn.scrollIntoView({ behavior: 'smooth' });
     }
 
     if (hasResultsDisplayed && window.history && window.history.replaceState) {

@@ -64,6 +64,9 @@ def validate_data_type(data):
         print("The data type of the values is OK")
 
 def validate_stream_size(stream, max_size_mb: float = 10) -> None:
+    if stream is None or not hasattr(stream, "tell") or not hasattr(stream, "seek"):
+        raise ValueError("Invalid file stream. No file was uploaded or stream is not file-like.")
+
     original_position = stream.tell()    
     try:
         stream.seek(0, os.SEEK_END)

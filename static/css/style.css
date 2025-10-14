@@ -80,14 +80,56 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-.bootstrap-select .bs-searchbox .form-control {
-    background-color: #333;
-    color: #fff;
-    border: 1px solid #555;
+.number-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
 }
 
-.language-selector .dropdown-menu {
-    left: -30% !important;
+.value-control {
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: 1px solid #555;
+  border-radius: 12px;
+  color: #3b3b3b;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.value-control:hover {
+  background: #eee;
+}
+
+.value-control:active {
+  background: #ddd;
+}
+
+.value-control:focus,
+.value-input:focus {
+  outline: 2px solid #3e67fd;
+  outline-offset: 1px;
+}
+
+.value-input {
+  height: 36px;
+  width: 80px;
+  border: 1px solid #555;
+  border-radius: 12px;
+  padding: 2px 8px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.value-input::-webkit-inner-spin-button,
+.value-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 /* FOOTER */
@@ -163,21 +205,6 @@ hr {
 }
 
 /* FORMS */
-.upload-form .btn {
-    padding: 0.5rem 2rem;
-    border-radius: 5rem;
-    background-color: #3498db;
-    border: none;
-    transition: all 0.3s ease;
-}
-
-.upload-form .btn:hover {
-    background-color: white;
-    color: #3498db;
-    transform: scale(1.1);
-    border: 1px solid #3498db;
-}
-
 .form-label {
     font-size: clamp(16px, 1.5vw, 1.5vw);
 }

@@ -2,24 +2,30 @@
 
 {% block content %}
 
-<!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/world_bank.css') }}"> -->
 <script src="{{ url_for('static', filename='js/world_bank.js') }}"></script>
 
 <div class="main-project-container">
     <div class="project-container mb-4">
-        <h1 data-translate-key="wb_title">{{ texts['wb_title'] }}</h1>
-        <p id="intro-paragraph" data-translate-key="intro">{{ texts['intro'] }}</p>
+        <h1 data-translate-key="wb_title">{{ texts['wb_title'] }}</h1><br>
 
         <div class="row g-3 text-center">
             <div class="col-md-4">
-                <label for="dropdownButton" class="form-label" data-translate-key="instr_ord">{{ texts['instr_ord'] }}</label>
+                <label for="dropdownButton" class="form-label" data-translate-key="instr_ord">{{ texts['instr_ord']
+                    }}</label>
                 <div class="dropdown">
-                    <button class="btn btn-light dropdown-toggle w-100" type="button" id="dropdownButton" data-bs-toggle="dropdown" aria-expanded="false" data-translate-key="ind">
+                    <button class="btn btn-light dropdown-toggle w-100" type="button" id="dropdownButton"
+                        data-bs-toggle="dropdown" aria-expanded="false" data-translate-key="ind">
                         {{ texts['ind'] }}
                     </button>
-                    <ul class="dropdown-menu w-100" id="dropdownMenu" style="max-height: 200px; overflow-y: auto;">
+                    <ul class="dropdown-menu p-2" aria-labelledby="dropdownButton" id="dropdownMenu"
+                        style="width: max-content;">
                         {% for key in indicators %}
-                        <li><a class="dropdown-item" href="#" onclick="selectIndicator(event, '{{ key }}', '{{ indicators[key] }}')">{{ key }}</a></li>
+                        <li>
+                            <a class="dropdown-item text-truncate" href="#"
+                                onclick="selectIndicator(event, '{{ key }}', '{{ indicators[key] }}')">
+                                {{ key }}
+                            </a>
+                        </li>
                         {% endfor %}
                     </ul>
                 </div>
@@ -27,23 +33,30 @@
             <div class="col-md-4">
                 <label for="typeButton" class="form-label" data-translate-key="type_ord">{{ texts['type_ord'] }}</label>
                 <div class="dropdown">
-                    <button class="btn btn-light dropdown-toggle w-100" type="button" id="typeButton" data-bs-toggle="dropdown" aria-expanded="false" data-translate-key="type">
+                    <button class="btn btn-light dropdown-toggle w-100" type="button" id="typeButton"
+                        data-bs-toggle="dropdown" aria-expanded="false" data-translate-key="type">
                         {{ texts['type'] }}
                     </button>
-                    <ul class="dropdown-menu w-100" id="typeMenu">
-                        <li><a class="dropdown-item" href="#" onclick="selectType(event, 'country')" data-translate-key="country">{{ texts['country'] }}</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="selectType(event, 'year')" data-translate-key="year">{{ texts['year'] }}</a></li>
+                    <ul class="dropdown-menu w-100" id="typeMenu" style="width: max-content;">
+                        <li><a class="dropdown-item" href="#" onclick="selectType(event, 'country')"
+                                data-translate-key="country">{{ texts['country'] }}</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="selectType(event, 'year')"
+                                data-translate-key="year">{{ texts['year'] }}</a></li>
                     </ul>
                 </div>
             </div>
             <div class="col-md-4">
-                <label for="optionsButton" class="form-label" data-translate-key="opt_ord">{{ texts['opt_ord'] }}</label>
+                <label for="optionsButton" class="form-label" data-translate-key="opt_ord">{{ texts['opt_ord']
+                    }}</label>
                 <div class="dropdown">
-                    <button class="btn btn-light dropdown-toggle w-100" type="button" id="optionsButton" data-bs-toggle="dropdown" aria-expanded="false" data-translate-key="opt">
+                    <button class="btn btn-light dropdown-toggle w-100" type="button" id="optionsButton"
+                        data-bs-toggle="dropdown" aria-expanded="false" data-translate-key="opt">
                         {{ texts['opt'] }}
                     </button>
-                    <ul class="dropdown-menu w-100" id="optionsMenu">
-                         <li><a class="dropdown-item disabled" href="#" data-translate-key="first_warning">{{ texts['first_warning'] }}</a></li>
+                    <ul class="dropdown-menu w-100" id="optionsMenu"
+                        style="width: max-content; max-height: 500px; overflow-y: auto;">
+                        <li><a class="dropdown-item item-primary disabled" href="#" data-translate-key="first_warning">{{
+                                texts['first_warning'] }}</a></li>
                     </ul>
                 </div>
             </div>
@@ -51,12 +64,16 @@
 
         <div class="upload-form">
             <div class="d-flex flex-wrap justify-content-center gap-3 mt-4" id="wb-button-row">
-                <button type="submit" class="btn btn-primary" data-translate-key="first_button">{{ texts['first_button'] }}</button>
-                <button type="button" class="btn btn-secondary" id="downloadCSVBtn" data-translate-key="second_button">{{ texts['second_button'] }}</button>
-                <button type="button" class="btn btn-info" id="interactiveGraphBtn" data-translate-key="third_button">{{ texts['third_button'] }}</button>
+                <button type="submit" class="btn btn-primary" data-translate-key="first_button">{{ texts['first_button']
+                    }}</button>
+                <button type="button" class="btn btn-success" id="downloadCSVBtn" data-translate-key="second_button">{{
+                    texts['second_button'] }}</button>
+                <button type="button" class="btn btn-info" id="interactiveGraphBtn" data-translate-key="third_button">{{
+                    texts['third_button'] }}</button>
             </div>
         </div>
-        <p class="text-muted mt-3" style="font-size: 0.9rem;" data-translate-key="second_warning">{{ texts['second_warning'] }}</p>
+        <p class="text-white mt-3" style="font-size: 0.9rem;" data-translate-key="second_warning">{{
+            texts['second_warning'] }}</p>
     </div>
 
     <div class="project-container" id="wb-results" style="display: none;">

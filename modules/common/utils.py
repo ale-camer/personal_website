@@ -441,7 +441,6 @@ def inject_texts_and_languages():
          for code in available_lang_codes 
          if code in LANG_OPTIONS)
     )
-    # print(language_options_to_render)
     default_lang = next(iter(LANG_OPTIONS))
     print(default_lang)
     return {
