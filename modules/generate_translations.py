@@ -8,7 +8,8 @@ from os.path import join, dirname, exists
 
 # --- Third-party ---
 from tqdm import tqdm
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
+from modules.common.utils import load_dotenv
 from deepl import Translator, TooManyRequestsException
 
 # --- Project/system ---
@@ -29,7 +30,7 @@ ORIGINAL_LANG = read_json(join(JSON_PATH, 'lang', 'english.json'))
 LANGUAGES = read_json(join(JSON_PATH, 'config.json'))["languages_to_translate"]
 
 # =============================================================================
-# AUXILIARY FUNCTIONS
+# AUXILIARY FUNCTIONS 
 # =============================================================================
 def translation_exists(lang_name: str) -> bool:
     path = join(JSON_PATH, 'lang', f"{lang_name}.json")
@@ -77,6 +78,6 @@ def main() -> None:
             print(
                 (
                     f"Error translating {lang_name} ({lang_code}): ",
-                    "{type(e).__name__}: {e}"
+                    f"{type(e).__name__}: {e}"
                 )
             )

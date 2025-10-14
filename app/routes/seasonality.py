@@ -9,7 +9,7 @@ from flask import Blueprint, request, render_template, send_file
 
 # --- Project ---
 from modules.seasonality import pipeline
-from modules.common.utils import export_zip
+from modules.common.utils import export_zip, timed_run
 from modules.common.decorators import validate_file_size
 from config import SEASONALITY_DIR
 
@@ -34,8 +34,14 @@ def predict_seasonality(uploaded_file):
 
     periodicity = int(request.form.get('periodicity', 12))
     nlags = int(request.form.get('nlags', 10))    
-    forecast, acf, pacf = pipeline(
-        upload_path, p=periodicity, nlags=nlags, save_dir=SEASONALITY_DIR
+    # forecast, acf, pacf = pipeline(
+    #     upload_path, p=periodicity, nlags=nlags, save_dir=SEASONALITY_DIR
+    # )
+    forecast, acf, pacf = timed_run(
+        pipeline,
+        upload_path, p=periodicity, nlags=nlags, save_dir=SEASONALITY_DIR,
+        process_str="Total Pipeline Execution",
+        in_seconds=True
     )
     
     return render_template(
