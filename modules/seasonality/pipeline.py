@@ -11,7 +11,7 @@ from .core import forecast_time_serie, autocorrelations
 from .visuals import plot_forecasts, plot_acf_pacf
 from modules.common.utils import (
     read_excel, clean_excel_input, get_first_sheet_name, get_sheet_values, 
-    data_to_numeric, timed_run
+    data_to_numeric
 )
 from modules.common.validations import (
     validate_number_of_columns, validate_number_of_sheets,
@@ -48,38 +48,16 @@ def load_and_clean(file: str) -> list:
 def pipeline(file: str, p: int, nlags: int, save_dir: str):
 
     print("\nINITIATING DATA VALIDATION")
-    # results, serie = {}, load_and_clean(file)
-    results = {}
-    serie = timed_run(
-        load_and_clean, file,
-        process_str="Data Loading & Cleaning", in_seconds=True
-    )
+    results, serie = {}, load_and_clean(file)
 
     print("\nINITIATING PROCESS")
     print("Calculating Predictions")
-    # def forecast_last():
-    #     results['pred_last'] = forecast_time_serie(serie[:-p], p)
-    # def forecast_next():
-    #     results['pred_next'] = forecast_time_serie(serie, p)
-    # def acf_pacf():
-    #     results['acf'], results['pacf'] = autocorrelations(serie, nlags)
     def forecast_last():
-        results['pred_last'] = timed_run(
-            forecast_time_serie, serie[:-p], p,
-            process_str="Calculation: Forecast Last Period", in_seconds=True
-        )
-
+        results['pred_last'] = forecast_time_serie(serie[:-p], p)
     def forecast_next():
-        results['pred_next'] = timed_run(
-            forecast_time_serie, serie, p,
-            process_str="Calculation: Forecast Next Period", in_seconds=True
-        )
-
+        results['pred_next'] = forecast_time_serie(serie, p)
     def acf_pacf():
-        acf_vals, pacf_vals = timed_run(
-            autocorrelations, serie, nlags,
-            process_str="Calculation: ACF/PACF", in_seconds=True
-        )
+        results['acf'], results['pacf'] = autocorrelations(serie, nlags)
 
     threads = [
         Thread(target=forecast_last),
@@ -92,16 +70,8 @@ def pipeline(file: str, p: int, nlags: int, save_dir: str):
         t.join()
 
     print("Printing Plots")
-    timed_run(
-        plot_forecasts, serie, results['pred_last'], results['pred_next'], p, save_dir,
-        process_str="Plotting: Forecasts", in_seconds=True
-    )
-    timed_run(
-        plot_acf_pacf, results['acf'], results['pacf'], save_dir,
-        process_str="Plotting: ACF/PACF", in_seconds=True
-    )
-    # plot_forecasts(serie, results['pred_last'], results['pred_next'], p, save_dir)
-    # plot_acf_pacf(results['acf'], results['pacf'], save_dir)
+    plot_forecasts(serie, results['pred_last'], results['pred_next'], p, save_dir)
+    plot_acf_pacf(results['acf'], results['pacf'], save_dir)
     print("PROCESS COMPLETED")
 
     return results['pred_last'], results['acf'], results['pacf']

@@ -174,29 +174,25 @@ def clean_excel_input(workbook_data: dict) -> dict:
 # =============================================================================
 # FILE EXPORT
 # =============================================================================
-def export_zip(save_dir, filename: str = 'predictions.zip'):
+def export_zip(save_dir, not_format: str, filename: str = 'predictions.zip'):
     zip_path = os.path.join(save_dir, filename)
     with zf.ZipFile(zip_path, 'w', zf.ZIP_DEFLATED) as f:
         for root, _, files in os.walk(save_dir):
             for file in files:
-                if file != filename:
+                if file != filename and not file.endswith(not_format):
                     file_path = os.path.join(root, file)
                     f.write(file_path, os.path.relpath(file_path, save_dir))
     return zip_path, filename
 
 def make_markdown_table(headers, rows):
-    # Convierte todos los valores a string
     rows = [[str(cell) for cell in row] for row in rows]
     headers = [str(h) for h in headers]
 
-    # Calcula el ancho máximo de cada columna
     widths = [max(len(row[i]) for row in [headers] + rows) for i in range(len(headers))]
 
-    # Función para formatear una fila
     def fmt_row(row):
         return "| " + " | ".join(f"{cell:<{widths[i]}}" for i, cell in enumerate(row)) + " |"
 
-    # Arma la tabla Markdown tipo GitHub
     header_line = fmt_row(headers)
     separator_line = "| " + " | ".join("-" * w for w in widths) + " |"
     data_lines = [fmt_row(r) for r in rows]
@@ -442,7 +438,7 @@ def inject_texts_and_languages():
          if code in LANG_OPTIONS)
     )
     default_lang = next(iter(LANG_OPTIONS))
-    print(default_lang)
+    # print(default_lang)
     return {
         'texts': getattr(g, 'texts', {}),
         'selected_lang': getattr(g, 'lang', default_lang),

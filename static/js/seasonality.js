@@ -1,5 +1,3 @@
-//Seasonality Prediction Functionalities
-
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById('predictionForm');
     const fileInput = document.getElementById('file');

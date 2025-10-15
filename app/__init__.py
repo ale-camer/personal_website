@@ -4,9 +4,8 @@ from modules.whatsapp import init_dash, ChatSession
 from config import WEEK_DAYS, MONTHS
 
 def create_app():
-    app = Flask(__name__, static_folder='../static', template_folder='../templates')
-    app.config['SECRET_KEY'] = 'a-very-secret-and-random-string-should-go-here'
 
+    app = Flask(__name__, static_folder='../static', template_folder='../templates')
     with app.app_context():
         app.before_request(load_language_texts)
         app.context_processor(inject_texts_and_languages)

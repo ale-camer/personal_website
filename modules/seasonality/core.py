@@ -8,7 +8,7 @@ import numpy as np
 
 # --- Project ---
 from modules.common.utils import (
-    rolling_mean, divide_lists, multiply_lists, get_mean, groupby_lists, timed_run
+    rolling_mean, divide_lists, multiply_lists, get_mean, groupby_lists
 )
 
 # =============================================================================
