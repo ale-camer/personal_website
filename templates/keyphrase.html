@@ -8,9 +8,9 @@
     <div class="project-container mb-4" id="first-container">
         <h1 data-translate-key="keyphrase_title">{{ texts['keyphrase_title'] }}</h1><br>
 
-        {% if error %}
+        {% if error or execution_exception %}
         <div class="alert alert-danger" role="alert">
-            {{ error }}
+            {{ error or execution_exception }}
         </div>
         {% endif %}
 

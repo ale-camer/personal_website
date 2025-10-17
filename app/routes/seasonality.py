@@ -33,39 +33,46 @@ def predict_seasonality(uploaded_file):
     uploaded_file.save(upload_path)
 
     periodicity = int(request.form.get('periodicity', 12))
-    nlags = int(request.form.get('nlags', 10))    
-    forecast, acf, pacf = pipeline(
-        upload_path, p=periodicity, nlags=nlags, save_dir=SEASONALITY_DIR
-    )
-    
-    forecast_data = [(i+1, v) for i, v in enumerate(forecast)]
-    acf_data = [(i+1, v) for i, v in enumerate(acf)]
-    pacf_data = [(i+1, v) for i, v in enumerate(pacf)]
+    nlags = int(request.form.get('nlags', 10))
 
-    cols_forecast = ["Period", "Forecast"]
-    cols_acf_pacf = ["Lag", "Correlation (%)"]
+    try:
+        forecast, acf, pacf = pipeline(
+            upload_path, p=periodicity, nlags=nlags, save_dir=SEASONALITY_DIR
+        )
+        
+        forecast_data = [(i+1, v) for i, v in enumerate(forecast)]
+        acf_data = [(i+1, v) for i, v in enumerate(acf)]
+        pacf_data = [(i+1, v) for i, v in enumerate(pacf)]
 
-    forecast_exporter = FileExporter({"Forecast": forecast_data}, cols_forecast)
-    acf_exporter = FileExporter({"ACF": acf_data}, cols_acf_pacf)
-    pacf_exporter = FileExporter({"PACF": pacf_data}, cols_acf_pacf)
+        cols_forecast = ["Period", "Forecast"]
+        cols_acf_pacf = ["Lag", "Correlation (%)"]
 
-    txt_output = "\n\n".join([
-        forecast_exporter.to_txt_string(),
-        acf_exporter.to_txt_string(),
-        pacf_exporter.to_txt_string()
-    ])
+        forecast_exporter = FileExporter({"Forecast": forecast_data}, cols_forecast)
+        acf_exporter = FileExporter({"ACF": acf_data}, cols_acf_pacf)
+        pacf_exporter = FileExporter({"PACF": pacf_data}, cols_acf_pacf)
 
-    txt_path = os.path.join(SEASONALITY_DIR, "seasonality_results.txt")
-    write_txt(txt_output, txt_path)
-    
-    return render_template(
-        'seasonality.html',
-        forecast=forecast,
-        acf=acf,
-        pacf=pacf,
-        existing_plots=['forecast_plot.png', 'acf_pacf_plot.png'],
-        enumerate=enumerate
-    )
+        txt_output = "\n\n".join([
+            forecast_exporter.to_txt_string(),
+            acf_exporter.to_txt_string(),
+            pacf_exporter.to_txt_string()
+        ])
+
+        txt_path = os.path.join(SEASONALITY_DIR, "seasonality_results.txt")
+        write_txt(txt_output, txt_path)
+        
+        return render_template(
+            'seasonality.html',
+            forecast=forecast,
+            acf=acf,
+            pacf=pacf,
+            existing_plots=['forecast_plot.png', 'acf_pacf_plot.png'],
+            enumerate=enumerate
+        )
+    except Exception as e:
+        return render_template(
+            'seasonality.html',
+            execution_exception=str(e).capitalize()
+        )
 
 @bp.route('/download_predictions', methods=['GET'])
 def download_predictions():

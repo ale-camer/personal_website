@@ -25,18 +25,21 @@ progress = {"value": 0}
 @validate_file_size(template_on_error='keyphrase.html')
 def extract_keyphrases(uploaded_file):
     
-    results = pipeline(
-        raw_text=uploaded_file.read().decode('utf-8'),
-        progress=progress,
-        top_k=int(request.form.get('num_rows', 1)),
-        max_n=int(request.form.get('num_tables', 1))
-    )
-    summary = {
-        label: [{"Keywords": d[0], "# Appearances": d[1]} for d in data]
-        for label, data in results.items()
-    }
-    write_json(summary, KEYPHRASE_INPUT_PATH)
-    return render_template('keyphrase.html', results=results)
+    try:
+        results = pipeline(
+            raw_text=uploaded_file.read().decode('utf-8'),
+            progress=progress,
+            top_k=int(request.form.get('num_rows', 1)),
+            max_n=int(request.form.get('num_tables', 1))
+        )
+        summary = {
+            label: [{"Keywords": d[0], "# Appearances": d[1]} for d in data]
+            for label, data in results.items()
+        }
+        write_json(summary, KEYPHRASE_INPUT_PATH)
+        return render_template('keyphrase.html', results=results)
+    except Exception as e:
+        return render_template('keyphrase.html', execution_exception=str(e))
 
 @bp.route('/progress')
 def get_progress():
