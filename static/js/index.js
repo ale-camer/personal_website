@@ -139,7 +139,8 @@ function initializeProjectFilter() {
     projectCards.forEach(card => {
         card.addEventListener('click', () => {
             const projectId = card.dataset.id;
-            const projectData = window.projectTranslations;
+            modal.dataset.currentProjectId = projectId;
+            // const projectData = window.projectTranslations;
             updateModalContent(projectId);
             modal.style.display = 'block';
             modalOverlay.style.display = 'block';

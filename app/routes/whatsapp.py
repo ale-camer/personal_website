@@ -23,7 +23,7 @@ whatsapp_service = ChatSession()
 @validate_file_size(template_on_error='whatsapp.html')
 def whatsapp_dashboard(uploaded_file):
     
-    try:
+    # try:
         data = whatsapp_service.parse_chat(
             uploaded_file,
             request.form.get('selected_language')
@@ -34,5 +34,5 @@ def whatsapp_dashboard(uploaded_file):
         dash_app.layout = layout(issuers)
         
         return redirect('/dashboard/')
-    except Exception as e:
-        return render_template('whatsapp.html', execution_exception=str(e))
+    # except Exception as e:
+    #     return render_template('whatsapp.html', execution_exception=str(e))

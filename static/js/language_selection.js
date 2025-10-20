@@ -31,6 +31,11 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             const response = await fetch(`${langJsonBaseUrl}${lang}.json`);
             const allTranslations = await response.json();
+
+            if (allTranslations['projects-description']) {
+                window.projectTranslations = allTranslations['projects-description'];
+            }
+
             const commonTranslations = allTranslations['common'] || {};
             const pageTranslations = allTranslations[pageKey] || {};
             const finalTranslations = { ...commonTranslations, ...pageTranslations };
@@ -142,6 +147,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const success = await loadAndApplyTranslations(newLang);
             if (success) {
                 document.documentElement.lang = newLang;
+                const modal = document.querySelector('.project-modal');
+                if (modal && modal.style.display === 'block' && modal.dataset.currentProjectId) {
+                    updateModalContent(modal.dataset.currentProjectId);
+                }
             } else {
                 console.error(`Error al cargar las traducciones para: ${newLang}`);
             }

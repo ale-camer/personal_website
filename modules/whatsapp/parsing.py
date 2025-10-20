@@ -17,7 +17,8 @@ from modules.common.utils import read_json, get_chunks, normalize_strings
 # =============================================================================
 # CONSTANTS
 # =============================================================================
-_SPLIT_STR = r'^(\d{1,2}/\d{1,2}/\d{2,4}), ([^ ]+) - ([^:]+): (.+)$'
+# _SPLIT_STR = r'^(\d{1,2}/\d{1,2}/\d{2,4}), ([^ ]+) - ([^:]+): (.+)$'
+_SPLIT_STR = r'^(\d{1,2}/\d{1,2}/\d{2,4})[,\s]+(\d{1,2}:\d{2}) - (?:(.*?): )?(.*)$'
 _SPLIT_PATTERN = re.compile(_SPLIT_STR)
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -31,14 +32,17 @@ STOPWORDS = read_json(STOPWORDS_PATH)
 def _is_valid(line: str) -> bool:
     if not (m := _SPLIT_PATTERN.match(line)):
         return False
+    if None in m.groups():
+        return False
     if (msg := m.group(4).strip()).startswith("<") and msg.endswith(">"):
         return False
     return True
 
 def _parse(line: str) -> tuple:
-    match = _SPLIT_PATTERN.match(line)
-    date_str, time_str, issuer, msg = map(str.strip, match.groups())
-    date = datetime.strptime(date_str, "%d/%m/%Y")
+    print(line)
+    _match = _SPLIT_PATTERN.match(line)
+    date_str, time_str, issuer, msg = map(str.strip, _match.groups())
+    date = datetime.strptime(date_str, "%d/%m/%y")
     return (
         date, int(time_str[:2]), issuer, msg, date.weekday(), date.day,
         date.month, msg.count(" ") + 1,
