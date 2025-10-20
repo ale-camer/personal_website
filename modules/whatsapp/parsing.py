@@ -39,10 +39,15 @@ def _is_valid(line: str) -> bool:
     return True
 
 def _parse(line: str) -> tuple:
-    print(line)
+
     _match = _SPLIT_PATTERN.match(line)
     date_str, time_str, issuer, msg = map(str.strip, _match.groups())
-    date = datetime.strptime(date_str, "%d/%m/%y")
+    
+    try:
+        date = datetime.strptime(date_str, "%d/%m/%Y")
+    except ValueError:
+        date = datetime.strptime(date_str, "%d/%m/%y")
+
     return (
         date, int(time_str[:2]), issuer, msg, date.weekday(), date.day,
         date.month, msg.count(" ") + 1,
