@@ -2,6 +2,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+🌐 **Live Demo:** [Visit the project here](https://www.alejandrocamerlengo.com/)
+
 A personal website showcasing data science projects, CV, and analytical articles. This portfolio is designed to demonstrate ideas and projects I have worked on, while also serving as a learning experience in web development. 👨‍💻
 
 ## 📋 Table of Contents
