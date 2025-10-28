@@ -1,65 +1,122 @@
-# Personal Website - Data Projects
+# Personal Website - Data Projects 🚀
 
-Welcome! I am a data scientist and I've created this website so you can take a look at my resume and have fun with some of my toy projects. This portfolio is designed to showcase ideas and projects that I worked on and to learn a little bit of web development in the process of making the page :)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Live Demo
+A personal website showcasing data science projects, CV, and analytical articles. This portfolio is designed to demonstrate ideas and projects I have worked on, while also serving as a learning experience in web development. 👨‍💻
 
-You can see the site in action here: [https://personal-website-gz63.onrender.com/](https://personal-website-gz63.onrender.com/)
+## 📋 Table of Contents
 
-## Key Features
+- [Live Demo](#live-demo)
+- [Key Features](#key-features)
+- [Tech Stack](#tech-stack)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Project Structure](#project-structure)
+- [API Reference](#api-reference)
+- [Contributing](#contributing)
+- [License](#license)
+- [Important Links](#important-links)
+- [Footer](#footer)
 
-- Personal portfolio showcasing data projects and my CV.
-- Interactive tools for:
-  - Extracting keyphrases from text
-  - Predicting seasonal trends
-  - Analyzing WhatsApp conversations
-  - Accessing and visualizing World Bank API data
-- Analytical articles and visual insights on:
-  - Data science job market trends
-  - Macroeconomics
-  - Mathematics
-  - Algorithmic trading
+## 🌐 Live Demo
 
-## Installation
+Check out the live website [here](https://personal-website-gz63.onrender.com/).
 
-1. Clone the repository: `git clone https://github.com/ale-camer/personal_website.git`
-2. Create a virtual environment: `python -m venv venv`
+## ✨ Key Features
+
+- **Personal Portfolio:** Showcasing data projects and my CV.
+- **Interactive Tools:**
+  - Extract keyphrases from text.
+  - Predict seasonal trends.
+  - Analyze WhatsApp conversations.
+  - Access and visualize World Bank API data.
+- **Analytical Articles and Visual Insights:**
+  - Data science job market trends.
+  - Macroeconomics.
+  - Mathematics.
+  - Algorithmic trading.
+- **Multi-language Support:** Uses JSON files to load text in different languages dynamically.
+
+## 🛠️ Tech Stack
+
+- **Frontend:**
+  - HTML
+  - SCSS
+  - JavaScript
+- **Backend & Data:**
+  - Python (Flask, Dash)
+  - Data manipulation and visualization: pandas, numpy, seaborn, matplotlib, plotly
+  - Text processing: TextBlob, NLTK, unidecode, regex
+  - Web and API tools: requests, tqdm, prettytable, folium, branca
+  - Utility modules and structured programming: dataclasses, abc, os, re, zipfile, time
+- **Other:**
+  - Docker
+
+## 📦 Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/ale-camer/personal_website.git
+   ```
+2. Create a virtual environment:
+   ```bash
+   python -m venv venv
+   ```
 3. Activate the environment:
-   - On Windows: `venv\Scripts\activate`
-   - On Unix/MacOS: `source venv/bin/activate`
-4. Install dependencies: `pip install -r requirements.txt`
-5. Run the app: `python main.py`
+   - On Windows:
+     ```bash
+     venv\Scripts\activate
+     ```
+   - On Unix/MacOS:
+     ```bash
+     source venv/bin/activate
+     ```
+4. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+5. Run the app:
+   ```bash
+   python main.py
+   ```
 
-## Usage
+## 💡 Usage
 
-Once the application is running (after step 5 of Installation):
-1. Open your web browser and navigate to `http://127.0.0.1:5000/` (or the address shown in your console, typically `http://localhost:PORT` where PORT is specified by your environment, e.g., 5000).
-2. Explore the different sections and interactive tools available through the navigation menu.
+1.  **Run the application:** After completing the installation steps, execute `python main.py` to start the Flask server.
+2.  **Access the Website:** Open your web browser and navigate to `http://127.0.0.1:5000/` or the address displayed in your console.
+3.  **Explore Projects:** Use the navigation menu to explore different sections such as Keyphrase Extraction, Seasonality Prediction, WhatsApp Analysis, and World Bank Data.
 
-## Technologies Used
+### Keyphrase Extraction
 
-**Frontend**:
-- HTML, SCSS, JavaScript
+1. Navigate to the "Keyphrase Extraction" page.
+2. Upload a `.txt` file containing the text you want to analyze.
+3. Adjust the number of n-grams and rows using the input controls.
+4. Click the "Extract Keyphrases" button to process the text and display the results.
+5. Download the results in TXT, Markdown, or PDF format.
 
-**Backend & Data**:
-- Python (Flask, Dash)
-- Data manipulation and visualization: pandas, numpy, seaborn, matplotlib, plotly
-- Text processing: TextBlob, NLTK, unidecode, regex
-- Web and API tools: requests, tqdm, prettytable, folium, branca
-- Utility modules and structured programming: dataclasses, abc, os, re, zipfile, time
+### Seasonality Prediction
 
-## Key Files
+1.  Navigate to the "Seasonality Prediction" page.
+2.  Upload an `.xlsx` or `.xls` file containing time series data.
+3.  Specify the periodicity and number of lags.
+4.  Click the "Predict Seasonality" button to generate forecasts and visualizations.
+5.  Download the predictions and plots as a ZIP archive.
 
-- `main.py`: Main application script (entry point, configures and runs the Flask app).
-- `app.py`: Defines the Flask application instance and core web routes (imported by `main.py`).
-- `modules/dash_app.py`: Contains Dash applications for interactive data visualizations.
-- `modules/`: Directory for custom Python modules (utilities, text processing, specific functionalities).
-- `static/`: Stores static assets (CSS, JavaScript, images) and user-uploaded files.
-- `templates/`: Contains HTML templates for the web interface.
+### WhatsApp Analysis
 
-## Project Structure
+1. Navigate to the "WhatsApp Analysis" page.
+2. Upload the exported WhatsApp chat `.txt` file.
+3. Select the language of the chat.
+4. Click the "Analyze Chat" button to view the interactive dashboard.
 
-The project directory tree with comments is shown below:
+### World Bank Data
+
+1. Navigate to the "World Bank Data" page.
+2. Select an indicator and a type (country or year).
+3. Choose an option and click the "Show Results" button to display the data in a table.
+4. Download the data as a CSV file or view an interactive graph.
+
+## 🗂️ Project Structure
 
 ```bash
 personal_website/
@@ -121,7 +178,32 @@ personal_website/
     └── world_bank.html  # World Bank Functionality Template
 ```
 
-## Author
+## ℹ️ API Reference
 
-**Alejandro Camerlengo**
-- LinkedIn: [https://www.linkedin.com/in/alejandro-camerlengo/](https://www.linkedin.com/in/alejandro-camerlengo/)
+The project uses the World Bank API for fetching economic indicators. The core logic for interacting with the API is located in `modules/world_bank/core.py`. Here are some key API endpoints:
+
+-   `https://api.worldbank.org/v2/country/all/indicator/{indicator_id}`: Downloads data for a specific indicator.
+-   `https://api.worldbank.org/v2/country`: Retrieves a list of countries.
+
+## 🤝 Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1.  Fork the repository.
+2.  Create a new branch for your feature or bug fix.
+3.  Make your changes and commit them with descriptive messages.
+4.  Submit a pull request.
+
+## 📜 License
+
+This project is licensed under the MIT License - see the [LICENSE](https://opensource.org/licenses/MIT) file for details.
+
+## 🔗 Important Links
+
+-   Live Demo: [https://personal-website-gz63.onrender.com/](https://personal-website-gz63.onrender.com/)
+-   LinkedIn: [https://www.linkedin.com/in/alejandro-camerlengo/](https://www.linkedin.com/in/alejandro-camerlengo/)
+
+## <footer> Personal Website - Data Projects by [Alejandro Camerlengo](https://www.linkedin.com/in/alejandro-camerlengo/).  Fork it on [GitHub](https://github.com/ale-camer/personal_website) and give it a ⭐! Create issues, too! </footer>
+
+---
+**<p align="center">Generated by [ReadmeCodeGen](https://www.readmecodegen.com/)</p>**
