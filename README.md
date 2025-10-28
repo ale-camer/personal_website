@@ -8,7 +8,6 @@ A personal website showcasing data science projects, CV, and analytical articles
 
 ## 📋 Table of Contents
 
-- [Live Demo](#live-demo)
 - [Key Features](#key-features)
 - [Tech Stack](#tech-stack)
 - [Installation](#installation)
@@ -19,10 +18,6 @@ A personal website showcasing data science projects, CV, and analytical articles
 - [License](#license)
 - [Important Links](#important-links)
 - [Footer](#footer)
-
-## 🌐 Live Demo
-
-Check out the live website [here](https://personal-website-gz63.onrender.com/).
 
 ## ✨ Key Features
 
