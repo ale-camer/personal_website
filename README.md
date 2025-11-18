@@ -1,4 +1,4 @@
-# Personal Website - Data Projects 🚀
+# Personal Website
 
 🌐 **Live Demo:** [Visit the project here](https://www.alejandrocamerlengo.com/)
 
@@ -8,18 +8,16 @@ A personal website built with Flask and Dash that showcases my data science proj
 
 ## 📋 Table of Contents
 
-- [Key Features](#key-features)
-- [Tech Stack](#tech-stack)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Project Structure](#project-structure)
-- [API Reference](#api-reference)
-- [Contributing](#contributing)
-- [License](#license)
-- [Important Links](#important-links)
-- [Footer](#footer)
+1. [Features](#features)
+2. [Tech Stack](#tech-stack)
+3. [Installation](#installation)
+4. [Usage](#usage)
+5. [Project Structure](#project-structure)
+6. [API Reference](#api-reference)
+7. [Contributing](#contributing)
+8. [Deployment](#deployment)
 
-## 🚀 Features
+## 🚀 1. Features
 
 - **Personal Portfolio:** Showcasing data projects and my CV.
 - **Interactive Tools:**
@@ -34,7 +32,7 @@ A personal website built with Flask and Dash that showcases my data science proj
   - Algorithmic trading.
 - **Multi-language Support:** Uses JSON files to load text in different languages dynamically.
 
-## 🛠️ Tech Stack
+## 🛠️ 2. Tech Stack
 
 - **Frontend:**
   - HTML
@@ -49,7 +47,7 @@ A personal website built with Flask and Dash that showcases my data science proj
 - **Other:**
   - Docker
 
-## ⚙️ Installation
+## ⚙️ 3. Installation
 
 1. Clone the repository:
    ```bash
@@ -77,7 +75,7 @@ A personal website built with Flask and Dash that showcases my data science proj
    python main.py
    ```
 
-## 💡 Usage
+## 💡 4. Usage
 
 1.  **Run the application:** After completing the installation steps, execute `python main.py` to start the Flask server.
 2.  **Access the Website:** Open your web browser and navigate to `http://127.0.0.1:5000/` or the address displayed in your console.
@@ -113,7 +111,7 @@ A personal website built with Flask and Dash that showcases my data science proj
 3. Choose an option and click the "Show Results" button to display the data in a table.
 4. Download the data as a CSV file or view an interactive graph.
 
-## 🗺️ Project Structure
+## 🗺️ 5. Project Structure
 
 ```bash
 personal_website/
@@ -175,14 +173,14 @@ personal_website/
     └── world_bank.html  # World Bank Functionality Template
 ```
 
-## 📖 API Reference
+## 📖 6. API Reference
 
 The project uses the World Bank API for fetching economic indicators. The core logic for interacting with the API is located in `modules/world_bank/core.py`. Here are some key API endpoints:
 
 -   `https://api.worldbank.org/v2/country/all/indicator/{indicator_id}`: Downloads data for a specific indicator.
 -   `https://api.worldbank.org/v2/country`: Retrieves a list of countries.
 
-## 🤝 Contributing
+## 🤝 7. Contributing
 
 Contributions are welcome! Please follow these steps:
 
@@ -191,8 +189,8 @@ Contributions are welcome! Please follow these steps:
 3.  Make your changes and commit them with descriptive messages.
 4.  Submit a pull request.
 
-## 🛠️ Deployment
+## 🛠️ 8. Deployment
 
 The application is containerized and hosted on **AWS EC2**, using **Nginx** as a reverse proxy and **Gunicorn** as the WSGI server. Static assets are served via **Amazon S3**.
 
-## <footer> Personal Website - Data Projects by [Alejandro Camerlengo](https://www.linkedin.com/in/alejandro-camerlengo/).  Fork it on [GitHub](https://github.com/ale-camer/personal_website) and give it a ⭐! Create issues, too! </footer>
+## <footer> Personal Website by [Alejandro Camerlengo](https://www.linkedin.com/in/alejandro-camerlengo/).  Fork it on [GitHub](https://github.com/ale-camer/personal_website) and give it a ⭐! Create issues, too! </footer>
