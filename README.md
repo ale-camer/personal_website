@@ -1,17 +1,5 @@
 # Personal Website - Data Projects 🚀
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python](https://img.shields.io/badge/Python-3.10-blue.svg)](https://www.python.org/)
-[![Flask](https://img.shields.io/badge/Flask-%3E%3D2.0-lightgrey.svg)](https://flask.palletsprojects.com/)
-[![Dash](https://img.shields.io/badge/Dash-%3E%3D2.0-lightgrey.svg)](https://plotly.com/dash/)
-[![HTML5](https://img.shields.io/badge/HTML5-%3E%3D5-orange.svg)](https://developer.mozilla.org/docs/Web/HTML)
-[![SCSS](https://img.shields.io/badge/SCSS-styled-pink.svg)](https://sass-lang.com/)
-[![Pandas](https://img.shields.io/badge/pandas-%3E%3D1.0-blue.svg)](https://pandas.pydata.org/)
-[![Plotly](https://img.shields.io/badge/Plotly-visualization-lightgrey.svg)](https://plotly.com/)
-[![Docker](https://img.shields.io/badge/Docker-enabled-blue.svg)](https://www.docker.com/)
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Website-brightgreen.svg)](https://www.alejandrocamerlengo.com/)
-[![Repo](https://img.shields.io/badge/Repo-GitHub-black.svg)](https://github.com/ale-camer/personal_website)
-
 🌐 **Live Demo:** [Visit the project here](https://www.alejandrocamerlengo.com/)
 
 ## ✨ Description
