@@ -1,10 +1,22 @@
 # Personal Website - Data Projects 🚀
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python](https://img.shields.io/badge/Python-3.10-blue.svg)](https://www.python.org/)
+[![Flask](https://img.shields.io/badge/Flask-%3E%3D2.0-lightgrey.svg)](https://flask.palletsprojects.com/)
+[![Dash](https://img.shields.io/badge/Dash-%3E%3D2.0-lightgrey.svg)](https://plotly.com/dash/)
+[![HTML5](https://img.shields.io/badge/HTML5-%3E%3D5-orange.svg)](https://developer.mozilla.org/docs/Web/HTML)
+[![SCSS](https://img.shields.io/badge/SCSS-styled-pink.svg)](https://sass-lang.com/)
+[![Pandas](https://img.shields.io/badge/pandas-%3E%3D1.0-blue.svg)](https://pandas.pydata.org/)
+[![Plotly](https://img.shields.io/badge/Plotly-visualization-lightgrey.svg)](https://plotly.com/)
+[![Docker](https://img.shields.io/badge/Docker-enabled-blue.svg)](https://www.docker.com/)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Website-brightgreen.svg)](https://www.alejandrocamerlengo.com/)
+[![Repo](https://img.shields.io/badge/Repo-GitHub-black.svg)](https://github.com/ale-camer/personal_website)
 
 🌐 **Live Demo:** [Visit the project here](https://www.alejandrocamerlengo.com/)
 
-A personal website showcasing data science projects, CV, and analytical articles. This portfolio is designed to demonstrate ideas and projects I have worked on, while also serving as a learning experience in web development. 👨‍💻
+## ✨ Description
+
+A personal website built with Flask and Dash that showcases my data science projects and interactive analytics. The platform integrates Python visualizations, dynamic dashboards, and custom data-processing tools, including WhatsApp chat analysis, sentiment exploration, and time-based message insights. It also supports direct file uploads, real-time processing, and unified backend/frontend execution. Designed as a central hub for my portfolio.
 
 ## 📋 Table of Contents
 
@@ -19,7 +31,7 @@ A personal website showcasing data science projects, CV, and analytical articles
 - [Important Links](#important-links)
 - [Footer](#footer)
 
-## ✨ Key Features
+## 🚀 Features
 
 - **Personal Portfolio:** Showcasing data projects and my CV.
 - **Interactive Tools:**
@@ -49,7 +61,7 @@ A personal website showcasing data science projects, CV, and analytical articles
 - **Other:**
   - Docker
 
-## 📦 Installation
+## ⚙️ Installation
 
 1. Clone the repository:
    ```bash
@@ -113,7 +125,7 @@ A personal website showcasing data science projects, CV, and analytical articles
 3. Choose an option and click the "Show Results" button to display the data in a table.
 4. Download the data as a CSV file or view an interactive graph.
 
-## 🗂️ Project Structure
+## 🗺️ Project Structure
 
 ```bash
 personal_website/
@@ -175,7 +187,7 @@ personal_website/
     └── world_bank.html  # World Bank Functionality Template
 ```
 
-## ℹ️ API Reference
+## 📖 API Reference
 
 The project uses the World Bank API for fetching economic indicators. The core logic for interacting with the API is located in `modules/world_bank/core.py`. Here are some key API endpoints:
 
@@ -190,10 +202,6 @@ Contributions are welcome! Please follow these steps:
 2.  Create a new branch for your feature or bug fix.
 3.  Make your changes and commit them with descriptive messages.
 4.  Submit a pull request.
-
-## 📜 License
-
-This project is licensed under the MIT License - see the [LICENSE](https://opensource.org/licenses/MIT) file for details.
 
 ## 🛠️ Deployment
 
