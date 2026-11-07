@@ -1,7 +1,25 @@
-AWS.txt
-.env
-my-aws-key.pem
+# Legacy version (kept locally for reference, excluded from GitHub)
+_legacy/
+
+# Python / Virtualenvs
+.venv/
 venv/
 __pycache__/
 *.pyc
-modules/refactoring
+
+# Node / Frontend build
+node_modules/
+dist/
+.vite/
+
+# Environment & Secrets
+.env
+.env.*
+!.env.example
+AWS.txt
+*.pem
+
+# OS / Editor
+.DS_Store
+.idea/
+.vscode/
