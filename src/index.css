@@ -60,7 +60,17 @@ body {
   pointer-events: auto;
 }
 
-/* Utilidades inferiores a la derecha */
+/* Redes de contacto abajo a la izquierda */
+.l-pos-bottom-left {
+  position: fixed;
+  bottom: 22px;
+  left: 28px;
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Preferencias abajo a la derecha */
 .l-pos-bottom-right {
   position: fixed;
   bottom: 22px;
@@ -225,7 +235,7 @@ body {
   position: fixed;
   top: 86px;
   left: 28px;
-  bottom: 28px;
+  bottom: 76px;
   width: 356px;
   max-width: calc(100vw - 40px);
   background: var(--drawer-bg);
@@ -478,30 +488,42 @@ body {
   border-radius: 999px;
 }
 
-/* Íconos originales en sus respectivos colores */
+/* Íconos vectoriales nítidos en sus colores originales */
+.social-pill-group {
+  padding: 8px 15px;
+}
+
 .social-original-links {
   display: inline-flex;
   align-items: center;
-  gap: 9px;
+  gap: 14px;
 }
 
 .social-orig-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  color: inherit;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
 }
 
 .social-orig-link:hover {
-  transform: scale(1.18);
+  transform: translateY(-1px) scale(1.14);
 }
 
-.social-orig-img {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  object-fit: cover;
+.social-brand-svg {
+  width: 22px;
+  height: 22px;
   display: block;
+  flex-shrink: 0;
+}
+
+.github-svg {
+  color: #f8fafc;
+}
+
+.mode-light .github-svg {
+  color: #111827;
 }
 
 /* ==========================================================================
@@ -680,13 +702,18 @@ body {
     font-size: 11px;
   }
 
+  .l-pos-bottom-left {
+    left: 18px;
+    bottom: 16px;
+  }
+
   .l-pos-bottom-right {
     right: 18px;
     bottom: 16px;
   }
 }
 
-/* Mobile: identidad arriba, navegación debajo a lo ancho, utilidades centradas abajo */
+/* Mobile: identidad arriba, navegación debajo a lo ancho, redes a la izq y preferencias a la der */
 @media (max-width: 640px) {
   .l-pos-top-split {
     top: 12px;
@@ -724,11 +751,14 @@ body {
     letter-spacing: 0;
   }
 
-  .l-pos-bottom-right {
-    left: 50%;
-    right: auto;
+  .l-pos-bottom-left {
+    left: 12px;
     bottom: 14px;
-    transform: translateX(-50%);
+  }
+
+  .l-pos-bottom-right {
+    right: 12px;
+    bottom: 14px;
   }
 
   .utility-pill-group {
@@ -796,7 +826,7 @@ body {
 .sv-a-scroll {
   flex: 1;
   overflow-y: auto;
-  padding: 56px 32px 32px;
+  padding: 46px 28px 22px;
 }
 
 /* --- Contenido placeholder común --- */
@@ -883,5 +913,496 @@ body {
 
   .ph-hero-title {
     font-size: 20px;
+  }
+}
+
+/* ==========================================================================
+   SECCIÓN 01: QUANTLAMBDA SHOWCASE
+   ========================================================================== */
+.ql-showcase {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ql-top-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 13px 20px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.mode-light .ql-top-banner {
+  background: rgba(15, 23, 42, 0.02);
+}
+
+.ql-top-banner-main {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.ql-eyebrow-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ql-live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #10b981;
+  box-shadow: 0 0 10px #10b981;
+}
+
+.ql-eyebrow-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #10b981;
+}
+
+.ql-domain-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  color: var(--muted-text);
+  border: 1px solid var(--border-subtle);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.ql-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.15;
+}
+
+.ql-lead {
+  font-size: 13.8px;
+  font-weight: 600;
+  line-height: 1.45;
+  opacity: 0.95;
+}
+
+.ql-sublead {
+  font-size: 13.2px;
+  line-height: 1.62;
+  color: var(--muted-text);
+}
+
+.ql-cta-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.ql-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background-color: #10b981;
+  color: #04130d;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.ql-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(16, 185, 129, 0.32);
+}
+
+.ql-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  color: inherit;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12.2px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color 0.18s ease, background-color 0.18s ease;
+}
+
+.ql-btn-secondary:hover {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.07);
+}
+
+/* Ventana interactiva del Home de QuantLambda */
+.ql-preview-frame {
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: #05070b;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.36);
+  min-height: 214px;
+}
+
+.mode-light .ql-preview-frame {
+  background: #e6f4ef;
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.12);
+}
+
+.ql-browser-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 12px;
+  background: rgba(10, 12, 18, 0.92);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mode-light .ql-browser-bar {
+  background: rgba(244, 242, 236, 0.95);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.12);
+}
+
+.ql-browser-dots {
+  display: inline-flex;
+  gap: 5px;
+}
+
+.ql-browser-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(148, 163, 184, 0.38);
+}
+
+.ql-browser-url {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  color: var(--muted-text);
+  text-decoration: none;
+  padding: 2px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle);
+  transition: color 0.18s ease, border-color 0.18s ease;
+}
+
+.ql-browser-url:hover {
+  color: inherit;
+  border-color: #10b981;
+}
+
+.ql-scene-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ql-scene-dot-btn {
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  border: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--muted-text);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.16s ease;
+}
+
+.ql-scene-dot-btn:hover,
+.ql-scene-dot-btn.is-active {
+  border-color: #10b981;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.12);
+}
+
+.ql-mini-stage {
+  position: relative;
+  flex: 1;
+  min-height: 184px;
+  overflow: hidden;
+}
+
+.ql-mini-header {
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  right: 12px;
+  z-index: 25;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10.5px;
+}
+
+.ql-mini-lambda {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #10b981;
+}
+
+.ql-mini-nav {
+  display: inline-flex;
+  gap: 14px;
+}
+
+.ql-mini-nav a,
+.ql-mini-footer a {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.82;
+  font-weight: 500;
+  transition: opacity 0.16s ease, color 0.16s ease;
+}
+
+.ql-mini-nav a:hover,
+.ql-mini-footer a:hover {
+  opacity: 1;
+  color: #10b981;
+}
+
+.ql-mini-spacer {
+  width: 14px;
+}
+
+.ql-mini-overlay-copy {
+  position: absolute;
+  top: 16%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  width: 88%;
+  text-align: center;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ql-mini-headline {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.ql-mini-stage.is-light .ql-mini-headline {
+  color: rgba(14, 28, 22, 0.95);
+}
+
+.ql-mini-brief {
+  font-size: 10px;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+.ql-mini-stage.is-light .ql-mini-brief {
+  color: rgba(28, 52, 40, 0.76);
+}
+
+.ql-mini-footer {
+  position: absolute;
+  bottom: 6px;
+  left: 12px;
+  right: 12px;
+  z-index: 25;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  opacity: 0.78;
+}
+
+.ql-mini-footer-left,
+.ql-mini-footer-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ql-mini-sys-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  margin-right: 3px;
+}
+
+/* Ajustes para el cartel inferior del canvas en tamaño miniatura */
+.ql-mini-stage .resp-home-artwork-placard {
+  bottom: 24px !important;
+}
+
+.ql-mini-stage .resp-home-artwork-title {
+  font-size: 10.5px !important;
+}
+
+.ql-mini-stage .resp-home-artwork-medium {
+  font-size: 8.8px !important;
+}
+
+/* Lista de 4 bullets concisos */
+.ql-bullets-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 11px 16px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.mode-light .ql-bullets-list {
+  background: rgba(15, 23, 42, 0.02);
+}
+
+.ql-bullet-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 2px 0;
+}
+
+.ql-bullet-marker {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  flex-shrink: 0;
+}
+
+.ql-bullet-body {
+  flex: 1;
+  font-size: 12.4px;
+  line-height: 1.42;
+  color: var(--muted-text);
+}
+
+.ql-bullet-body strong {
+  color: inherit;
+  font-weight: 600;
+}
+
+.ql-bullet-link {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle);
+  transition: border-color 0.16s ease, color 0.16s ease, background-color 0.16s ease;
+}
+
+.ql-bullet-link:hover {
+  border-color: #10b981;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.08);
+}
+
+/* Franja inferior de Ingeniería y FinOps */
+.ql-arch-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border-subtle);
+  background: rgba(16, 185, 129, 0.04);
+}
+
+.ql-arch-info {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.ql-arch-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  padding: 3px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.ql-arch-text {
+  font-size: 12.2px;
+  line-height: 1.5;
+  color: var(--muted-text);
+}
+
+.ql-arch-text strong {
+  color: inherit;
+}
+
+.ql-arch-link {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: #10b981;
+  text-decoration: none;
+  white-space: nowrap;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  transition: background-color 0.16s ease;
+}
+
+.ql-arch-link:hover {
+  background: rgba(16, 185, 129, 0.12);
+}
+
+@media (max-width: 900px) {
+  .ql-top-banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .ql-bullet-item {
+    flex-wrap: wrap;
+  }
+
+  .ql-arch-strip {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

@@ -89,6 +89,7 @@ El desarrollo se organiza en **5 etapas secuenciales**, comenzando por el marco 
 
 | Pendiente | Decisión / Detalle | Cuándo |
 | :--- | :--- | :--- |
+| **Unificación de patrones de diseño (Design System final)** | Definir y estandarizar cómo deben verse todos los elementos que cumplen la misma función en las 4 secciones: jerarquía de títulos/subtítulos, estilo de tarjetas (`cards`), píldoras/badges, listas de bullets, botones primarios/secundarios, espaciados y bordes. | Al final, una vez armadas las 4 secciones. |
 | **Propuesta central de la landing** | Una sola línea corta en el centro de la pantalla (sin bloques de texto) para que quien entra entienda en ~2 segundos qué hace Alejandro. Hoy existe un *placeholder* visual (`.hero-tagline-slot` en `src/App.jsx`). Se propondrán 3–4 frases para elegir. | Cuando se defina el contenido/texto. |
 | **Selector de idioma** | Reemplazar el desplegable actual por una **ventana modal centrada** que ocupe la pantalla, con **buscador escribible** y **banderas**. Hasta tener i18n real, el selector actual es solo visual. | Al final, con todo el texto ya escrito. |
 | **Mejoras técnicas menores** | Canvas nítido en pantallas retina (`devicePixelRatio`), respeto de `prefers-reduced-motion`, mover utilidades de `App.jsx` a `components/`. | Pulido posterior. |

@@ -40,31 +40,71 @@ function readSectionFromHash() {
 
 function OriginalSocialLinks() {
   return (
-    <div className="social-original-links">
+    <div className="social-original-links" aria-label="Redes y contacto directo">
+      {/* GitHub */}
       <a
         href="https://github.com/ale-camer/personal_website"
         target="_blank"
         rel="noreferrer"
         className="social-orig-link"
         title="GitHub"
+        aria-label="GitHub"
       >
-        <img src="/images/gh.png" alt="GitHub" className="social-orig-img" />
+        <svg className="social-brand-svg github-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            fill="currentColor"
+            d="M12 .5C5.65.5.5 5.65.5 12c0 5.09 3.29 9.4 7.86 10.92.58.1.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.52-1.33-1.28-1.68-1.28-1.68-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.18-3.09-.12-.29-.51-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11.05 11.05 0 0 1 5.78 0c2.2-1.49 3.16-1.18 3.16-1.18.63 1.59.24 2.76.12 3.05.74.81 1.18 1.83 1.18 3.09 0 4.41-2.69 5.38-5.26 5.67.41.36.78 1.06.78 2.14 0 1.55-.01 2.79-.01 3.17 0 .31.21.67.8.56A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"
+          />
+        </svg>
       </a>
+
+      {/* LinkedIn */}
       <a
         href="https://www.linkedin.com/in/alejandro-camerlengo-1ab3981b/"
         target="_blank"
         rel="noreferrer"
         className="social-orig-link"
         title="LinkedIn"
+        aria-label="LinkedIn"
       >
-        <img src="/images/li.png" alt="LinkedIn" className="social-orig-img" />
+        <svg className="social-brand-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <rect width="24" height="24" rx="4.5" fill="#0A66C2" />
+          <path
+            fill="#FFFFFF"
+            d="M7.12 9.5H4.18V19h2.94V9.5ZM5.65 8.22c.96 0 1.73-.78 1.73-1.74a1.73 1.73 0 1 0-3.46 0c0 .96.77 1.74 1.73 1.74ZM19.82 19h-2.93v-4.63c0-1.1-.02-2.52-1.54-2.52-1.54 0-1.77 1.2-1.77 2.44V19h-2.94V9.5h2.82v1.3h.04c.39-.75 1.35-1.54 2.78-1.54 2.98 0 3.54 1.96 3.54 4.51V19Z"
+          />
+        </svg>
       </a>
+
+      {/* Gmail */}
       <a
         href="mailto:alejandrocamerlengo@gmail.com"
         className="social-orig-link"
-        title="Email"
+        title="Email (Gmail)"
+        aria-label="Email"
       >
-        <img src="/images/email.png" alt="Email" className="social-orig-img" />
+        <svg className="social-brand-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            fill="#4285F4"
+            d="M2.5 6.75V18c0 .97.78 1.75 1.75 1.75H6V9.82L2.5 6.75Z"
+          />
+          <path
+            fill="#34A853"
+            d="M18 19.75h1.75c.97 0 1.75-.78 1.75-1.75V6.75L18 9.82v9.93Z"
+          />
+          <path
+            fill="#FBBC05"
+            d="M18 4.75v5.07l3.5-3.07V5.9c0-1.45-1.65-2.28-2.8-1.4L18 4.75Z"
+          />
+          <path
+            fill="#EA4335"
+            d="M6 9.82V4.75L12 9.2l6-4.45v5.07L12 14.27 6 9.82Z"
+          />
+          <path
+            fill="#C5221F"
+            d="M2.5 5.9v.85L6 9.82V4.75l-.7-.25C4.15 3.62 2.5 4.45 2.5 5.9Z"
+          />
+        </svg>
       </a>
     </div>
   );
@@ -140,8 +180,6 @@ function ThemeToggleBtn({ colorMode, setColorMode }) {
 function UtilitiesCluster({ lang, setLang, colorMode, setColorMode, openDirection = 'up' }) {
   return (
     <div className="utility-pill-group">
-      <OriginalSocialLinks />
-      <span className="utility-divider" />
       <LanguageDropdown lang={lang} setLang={setLang} openDirection={openDirection} />
       <span className="utility-divider" />
       <ThemeToggleBtn colorMode={colorMode} setColorMode={setColorMode} />
@@ -203,12 +241,21 @@ export default function App() {
       {/* SECCIÓN ACTIVA — PANEL CENTRAL */}
       {activeSection && (
         <SectionView
+          sectionId={activeSection}
           label={NAV_ITEMS.find((item) => item.id === activeSection)?.label}
+          colorMode={colorMode}
           onClose={() => selectSection(null)}
         />
       )}
 
-      {/* UTILIDADES INFERIORES: REDES + IDIOMA + TEMA */}
+      {/* REDES DE CONTACTO ABAJO A LA IZQUIERDA */}
+      <div className="l-pos-bottom-left">
+        <div className="utility-pill-group social-pill-group">
+          <OriginalSocialLinks />
+        </div>
+      </div>
+
+      {/* PREFERENCIAS ABAJO A LA DERECHA: IDIOMA + TEMA */}
       <div className="l-pos-bottom-right">
         <UtilitiesCluster
           lang={lang}

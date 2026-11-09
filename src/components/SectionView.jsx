@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
+import QuantLambdaSection from './quantlambda/QuantLambdaSection';
 
 /**
  * Panel central translúcido donde se abre cada sección (scroll interno).
  * Se cierra con ✕, Esc, clic afuera o volviendo a tocar el botón activo.
- * El contenido actual es placeholder hasta armar cada sección.
  */
 
-// Bloque de texto falso: barras grises de distinto largo
+// Bloque de texto falso: barras grises de distinto largo (para las secciones aún en construcción)
 function SkeletonLines({ count = 4 }) {
   const widths = [100, 94, 97, 88, 92, 76, 99, 84];
   return (
@@ -47,7 +47,7 @@ function PlaceholderContent({ label }) {
   );
 }
 
-export default function SectionView({ label, onClose }) {
+export default function SectionView({ sectionId, label, colorMode = 'dark', onClose }) {
   useEffect(() => {
     const handleKey = (e) => e.key === 'Escape' && onClose();
     window.addEventListener('keydown', handleKey);
@@ -57,11 +57,21 @@ export default function SectionView({ label, onClose }) {
   return (
     <div className="sv-a-backdrop" onClick={(e) => e.target === e.currentTarget && onClose()}>
       <section className="sv-a-card" aria-label={label}>
-        <button type="button" className="sv-close" onClick={onClose} title="Cerrar (Esc)" aria-label="Cerrar">
+        <button
+          type="button"
+          className="sv-close"
+          onClick={onClose}
+          title="Cerrar (Esc)"
+          aria-label="Cerrar"
+        >
           ✕
         </button>
         <div className="sv-a-scroll">
-          <PlaceholderContent label={label} />
+          {sectionId === 'flagship' ? (
+            <QuantLambdaSection colorMode={colorMode} />
+          ) : (
+            <PlaceholderContent label={label} />
+          )}
         </div>
       </section>
     </div>
