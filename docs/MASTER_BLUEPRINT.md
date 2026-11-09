@@ -78,3 +78,18 @@ El desarrollo se organiza en **5 etapas secuenciales**, comenzando por el marco 
    - Iteración opcional sobre el diseño/UX de los proyectos de juguete para darles cohesión visual.
 5. **Etapa 5 — Proyecto Estrella (`QuantLambda` Showcase):**
    - Construcción del bloque destacado de **QuantLambda (`quantlambda.dev`)**: resumen visual e interactivo de su arquitectura end-to-end (`P-01..P-11`), sus capacidades cuantitativas/agénticas y el puente directo hacia la plataforma en producción.
+6. **Paso $n-1$ (Etapa 6) — Diseño del Ícono de la Pestaña (*Favicon*):**
+   - Diseño e iteración del ícono/monograma que se muestra en la pestaña del navegador (`index.html` / `public/`), alineado con la identidad visual definitiva de la web.
+7. **Paso $n$ (Etapa 7) — Documentación Integral de la Aplicación:**
+   - Documentación técnica y funcional completa de la aplicación (`README.md`, arquitectura de componentes, configuración de variables de entorno como `gemini-flash`, estructura de datos de ensayos/timeline y guía de despliegue/mantenimiento).
+
+---
+
+## 4. Pendientes Acordados (Se resuelven más adelante)
+
+| Pendiente | Decisión / Detalle | Cuándo |
+| :--- | :--- | :--- |
+| **Propuesta central de la landing** | Una sola línea corta en el centro de la pantalla (sin bloques de texto) para que quien entra entienda en ~2 segundos qué hace Alejandro. Hoy existe un *placeholder* visual (`.hero-tagline-slot` en `src/App.jsx`). Se propondrán 3–4 frases para elegir. | Cuando se defina el contenido/texto. |
+| **Selector de idioma** | Reemplazar el desplegable actual por una **ventana modal centrada** que ocupe la pantalla, con **buscador escribible** y **banderas**. Hasta tener i18n real, el selector actual es solo visual. | Al final, con todo el texto ya escrito. |
+| **Mejoras técnicas menores** | Canvas nítido en pantallas retina (`devicePixelRatio`), respeto de `prefers-reduced-motion`, mover utilidades de `App.jsx` a `components/`. | Pulido posterior. |
+| **API key de Gemini en el cliente** | `VITE_GEMINI_API_KEY` queda expuesta en el bundle; mover a un proxy/serverless antes de publicar. | Antes del despliegue. |

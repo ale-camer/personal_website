@@ -38,7 +38,39 @@ Se evaluó la conveniencia de incorporar lenguajes compilados de alto rendimient
 
 ---
 
-## 2. Especificación por Módulo (Etapas 2 a 5)
+## 2. Reglas de UX, Proceso de Trabajo y Distribución Espacial
+
+### 2.1 Regla de Proceso de Trabajo (Elemento por Elemento)
+- **Flujo obligatorio en 3 pasos:** **1° Proponer ideas conceptuales $\rightarrow$ 2° El usuario decide $\rightarrow$ 3° Recién ahí se ejecuta en código/documentos**.
+- **Construcción de a UN elemento por vez:** En lugar de poblar toda la pantalla con cajas invasivas simultáneamente, la landing se construye con el centro despejado cerrando un único elemento por iteración:
+  1. **Elemento 1:** El Lienzo / Fondo (Oscuro y Claro).
+  2. **Elemento 2:** Identidad Discreta arriba a la izquierda (Foto + Nombre).
+  3. **Elemento 3:** Marco Periférico Inferior (Riel vertical de redes + Idioma/Tema).
+  4. **Elemento 4:** Barra de Navegación hacia los 4 destinos.
+  5. **Elemento 5:** Animación Inicial (`AC`) y Detalle Central no invasivo.
+
+### 2.2 Reglas Espaciales (Definidas por Iteración sobre Referencias)
+A partir del análisis crítico de referencias reales (*Brittany Chiang v4*, *Jhey Tompkins*, *Lee Robinson*, *Shu Ding*, *Cassidoo*, *Anthony Fu*, etc.), se establecieron las siguientes **reglas inquebrantables de diseño** para la landing page:
+
+1. **El Deseo Exploratorio hay que Ganárselo (Cero "Diario de Texto" y Cero Abrumar):**
+   - Sitios puramente textuales o minimalistas extremos fallan porque exigen que un desconocido o reclutador invierta media hora leyendo para descubrir si hay valor (*"si tengo ganas de leer me compro el diario"*).
+   - Sitios recargados de paneles y texto abrumador también expulsan al visitante.
+   - La primera vista debe caber en **una sola pantalla limpia (sin scroll obligatorio)** y despertar curiosidad inmediata a través de **navegación clara y ganchos visuales concretos**, no bloques de texto ni formularios.
+2. **Foto + Nombre Unificados en un Lugar que No Moleste (Arriba a la Izquierda):**
+   - La foto de perfil y el nombre (`Alejandro Camerlengo`) no deben ocupar el centro de la pantalla como en la versión legacy.
+   - Se unifican en una **insignia de identidad compacta (Avatar circular + Nombre)** en la esquina superior izquierda del Header. Así el visitante identifica al autor al instante, liberando el centro de la pantalla para el contenido y la navegación.
+3. **Animación Inicial de Entrada con Iniciales (`AC`):**
+   - Inspirado en la apertura de *Brittany Chiang v4*: al entrar a la web se ejecuta una animación corta y precisa que juega geométricamente con las iniciales **`AC`** antes de revelar la pantalla principal.
+4. **Protagonismo para la Navegación, No para "Herramientas de Exploración" (Buscadores/Filtros):**
+   - Barras de búsqueda grandes (`Search projects...`) y nubes de tags/filtros no deben ocupar el centro de la aplicación.
+   - Lo que sí ocupa el centro y la estructura principal son los **accesos de navegación directa** hacia los pilares definidos de la app:
+     1. **Proyecto Estrella (`QuantLambda`)**
+     2. **Investigaciones (`Leer`)**
+     3. **Playground (`Jugar`)**
+     4. **Trayectoria (`Timeline 2011–2026`)**
+5. **Footer Vertical Lateral + Selector de Idioma en el Pie:**
+   - El selector de idioma sale del Header superior y pasa al **Footer**, manteniendo la cabecera despejada.
+   - Los enlaces de contacto (`GitHub`, `LinkedIn`, `Email`) se disponen en sentido **vertical en un riel lateral inferior** (inspirado en el riel vertical de *Brittany Chiang*), acompañado del selector de idioma/tema en la base.
 
 ### 2.1 Etapa 2: Trayectoria — Timeline Proporcional de Doble Eje (`2011–2026`)
 Basado en la referencia visual (`_legacy/reference_timeline_cv.jpg`), vive en su propia pestaña para mantener la web libre de formato "currículum corporativo":
