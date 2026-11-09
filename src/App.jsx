@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import IntangibleCanvasBackground from './components/IntangibleCanvasBackground';
 import IdentityBadge from './components/IdentityBadge';
-import TopNavBar from './components/TopNavBar';
+import TopNavBar, { NAV_ITEMS } from './components/TopNavBar';
+import SectionView from './components/SectionView';
 
 const LANGUAGES = [
   { code: 'ES', flag: '/images/flags/es.svg', label: 'Español' },
@@ -197,6 +198,14 @@ export default function App() {
         <div className="hero-tagline-slot" aria-hidden="true">
           <p className="hero-tagline-placeholder">[ Propuesta central — texto pendiente ]</p>
         </div>
+      )}
+
+      {/* SECCIÓN ACTIVA — PANEL CENTRAL */}
+      {activeSection && (
+        <SectionView
+          label={NAV_ITEMS.find((item) => item.id === activeSection)?.label}
+          onClose={() => selectSection(null)}
+        />
       )}
 
       {/* UTILIDADES INFERIORES: REDES + IDIOMA + TEMA */}
