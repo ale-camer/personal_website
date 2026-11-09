@@ -33,7 +33,7 @@ const SECTION_SLUGS = {
 };
 
 function readSectionFromHash() {
-  const slug = window.location.hash.replace('#', '').toLowerCase();
+  const slug = window.location.hash.replace('#', '').split('/')[0].toLowerCase();
   const match = Object.entries(SECTION_SLUGS).find(([, s]) => s === slug);
   return match ? match[0] : null;
 }
@@ -43,11 +43,11 @@ function OriginalSocialLinks() {
     <div className="social-original-links" aria-label="Redes y contacto directo">
       {/* GitHub */}
       <a
-        href="https://github.com/ale-camer/personal_website"
+        href="https://github.com/ale-camer/"
         target="_blank"
         rel="noreferrer"
         className="social-orig-link"
-        title="GitHub"
+        title="GitHub (ale-camer)"
         aria-label="GitHub"
       >
         <svg className="social-brand-svg github-svg" viewBox="0 0 24 24" aria-hidden="true">

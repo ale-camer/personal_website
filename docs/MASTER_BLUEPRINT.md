@@ -85,12 +85,28 @@ El desarrollo se organiza en **5 etapas secuenciales**, comenzando por el marco 
 
 ---
 
-## 4. Pendientes Acordados (Se resuelven más adelante)
+## 4. Orden de Avance Actual (De lo Más Fácil a lo Más Difícil) y Pendientes Acordados
+
+### 4.1 Orden de Ejecución Definido
+1. **`1. Recorrido` (`#recorrido`)**:
+   - Limpieza de etiquetas (`RUNNING`, `SUCCESS`, `ARTIFACT`, `pipeline: ...` y tags) y etiquetas en 2 líneas (Rol/Título arriba + Empresa/Universidad abajo) — **hecho**.
+   - **Pendiente anotado:** Agregar el contenido definitivo del CV en el que Alejandro está trabajando actualmente cuando esté listo.
+2. **`2. Análisis` (`#analisis`)**:
+   - Rehacer los estudios con los datos pertinentes actualizados (fuentes propias) y evaluar agregar **Forecast** a las series.
+3. **`3. Proyectos` (`#proyectos`)**:
+   - Darles una nueva estética (lavada de cara Sci-Fi/Tech) y **rehacer todo el código** de las 4 aplicaciones interactivas (*Spark 3.5 Encyclopedia*, *Crypto Analytics*, *World Map Explorer* y *World Bank Explorer*) para que corran integradas en la web.
+4. **`4. Home y Cierre General`**:
+   - Frase central de la portada, pase de diseño general unificado, selector de idiomas y traducciones.
+
+### 4.2 Tabla de Pendientes Acordados
 
 | Pendiente | Decisión / Detalle | Cuándo |
 | :--- | :--- | :--- |
-| **Unificación de patrones de diseño (Design System final)** | Definir y estandarizar cómo deben verse todos los elementos que cumplen la misma función en las 4 secciones: jerarquía de títulos/subtítulos, estilo de tarjetas (`cards`), píldoras/badges, listas de bullets, botones primarios/secundarios, espaciados y bordes. | Al final, una vez armadas las 4 secciones. |
-| **Propuesta central de la landing** | Una sola línea corta en el centro de la pantalla (sin bloques de texto) para que quien entra entienda en ~2 segundos qué hace Alejandro. Hoy existe un *placeholder* visual (`.hero-tagline-slot` en `src/App.jsx`). Se propondrán 3–4 frases para elegir. | Cuando se defina el contenido/texto. |
-| **Selector de idioma** | Reemplazar el desplegable actual por una **ventana modal centrada** que ocupe la pantalla, con **buscador escribible** y **banderas**. Hasta tener i18n real, el selector actual es solo visual. | Al final, con todo el texto ya escrito. |
-| **Mejoras técnicas menores** | Canvas nítido en pantallas retina (`devicePixelRatio`), respeto de `prefers-reduced-motion`, mover utilidades de `App.jsx` a `components/`. | Pulido posterior. |
-| **API key de Gemini en el cliente** | `VITE_GEMINI_API_KEY` queda expuesta en el bundle; mover a un proxy/serverless antes de publicar. | Antes del despliegue. |
+| **Contenido definitivo del CV en `Recorrido` (`#recorrido`)** | Incorporar el texto definitivo de responsabilidades y logros del CV en el que Alejandro está trabajando actualmente. | Cuando esté cerrada la nueva versión del CV. |
+| **Pulir perfil de GitHub (`https://github.com/ale-camer/`)** | El ícono de GitHub en el Home ya apunta a `https://github.com/ale-camer/` (y el de Gmail a `mailto:alejandrocamerlengo@gmail.com`). Queda anotado pulir el perfil público de GitHub (README de perfil, repos fijados, descripciones). | Tarea de perfil externo. |
+| **Rehacer `Análisis` (`#analisis`) con datos actualizados + Forecast** | Actualizar las series con fuentes propias, rehacer el estudio de Macroeconomía y Empleo en Argentina (y demás análisis) e incorporar proyecciones / **Forecast**. | Paso 2 del orden actual. |
+| **Rehacer código y estética de las 4 apps de `Proyectos` (`#proyectos`)** | No mostrar los repositorios de GitHub sino **las aplicaciones interactivas en sí**, rehaciendo su código y dándoles una nueva estética moderna/Sci-Fi coherente con el sitio. | Paso 3 del orden actual. |
+| **Unificación de patrones de diseño (Design System final — Estética Sci-Fi / Tech Engineering)** | Definir y estandarizar cómo deben verse todos los elementos que cumplen la misma función en las 4 secciones (jerarquía de títulos/subtítulos, `cards`, badges, bullets, botones, espaciados y bordes) explorando variantes **Sci-Fi / Futuristas inspiradas en herramientas reales de ingeniería** (*DAG Pipeline*, *Git Branch Graph*, *PCB Circuit*, *Telemetry HUD*, *Terminal Trace*). | Paso 4 (Al final, con las secciones listas). |
+| **Propuesta central de la landing (`Home`)** | Una sola línea corta en el centro de la pantalla (`.hero-tagline-slot` en `src/App.jsx`). Se propondrán 3–4 frases para elegir. | Paso 4 (`Home`). |
+| **Selector de idioma masivo (estilo `quantlambda.dev`) + Traducciones** | Incorporar la mayor cantidad de idiomas posibles (como el catálogo de **56 idiomas con banderas SVG y ventana modal centrada con buscador** de `quantlambda.dev` en `market-intelligence-dashboard/src/data/i18n/languages.js`), realizando las traducciones recién cuando todo el texto definitivo esté cerrado. | Al final de todo el proyecto. |
+| **Mejoras técnicas menores y seguridad** | Canvas nítido en pantallas retina (`devicePixelRatio`), respeto de `prefers-reduced-motion`, mover utilidades de `App.jsx` a `components/`, y asegurar `VITE_GEMINI_API_KEY` detrás de un proxy antes de publicar. | Pulido previo al despliegue. |
