@@ -1,12 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import IntangibleCanvasBackground from './components/IntangibleCanvasBackground';
 import IdentityBadge from './components/IdentityBadge';
 import TopNavBar, { getNavLabel } from './components/TopNavBar';
-import SectionView from './components/SectionView';
 import HomeCenterShowcase from './components/HomeCenterShowcase';
-import LanguageModal from './components/LanguageModal';
 import { LANGUAGES, FlagBadge } from './i18n/languages';
 import { tx, useSiteLocale } from './i18n/localeService';
+
+const SectionView = lazy(() => import('./components/SectionView'));
+const LanguageModal = lazy(() => import('./components/LanguageModal'));
 
 // id interno de sección -> slug visible en la URL
 const SECTION_SLUGS = {
@@ -281,7 +282,7 @@ export default function App() {
   return (
     <div className={`canvas-shell mode-${colorMode}`}>
       {/* ELEMENTO 1: FONDO MULTICAPA DE RED */}
-      <IntangibleCanvasBackground colorMode={colorMode} />
+      <IntangibleCanvasBackground colorMode={colorMode} isPaused={Boolean(activeSection) || langOpen} />
 
       {/* CABECERA: IDENTIDAD (IZQUIERDA) + NAVEGACIÓN (DERECHA) */}
       <header className="l-pos-top-split">
@@ -292,6 +293,7 @@ export default function App() {
           lang={lang}
           externalOpen={chatOpen}
           onDrawerChange={setChatOpen}
+          onSelectSection={selectSection}
         />
         <TopNavBar
           activeId={activeSection}
@@ -317,17 +319,23 @@ export default function App() {
 
       {/* SECCIÓN ACTIVA — PANEL CENTRAL */}
       {activeSection && (
-        <SectionView
-          sectionId={activeSection}
-          label={getNavLabel(activeSection, lang)}
-          colorMode={colorMode}
-          lang={lang}
-          onClose={() => selectSection(null)}
-        />
+        <Suspense fallback={null}>
+          <SectionView
+            sectionId={activeSection}
+            label={getNavLabel(activeSection, lang)}
+            colorMode={colorMode}
+            lang={lang}
+            onClose={() => selectSection(null)}
+          />
+        </Suspense>
       )}
 
       {/* MODAL CENTRADO DE SELECCIÓN DE IDIOMA (56 IDIOMAS CON BUSCADOR Y BANDERAS SVG) */}
-      <LanguageModal lang={lang} setLang={setLang} open={langOpen} setOpen={setLangOpen} />
+      {langOpen && (
+        <Suspense fallback={null}>
+          <LanguageModal lang={lang} setLang={setLang} open={langOpen} setOpen={setLangOpen} />
+        </Suspense>
+      )}
 
       {/* REDES DE CONTACTO ABAJO A LA IZQUIERDA */}
       <div className="l-pos-bottom-left">

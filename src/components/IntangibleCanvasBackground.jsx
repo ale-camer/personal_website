@@ -1,12 +1,10 @@
 import React, { useEffect, useRef } from 'react';
 
 /**
- * ELEMENTO 1 DEFINITIVO — FONDO INTERACTIVO MULTIDISCIPLINARIO:
- * - Paleta de 4 colores por dominio sobre fondo neutro (siempre visible en toda la pantalla)
- * - 3 Planos de profundidad con Parallax escalonado
- * - Puentes en el Eje Z entre capas contiguas
- * - Jerarquía de nodos limpia (sin halos/brillos que distraigan)
- * - Cometas y estelas de flujo viajando por las conexiones
+ * ELEMENTO 1 DEFINITIVO — FONDO INTERACTIVO MULTIDISCIPLINARIO (ULTRA-LIVIANO):
+ * - Optimizado para 60fps estables en mobile y desktop (cero createLinearGradient por arista)
+ * - Escala automáticamente la cantidad de nodos en pantallas móviles (< 768px)
+ * - Pausa el loop de renderizado cuando la pestaña no está visible (document.hidden)
  */
 const DOMAIN_COLORS = {
   dark: {
@@ -23,30 +21,29 @@ const DOMAIN_COLORS = {
   }
 };
 
-// 3 Planos de profundidad definitivos (0 = Primer Plano, 1 = Plano Medio, 2 = Plano Profundo)
 const PLANE_CONFIGS = [
   {
     layer: 0,
-    nodeCount: 34,
-    hubCount: 8,
+    nodeCount: 28,
+    hubCount: 6,
     sizeRange: [2.2, 3.0],
-    hubSize: 4.2,
+    hubSize: 4.1,
     speedMult: 1.0,
     edgeAlphaDark: 0.25,
     edgeAlphaLight: 0.29,
     nodeAlphaDark: 0.74,
     nodeAlphaLight: 0.8,
     linkDistScale: 1.0,
-    parallaxStrength: -18,
-    trailLength: 8,
-    cometRadius: 1.85
+    parallaxStrength: -16,
+    trailLength: 5,
+    cometRadius: 1.8
   },
   {
     layer: 1,
-    nodeCount: 28,
+    nodeCount: 22,
     hubCount: 4,
-    sizeRange: [1.6, 2.15],
-    hubSize: 3.1,
+    sizeRange: [1.6, 2.1],
+    hubSize: 3.0,
     speedMult: 0.65,
     edgeAlphaDark: 0.16,
     edgeAlphaLight: 0.19,
@@ -54,14 +51,14 @@ const PLANE_CONFIGS = [
     nodeAlphaLight: 0.56,
     linkDistScale: 0.82,
     parallaxStrength: -4,
-    trailLength: 5,
-    cometRadius: 1.4
+    trailLength: 3,
+    cometRadius: 1.35
   },
   {
     layer: 2,
-    nodeCount: 26,
+    nodeCount: 18,
     hubCount: 0,
-    sizeRange: [1.15, 1.55],
+    sizeRange: [1.15, 1.5],
     hubSize: 0,
     speedMult: 0.42,
     edgeAlphaDark: 0.1,
@@ -69,33 +66,42 @@ const PLANE_CONFIGS = [
     nodeAlphaDark: 0.32,
     nodeAlphaLight: 0.36,
     linkDistScale: 0.68,
-    parallaxStrength: 10,
-    trailLength: 3,
-    cometRadius: 1.1
+    parallaxStrength: 8,
+    trailLength: 0,
+    cometRadius: 1.05
   }
 ];
 
-export default function IntangibleCanvasBackground({ colorMode = 'dark' }) {
+export default function IntangibleCanvasBackground({ colorMode = 'dark', isPaused = false }) {
   const canvasRef = useRef(null);
   const mouseRef = useRef({ x: -1000, y: -1000, targetX: -1000, targetY: -1000 });
   const colorModeRef = useRef(colorMode);
+  const isPausedRef = useRef(isPaused);
 
   useEffect(() => {
     colorModeRef.current = colorMode;
   }, [colorMode]);
 
   useEffect(() => {
+    isPausedRef.current = isPaused;
+  }, [isPaused]);
+
+  useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: false });
 
     let animationFrameId;
     let width = window.innerWidth;
     let height = window.innerHeight;
+    let isMobile = width < 768;
+
     const applyCanvasSize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
       width = window.innerWidth;
       height = window.innerHeight;
+      isMobile = width < 768;
+      // En móviles limitamos DPR a 1.25 para reducir un 60% el fill-rate de GPU
+      const dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1.25 : 1.75);
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -108,13 +114,16 @@ export default function IntangibleCanvasBackground({ colorMode = 'dark' }) {
     mouseRef.current.targetY = height * 0.5;
 
     const domains = ['finance', 'math', 'ds', 'aie'];
+    const densityScale = isMobile ? 0.52 : 1.0;
 
     const planes = PLANE_CONFIGS.map((cfg) => {
       const layerNodes = [];
+      const hubTotal = Math.max(0, Math.round(cfg.hubCount * densityScale));
+      const regularTotal = Math.max(6, Math.round(cfg.nodeCount * densityScale));
 
-      for (let h = 0; h < cfg.hubCount; h++) {
+      for (let h = 0; h < hubTotal; h++) {
         const dom = domains[h % 4];
-        const angle = (h / cfg.hubCount) * Math.PI * 2 + (cfg.layer * 0.5 + 0.35);
+        const angle = (h / hubTotal) * Math.PI * 2 + (cfg.layer * 0.5 + 0.35);
         const rx = width * (0.5 + Math.cos(angle) * (0.28 - cfg.layer * 0.04));
         const ry = height * (0.5 + Math.sin(angle) * (0.26 - cfg.layer * 0.04));
         layerNodes.push({
@@ -124,26 +133,25 @@ export default function IntangibleCanvasBackground({ colorMode = 'dark' }) {
           isHub: true,
           x: rx,
           y: ry,
-          vx: (Math.random() - 0.5) * 0.38 * cfg.speedMult,
-          vy: (Math.random() - 0.5) * 0.38 * cfg.speedMult,
+          vx: (Math.random() - 0.5) * 0.36 * cfg.speedMult,
+          vy: (Math.random() - 0.5) * 0.36 * cfg.speedMult,
           size: cfg.hubSize,
           trail: []
         });
       }
 
-      for (let i = 0; i < cfg.nodeCount; i++) {
+      for (let i = 0; i < regularTotal; i++) {
         const dom = domains[i % 4];
-        const speed = (0.42 + Math.random() * 0.45) * cfg.speedMult;
+        const speed = (0.4 + Math.random() * 0.42) * cfg.speedMult;
         const dir = Math.random() * Math.PI * 2;
-        const size =
-          cfg.sizeRange[0] + Math.random() * (cfg.sizeRange[1] - cfg.sizeRange[0]);
+        const size = cfg.sizeRange[0] + Math.random() * (cfg.sizeRange[1] - cfg.sizeRange[0]);
         layerNodes.push({
           id: `L${cfg.layer}_n_${i}`,
           layer: cfg.layer,
           domain: dom,
           isHub: false,
-          x: 35 + Math.random() * (width - 70),
-          y: 35 + Math.random() * (height - 70),
+          x: 35 + Math.random() * Math.max(40, width - 70),
+          y: 35 + Math.random() * Math.max(40, height - 70),
           vx: Math.cos(dir) * speed,
           vy: Math.sin(dir) * speed,
           size,
@@ -164,37 +172,40 @@ export default function IntangibleCanvasBackground({ colorMode = 'dark' }) {
       mouseRef.current.targetY = e.clientY;
     };
 
-    window.addEventListener('resize', handleResize);
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('resize', handleResize, { passive: true });
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
 
     let time = 0;
 
-    const drawComet = (x1, y1, x2, y2, t, rgb, alpha, radius, tailLen = 0.24) => {
+    // Dibuja el cometa en 2 trazos simples sin alocar objetos CanvasGradient por frame
+    const drawCometFast = (x1, y1, x2, y2, t, rgb, alpha, radius, tailLen = 0.22) => {
       const tStart = Math.max(0, t - tailLen);
       const px = x1 + (x2 - x1) * t;
       const py = y1 + (y2 - y1) * t;
       const tx = x1 + (x2 - x1) * tStart;
       const ty = y1 + (y2 - y1) * tStart;
-
-      const grad = ctx.createLinearGradient(tx, ty, px, py);
-      grad.addColorStop(0, `rgba(${rgb}, 0)`);
-      grad.addColorStop(1, `rgba(${rgb}, ${Math.min(1, alpha)})`);
+      const a = Math.min(1, alpha);
 
       ctx.beginPath();
       ctx.moveTo(tx, ty);
       ctx.lineTo(px, py);
-      ctx.strokeStyle = grad;
-      ctx.lineWidth = radius * 1.45;
+      ctx.strokeStyle = `rgba(${rgb}, ${(a * 0.48).toFixed(2)})`;
+      ctx.lineWidth = radius * 1.35;
       ctx.lineCap = 'round';
       ctx.stroke();
 
       ctx.beginPath();
       ctx.arc(px, py, radius, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${rgb}, ${Math.min(1, alpha)})`;
+      ctx.fillStyle = `rgba(${rgb}, ${a.toFixed(2)})`;
       ctx.fill();
     };
 
     const render = () => {
+      if (document.hidden || isPausedRef.current) {
+        animationFrameId = requestAnimationFrame(render);
+        return;
+      }
+
       time += 0.008;
       const isDark = colorModeRef.current === 'dark';
       const palette = DOMAIN_COLORS[isDark ? 'dark' : 'light'];
@@ -210,39 +221,40 @@ export default function IntangibleCanvasBackground({ colorMode = 'dark' }) {
       ctx.fillStyle = isDark ? '#09090c' : '#f6f4ef';
       ctx.fillRect(0, 0, width, height);
 
-      const spotRadius = 390;
+      const spotRadius = isMobile ? 260 : 390;
 
-      // Halo sutil del Spotlight
+      // Único gradiente radial por frame (1 por frame en total)
       const spotGrad = ctx.createRadialGradient(mx, my, 0, mx, my, spotRadius);
-      spotGrad.addColorStop(0, isDark ? 'rgba(245, 158, 11, 0.065)' : 'rgba(180, 83, 9, 0.045)');
-      spotGrad.addColorStop(0.5, isDark ? 'rgba(168, 85, 247, 0.04)' : 'rgba(109, 40, 217, 0.03)');
+      spotGrad.addColorStop(0, isDark ? 'rgba(245, 158, 11, 0.06)' : 'rgba(180, 83, 9, 0.04)');
+      spotGrad.addColorStop(0.5, isDark ? 'rgba(168, 85, 247, 0.035)' : 'rgba(109, 40, 217, 0.025)');
       spotGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
       ctx.fillStyle = spotGrad;
       ctx.fillRect(0, 0, width, height);
 
-      const baseMaxDist = Math.min(width, height) * 0.21;
+      const baseMaxDist = Math.min(width, height) * (isMobile ? 0.25 : 0.21);
 
-      // Renderizar los 3 planos desde el más lejano (2) hasta el frontal (0)
       for (let pIdx = planes.length - 1; pIdx >= 0; pIdx--) {
         const { cfg, nodes } = planes[pIdx];
         const parX = normMx * cfg.parallaxStrength;
         const parY = normMy * cfg.parallaxStrength;
+        const maxTrail = isMobile ? 0 : cfg.trailLength;
 
-        nodes.forEach((n) => {
+        for (let k = 0; k < nodes.length; k++) {
+          const n = nodes[k];
           const rx = n.x + parX;
           const ry = n.y + parY;
           n.renderX = rx;
           n.renderY = ry;
 
-          if (cfg.trailLength > 0) {
+          if (maxTrail > 0) {
             n.trail.push({ x: rx, y: ry });
-            if (n.trail.length > cfg.trailLength) n.trail.shift();
+            if (n.trail.length > maxTrail) n.trail.shift();
           }
 
           n.x += n.vx;
           n.y += n.vy;
 
-          const pad = 26;
+          const pad = 24;
           if (n.x < pad) {
             n.x = pad;
             n.vx = Math.abs(n.vx);
@@ -257,29 +269,33 @@ export default function IntangibleCanvasBackground({ colorMode = 'dark' }) {
             n.y = height - pad;
             n.vy = -Math.abs(n.vy);
           }
-        });
+        }
 
         const planeMaxDist = baseMaxDist * cfg.linkDistScale;
         const baseEdgeAlpha = isDark ? cfg.edgeAlphaDark : cfg.edgeAlphaLight;
         const baseNodeAlpha = isDark ? cfg.nodeAlphaDark : cfg.nodeAlphaLight;
 
-        // Conexiones internas del plano
         for (let i = 0; i < nodes.length; i++) {
           const n1 = nodes[i];
           const x1 = n1.renderX;
           const y1 = n1.renderY;
           const dMouse1 = Math.hypot(x1 - mx, y1 - my);
           const inf1 = Math.max(0, 1 - dMouse1 / spotRadius);
+          const rgb1 = palette[n1.domain].rgb;
 
           for (let j = i + 1; j < nodes.length; j++) {
             const n2 = nodes[j];
             const x2 = n2.renderX;
             const y2 = n2.renderY;
 
+            // Descarte rápido por bounding box antes de Math.hypot
+            const dx = Math.abs(x1 - x2);
+            const dy = Math.abs(y1 - y2);
             const isHubBridge = n1.isHub || n2.isHub;
             const linkLimit = isHubBridge ? planeMaxDist * 1.25 : planeMaxDist;
+            if (dx >= linkLimit || dy >= linkLimit) continue;
 
-            const dNodes = Math.hypot(x1 - x2, y1 - y2);
+            const dNodes = Math.hypot(dx, dy);
             if (dNodes >= linkLimit) continue;
 
             const dMouse2 = Math.hypot(x2 - mx, y2 - my);
@@ -289,108 +305,40 @@ export default function IntangibleCanvasBackground({ colorMode = 'dark' }) {
 
             const spotBoost = pairInf * (0.48 / (1 + cfg.layer * 0.45));
             const alpha = distFactor * Math.min(0.86, baseEdgeAlpha + spotBoost);
-            if (alpha < 0.015) continue;
-
-            const rgb1 = palette[n1.domain].rgb;
-            const rgb2 = palette[n2.domain].rgb;
+            if (alpha < 0.02) continue;
 
             ctx.beginPath();
             ctx.moveTo(x1, y1);
             ctx.lineTo(x2, y2);
-
-            if (n1.domain !== n2.domain) {
-              const grad = ctx.createLinearGradient(x1, y1, x2, y2);
-              grad.addColorStop(0, `rgba(${rgb1}, ${alpha})`);
-              grad.addColorStop(1, `rgba(${rgb2}, ${alpha})`);
-              ctx.strokeStyle = grad;
-            } else {
-              ctx.strokeStyle = `rgba(${rgb1}, ${alpha})`;
-            }
-
-            ctx.lineWidth = isHubBridge ? 1.35 : Math.max(0.5, 0.9 - cfg.layer * 0.12);
+            ctx.strokeStyle = `rgba(${rgb1}, ${alpha.toFixed(2)})`;
+            ctx.lineWidth = isHubBridge ? 1.3 : Math.max(0.5, 0.85 - cfg.layer * 0.12);
             ctx.stroke();
 
-            const cometModulo = cfg.layer === 0 ? 3 : cfg.layer === 1 ? 4 : 6;
-            if ((i + j) % cometModulo === 0 && distFactor > 0.28) {
-              const pulseSpeed = (0.46 + (pairInf > 0.2 ? 0.18 : 0)) * cfg.speedMult;
+            const cometModulo = isMobile ? 6 : cfg.layer === 0 ? 4 : 6;
+            if ((i + j) % cometModulo === 0 && distFactor > 0.3) {
+              const pulseSpeed = (0.46 + (pairInf > 0.2 ? 0.16 : 0)) * cfg.speedMult;
               const pulseT = (time * pulseSpeed + (i * 0.19 + j * 0.13)) % 1;
               const pulseAlpha = Math.min(
                 1,
-                baseNodeAlpha * 0.85 + pairInf * (0.45 / (1 + cfg.layer * 0.35))
+                baseNodeAlpha * 0.85 + pairInf * (0.42 / (1 + cfg.layer * 0.35))
               );
-              drawComet(
+              drawCometFast(
                 x1,
                 y1,
                 x2,
                 y2,
                 pulseT,
-                rgb2,
+                palette[n2.domain].rgb,
                 pulseAlpha,
-                isHubBridge ? cfg.cometRadius * 1.15 : cfg.cometRadius
+                isHubBridge ? cfg.cometRadius * 1.1 : cfg.cometRadius
               );
             }
           }
         }
 
-        // Puentes en el Eje Z hacia el plano contiguo más cercano
-        if (pIdx > 0) {
-          const closerPlane = planes[pIdx - 1];
-          const zMaxDist = planeMaxDist * 0.72;
-
-          for (let i = 0; i < nodes.length; i += 2) {
-            const deepNode = nodes[i];
-            const x1 = deepNode.renderX;
-            const y1 = deepNode.renderY;
-
-            for (let j = 0; j < closerPlane.nodes.length; j++) {
-              const nearNode = closerPlane.nodes[j];
-              if (!nearNode.isHub && j % 3 !== 0) continue;
-
-              const x2 = nearNode.renderX ?? nearNode.x;
-              const y2 = nearNode.renderY ?? nearNode.y;
-              const dZ = Math.hypot(x1 - x2, y1 - y2);
-
-              if (dZ < zMaxDist) {
-                const distFactor = 1 - dZ / zMaxDist;
-                const dMouse = Math.hypot((x1 + x2) * 0.5 - mx, (y1 + y2) * 0.5 - my);
-                const inf = Math.max(0, 1 - dMouse / spotRadius);
-                const zAlpha = distFactor * (baseEdgeAlpha * 0.75 + inf * 0.22);
-
-                const rgbDeep = palette[deepNode.domain].rgb;
-                const rgbNear = palette[nearNode.domain].rgb;
-
-                const grad = ctx.createLinearGradient(x1, y1, x2, y2);
-                grad.addColorStop(0, `rgba(${rgbDeep}, ${zAlpha * 0.55})`);
-                grad.addColorStop(1, `rgba(${rgbNear}, ${zAlpha * 1.15})`);
-
-                ctx.beginPath();
-                ctx.moveTo(x1, y1);
-                ctx.lineTo(x2, y2);
-                ctx.strokeStyle = grad;
-                ctx.lineWidth = 0.7;
-                ctx.stroke();
-
-                if ((i + j) % 4 === 0 && distFactor > 0.32) {
-                  const zT = (time * 0.38 + (i * 0.23 + j * 0.17)) % 1;
-                  drawComet(
-                    x1,
-                    y1,
-                    x2,
-                    y2,
-                    zT,
-                    rgbNear,
-                    Math.min(0.9, zAlpha * 2.4),
-                    cfg.cometRadius * 1.05,
-                    0.28
-                  );
-                }
-              }
-            }
-          }
-        }
-
-        // Nodos limpios (sin halo ni brillo externo que distraiga)
-        nodes.forEach((n) => {
+        // Nodos limpios
+        for (let k = 0; k < nodes.length; k++) {
+          const n = nodes[k];
           const x = n.renderX;
           const y = n.renderY;
           const dMouse = Math.hypot(x - mx, y - my);
@@ -403,9 +351,9 @@ export default function IntangibleCanvasBackground({ colorMode = 'dark' }) {
             for (let tIdx = 1; tIdx < n.trail.length; tIdx++) {
               ctx.lineTo(n.trail[tIdx].x, n.trail[tIdx].y);
             }
-            const trailAlpha = (isDark ? 0.16 : 0.2) * (cfg.layer === 0 ? 1 : 0.6);
-            ctx.strokeStyle = `rgba(${domainRgb}, ${trailAlpha})`;
-            ctx.lineWidth = n.isHub ? 1.6 : 1.05;
+            const trailAlpha = (isDark ? 0.15 : 0.19) * (cfg.layer === 0 ? 1 : 0.6);
+            ctx.strokeStyle = `rgba(${domainRgb}, ${trailAlpha.toFixed(2)})`;
+            ctx.lineWidth = n.isHub ? 1.5 : 1.0;
             ctx.stroke();
           }
 
@@ -413,13 +361,13 @@ export default function IntangibleCanvasBackground({ colorMode = 'dark' }) {
             1,
             baseNodeAlpha + inf * (0.28 / (1 + cfg.layer * 0.35))
           );
-          const radius = n.size + inf * (cfg.layer === 0 ? 0.9 : 0.45);
+          const radius = n.size + inf * (cfg.layer === 0 ? 0.85 : 0.4);
 
           ctx.beginPath();
           ctx.arc(x, y, radius, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(${domainRgb}, ${activeAlpha})`;
+          ctx.fillStyle = `rgba(${domainRgb}, ${activeAlpha.toFixed(2)})`;
           ctx.fill();
-        });
+        }
       }
 
       animationFrameId = requestAnimationFrame(render);

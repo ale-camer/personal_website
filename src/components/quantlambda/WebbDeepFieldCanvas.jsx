@@ -190,28 +190,28 @@ export default function WebbDeepFieldCanvas({
       if (vw <= 680 || (isTouch && vw <= 768)) {
         return {
           tier: 'mobile',
-          dpr: cores <= 4 ? 0.75 : 0.88,
-          particles: 7500,
+          dpr: cores <= 4 ? 0.65 : 0.75,
+          particles: 2800,
           antialias: false,
-          speedMult: 1.28,
+          speedMult: 1.2,
         };
       }
       // Tier 2: Tablet (681px - 1024px or touch screen)
       if (vw <= 1024 || isTouch) {
         return {
           tier: 'tablet',
-          dpr: 1.1,
-          particles: 13500,
+          dpr: 0.9,
+          particles: 5500,
           antialias: false,
-          speedMult: 1.12,
+          speedMult: 1.1,
         };
       }
       // Tier 3: Desktop (> 1024px)
       return {
         tier: 'desktop',
-        dpr: Math.min(window.devicePixelRatio || 1, 2),
-        particles: 24000,
-        antialias: true,
+        dpr: Math.min(window.devicePixelRatio || 1, 1.35),
+        particles: 9500,
+        antialias: false,
         speedMult: 1.0,
       };
     };
