@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { tx, txList, useSiteLocale } from '../../i18n/localeService';
 
 export const WORK_ITEMS = [
@@ -316,6 +316,16 @@ function buildDagConnectorPath(side, labelY, midPct) {
 export default function TimelineSection({ colorMode = 'dark', lang = 'ES' }) {
   useSiteLocale(lang);
   const [selectedId, setSelectedId] = useState('tongo');
+  const inspectorRef = useRef(null);
+
+  const handleSelectNode = (id) => {
+    setSelectedId(id);
+    if (typeof window !== 'undefined' && window.innerWidth <= 680) {
+      setTimeout(() => {
+        inspectorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 60);
+    }
+  };
 
   const selectedItem = ALL_ITEMS.find((it) => it.id === selectedId) || ALL_ITEMS[0];
   const activeSpanTop = getTopPct(selectedItem.end);
@@ -418,7 +428,7 @@ export default function TimelineSection({ colorMode = 'dark', lang = 'ES' }) {
                       '--item-accent': item.colorAccent,
                       '--item-rgb': item.colorRgb
                     }}
-                    onClick={() => setSelectedId(item.id)}
+                    onClick={() => handleSelectNode(item.id)}
                   />
 
                   <svg
@@ -456,7 +466,7 @@ export default function TimelineSection({ colorMode = 'dark', lang = 'ES' }) {
                       '--item-accent': item.colorAccent,
                       '--item-rgb': item.colorRgb
                     }}
-                    onClick={() => setSelectedId(item.id)}
+                    onClick={() => handleSelectNode(item.id)}
                   >
                     <div className="tl-node-main-row">
                       <div className="tl-node-titles">
@@ -524,7 +534,7 @@ export default function TimelineSection({ colorMode = 'dark', lang = 'ES' }) {
                       '--item-accent': item.colorAccent,
                       '--item-rgb': item.colorRgb
                     }}
-                    onClick={() => setSelectedId(item.id)}
+                    onClick={() => handleSelectNode(item.id)}
                   />
 
                   <svg
@@ -562,7 +572,7 @@ export default function TimelineSection({ colorMode = 'dark', lang = 'ES' }) {
                       '--item-accent': item.colorAccent,
                       '--item-rgb': item.colorRgb
                     }}
-                    onClick={() => setSelectedId(item.id)}
+                    onClick={() => handleSelectNode(item.id)}
                   >
                     <div className="tl-node-main-row">
                       <div className="tl-node-titles">
@@ -585,6 +595,7 @@ export default function TimelineSection({ colorMode = 'dark', lang = 'ES' }) {
 
       {/* CAJA EXPLICATORIA ABAJO (CON EL CONTENIDO DEL CV SIN TAGS) */}
       <footer
+        ref={inspectorRef}
         className="tl-bottom-inspector"
         style={{
           '--insp-accent': selectedItem.colorAccent,

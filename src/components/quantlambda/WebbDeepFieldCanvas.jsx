@@ -328,8 +328,22 @@ export default function WebbDeepFieldCanvas({
       ro.observe(canvas.parentElement);
     }
 
+    let isOffscreen = false;
+    let io = null;
+    if (typeof IntersectionObserver !== 'undefined' && canvas.parentElement) {
+      io = new IntersectionObserver(
+        (entries) => {
+          if (entries[0]) isOffscreen = !entries[0].isIntersecting;
+        },
+        { threshold: 0.05 }
+      );
+      io.observe(canvas.parentElement);
+    }
+
     let animId;
     let lastTime = performance.now();
+    let lastDrawTime = 0;
+    const minFrameMs = profile.tier === 'mobile' ? 1000 / 30 : profile.tier === 'tablet' ? 1000 / 45 : 0;
     let elapsed = 0;
     let currentPairFloat = selectedSceneRef.current !== null ? Number(selectedSceneRef.current) % 4 : 0;
 
@@ -339,6 +353,17 @@ export default function WebbDeepFieldCanvas({
     let didAutoScaleDown = false;
 
     const render = (now) => {
+      if (document.hidden || isOffscreen) {
+        lastTime = now;
+        animId = requestAnimationFrame(render);
+        return;
+      }
+      if (minFrameMs > 0 && now - lastDrawTime < minFrameMs) {
+        animId = requestAnimationFrame(render);
+        return;
+      }
+      lastDrawTime = now;
+
       const rawDeltaMs = now - lastTime;
       const dt = Math.min(0.1, Math.max(0, rawDeltaMs * 0.001));
       lastTime = now;
@@ -459,6 +484,7 @@ export default function WebbDeepFieldCanvas({
       cancelAnimationFrame(animId);
       window.removeEventListener('resize', resize);
       if (ro) ro.disconnect();
+      if (io) io.disconnect();
       gl.deleteBuffer(quadBuf);
       gl.deleteBuffer(particleBuf);
       if (darkSuite) {

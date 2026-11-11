@@ -2,16 +2,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import { tx, useSiteLocale } from '../i18n/localeService';
 
 const SYSTEM_PROMPT_GUARDRAIL = `Sos el asistente personal integrado en la web de Alejandro Camerlengo.
-REGLA ESTRICTA E INQUEBRANTABLE:
-Solo podés responder preguntas sobre lo que hay en esta aplicación web y el CV de Alejandro, estructurados en 3 secciones principales:
+Podés saludar, conversar de forma amena, cálida y natural (en español rioplatense si te hablan en español, o en el idioma en que te escriban) y guiar al visitante por lo que hay en esta aplicación web:
 1. Proyectos (#proyectos):
-   - Proyecto Insignia: QuantLambda (quantlambda.dev), plataforma financiera cuantitativa, optimización de carteras, RAG vectorial y comité multi-agente en GCP.
-   - Exploradores interactivos: Spark Learning (spark.alejandrocamerlengo.com), World Map Explorer (worldmap.alejandrocamerlengo.com) y Global Quality of Life Explorer (explorer.alejandrocamerlengo.com).
+   - Proyecto Insignia: QuantLambda (quantlambda.dev), plataforma para seguir mercados globales en vivo, analizar activos y simular riesgo de carteras.
+   - Otros desarrollos interactivos: Spark Learning (spark.alejandrocamerlengo.com), World Map (worldmap.alejandrocamerlengo.com) y Quality of Life Explorer (explorer.alejandrocamerlengo.com).
 2. Análisis (#analisis):
-   - Investigación propia: Macroeconomía, Gasto Público y Degradación del Mercado Laboral en Argentina (macro.alejandrocamerlengo.com), con series oficiales automatizadas y proyección SARIMAX.
+   - Investigación propia: Macroeconomía, Gasto Público y Degradación del Mercado Laboral en Argentina (macro.alejandrocamerlengo.com), con datos oficiales automatizados y proyecciones SARIMAX.
 3. Mi CV (#mi-cv):
-   - Trayectoria 2011–2026: Negocios, Economía y Finanzas Cuantitativas (UNLZ, UBA Finanzas, UCEMA; Best Day, Portfolio Manager, Balanz), Ciencia de Datos (UBA Data Science; Lumen, AB InBev) e Ingeniería de Datos (Siemens Advanta y actualmente Data Engineer en Tongo, Suiza). Incluye descarga directa del CV en PDF.
-Respondé en el idioma en que esté la consulta o el sitio, breve (2-3 oraciones).`;
+   - Trayectoria 2011–2026: Negocios y Finanzas (UNLZ, UBA Finanzas, UCEMA; Best Day, Portfolio Manager, Balanz), Data Science (UBA Data Science; Lumen, AB InBev) y Data Engineering (Siemens Advanta y actualmente Data Engineer en Tongo). Incluye descarga directa del CV en PDF.
+Respondé siempre con buena onda, conciso (2-4 oraciones) y sin compartir teléfono ni dirección personal.`;
 
 /**
  * Renderiza texto con soporte limpio para **negritas** y `código` sin mostrar asteriscos crudos.
@@ -42,7 +41,115 @@ function renderFormattedText(text) {
 }
 
 function getLocalScopedReplyObject(userText, lang = 'ES') {
-  const q = userText.toLowerCase();
+  const q = userText.toLowerCase().trim();
+
+  // 0. Saludos y charla casual ("hola", "buenas", "cómo estás", "qué tal", "hello", "hi", etc.)
+  const isGreetingOnly =
+    /^(hola|buenas|buen dia|buen día|buenas tardes|buenas noches|que tal|qué tal|como va|cómo va|como estas|cómo estás|como andas|cómo andás|todo bien|que onda|qué onda|hey|hi|hello|howdy|good morning|good afternoon|good evening|how are you|what's up|whats up|saludos)[!¡?¿.,\s]*$/i.test(
+      q
+    );
+
+  if (isGreetingOnly) {
+    return {
+      text: tx(
+        '¡Hola! 👋 ¿Cómo va? Qué bueno que pases por acá.\nEn la app tenés todo el trabajo de **Alejandro** organizado en 3 secciones para explorar a tu ritmo:\n• **Proyectos:** `QuantLambda` (su plataforma de mercados en vivo) + 3 apps interactivas (*Spark Learning*, *World Map* y *Quality of Life Explorer*).\n• **Análisis:** Su investigación sobre macroeconomía y empleo en Argentina.\n• **Mi CV:** Su recorrido profesional y académico (2011–2026) y el **CV en PDF**.\n¿Qué te gustaría ver primero?',
+        'Hi there! 👋 How’s it going? Great to have you here.\nIn this app you have all of **Alejandro’s** work organized into 3 sections to explore at your own pace:\n• **Projects:** `QuantLambda` (his live market platform) + 3 interactive apps (*Spark Learning*, *World Map*, and *Quality of Life Explorer*).\n• **Research:** His macroeconomic and labor market study on Argentina.\n• **My CV:** His full career & academic timeline (2011–2026) plus the **PDF CV**.\nWhat would you like to check out first?',
+        lang
+      ),
+      actions: [
+        {
+          type: 'section',
+          target: 'playground',
+          label: tx('1 · Proyectos →', '1 · Projects →', lang)
+        },
+        {
+          type: 'section',
+          target: 'research',
+          label: tx('2 · Análisis →', '2 · Research →', lang)
+        },
+        {
+          type: 'section',
+          target: 'timeline',
+          label: tx('3 · Mi CV →', '3 · My CV →', lang)
+        }
+      ]
+    };
+  }
+
+  // 0b. Agradecimientos, elogios o cierre ameno ("gracias", "buenísimo", "genial", "chau", etc.)
+  if (
+    /^(gracias|muchas gracias|mil gracias|thanks|thank you|thx|genial|buenisimo|buenísimo|excelente|impecable|crack|muy bueno|cool|awesome|great|nice|ok|okey|dale|perfecto|de diez|chau|adios|adiós|nos vemos|bye|hasta luego)[!¡?¿.,\s]*$/i.test(
+      q
+    )
+  ) {
+    return {
+      text: tx(
+        '¡De nada, un placer! 🙌 Si tenés cualquier otra duda sobre los proyectos, el análisis macro o el recorrido de Alejandro, escribime acá mismo o usá los accesos directos:',
+        'You’re very welcome! 🙌 If you have any other questions about the projects, macro research, or Alejandro’s background, just ask me here or use the quick links below:',
+        lang
+      ),
+      actions: [
+        {
+          type: 'section',
+          target: 'playground',
+          label: tx('Ver Proyectos →', 'View Projects →', lang)
+        },
+        {
+          type: 'download',
+          href: '/Alejandro_Camerlengo_Data_Engineer.pdf',
+          label: tx('Descargar CV (PDF) ↓', 'Download CV (PDF) ↓', lang)
+        }
+      ]
+    };
+  }
+
+  // 0c. Quién sos / Quién es Alejandro / Contame de vos / Qué hay en la app
+  if (
+    q.includes('quien sos') ||
+    q.includes('quién sos') ||
+    q.includes('quien es') ||
+    q.includes('quién es') ||
+    q.includes('contame de vos') ||
+    q.includes('contame sobre') ||
+    q.includes('sobre alejandro') ||
+    q.includes('who are you') ||
+    q.includes('who is alejandro') ||
+    q.includes('about you') ||
+    q.includes('about alejandro') ||
+    q.includes('que hay en la app') ||
+    q.includes('qué hay en la app') ||
+    q.includes('que hay en la web') ||
+    q.includes('qué hay en la web') ||
+    q.includes('que tenes') ||
+    q.includes('qué tenés') ||
+    q.includes('que puedo ver') ||
+    q.includes('qué puedo ver')
+  ) {
+    return {
+      text: tx(
+        '¡Te cuento! Soy el asistente interactivo de la web de **Alejandro Camerlengo**.\nAlejandro es **Data Engineer** (con base en **Data Science** y **Finanzas Cuantitativas y Corporativas**). Acá en la app tenés:\n• **Proyectos:** `QuantLambda` (su proyecto insignia) + 3 exploradores interactivos.\n• **Análisis:** Su estudio econométrico sobre macroeconomía y empleo.\n• **Mi CV:** Su línea de tiempo interactiva (2011–2026) y el PDF descargable.',
+        'Happy to share! I’m the interactive assistant for **Alejandro Camerlengo’s** website.\nAlejandro is a **Data Engineer** (with a strong background in **Data Science** and **Quantitative & Corporate Finance**). Here in the app you’ll find:\n• **Projects:** `QuantLambda` (his flagship platform) + 3 interactive explorers.\n• **Research:** His econometric study on macroeconomics and employment.\n• **My CV:** His interactive timeline (2011–2026) and downloadable PDF.',
+        lang
+      ),
+      actions: [
+        {
+          type: 'section',
+          target: 'playground',
+          label: tx('Ver Proyectos →', 'View Projects →', lang)
+        },
+        {
+          type: 'section',
+          target: 'timeline',
+          label: tx('Abrir Mi CV →', 'Open My CV →', lang)
+        },
+        {
+          type: 'download',
+          href: '/Alejandro_Camerlengo_Data_Engineer.pdf',
+          label: tx('Descargar CV (PDF) ↓', 'Download CV (PDF) ↓', lang)
+        }
+      ]
+    };
+  }
 
   // 1. Stack técnico / herramientas / tecnologías
   if (
@@ -55,19 +162,20 @@ function getLocalScopedReplyObject(userText, lang = 'ES') {
     q.includes('lenguaje') ||
     q.includes('python') ||
     q.includes('sql') ||
-    q.includes('kafka') ||
+    q.includes('snowflake') ||
+    q.includes('databricks') ||
     q.includes('airflow') ||
     q.includes('bigquery') ||
     q.includes('dbt') ||
-    q.includes('terraform') ||
     q.includes('cloud') ||
     q.includes('gcp') ||
-    q.includes('aws')
+    q.includes('aws') ||
+    q.includes('azure')
   ) {
     return {
       text: tx(
-        'Su stack principal combina **Data Engineering & Streaming** (`Python`, `SQL`, `Apache Spark`, `Kafka`, `Airflow`, `dbt`, `Polars`), **Cloud & IaC** (`GCP BigQuery`, `Cloud Run`, `AWS`, `Docker`, `Terraform`) y **AI / Sistemas Cuantitativos** (`RAG híbrido`, `Qdrant`, `pgvector`, `LangGraph`, `SARIMAX`, `CVaR/HRP`, `FastAPI`).',
-        'His core stack combines **Data Engineering & Streaming** (`Python`, `SQL`, `Apache Spark`, `Kafka`, `Airflow`, `dbt`, `Polars`), **Cloud & IaC** (`GCP BigQuery`, `Cloud Run`, `AWS`, `Docker`, `Terraform`), and **AI / Quantitative Systems** (`Hybrid RAG`, `Qdrant`, `pgvector`, `LangGraph`, `SARIMAX`, `CVaR/HRP`, `FastAPI`).',
+        'Su stack principal combina **Plataformas & Cloud** (`Snowflake`, `Databricks`, `Azure ADF/DevOps`, `AWS S3/EC2`, `GCP`), **Pipelines & Orquestación** (`Python`, `SQL`, `Apache Spark`, `dbt`, `Airflow`, `Airbyte`, `Fivetran`) e **IA & Analytics** (`Workflows Agénticos`, `LLMs`, `Detección de Anomalías`, `Inferencia Causal`, `Forecasting`, `Power BI`, `Superset`, `Streamlit`).',
+        'His core stack combines **Platforms & Cloud** (`Snowflake`, `Databricks`, `Azure ADF/DevOps`, `AWS S3/EC2`, `GCP`), **Pipelines & Orchestration** (`Python`, `SQL`, `Apache Spark`, `dbt`, `Airflow`, `Airbyte`, `Fivetran`), and **AI & Analytics** (`Agentic Workflows`, `LLMs`, `Anomaly Detection`, `Causal Inference`, `Forecasting`, `Power BI`, `Superset`, `Streamlit`).',
         lang
       ),
       actions: [
@@ -93,11 +201,10 @@ function getLocalScopedReplyObject(userText, lang = 'ES') {
     q.includes('ab inbev') ||
     q.includes('lumen') ||
     q.includes('balanz') ||
+    q.includes('best day') ||
     q.includes('trabajo') ||
     q.includes('empresa') ||
     q.includes('actual') ||
-    q.includes('suiza') ||
-    q.includes('switzerland') ||
     q.includes('recorrido') ||
     q.includes('trayectoria') ||
     q.includes('experiencia') ||
@@ -110,8 +217,8 @@ function getLocalScopedReplyObject(userText, lang = 'ES') {
   ) {
     return {
       text: tx(
-        'Actualmente es **Data Engineer en Tongo** (Suiza), tras desempeñarse como Data Engineer Global en **Siemens Advanta**, Data Scientist Global en **AB InBev** y **Lumen**, y en Finanzas Cuantitativas en **Balanz Capital**. En **Mi CV** podés recorrer el grafo completo (2011–2026) o descargar el PDF directo.',
-        'He is currently a **Data Engineer at Tongo** (Switzerland), following global roles as a Data Engineer at **Siemens Advanta**, Global Data Scientist at **AB InBev** and **Lumen**, and Quantitative Finance roles at **Balanz Capital**. In **My CV** you can explore the full 2011–2026 timeline or download the PDF.',
+        'Actualmente trabaja como **Data Engineer en Tongo** (Fintech de EE.UU.), tras desempeñarse como Data Engineer en **Siemens Advanta**, Data Scientist en **AB InBev** y **Lumen Technologies**, Quantitative Analyst en **Balanz Capital**, **Portfolio Manager** y Treasury Analyst en **Best Day**. En **Mi CV** podés explorar cada etapa o bajar el PDF directo.',
+        'He currently works as a **Data Engineer at Tongo** (U.S. Fintech), following roles as a Data Engineer at **Siemens Advanta**, Data Scientist at **AB InBev** and **Lumen Technologies**, Quantitative Analyst at **Balanz Capital**, **Portfolio Manager**, and Treasury Analyst at **Best Day**. In **My CV** you can inspect every stage or download the PDF.',
         lang
       ),
       actions: [
@@ -148,15 +255,15 @@ function getLocalScopedReplyObject(userText, lang = 'ES') {
   ) {
     return {
       text: tx(
-        'Cuenta con **3 posgrados** sobre su Licenciatura en Administración (UNLZ): **Maestría en Finanzas** (UBA), **Posgrado en finanzas cuantitativas** (UCEMA) y **Especialización en Ciencia de Datos y Estadística** (UBA). Podés ver el detalle de materias y tesis haciendo clic en el eje derecho de **Mi CV**.',
-        'He holds **3 graduate degrees** building on his B.Sc. in Business & Economics (UNLZ): **M.Sc. in Finance** (UBA), **Graduate Program in Quantitative Finance** (UCEMA), and **Postgraduate Specialization in Data Science & Statistics** (UBA). You can inspect every curriculum on the right axis of **My CV**.',
+        'Su formación académica combina **3 posgrados** sobre su **Licenciatura en Administración** (UNLZ): **Maestría en Finanzas** (UBA), **Maestría en Ciencia de Datos** (UBA) y **Posgrado en Finanzas Cuantitativas** (UCEMA). Podés tocar cada título en la columna derecha de **Mi CV** para ver las materias clave.',
+        'His academic background combines **3 postgraduate programs** on top of his **BSc in Business Administration** (UNLZ): **MSc in Finance** (UBA), **MSc in Data Science** (UBA), and **Executive Program in Quantitative Finance** (UCEMA). You can tap each degree on the right column of **My CV** to see its core subjects.',
         lang
       ),
       actions: [
         {
           type: 'section',
           target: 'timeline',
-          label: tx('Ver Formación en Mi CV →', 'View Education in My CV →', lang)
+          label: tx('Ver Educación en Mi CV →', 'View Education in My CV →', lang)
         }
       ]
     };
@@ -178,8 +285,8 @@ function getLocalScopedReplyObject(userText, lang = 'ES') {
   ) {
     return {
       text: tx(
-        '**QuantLambda** (`quantlambda.dev`) es su plataforma insignia en producción: integra **13 microservicios en GCP** (`P-01` a `P-11`), monitoreo de regímenes macro, optimización de carteras (`CVaR` / `HRP`), RAG híbrido sobre reportes de la SEC y un **comité de 6 agentes de IA** con veto de riesgo.',
-        '**QuantLambda** (`quantlambda.dev`) is his flagship production platform: integrating **13 GCP microservices** (`P-01` to `P-11`), macro regime telemetry, portfolio optimization (`CVaR` / `HRP`), hybrid RAG over SEC filings, and a **6-agent AI investment committee** with deterministic risk veto.',
+        '**QuantLambda** (`quantlambda.dev`) es su proyecto insignia: una plataforma en vivo para explorar **213 activos globales**, analizar opciones y curvas de tasas en 3D, simular el riesgo de carteras ante crisis históricas y debatir tesis con un comité de agentes e inteligencia artificial.',
+        '**QuantLambda** (`quantlambda.dev`) is his flagship project: a live platform to explore **213 global assets**, inspect 3D options & sovereign yield curves, stress-test portfolios against historical crises, and evaluate investment theses with an AI committee.',
         lang
       ),
       actions: [
@@ -214,8 +321,8 @@ function getLocalScopedReplyObject(userText, lang = 'ES') {
   ) {
     return {
       text: tx(
-        'En **Análisis** (`#analisis`) encontrás el estudio *Macroeconomía, Gasto Público y Degradación del Empleo en Argentina (1980–Presente)*: concilia **7 fuentes oficiales** mediante un pipeline mensual automatizado, con **5 gráficos interactivos nativos** y proyecciones econométricas `SARIMAX`.',
-        'In **Research** (`#analisis`) you can read *Macroeconomics, Public Spending & Labor Quality Degradation in Argentina (1980–Present)*: reconciling **7 official statistical sources** via an automated monthly pipeline, with **5 interactive native charts** and `SARIMAX` econometric forecasts.',
+        'En **Análisis** (`#analisis`) encontrás el estudio *Macroeconomía, Gasto Público y Degradación del Empleo en Argentina (1980–Presente)*: concilia **7 fuentes oficiales** mediante un pipeline automatizado, con **5 gráficos interactivos** y proyecciones econométricas `SARIMAX`.',
+        'In **Research** (`#analisis`) you can read *Macroeconomics, Public Spending & Labor Quality Degradation in Argentina (1980–Present)*: reconciling **7 official sources** via an automated pipeline, with **5 interactive charts** and `SARIMAX` econometric forecasts.',
         lang
       ),
       actions: [
@@ -245,8 +352,8 @@ function getLocalScopedReplyObject(userText, lang = 'ES') {
   ) {
     return {
       text: tx(
-        'En **Proyectos** (`#proyectos`), debajo de **QuantLambda**, tenés **3 aplicaciones interactivas** listas para usar en el navegador: **Spark Learning** (arquitectura de Apache Spark 3.5), **World Map Explorer** (cartografía interactiva) y **Quality of Life Explorer** (44 indicadores en 240 países).',
-        'In **Projects** (`#proyectos`), right below **QuantLambda**, you have **3 interactive web applications**: **Spark Learning** (Apache Spark 3.5 decision graph), **World Map Explorer** (custom cartography), and **Quality of Life Explorer** (44 indicators across 240 countries).',
+        'En **Proyectos** (`#proyectos`), además de **QuantLambda**, tenés **3 aplicaciones interactivas** para probar:\n• **Spark Learning:** guía visual paso a paso sobre Apache Spark.\n• **World Map:** marcá los países que visitaste y creá tu propio mapa.\n• **Quality of Life Explorer:** compará 44 indicadores históricos en 240 países.',
+        'In **Projects** (`#proyectos`), alongside **QuantLambda**, you have **3 interactive apps** to try:\n• **Spark Learning:** step-by-step visual guide to Apache Spark.\n• **World Map:** mark the countries you visited and style your own map.\n• **Quality of Life Explorer:** compare 44 historical indicators across 240 countries.',
         lang
       ),
       actions: [
@@ -273,8 +380,8 @@ function getLocalScopedReplyObject(userText, lang = 'ES') {
   ) {
     return {
       text: tx(
-        'Podés navegar todo el sitio **100% con el teclado**: `1` abre **Proyectos**, `2` **Análisis**, `3` **Mi CV** (adentro `d` descarga el PDF), `c` abre/cierra este chat, `gh`/`li`/`gm` abren GitHub, LinkedIn o Gmail, `l` abre los **56 idiomas** y `t` cambia entre Modo Oscuro y Claro.',
-        'You can navigate the entire site **100% by keyboard**: `1` opens **Projects**, `2` **Research**, `3` **My CV** (inside, `d` downloads the PDF), `c` toggles this chat, `gh`/`li`/`gm` open GitHub, LinkedIn, or Gmail, `l` opens the **56-language modal**, and `t` switches Dark/Light mode.',
+        'Podés usar la web con clic o **100% con el teclado**: `1` abre **Proyectos**, `2` **Análisis**, `3` **Mi CV** (adentro `d` descarga el PDF), `c` abre/cierra este chat, `gh`/`li`/`gm` abren GitHub, LinkedIn o Gmail, `l` abre los **56 idiomas** y `t` cambia el tema.',
+        'You can use the site by click or **100% by keyboard**: `1` opens **Projects**, `2` **Research**, `3` **My CV** (inside, `d` downloads the PDF), `c` toggles this chat, `gh`/`li`/`gm` open GitHub, LinkedIn, or Gmail, `l` opens the **56 languages**, and `t` switches theme.',
         lang
       ),
       actions: []
@@ -294,8 +401,8 @@ function getLocalScopedReplyObject(userText, lang = 'ES') {
   ) {
     return {
       text: tx(
-        'Podés contactar a Alejandro directamente por **LinkedIn**, **GitHub** o **Email** (`alejandrocamerlengo@gmail.com`) con los botones de acá abajo:',
-        'You can reach Alejandro directly via **LinkedIn**, **GitHub**, or **Email** (`alejandrocamerlengo@gmail.com`) using the buttons below:',
+        'Podés escribirle o seguir el trabajo de Alejandro directamente por **LinkedIn**, **GitHub** o **Email** desde estos accesos:',
+        'You can reach out or follow Alejandro’s work directly on **LinkedIn**, **GitHub**, or **Email** via these links:',
         lang
       ),
       actions: [
@@ -318,11 +425,11 @@ function getLocalScopedReplyObject(userText, lang = 'ES') {
     };
   }
 
-  // 9. Resumen general de la web / saludo
+  // 9. Respuesta conversacional amigable por defecto ("hola, en la app tenés...")
   return {
     text: tx(
-      'Podés preguntarme sobre cualquiera de las 3 áreas de la web o tocar una opción directa:\n• **Proyectos:** `QuantLambda` + 3 apps interactivas (*Spark*, *World Map*, *QoL Explorer*).\n• **Análisis:** Estudio macroeconómico y laboral de Argentina.\n• **Mi CV:** Experiencia (Tongo, Siemens, AB InBev, Balanz), posgrados y **CV en PDF**.',
-      'You can ask me about any of the 3 areas of the site or pick a direct shortcut:\n• **Projects:** `QuantLambda` + 3 interactive apps (*Spark*, *World Map*, *QoL Explorer*).\n• **Research:** Argentine macroeconomic & labor market study.\n• **My CV:** Experience (Tongo, Siemens, AB InBev, Balanz), graduate degrees, and **PDF CV**.',
+      '¡Hola! Mirá, te cuento rápido qué tenés acá en la app para que explores lo que más te interese:\n• En **Proyectos** podés probar **QuantLambda** (mercados y carteras en vivo) y 3 apps interactivas (*Spark*, *World Map* y *Quality of Life*).\n• En **Análisis** tenés un estudio macroeconómico y laboral sobre Argentina.\n• En **Mi CV** podés recorrer toda la experiencia y formación de Alejandro (2011–2026) o bajarte su **CV en PDF**.',
+      'Hi! Here is a quick tour of what you have in the app so you can jump straight into what interests you most:\n• In **Projects** you can try **QuantLambda** (live markets & portfolios) and 3 interactive apps (*Spark*, *World Map*, and *Quality of Life*).\n• In **Research** you have an econometric study on Argentine macroeconomics & labor.\n• In **My CV** you can explore Alejandro’s full experience & education (2011–2026) or download his **PDF CV**.',
       lang
     ),
     actions: [
@@ -406,6 +513,11 @@ export default function IdentityBadge({
 
   const quickPrompts = [
     {
+      id: 'hello',
+      label: tx('👋 ¿Qué hay en la app?', '👋 What’s in the app?', lang),
+      query: tx('¡Hola! ¿Qué puedo ver en la app?', 'Hi! What can I see in the app?', lang)
+    },
+    {
       id: 'quantlambda',
       label: tx('🚀 QuantLambda', '🚀 QuantLambda', lang),
       query: tx('Contame sobre QuantLambda', 'Tell me about QuantLambda', lang)
@@ -441,11 +553,16 @@ export default function IdentityBadge({
     id: 'welcome',
     sender: 'ale',
     text: tx(
-      '¡Buenas! Soy el asistente interactivo de la web de **Alejandro**. Tocá cualquiera de los temas de abajo o escribí tu consulta:',
-      'Hi! I am the interactive assistant for **Alejandro’s** website. Tap any topic below or type your question:',
+      '¡Hola! 👋 Bienvenido a la web de **Alejandro**. Podés saludarme, escribir cualquier duda o tocar uno de los temas de acá abajo para ir directo:',
+      'Hi! 👋 Welcome to **Alejandro’s** website. Feel free to say hello, ask anything, or tap one of the topics below to jump right in:',
       lang
     ),
     actions: [
+      {
+        type: 'section',
+        target: 'playground',
+        label: tx('Ver Proyectos →', 'View Projects →', lang)
+      },
       {
         type: 'download',
         href: '/Alejandro_Camerlengo_Data_Engineer.pdf',

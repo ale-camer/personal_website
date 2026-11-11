@@ -94,14 +94,54 @@ export default function IntangibleCanvasBackground({ colorMode = 'dark', isPause
     let animationFrameId;
     let width = window.innerWidth;
     let height = window.innerHeight;
-    let isMobile = width < 768;
+
+    // Hardware Tiering estilo QuantLambda (detecta gama por núcleos CPU, pantalla táctil y resolución)
+    const getHardwareProfile = () => {
+      const vw = window.innerWidth || 1280;
+      const isTouch =
+        typeof window.matchMedia === 'function' &&
+        window.matchMedia('(hover: none), (pointer: coarse)').matches;
+      const cores = navigator.hardwareConcurrency || 4;
+
+      // Tier 1: Smartphone (<= 680px o pantalla táctil chica)
+      if (vw <= 680 || (isTouch && vw <= 768)) {
+        return {
+          tier: 'mobile',
+          isMobile: true,
+          dpr: cores <= 4 ? 0.78 : 0.9,
+          densityScale: 0.36,
+          frameIntervalMs: 1000 / 30 // 30 FPS estables sin recalentar batería ni trabar scroll
+        };
+      }
+      // Tier 2: Tablet (681px - 1024px o touch)
+      if (vw <= 1024 || isTouch) {
+        return {
+          tier: 'tablet',
+          isMobile: true,
+          dpr: 1.05,
+          densityScale: 0.62,
+          frameIntervalMs: 1000 / 45 // 45 FPS
+        };
+      }
+      // Tier 3: Desktop (> 1024px)
+      return {
+        tier: 'desktop',
+        isMobile: false,
+        dpr: Math.min(window.devicePixelRatio || 1, 1.65),
+        densityScale: 1.0,
+        frameIntervalMs: 0 // 60 FPS nativo
+      };
+    };
+
+    let hw = getHardwareProfile();
+    let isMobile = hw.isMobile;
 
     const applyCanvasSize = () => {
       width = window.innerWidth;
       height = window.innerHeight;
-      isMobile = width < 768;
-      // En móviles limitamos DPR a 1.25 para reducir un 60% el fill-rate de GPU
-      const dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1.25 : 1.75);
+      hw = getHardwareProfile();
+      isMobile = hw.isMobile;
+      const dpr = hw.dpr;
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -114,7 +154,7 @@ export default function IntangibleCanvasBackground({ colorMode = 'dark', isPause
     mouseRef.current.targetY = height * 0.5;
 
     const domains = ['finance', 'math', 'ds', 'aie'];
-    const densityScale = isMobile ? 0.52 : 1.0;
+    const densityScale = hw.densityScale;
 
     const planes = PLANE_CONFIGS.map((cfg) => {
       const layerNodes = [];
@@ -176,6 +216,7 @@ export default function IntangibleCanvasBackground({ colorMode = 'dark', isPause
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
 
     let time = 0;
+    let lastFrameTime = 0;
 
     // Dibuja el cometa en 2 trazos simples sin alocar objetos CanvasGradient por frame
     const drawCometFast = (x1, y1, x2, y2, t, rgb, alpha, radius, tailLen = 0.22) => {
@@ -200,13 +241,19 @@ export default function IntangibleCanvasBackground({ colorMode = 'dark', isPause
       ctx.fill();
     };
 
-    const render = () => {
+    const render = (now = 0) => {
       if (document.hidden || isPausedRef.current) {
         animationFrameId = requestAnimationFrame(render);
         return;
       }
 
-      time += 0.008;
+      if (hw.frameIntervalMs > 0 && now - lastFrameTime < hw.frameIntervalMs) {
+        animationFrameId = requestAnimationFrame(render);
+        return;
+      }
+      lastFrameTime = now;
+
+      time += hw.frameIntervalMs > 0 ? 0.014 : 0.008;
       const isDark = colorModeRef.current === 'dark';
       const palette = DOMAIN_COLORS[isDark ? 'dark' : 'light'];
 

@@ -182,6 +182,22 @@ export default function App() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
+  // Pre-calentamiento silencioso (idle) de los contenedores Cloud Run de subdominios para evitar cold-starts en mobile
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const warmupTargets = [
+        'https://worldmap.alejandrocamerlengo.com/api/countries',
+        'https://explorer.alejandrocamerlengo.com/',
+        'https://qol-api-service-450135571603.us-central1.run.app/api/v1/metadata',
+        'https://spark.alejandrocamerlengo.com/'
+      ];
+      warmupTargets.forEach((url) => {
+        fetch(url, { mode: 'no-cors', cache: 'no-store' }).catch(() => {});
+      });
+    }, 2200);
+    return () => clearTimeout(timer);
+  }, []);
+
   const selectSection = (id) => {
     const slug = id ? SECTION_SLUGS[id] : '';
     if (slug) {

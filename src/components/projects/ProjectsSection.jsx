@@ -118,6 +118,19 @@ export default function ProjectsSection({ colorMode = 'dark', lang = 'ES' }) {
     setOpenId((prev) => (prev === id ? null : id));
   };
 
+  // Pre-calienta los servicios al abrir la sección Proyectos por si el contenedor entró en reposo
+  useEffect(() => {
+    const urls = [
+      'https://worldmap.alejandrocamerlengo.com/api/countries',
+      'https://explorer.alejandrocamerlengo.com/',
+      'https://qol-api-service-450135571603.us-central1.run.app/api/v1/metadata',
+      'https://spark.alejandrocamerlengo.com/'
+    ];
+    urls.forEach((u) => {
+      fetch(u, { mode: 'no-cors', cache: 'no-store' }).catch(() => {});
+    });
+  }, []);
+
   useEffect(() => {
     const handleKey = (e) => {
       const tag = document.activeElement?.tagName?.toLowerCase();
