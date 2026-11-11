@@ -20,42 +20,52 @@ El propósito principal del sitio **no es "vender un CV"**, sino ofrecer **valor
 
 ---
 
-## 2. Arquitectura de Contenido (Las 4 Áreas del Sitio)
+## 2. Arquitectura de Contenido y Topología de Subdominios
+
+### 2.1 Topología de Despliegue en Subdominios
+La web central y cada una de las aplicaciones satélite (proyectos interactivos y análisis profundo) operan bajo una arquitectura de **subdominios dedicados**, permitiendo despliegues independientes, URLs limpias y desacople total:
+
+| Dominio / Subdominio Objetivo | URL Productiva Actual (Origen) | Contenido / Aplicación | Estado |
+| :--- | :--- | :--- | :--- |
+| **`alejandrocamerlengo.com`** | *(Por mapear)* | **Web Personal Central:** Portada (`Home`), `Mi CV` (Timeline 2011–2026), Hub de Proyectos y Análisis con enlaces directos a sus subdominios. | En desarrollo / Base activa |
+| **`spark.alejandrocamerlengo.com`** | `https://spark-encyclopedia-pro-twg7ion2rq-uc.a.run.app/?phase=contexto` | **Spark Learning:** Enciclopedia interactiva y grafo de decisiones de Apache Spark 3.5. | En producción (Cloud Run `200 OK`) |
+| **`worldmap.alejandrocamerlengo.com`** | `https://mi-servicio-726519885138.us-central1.run.app/` | **World Map Explorer:** Visualizador geográfico interactivo multi-idioma. | En producción (Cloud Run `200 OK`) |
+| **`explorer.alejandrocamerlengo.com`** | `https://storage.googleapis.com/global-qol-explorer-frontend/index.html` | **World Quality of Life Explorer:** Comparador de calidad de vida global (Frontend GCS + API Cloud Run `qol-api-service`). | En producción (`200 OK`) |
+| **`macro.alejandrocamerlengo.com`** | *(Repo `argentina-macro-pipeline`)* | **Análisis Macroeconómico:** Investigación interactiva sobre Macroeconomía, Gasto Público y Empleo en Argentina. | Pipeline productivo (`OK_DETERMINISTIC`) + UI nativa en React |
+| **`quantlambda.dev`** | `https://quantlambda.dev` | **Proyecto Estrella:** Plataforma financiera cuantitativa y comité multi-agente en GCP. | En producción (Dominio propio) |
 
 ```text
 +-----------------------------------------------------------------------------------+
-| 0. MARCO GLOBAL (Header • Navegación • Conmutador Dark/Light • Selector Idioma)   |
+| 0. MARCO GLOBAL (Avatar/Chat WhatsApp • Menú 3 Vistas • Idioma Modal • Dark/Light)|
++-----------------------------------------------------------------------------------+
+|  PORTADA (HOME): Animación corta de arranque (AC) -> Terminal Guía Interactiva    |
 +-----------------------------------------------------------------------------------+
 |                                                                                   |
-|  [ 1. PROYECTO ESTRELLA ]   QuantLambda (quantlambda.dev)                         |
-|                             Estación cuantitativa, derivados e IA multi-agente    |
-|                             en producción (P-01 a P-11 en GCP bajo < $10/mes).    |
+|  [ 1. PROYECTOS ]  (#proyectos)                                                   |
+|     ├── PROYECTO INSIGNIA (Destacado arriba): QuantLambda (quantlambda.dev)       |
+|     │   Plataforma principal de mercados globales, carteras e IA en producción.   |
+|     └── EXPLORADORES / LABORATORIO (Desplegables abajo):                          |
+|         • Spark Learning  • World Map  • Quality of Life Explorer                 |
 |                                                                                   |
-|  [ 2. INVESTIGACIONES ]     Análisis Ad-Hoc con Datos y Tesis Propia ("Leer")     |
-|                             • Macroeconomía y calidad del empleo en Argentina.    |
-|                             • Futuros ensayos con datos (Calidad de vida global,  |
-|                               realidad del mercado laboral DS/DE vs. AIE, etc.).  |
+|  [ 2. ANÁLISIS ]   (#analisis)                                                    |
+|     • Investigaciones propias con datos primarios y criterio de dominio           |
+|       (Macroeconomía, Gasto Público y Empleo en Argentina + futuros estudios).    |
 |                                                                                   |
-|  [ 3. PLAYGROUND ]          Sandboxes & Proyectos de Aprendizaje ("Jugar")        |
-|                             • Spark 3.5 Pipeline Architecture & Encyclopedia      |
-|                             • Global Quality of Life Explorer                     |
-|                             • BTC Analytics Dashboard & World Map Explorer        |
+|  [ 3. MI CV ]      (#mi-cv)                                                       |
+|     • Timeline DAG de Doble Eje (2011–2026): Experiencia (izq) vs Educación (der) |
+|     • Botón directo para descargar CV en PDF en la barra superior HUD.            |
 |                                                                                   |
-+-----------------------------------------------------------------------------------+
-|  [ 4. PESTAÑA APARTE: TRAYECTORIA ]                                               |
-|  • Timeline Proporcional de Doble Eje (2011–2026): Trabajo (izq) vs Estudio (der) |
-|  • Síntesis de evolución: Finanzas/Quant -> DS -> DE (Tongo) -> AI Engineering    |
 +-----------------------------------------------------------------------------------+
 ```
 
-### Detalle de cada Área
+### Detalle de cada Pilar y Criterio de Presentación
+- **Enfoque centrado en el usuario/lector (Producto primero, Ingeniería en su lugar):** Los nombres, bajadas y bullets hablan siempre desde el valor para quien usa la aplicación o lee el análisis (sin sopa de tecnologías ni etiquetas redundantes). Quien quiera indagar en el *cómo está construido* (Tech Recruiters / Hiring Managers) cuenta con los enlaces dedicados a telemetría, pipelines y documentación técnica.
 
-| Área | Rol para el Visitante | Contenido y Alcance |
+| Pestaña | Rol para el Visitante / Recruiter | Contenido y Jerarquía |
 | :--- | :--- | :--- |
-| **1. Proyecto Estrella (`QuantLambda`)** | Explorar y usar una plataforma financiera y agéntica real de punta a punta. | • Presentación destacada de [`quantlambda.dev`](https://quantlambda.dev).<br>• Vista rápida e interactiva de cómo combina finanzas cuantitativas (10 clases de activos, superficies 3D, curvas soberanas), ingeniería de datos/MLOps y un comité multi-agente en LangGraph sobre GCP.<br>• Acceso directo a la app en vivo. |
-| **2. Investigaciones (`Leer`)** | Aprender de análisis económicos, laborales y cuantitativos hechos a medida con opinión propia. | • **Artículo Fundacional:** *Macroeconomía y Degradación del Empleo en Argentina* (modernizado de notebook estático a ensayo interactivo con sus 4 ejes: *Políticas/Inflación/Gasto desde 1961*, *Empleo Privado vs. Crecimiento*, *Composición por Modalidad: el espejismo del Monotributo Social +160% vs. estancamiento privado/autónomo* y *Salario Real*).<br>• **Estructura extensible** para publicar nuevos análisis ad-hoc sobre temas en curso (mercado laboral tech/IA, comparativas de calidad de vida y poder adquisitivo, etc.). |
-| **3. Playground (`Jugar`)** | Experimentar con herramientas educativas y exploradores construidos para aprender distintas tecnologías. | Hub curado y *user-friendly* de desarrollos de práctica (*Learning by Building*):<br>• **Spark Encyclopedia Pro:** Grafo interactivo de decisiones y enciclopedia de Apache Spark 3.5.<br>• **Global Quality of Life Explorer:** Explorador comparativo de calidad de vida.<br>• **BTC Dashboard & World Map Tool:** Visualizadores temáticos interactivos. |
-| **4. Trayectoria (`Sobre Mí / CV`)** | Conocer quién está detrás del laboratorio sin invadir la experiencia de lectura/juego. | • Ubicado en su propia vista/pestaña dedicada.<br>• **Timeline Proporcional de Doble Eje (`2011–2026`)** inspirado en `_legacy/reference_timeline_cv.jpg`: **Experiencia Laboral** a la izquierda (*Best Day $\rightarrow$ Balanz $\rightarrow$ Lumen $\rightarrow$ AB InBev $\rightarrow$ Siemens Advanta $\rightarrow$ **Tongo***) y **Educación** a la derecha (*UNLZ $\rightarrow$ UBA Finanzas $\rightarrow$ UBA Data Science $\rightarrow$ UCEMA Financial Math*), con paneles desplegables al hacer click.<br>• Breve narrativa de transición hacia **AI Engineering E2E**. |
+| **1. `Proyectos` (`#proyectos`)** | Ver de inmediato tu capacidad de construir productos reales end-to-end sin perderse la plataforma principal. | • **Arriba (Proyecto Insignia abierto):** **QuantLambda (`quantlambda.dev`)**, presentado explícitamente como tu plataforma principal.<br>• **Abajo (Exploradores / Desarrollos de práctica, cerrados por defecto):** *Spark Learning*, *World Map* y *Quality of Life Explorer*, enmarcados con naturalidad como desarrollos acotados de exploración e interactividad. |
+| **2. `Análisis` (`#analisis`)** | Demostrar tu diferencial frente a un perfil 100% dev puro: criterio económico, financiero y estadístico sobre problemas reales. | • **Ensayo interactivo:** *Macroeconomía, Gasto Público y Degradación del Empleo en Argentina (1980–Presente)* alimentado automáticamente por `argentina-macro-pipeline`.<br>• Estructura lista para sumar futuros estudios propios. |
+| **3. `Mi CV` (`#mi-cv`)** | Validar en segundos tu seniority, empresas y formación académica (y llevarse el PDF estándar ATS en 1 clic). | • **Grafo DAG proporcional (`2011–2026`):** *Best Day $\rightarrow$ Portfolio Manager $\rightarrow$ Balanz $\rightarrow$ Lumen $\rightarrow$ AB InBev $\rightarrow$ Siemens Advanta $\rightarrow$ **Tongo*** y *UNLZ $\rightarrow$ UBA Finanzas $\rightarrow$ UBA Data Science $\rightarrow$ UCEMA*.<br>• Acción directa **`Descargar CV (PDF)`** en la barra HUD. |
 
 ---
 
@@ -85,28 +95,32 @@ El desarrollo se organiza en **5 etapas secuenciales**, comenzando por el marco 
 
 ---
 
-## 4. Orden de Avance Actual (De lo Más Fácil a lo Más Difícil) y Pendientes Acordados
+## 4. Estado Actual y Plan Formal de Próximos Pasos (Hoja de Ruta de Cierre)
 
-### 4.1 Orden de Ejecución Definido
-1. **`1. Recorrido` (`#recorrido`)**:
-   - Limpieza de etiquetas (`RUNNING`, `SUCCESS`, `ARTIFACT`, `pipeline: ...` y tags) y etiquetas en 2 líneas (Rol/Título arriba + Empresa/Universidad abajo) — **hecho**.
-   - **Pendiente anotado:** Agregar el contenido definitivo del CV en el que Alejandro está trabajando actualmente cuando esté listo.
-2. **`2. Análisis` (`#analisis`)**:
-   - Rehacer los estudios con los datos pertinentes actualizados (fuentes propias) y evaluar agregar **Forecast** a las series.
-3. **`3. Proyectos` (`#proyectos`)**:
-   - Darles una nueva estética (lavada de cara Sci-Fi/Tech) y **rehacer todo el código** de las 4 aplicaciones interactivas (*Spark 3.5 Encyclopedia*, *Crypto Analytics*, *World Map Explorer* y *World Bank Explorer*) para que corran integradas en la web.
-4. **`4. Home y Cierre General`**:
-   - Frase central de la portada, pase de diseño general unificado, selector de idiomas y traducciones.
+### 4.1 Hitos Completados (`Hecho`)
+1. **`Mi CV` (`#mi-cv`, antes `Recorrido`)**:
+   - Renombrado en la navegación y rutas (`#mi-cv`).
+   - Limpieza de etiquetas técnicas artificiales (`RUNNING`, `SUCCESS`, `ARTIFACT`, `pipeline: ...` y tags), nodos en 2 líneas (Rol/Título + Empresa/Universidad) con timestamp a la derecha, e incorporación del contenido actualizado del CV (`profile.json` + Portfolio Manager + Best Day Travel Group + planes de estudio universitarios) — **hecho**.
+2. **`Análisis` (`#analisis` y `#analisis/macro-argentina`)**:
+   - Pipeline mensual automatizado en repositorio dedicado (`argentina-macro-pipeline`) conectado a las 7 fuentes oficiales + proyección SARIMAX a 6 meses.
+   - Renderizado nativo e interactivo en React (`MacroCharts.jsx` + `ResearchSection.jsx`) sin scroll horizontal y reactivo al cambio de idioma — **hecho**.
+3. **`Proyectos` (`#proyectos`)**:
+   - Lavada de cara estética y despliegue productivo de las 3 aplicaciones interactivas (*Spark Pipeline & Encyclopedia*, *World Map Explorer* y *Global Quality of Life Explorer*) — **hecho**.
+   - Incorporación de marco visual con imagen/vista previa inicial en cada proyecto al estilo de `QuantLambda` — **hecho**.
+4. **Infraestructura Cloud & Keepalive**:
+   - Verificación en BigQuery Studio de los proyectos activos y automatización quincenal del keepalive para MongoDB Atlas (`P-04` y `P-07`) en `portfolio-infra` — **hecho**.
 
-### 4.2 Tabla de Pendientes Acordados
+---
 
-| Pendiente | Decisión / Detalle | Cuándo |
-| :--- | :--- | :--- |
-| **Contenido definitivo del CV en `Recorrido` (`#recorrido`)** | Incorporar el texto definitivo de responsabilidades y logros del CV en el que Alejandro está trabajando actualmente. | Cuando esté cerrada la nueva versión del CV. |
-| **Pulir perfil de GitHub (`https://github.com/ale-camer/`)** | El ícono de GitHub en el Home ya apunta a `https://github.com/ale-camer/` (y el de Gmail a `mailto:alejandrocamerlengo@gmail.com`). Queda anotado pulir el perfil público de GitHub (README de perfil, repos fijados, descripciones). | Tarea de perfil externo. |
-| **Rehacer `Análisis` (`#analisis`) con datos actualizados + Forecast** | Actualizar las series con fuentes propias, rehacer el estudio de Macroeconomía y Empleo en Argentina (y demás análisis) e incorporar proyecciones / **Forecast**. | Paso 2 del orden actual. |
-| **Rehacer código y estética de las 4 apps de `Proyectos` (`#proyectos`)** | No mostrar los repositorios de GitHub sino **las aplicaciones interactivas en sí**, rehaciendo su código y dándoles una nueva estética moderna/Sci-Fi coherente con el sitio. | Paso 3 del orden actual. |
-| **Unificación de patrones de diseño (Design System final — Estética Sci-Fi / Tech Engineering)** | Definir y estandarizar cómo deben verse todos los elementos que cumplen la misma función en las 4 secciones (jerarquía de títulos/subtítulos, `cards`, badges, bullets, botones, espaciados y bordes) explorando variantes **Sci-Fi / Futuristas inspiradas en herramientas reales de ingeniería** (*DAG Pipeline*, *Git Branch Graph*, *PCB Circuit*, *Telemetry HUD*, *Terminal Trace*). | Paso 4 (Al final, con las secciones listas). |
-| **Propuesta central de la landing (`Home`)** | Una sola línea corta en el centro de la pantalla (`.hero-tagline-slot` en `src/App.jsx`). Se propondrán 3–4 frases para elegir. | Paso 4 (`Home`). |
-| **Selector de idioma masivo (estilo `quantlambda.dev`) + Traducciones** | Incorporar la mayor cantidad de idiomas posibles (como el catálogo de **56 idiomas con banderas SVG y ventana modal centrada con buscador** de `quantlambda.dev` en `market-intelligence-dashboard/src/data/i18n/languages.js`), realizando las traducciones recién cuando todo el texto definitivo esté cerrado. | Al final de todo el proyecto. |
-| **Mejoras técnicas menores y seguridad** | Canvas nítido en pantallas retina (`devicePixelRatio`), respeto de `prefers-reduced-motion`, mover utilidades de `App.jsx` a `components/`, y asegurar `VITE_GEMINI_API_KEY` detrás de un proxy antes de publicar. | Pulido previo al despliegue. |
+### 4.2 Plan de Ejecución Actualizado (De Acá al Cierre)
+
+| Orden | Fase / Tarea | Alcance y Detalle | Estado |
+| :--- | :--- | :--- | :--- |
+| **Base UX** | **Diseño General HUD, Tipografía y Limpieza de Etiquetas (Sub-pasos 1.1 a 1.4)** | • Contenedor central HUD con barra superior fija (`SectionView.jsx`), unificación tipográfica en 3 familias (`Orbitron`, `Plus Jakarta Sans`, `JetBrains Mono`), descripciones orientadas al usuario, escalado Retina (`devicePixelRatio`) y purga de etiquetas sobrantes. | **Hecho** |
+| **Paso 1** | **Consolidación en 3 Pestañas (`Proyectos` · `Análisis` · `Mi CV`) + Descarga PDF** | • Simplificar el menú superior a las **3 vistas autoexplicativas (`Proyectos` · `Análisis` · `Mi CV`)** (manteniendo redirección limpia si alguien entra a `#quantlambda`).<br>• Dentro de **`Proyectos`**: ubicar **`QuantLambda` arriba como Proyecto Insignia** (abierto y protagonista) y debajo un bloque diferenciado y honesto de **Exploradores / proyectos de práctica** (*Spark Learning*, *World Map*, *Quality of Life Explorer*, iniciando cerrados).<br>• Dentro de **`Mi CV`**: sumar en la barra superior fija HUD el botón directo para **descargar el CV en PDF**. | **Hecho** |
+| **Paso 2** | **Portada (`Home`): Apertura `> Welcome` + Terminal Guía `AI CLI Moderna` + Navegación 100% Teclado** | • Secuencia de apertura corta (`1C-5` escribiendo `> Welcome` antes de abrir la app).<br>• **Terminal Guía del Home (`03 · AI CLI Moderna` sobre estructura `T1`)**: saludo, agradecimiento, qué vas a encontrar y viñetas de comandos (`1`, `2`, `3`, `c`, `gh/li/gm`, `l`, `t`) + prompt interactivo inferior con soporte de navegación 100% por teclado en toda la web. | **Hecho** |
+| **Paso 3** | **Pulido de `Light Mode`, Chat WhatsApp y Resguardo de API Key** | • Contraste y estética pulidos en **Modo Claro (`Light Mode`)** en las 3 vistas (`Proyectos`, `Análisis`, `Mi CV`), la Terminal `AI CLI Moderna` y los 5 gráficos nativos de Macro.<br>• Contexto del chat estilo WhatsApp (`IdentityBadge.jsx`) actualizado a las 3 vistas + atajos de teclado y resguardo de clave privada (sin exponer `VITE_GEMINI_API_KEY` en el bundle cliente, soportando proxy `VITE_CHAT_API_URL`). | **Hecho** |
+| **Paso 4** | **Selector Modal de Idioma (~56 idiomas) + Traducción Integral** | • Reemplazado el dropdown provisorio inferior derecho por la **ventana modal centrada con buscador en lengua nativa y 56 banderas SVG** (`LanguageModal.jsx` + `FlagBadge`, estilo `quantlambda.dev`).<br>• Traducción integral de todos los textos definitivos cerrados (`Home`/Terminal, `Proyectos`/`QuantLambda`, `Análisis`, `Mi CV`, Chat y UI global) en los 56 idiomas (`ES`, `EN` + 54 diccionarios en `public/locales/`). | **Hecho** |
+| **Paso 5 (`n-1`)** | **Diseño del Ícono de la Pestaña (*Favicon*)** | • Diseñado y fijado en `public/favicon.svg` + `index.html` el monograma geométrico con chevrons de terminal (`#07 · ∧⊂_`: la `A` como chevron ascendente `∧` con punto esmeralda, la `C` como chevron lateral `<` y el cursor `_`). | **Hecho** |
+| **Paso 6 (`n`)** | **Documentación Integral, Subdominios y Puesta en Producción** | • Documentación técnica y funcional completa (`README.md`) para quien quiera indagar en el *cómo se construyó*, junto con configuraciones productivas (`Dockerfile`, `nginx.conf`, `vercel.json`, `.env.example`).<br>• Configuración de DNS y despliegue productivo: `alejandrocamerlengo.com` (web central) + `spark.`, `worldmap.`, `explorer.`, `macro.` (más `quantlambda.dev`). | **Hecho** |
+| **Paso 7 (`Post-Web`)** | **Lavada de Cara del Perfil de GitHub (`github.com/ale-camer`)** | • Rediseño integral de la página de inicio del perfil personal de GitHub (repositorio especial `ale-camer/ale-camer` -> `README.md` de portada).<br>• Alineación visual y narrativa con `alejandrocamerlengo.com` y `quantlambda.dev`: presentación limpia y directa, enlaces a la web central y sus subdominios (`quantlambda.dev`, `macro.`, `spark.`, `worldmap.`, `explorer.`), y curaduría de los **Pinned Repositories** principales. | **Pendiente (Próximo objetivo al cerrar el deploy)** |

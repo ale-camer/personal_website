@@ -1,227 +1,291 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import QuantLambdaSection from '../quantlambda/QuantLambdaSection';
+import { tx, txList, useSiteLocale } from '../../i18n/localeService';
 
 export const PLAYGROUND_PROJECTS = [
   {
     id: 'spark-encyclopedia',
-    num: '01',
-    hash: 'a94f2c',
-    branch: 'feat/spark-3.5-internals',
-    title: 'Spark Pipeline Architecture & Encyclopedia',
-    oneLiner: 'Grafo interactivo de decisiones en 6 fases y enciclopedia técnica de Apache Spark 3.5.',
-    objective:
-      'Bajar a tierra el funcionamiento interno de Apache Spark 3.5 (gestión unificada de memoria, Shuffle, Data Skew, AQE y Catalyst) transformando conceptos abstractos de sistemas distribuidos en un grafo de decisiones interactivo.',
-    domain: 'Data & AI Engineering',
+    title: 'Spark Learning',
+    oneLinerEs:
+      'Guía visual e interactiva para entender cómo procesa datos a gran escala Apache Spark.',
+    oneLinerEn:
+      'Interactive visual guide to understand how Apache Spark processes large-scale distributed data.',
+    objectiveEs:
+      'Transforma conceptos complejos de procesamiento distribuido en un recorrido visual paso a paso, para explorar qué decisiones se toman en cada etapa y qué ocurre por dentro cuando un sistema escala.',
+    objectiveEn:
+      'Turns complex distributed computing concepts into a step-by-step visual walkthrough, allowing you to explore architectural decisions at every stage and see what happens under the hood as a cluster scales.',
     colorAccent: '#f43f5e',
     colorRgb: '244, 63, 94',
-    appUrl: '#proyectos/spark-encyclopedia',
-    appLabel: 'Abrir Spark Encyclopedia ↗',
-    flow: ['Cluster & RAM', 'Ingest & Parquet', 'Shuffle & AQE', 'Serving Sink'],
-    bullets: [
-      'Grafo interactivo (React Flow) con los trade-offs reales de cada etapa del pipeline.',
-      'Modales "Deep Dive" con código PySpark, planes físicos y mitigación de cuellos de botella.',
-      'Buscador unificado que conecta decisiones de arquitectura con artículos técnicos.'
+    appUrl: 'https://spark.alejandrocamerlengo.com',
+    displayUrl: 'https://spark.alejandrocamerlengo.com',
+    previewImg: '/images/projects/spark-preview.png',
+    previewAlign: 'top',
+    appLabelEs: 'Abrir Spark Learning ↗',
+    appLabelEn: 'Open Spark Learning ↗',
+    bulletsEs: [
+      'Mapa de decisiones interactivo: Recorré las 7 etapas de un flujo de datos y descubrí cómo se conectan los problemas reales con sus soluciones.',
+      'Qué pasa por dentro: Inspeccioná casos prácticos, cuellos de botella frecuentes y cómo destrabarlos.',
+      'Enciclopedia integrada: Buscador rápido con 30 guías directas para consultar cualquier concepto al instante.'
     ],
-    tags: ['Apache Spark 3.5', 'PySpark', 'React Flow', 'TypeScript', 'AQE']
-  },
-  {
-    id: 'crypto-analytics',
-    num: '02',
-    hash: 'e31b80',
-    branch: 'feat/polars-airflow-gcp',
-    title: 'Crypto Analytics Platform (Polars + Airflow)',
-    oneLiner: 'Pipeline ETL diario con cálculo vectorial en Polars, Airflow 3, BigQuery y Terraform.',
-    objective:
-      'Dominar el stack moderno de ingeniería de datos reemplazando Pandas por procesamiento vectorial in-memory con Polars (Rust), orquestación productiva en Apache Airflow 3 e infraestructura reproducible con Terraform sobre GCP.',
-    domain: 'Data Engineering & Quant',
-    colorAccent: '#10b981',
-    colorRgb: '16, 185, 129',
-    appUrl: '#proyectos/crypto-analytics',
-    appLabel: 'Abrir Crypto Analytics App ↗',
-    flow: ['Market REST API', 'Polars Engine', 'GCS Raw Lake', 'BigQuery DWH'],
-    bullets: [
-      'Cálculo vectorizado de MACD, RSI y Bandas de Bollinger en memoria con Polars.',
-      'Data Lake inmutable en Cloud Storage y tablas analíticas particionadas en BigQuery.',
-      'Infraestructura 100% como código (IaC) aprovisionada con Terraform y Docker.'
-    ],
-    tags: ['Polars', 'Apache Airflow 3', 'GCP BigQuery', 'Terraform', 'Python 3.12']
+    bulletsEn: [
+      'Interactive decision map: Navigate the 7 stages of a data pipeline and discover how real-world bottlenecks connect to their engineering solutions.',
+      'Under the hood: Inspect practical case studies, frequent shuffle/skew bottlenecks, and how to resolve them.',
+      'Built-in encyclopedia: Instant search across 30 direct reference guides to look up any concept on the fly.'
+    ]
   },
   {
     id: 'geospatial-world-map',
-    num: '03',
-    hash: '7d2c19',
-    branch: 'feat/folium-i18n-atlas',
-    title: 'World Map & Geospatial Explorer',
-    oneLiner: 'Cartografía interactiva en 15 idiomas con Folium/Leaflet, estadísticas por continente y Excel.',
-    objective:
-      'Explorar la visualización de datos geoespaciales (GeoJSON, Folium y Leaflet.js) e implementar una arquitectura multi-idioma completa (15 lenguajes, incluyendo escrituras RTL y CJK) con importación/exportación de datos en Excel.',
-    domain: 'Geospatial Analytics',
+    title: 'World Map',
+    oneLinerEs:
+      'Marcá los países que visitaste, medí tu recorrido por continente y creá tu propio mapa.',
+    oneLinerEn:
+      'Mark the countries you have visited, track your progress by continent, and design your own custom map.',
+    objectiveEs:
+      'Una herramienta pensada para viajeros y curiosos de la geografía: seleccioná los países que conocés, visualizá tus estadísticas globales al instante y diseñá un mapa a tu medida para guardar o imprimir.',
+    objectiveEn:
+      'A tool designed for travelers and geography enthusiasts: select the countries you have visited, view your global statistics instantly, and style a custom map to save or print.',
     colorAccent: '#38bdf8',
     colorRgb: '56, 189, 248',
-    appUrl: '#proyectos/geospatial-world-map',
-    appLabel: 'Abrir World Map Explorer ↗',
-    flow: ['GeoJSON ISO', 'Excel I/O', 'Folium Layers', '15-Lang Stats'],
-    bullets: [
-      'Selección interactiva de países con cambio de mapas base (Positron, OSM, Dark Matter).',
-      'Métricas en vivo de cobertura por continente y subregión geográfica.',
-      'Interfaz traducida a 15 idiomas e integrada con carga/descarga de plantillas Excel.'
+    appUrl: 'https://worldmap.alejandrocamerlengo.com',
+    displayUrl: 'https://worldmap.alejandrocamerlengo.com',
+    previewImg: '/images/projects/worldmap-preview.png',
+    previewAlign: 'top',
+    appLabelEs: 'Abrir World Map ↗',
+    appLabelEn: 'Open World Map ↗',
+    bulletsEs: [
+      'Tu progreso alrededor del mundo: Estadísticas en vivo de cuántos países y qué porcentaje conocés de cada continente.',
+      'Diseño a tu medida: Elegí entre distintos estilos visuales y colores antes de lanzar tu mapa en pantalla completa.',
+      'Guardá y retomá cuando quieras: Descargá tu selección en un clic o volvé a cargarla sin necesidad de crearte una cuenta.'
     ],
-    tags: ['Python', 'Flask', 'Folium / Leaflet', 'GeoJSON', 'Pandas']
+    bulletsEn: [
+      'Your progress around the world: Live statistics showing how many countries and what percentage of each continent you have explored.',
+      'Custom visual styling: Choose across multiple cartographic themes and color palettes before launching your full-screen map.',
+      'Save and resume anytime: Download your selection in one click or reload it later without needing an account.'
+    ]
   },
   {
     id: 'world-bank-qol',
-    num: '04',
-    hash: '4f89a1',
-    branch: 'feat/worldbank-macro-api',
-    title: 'Global Socioeconomic & World Bank Explorer',
-    oneLiner: 'Comparador entre países sobre 19 indicadores estructurales del Banco Mundial.',
-    objective:
-      'Aprender a consumir, limpiar y armonizar series macroeconómicas internacionales desde la API oficial del Banco Mundial para contrastar desarrollo, estructura productiva, energía y empleo entre países.',
-    domain: 'Macroeconomics & Viz',
+    title: 'Quality of Life Explorer',
+    oneLinerEs:
+      'Compará cómo evolucionaron el bienestar, la salud, la educación y los ingresos en 240 países.',
+    oneLinerEn:
+      'Compare how well-being, health, education, and income evolved across 240 countries.',
+    objectiveEs:
+      'Un observatorio interactivo para cruzar décadas de datos históricos y descubrir qué países avanzaron, cuáles se estancaron y cómo cambiaron las condiciones de vida alrededor del mundo.',
+    objectiveEn:
+      'An interactive observatory to cross-examine decades of historical data and discover which nations advanced, which stagnated, and how living standards shifted worldwide.',
     colorAccent: '#f59e0b',
     colorRgb: '245, 158, 11',
-    appUrl: '#proyectos/world-bank-qol',
-    appLabel: 'Abrir World Bank Explorer ↗',
-    flow: ['World Bank API', '19 Indicators', 'Time / Ranking', 'Comparative Plot'],
-    bullets: [
-      'Cruza PBI per cápita, exportaciones high-tech, crédito privado, energía nuclear y empleo.',
-      'Doble vista: evolución histórica de un país o ranking comparativo transversal por año.',
-      'Normalización automática de series internacionales con ventanas temporales dispares.'
+    appUrl: 'https://explorer.alejandrocamerlengo.com',
+    displayUrl: 'https://explorer.alejandrocamerlengo.com',
+    previewImg: '/images/projects/qol-preview.png',
+    appLabelEs: 'Abrir Quality of Life Explorer ↗',
+    appLabelEn: 'Open Quality of Life Explorer ↗',
+    bulletsEs: [
+      '44 indicadores de vida real: Explorá desde esperanza de vida, salud y educación hasta poder adquisitivo, energía y ambiente.',
+      'Viaje en el tiempo: Filtrá cualquier ventana de años para ver cómo cambió el mapa mundial y el ranking global.',
+      'Exploración sincronizada: Hacé clic en cualquier país del mapa o de la tabla comparativa para seguir su trayectoria.'
     ],
-    tags: ['World Bank API', 'Macro Data', 'Python', 'Pandas', 'Time Series']
+    bulletsEn: [
+      '44 real-life indicators: Explore metrics ranging from life expectancy, health, and education to purchasing power, energy, and environment.',
+      'Time travel: Filter any historical year window to see how the world map and global rankings evolved.',
+      'Synchronized exploration: Click any country on the map or comparative table to trace its historical trajectory.'
+    ]
   }
 ];
 
-export default function ProjectsSection() {
-  const [openId, setOpenId] = useState('spark-encyclopedia');
+function renderBulletWithBoldLead(b) {
+  const colonIdx = b.indexOf(':');
+  if (colonIdx > 0 && colonIdx < 58) {
+    const lead = b.slice(0, colonIdx + 1).trim();
+    const rest = b.slice(colonIdx + 1).trim();
+    return (
+      <li key={b}>
+        <strong className="tl-bullet-lead">{lead}</strong> {rest}
+      </li>
+    );
+  }
+  return <li key={b}>{b}</li>;
+}
+
+export default function ProjectsSection({ colorMode = 'dark', lang = 'ES' }) {
+  useSiteLocale(lang);
+  const [openId, setOpenId] = useState(null);
+  // 0 = QuantLambda, 1..3 = los 3 proyectos exploratorios
+  const [kbdIdx, setKbdIdx] = useState(0);
 
   const toggleProject = (id) => {
     setOpenId((prev) => (prev === id ? null : id));
   };
 
+  useEffect(() => {
+    const handleKey = (e) => {
+      const tag = document.activeElement?.tagName?.toLowerCase();
+      if (tag === 'input' || tag === 'textarea') return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+      const total = PLAYGROUND_PROJECTS.length + 1;
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setKbdIdx((i) => (i + 1) % total);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setKbdIdx((i) => (i - 1 + total) % total);
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (kbdIdx === 0) {
+          window.open('https://quantlambda.dev', '_blank', 'noopener,noreferrer');
+        } else {
+          const proj = PLAYGROUND_PROJECTS[kbdIdx - 1];
+          if (proj) toggleProject(proj.id);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [kbdIdx]);
+
   return (
     <div className="pj-root">
-      {/* CABECERA CON EL PROPÓSITO GENERAL DE ESTOS PROYECTOS */}
-      <div className="pj-purpose-header">
-        <div className="tl-eyebrow">SYS.LAB // LEARNING BY BUILDING • PROYECTOS DE APRENDIZAJE</div>
-        <h2 className="tl-main-title">
-          Aprender tecnologías y dominar problemas construyendo aplicaciones de punta a punta
-        </h2>
-        <p className="pj-purpose-lead">
-          Cada uno de estos desarrollos nació con un <strong>objetivo técnico concreto</strong>:
-          elegir un motor distribuido, un stack de datos o un dominio nuevo y construir una
-          herramienta funcional para entenderlo a fondo. Hacé click en cualquiera para ver qué
-          busqué aprender y cómo está armado.
-        </p>
+      {/* 1. PROYECTO INSIGNIA DESTACADO ARRIBA: QUANTLAMBDA */}
+      <div className={`pj-flagship-wrap ${kbdIdx === 0 ? 'is-kbd-active' : ''}`}>
+        <QuantLambdaSection colorMode={colorMode} lang={lang} />
       </div>
 
-      {/* LISTA ESTILO GIT MINIMAL (SUBRAYADO EDITORIAL EXPANDIBLE) */}
-      <div className="pj-acc-list mode-git">
-        {PLAYGROUND_PROJECTS.map((proj) => {
-          const isOpen = openId === proj.id;
+      {/* 2. BLOQUE SECUNDARIO: PROYECTOS DE EXPLORACIÓN / PRÁCTICA */}
+      <div className="pj-sandbox-block">
+        <div className="pj-purpose-header">
+          <h3 className="tl-main-title">
+            {tx(
+              'Otros desarrollos y exploraciones interactivas',
+              'Other interactive builds & explorations',
+              lang
+            )}
+          </h3>
+          <p className="pj-purpose-lead">
+            {tx(
+              'Aplicaciones más acotadas y experimentales, creadas por curiosidad para explorar datos públicos, mapas y conceptos visuales jugando:',
+              'Focused experimental applications built out of curiosity to explore public datasets, maps, and visual concepts hands-on:',
+              lang
+            )}
+          </p>
+        </div>
 
-          return (
-            <div
-              key={proj.id}
-              className={`pj-acc-item mode-v2 ${isOpen ? 'is-open' : ''}`}
-              style={{
-                '--item-accent': proj.colorAccent,
-                '--item-rgb': proj.colorRgb
-              }}
-            >
-              {/* FILA CABECERA CLICKEABLE */}
-              <button
-                type="button"
-                className="pj-acc-trigger"
-                onClick={() => toggleProject(proj.id)}
-                aria-expanded={isOpen}
+        {/* LISTA DESPLEGABLE ESTILO GIT LIMPIA */}
+        <div className="pj-acc-list mode-git">
+          {PLAYGROUND_PROJECTS.map((proj, idx) => {
+            const isOpen = openId === proj.id;
+            const isKbdFocused = kbdIdx === idx + 1;
+            const oneLiner = tx(proj.oneLinerEs, proj.oneLinerEn, lang);
+            const objective = tx(proj.objectiveEs, proj.objectiveEn, lang);
+            const appLabel = tx(proj.appLabelEs, proj.appLabelEn, lang);
+            const bullets = txList(proj.bulletsEs, proj.bulletsEn, lang);
+
+            return (
+              <div
+                key={proj.id}
+                className={`pj-acc-item mode-v2 ${isOpen ? 'is-open' : ''} ${isKbdFocused ? 'is-kbd-focus' : ''}`}
+                style={{
+                  '--item-accent': proj.colorAccent,
+                  '--item-rgb': proj.colorRgb
+                }}
               >
-                <div className="pj-acc-trigger-left">
-                  <span className="pj-git-node-dot" aria-hidden="true" />
-                  <span className="pj-acc-code">commit {proj.hash}</span>
-                  <div className="pj-acc-titles">
-                    <div className="pj-acc-title-row">
-                      <span className="pj-acc-title">{proj.title}</span>
-                      <span className="pj-git-branch-pill">{proj.branch}</span>
+                {/* FILA CABECERA CLICKEABLE SIN RUIDO */}
+                <button
+                  type="button"
+                  className="pj-acc-trigger"
+                  onMouseEnter={() => setKbdIdx(idx + 1)}
+                  onClick={() => toggleProject(proj.id)}
+                  aria-expanded={isOpen}
+                >
+                  <div className="pj-acc-trigger-left">
+                    <span className="pj-git-node-dot" aria-hidden="true" />
+                    <div className="pj-acc-titles">
+                      <div className="pj-acc-title-row">
+                        <span className="pj-acc-title">{proj.title}</span>
+                      </div>
+                      <span className="pj-acc-oneliner">{oneLiner}</span>
                     </div>
-                    <span className="pj-acc-oneliner">{proj.oneLiner}</span>
-                  </div>
-                </div>
-
-                <div className="pj-acc-trigger-right">
-                  <div className="pj-acc-preview-tags">
-                    {proj.tags.slice(0, 3).map((t) => (
-                      <span key={t} className="tl-tag-pill">
-                        {t}
-                      </span>
-                    ))}
                   </div>
 
-                  <span className={`pj-acc-chevron ${isOpen ? 'is-open' : ''}`} aria-hidden="true">
-                    {isOpen ? '−' : '+'}
-                  </span>
-                </div>
-              </button>
-
-              {/* PANEL DESPLEGABLE IN-PLACE CON EL OBJETIVO EXPLÍCITO */}
-              {isOpen && (
-                <div className="pj-acc-body">
-                  {/* BLOQUE EXPLÍCITO: OBJETIVO DEL PROYECTO (QUÉ BUSQUÉ APRENDER / RESOLVER) */}
-                  <div className="pj-objective-banner">
-                    <span className="pj-objective-tag">OBJETIVO DE APRENDIZAJE // POR QUÉ LO CONSTRUÍ</span>
-                    <p className="pj-objective-text">{proj.objective}</p>
+                  <div className="pj-acc-trigger-right">
+                    <span className={`pj-acc-chevron ${isOpen ? 'is-open' : ''}`} aria-hidden="true">
+                      {isOpen ? '−' : '+'}
+                    </span>
                   </div>
+                </button>
 
-                  {/* Pipeline visual de 4 nodos */}
-                  <div className="pj-flow-strip">
-                    {proj.flow.map((step, idx) => (
-                      <React.Fragment key={step}>
-                        <div className="pj-flow-node">
-                          <span className="pj-flow-idx">0{idx + 1}</span>
-                          <span className="pj-flow-label">{step}</span>
+                {/* PANEL DESPLEGABLE UNIFICADO */}
+                {isOpen && (
+                  <div className="pj-acc-body">
+                    {/* 1. PÁRRAFO DE PROPÓSITO CON BORDE LATERAL (SIN ETIQUETA) */}
+                    <div className="pj-objective-banner">
+                      <p className="pj-objective-text">{objective}</p>
+                    </div>
+
+                    {/* 2. VENTANA CON IMAGEN INICIAL DE LA APP (ESTILO QUANTLAMBDA) */}
+                    <div className="ql-preview-frame pj-preview-frame">
+                      <div className="ql-browser-bar">
+                        <div className="ql-browser-dots">
+                          <span />
+                          <span />
+                          <span />
                         </div>
-                        {idx < proj.flow.length - 1 && (
-                          <span className="pj-flow-connector" aria-hidden="true">
-                            ───●
-                          </span>
-                        )}
-                      </React.Fragment>
-                    ))}
-                  </div>
-
-                  {/* 3 Bullets de qué hace + Tags + Botón al repositorio */}
-                  <div className="pj-body-main-row">
-                    <ul className="pj-clean-bullets">
-                      {proj.bullets.map((b) => (
-                        <li key={b}>{b}</li>
-                      ))}
-                    </ul>
-
-                    <div className="pj-body-side-actions">
-                      <div className="pj-all-tags">
-                        {proj.tags.map((t) => (
-                          <span key={t} className="tl-tag-pill">
-                            {t}
-                          </span>
-                        ))}
+                        <a
+                          href={proj.appUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="ql-browser-url"
+                          title={appLabel}
+                        >
+                          {proj.displayUrl}
+                        </a>
+                        <span className="pj-browser-spacer" />
                       </div>
 
                       <a
                         href={proj.appUrl}
-                        className="pj-repo-cta"
-                        style={{
-                          '--insp-accent': proj.colorAccent,
-                          '--insp-rgb': proj.colorRgb
-                        }}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="pj-preview-stage"
+                        title={appLabel}
                       >
-                        <span>{proj.appLabel}</span>
+                        <img
+                          src={proj.previewImg}
+                          alt={proj.title}
+                          className={`pj-preview-img ${proj.previewAlign === 'top' ? 'align-top' : ''}`}
+                          loading="lazy"
+                        />
                       </a>
                     </div>
+
+                    {/* 3. BULLETS UNIFICADOS + BOTÓN CTA ÚNICO */}
+                    <div className="pj-body-main-row">
+                      <ul className="pj-clean-bullets">
+                        {bullets.map(renderBulletWithBoldLead)}
+                      </ul>
+
+                      <div className="pj-body-side-actions">
+                        <a
+                          href={proj.appUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="pj-repo-cta"
+                          style={{
+                            '--insp-accent': proj.colorAccent,
+                            '--insp-rgb': proj.colorRgb
+                          }}
+                        >
+                          <span>{appLabel}</span>
+                        </a>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
-          );
-        })}
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

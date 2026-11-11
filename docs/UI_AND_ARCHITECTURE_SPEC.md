@@ -8,7 +8,8 @@ Documento técnico y visual que define el stack, el sistema de temas duales (**D
 
 ### 1.1 Stack Elegido para la Web Personal: `React + Vite (SWC)` Puro
 - **React + Vite (con compilador SWC y linter Oxlint basados en Rust)** para lograr carga instantánea, transiciones fluidas entre vistas (*Inicio*, *Investigaciones*, *Playground*, *Trayectoria*) y componentes interactivos ricos (gráficos dinámicos en las investigaciones y línea de tiempo proporcional en Trayectoria).
-- **Cero Backend Acoplado:** Al tratarse de contenido editorial/analítico, visualizaciones de series macroeconómicas (~60 a 200 puntos por serie) y un timeline geométrico, todo corre en `< 1 ms` directamente en el motor JS del navegador.
+- **Cero Backend Acoplado en la Web Central:** Al tratarse de contenido editorial/analítico, visualizaciones de series macroeconómicas (~60 a 200 puntos por serie) y un timeline geométrico, todo corre en `< 1 ms` directamente en el motor JS del navegador.
+- **Topología de Despliegue en Subdominios:** La web central opera en `alejandrocamerlengo.com`, mientras que los proyectos y el análisis se despliegan en subdominios independientes (`spark.alejandrocamerlengo.com`, `worldmap.alejandrocamerlengo.com`, `explorer.alejandrocamerlengo.com`, `macro.alejandrocamerlengo.com`, más `quantlambda.dev`), permitiendo apps aisladas, repositorios desacoplados y enlaces directos desde el Hub.
 
 ### 1.2 Evaluación de Lenguajes de Sistemas (`Rust`, `Go`, `C`, `C++`): ¿Dónde sí y dónde no?
 Se evaluó la conveniencia de incorporar lenguajes compilados de alto rendimiento (`Rust`, `Go`, `C`, `C++`) para maximizar la eficiencia:

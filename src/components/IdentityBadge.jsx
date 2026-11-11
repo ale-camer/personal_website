@@ -1,44 +1,129 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { tx, useSiteLocale } from '../i18n/localeService';
 
 const SYSTEM_PROMPT_GUARDRAIL = `Sos el asistente personal integrado en la web de Alejandro Camerlengo.
 REGLA ESTRICTA E INQUEBRANTABLE:
-Solo podés responder preguntas sobre lo que hay en esta aplicación web y el recorrido de Alejandro:
-1. Recorrido multidisciplinario (2011–2026): Negocios, Economía y Finanzas Corporativas/Cuantitativas (UNLZ, UBA, UCEMA; Best Day, Balanz), Ciencia de Datos (Lumen LATAM, AB InBev Global) e Ingeniería de Datos e IA End-to-End (Siemens Advanta Global y actualmente en Tongo).
-2. 01. Proyecto Estrella (QuantLambda - quantlambda.dev).
-3. 02. Investigaciones (Macroeconomía Argentina y Calidad del Empleo).
-4. 03. Playground (Apache Spark, Calidad de Vida Global, Bitcoin y Geoespacial).
-Si el usuario pregunta CUALQUIER COSA fuera de estos temas, debés rechazarlo amablemente en 1 oración indicando que este chat solo responde sobre el contenido de la web de Alejandro. Respondé en español rioplatense, breve (2-3 oraciones).`;
+Solo podés responder preguntas sobre lo que hay en esta aplicación web y el CV de Alejandro, estructurados en 3 secciones principales:
+1. Proyectos (#proyectos):
+   - Proyecto Insignia: QuantLambda (quantlambda.dev), plataforma financiera cuantitativa, optimización de carteras, RAG vectorial (pgvector) y comité multi-agente en GCP.
+   - Exploradores interactivos: Spark Learning (spark.alejandrocamerlengo.com), World Map Explorer (worldmap.alejandrocamerlengo.com) y Global Quality of Life Explorer (explorer.alejandrocamerlengo.com).
+2. Análisis (#analisis):
+   - Investigación propia: Macroeconomía, Gasto Público y Degradación del Mercado Laboral en Argentina (macro.alejandrocamerlengo.com), con series oficiales automatizadas y proyección SARIMAX.
+3. Mi CV (#mi-cv):
+   - Trayectoria 2011–2026: Negocios, Economía y Finanzas Corporativas/Cuantitativas (UNLZ, UBA Finanzas, UCEMA; Best Day Travel Group, Portfolio Manager, Balanz Capital), Ciencia de Datos (UBA Data Science; Lumen Technologies, AB InBev Global) e Ingeniería de Datos (Siemens Advanta Global y actualmente Data Engineer en Tongo). Incluye descarga directa del CV en PDF.
+4. Navegación 100% por teclado: desde el Home o cualquier vista con teclas 1 (Proyectos), 2 (Análisis), 3 (Mi CV), c (Chat), gh (GitHub), li (LinkedIn), gm (Gmail), l (Idioma) y t (Tema Claro/Oscuro).
+Si el usuario pregunta CUALQUIER COSA fuera de estos temas, debés rechazarlo amablemente en 1 oración indicando que este chat solo responde sobre el contenido de la web de Alejandro. Respondé en el idioma en que esté la consulta o el sitio, breve (2-3 oraciones).`;
 
-function getLocalScopedResponse(userText) {
+function getLocalScopedResponse(userText, lang = 'ES') {
   const q = userText.toLowerCase();
 
   if (
     q.includes('web') ||
     q.includes('página') ||
     q.includes('pagina') ||
+    q.includes('site') ||
+    q.includes('page') ||
     q.includes('encontrar') ||
     q.includes('hay') ||
     q.includes('secciones') ||
-    q.includes('contenido')
+    q.includes('sections') ||
+    q.includes('contenido') ||
+    q.includes('resumen') ||
+    q.includes('summary')
   ) {
-    return 'En la web tenés 4 espacios: **QuantLambda** (plataforma financiera E2E con IA), **Análisis** (investigaciones propias como Macroeconomía y Empleo en Argentina), **Proyectos** (apps interactivas de Spark, Geo, BTC y Calidad de Vida) y **Recorrido** (línea de tiempo 2011–2026).';
+    return tx(
+      'La web se organiza en 3 secciones: **Proyectos** (con **QuantLambda** como proyecto insignia arriba y 3 exploradores interactivos debajo), **Análisis** (ensayos propios con datos reales como Macroeconomía y Empleo en Argentina) y **Mi CV** (recorrido 2011–2026 + descarga en PDF). Además podés navegar todo 100% con teclado (`1`, `2`, `3`, `c`, `gh`, `li`, `gm`, `l`, `t`).',
+      'The website is organized into 3 sections: **Projects** (with **QuantLambda** as the flagship platform at the top and 3 interactive explorers below), **Research** (empirical studies with primary data such as Macroeconomics & Employment in Argentina), and **My CV** (2011–2026 career timeline + PDF download). You can also navigate 100% by keyboard (`1`, `2`, `3`, `c`, `gh`, `li`, `gm`, `l`, `t`).',
+      lang
+    );
+  }
+
+  if (
+    q.includes('teclado') ||
+    q.includes('keyboard') ||
+    q.includes('comando') ||
+    q.includes('command') ||
+    q.includes('atajo') ||
+    q.includes('shortcut') ||
+    q.includes('terminal') ||
+    q.includes('navegar') ||
+    q.includes('navigate')
+  ) {
+    return tx(
+      'Podés moverte 100% con el teclado en toda la página: `1` abre **Proyectos**, `2` **Análisis**, `3` **Mi CV** (y adentro `D` descarga el PDF), `c` abre/cierra este chat, `gh`/`li`/`gm` van a GitHub, LinkedIn o Gmail, `l` cambia el idioma y `t` alterna entre Modo Oscuro y Claro.',
+      'You can navigate the entire site 100% with your keyboard: `1` opens **Projects**, `2` **Research**, `3` **My CV** (and inside `D` downloads the PDF), `c` toggles this chat, `gh`/`li`/`gm` open GitHub, LinkedIn, or Gmail, `l` opens the 56-language selector, and `t` switches between Dark and Light mode.',
+      lang
+    );
   }
 
   if (
     q.includes('recorrido') ||
     q.includes('trayectoria') ||
     q.includes('experiencia') ||
+    q.includes('experience') ||
+    q.includes('career') ||
+    q.includes('background') ||
     q.includes('quién') ||
     q.includes('quien') ||
+    q.includes('who') ||
     q.includes('cv') ||
+    q.includes('resume') ||
     q.includes('tongo') ||
-    q.includes('finanzas')
+    q.includes('siemens') ||
+    q.includes('abinbev') ||
+    q.includes('lumen') ||
+    q.includes('balanz') ||
+    q.includes('educación') ||
+    q.includes('educacion') ||
+    q.includes('education') ||
+    q.includes('estudios') ||
+    q.includes('pdf') ||
+    q.includes('finanzas') ||
+    q.includes('finance')
   ) {
-    return 'Ale cruza varias disciplinas sin encasillarse en una sola etiqueta: arrancó en **Negocios y Finanzas Cuantitativas** (Best Day, Balanz; UBA/UCEMA), pasó a **Data Science** modelando problemas reales (Lumen, AB InBev) y evolucionó a **Data & AI Engineering End-to-End** (Siemens Advanta y hoy en **Tongo**).';
+    return tx(
+      'En **Mi CV** (`#mi-cv`) ves su evolución de 2011 a 2026: arrancó en **Negocios y Finanzas Cuantitativas** (UNLZ, UBA Finanzas, UCEMA; Best Day, Portfolio Manager, Balanz), pasó a **Data Science** (UBA MSc Data Science; Lumen, AB InBev) y evolucionó a **Data Engineering** (Siemens Advanta y hoy en **Tongo**). Arriba a la derecha podés descargar el CV en PDF.',
+      'In **My CV** (`#mi-cv`) you can explore his 2011–2026 progression: starting in **Business & Quantitative Finance** (UNLZ, UBA Finance, UCEMA; Best Day, Portfolio Manager, Balanz), moving into **Data Science** (UBA MSc Data Science; Lumen, AB InBev), and evolving into **Data Engineering** (Siemens Advanta and currently at **Tongo**). You can download the PDF CV at the top right.',
+      lang
+    );
   }
 
-  if (q.includes('quantlambda') || q.includes('estrella') || q.includes('quant') || q.includes('mercado')) {
-    return '**QuantLambda** (`quantlambda.dev`) es su proyecto insignia: una arquitectura financiera end-to-end que combina pipelines de datos en la nube, análisis cuantitativo, RAG vectorial (`pgvector`) y agentes de IA para inteligencia de mercado.';
+  if (
+    q.includes('quantlambda') ||
+    q.includes('insignia') ||
+    q.includes('flagship') ||
+    q.includes('estrella') ||
+    q.includes('quant') ||
+    q.includes('mercado') ||
+    q.includes('market') ||
+    q.includes('cartera') ||
+    q.includes('portfolio')
+  ) {
+    return tx(
+      '**QuantLambda** (`quantlambda.dev`) encabeza la pestaña **Proyectos** como su proyecto insignia: una plataforma financiera end-to-end que integra pipelines en GCP, análisis cuantitativo de carteras, búsqueda vectorial (`pgvector`) y un comité de agentes de IA.',
+      '**QuantLambda** (`quantlambda.dev`) leads the **Projects** tab as his flagship platform: an end-to-end financial workstation combining GCP data pipelines, quantitative portfolio analytics, vector RAG (`pgvector`), and an AI agent committee.',
+      lang
+    );
+  }
+
+  if (
+    q.includes('investigaciones') ||
+    q.includes('análisis') ||
+    q.includes('analisis') ||
+    q.includes('research') ||
+    q.includes('macro') ||
+    q.includes('inflación') ||
+    q.includes('inflacion') ||
+    q.includes('inflation') ||
+    q.includes('empleo') ||
+    q.includes('employment') ||
+    q.includes('argentina')
+  ) {
+    return tx(
+      'En **Análisis** (`#analisis`) encontrás investigaciones propias con datos primarios, encabezadas por el estudio sobre *Macroeconomía, Gasto Público y Calidad del Empleo en Argentina*, con 5 visualizaciones interactivas actualizadas automáticamente y proyección econométrica SARIMAX.',
+      'In **Research** (`#analisis`) you will find empirical studies built from primary sources, led by *Macroeconomics, Public Spending & Labor Quality Degradation in Argentina*, featuring 5 automatically updated interactive charts and SARIMAX econometric forecasts.',
+      lang
+    );
   }
 
   if (
@@ -46,43 +131,70 @@ function getLocalScopedResponse(userText) {
     q.includes('jugar') ||
     q.includes('apps') ||
     q.includes('proyectos') ||
+    q.includes('projects') ||
     q.includes('spark') ||
-    q.includes('investigaciones') ||
-    q.includes('análisis') ||
-    q.includes('analisis') ||
-    q.includes('macro')
+    q.includes('world') ||
+    q.includes('mapa') ||
+    q.includes('map') ||
+    q.includes('quality') ||
+    q.includes('calidad de vida')
   ) {
-    return 'En **Análisis** podés leer ensayos ad-hoc como el estudio sobre *Macroeconomía y Calidad del Empleo en Argentina*. Y en **Proyectos** tenés 4 apps listas para probar: *Apache Spark Encyclopedia*, *Calidad de Vida Global*, *Bitcoin Dashboard* y *Proyectos Geoespaciales*.';
+    return tx(
+      'En **Proyectos** (`#proyectos`), además de **QuantLambda** arriba como proyecto principal, tenés 3 desarrollos interactivos desplegables para explorar en vivo: *Spark Learning*, *World Map Explorer* y *Global Quality of Life Explorer*.',
+      'In **Projects** (`#proyectos`), right below **QuantLambda** as the flagship platform, you have 3 interactive exploratory apps ready to try live: *Spark Learning*, *World Map Explorer*, and *Global Quality of Life Explorer*.',
+      lang
+    );
   }
 
-  return '🔒 Este chat está acotado exclusivamente a lo que hay en la web (Recorrido 2011–2026, QuantLambda, Análisis y Proyectos). ¿Sobre cuál te gustaría saber?';
+  if (
+    q.includes('contacto') ||
+    q.includes('contact') ||
+    q.includes('mail') ||
+    q.includes('email') ||
+    q.includes('linkedin') ||
+    q.includes('github')
+  ) {
+    return tx(
+      'Podés contactarlo directo por **LinkedIn** (`li`), **GitHub** (`gh`) o **Email** (`gm` → `alejandrocamerlengo@gmail.com`) desde los íconos de abajo a la izquierda o escribiendo el comando en la terminal del Home.',
+      'You can reach him directly via **LinkedIn** (`li`), **GitHub** (`gh`), or **Email** (`gm` → `alejandrocamerlengo@gmail.com`) using the bottom-left icons or by typing the command in the Home terminal.',
+      lang
+    );
+  }
+
+  return tx(
+    '🔒 Este chat responde exclusivamente sobre lo que hay en la web (**Proyectos / QuantLambda**, **Análisis**, **Mi CV** y atajos de navegación). ¿Sobre cuál te gustaría consultar?',
+    '🔒 This chat is strictly scoped to the content of this website (**Projects / QuantLambda**, **Research**, **My CV**, and keyboard shortcuts). Which one would you like to ask about?',
+    lang
+  );
 }
 
-async function askScopedGeminiFlash(userText) {
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-  if (!apiKey) {
-    await new Promise((r) => setTimeout(r, 380));
-    return getLocalScopedResponse(userText);
+/**
+ * Resguardo de API Key: nunca se expone ninguna clave privada en el bundle del navegador.
+ * Si se configura VITE_CHAT_API_URL (endpoint proxy serverless/Cloud Run propio), consulta al backend;
+ * de lo contrario responde de forma determinística e instantánea con el motor local acotado.
+ */
+async function askScopedAssistant(userText, lang) {
+  const proxyEndpoint = import.meta.env.VITE_CHAT_API_URL;
+  if (!proxyEndpoint) {
+    await new Promise((r) => setTimeout(r, 320));
+    return getLocalScopedResponse(userText, lang);
   }
 
   try {
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: SYSTEM_PROMPT_GUARDRAIL }] },
-          contents: [{ role: 'user', parts: [{ text: userText }] }],
-          generationConfig: { maxOutputTokens: 160, temperature: 0.25 }
-        })
-      }
-    );
-    if (!res.ok) return getLocalScopedResponse(userText);
+    const res = await fetch(proxyEndpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: userText,
+        lang,
+        systemInstruction: SYSTEM_PROMPT_GUARDRAIL
+      })
+    });
+    if (!res.ok) return getLocalScopedResponse(userText, lang);
     const data = await res.json();
-    return data?.candidates?.[0]?.content?.parts?.[0]?.text || getLocalScopedResponse(userText);
+    return data?.reply || data?.text || getLocalScopedResponse(userText, lang);
   } catch {
-    return getLocalScopedResponse(userText);
+    return getLocalScopedResponse(userText, lang);
   }
 }
 
@@ -92,27 +204,47 @@ export default function IdentityBadge({
   chatAttached = false,
   socialsInChat = false,
   colorMode = 'dark',
+  lang = 'ES',
   drawerAlign = 'left',
+  externalOpen,
   onDrawerChange
 }) {
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  useSiteLocale(lang);
+  const [internalOpen, setInternalOpen] = useState(false);
+  const drawerOpen = externalOpen !== undefined ? externalOpen : internalOpen;
+
+  const setDrawerOpen = (val) => {
+    const next = typeof val === 'function' ? val(drawerOpen) : val;
+    setInternalOpen(next);
+    if (onDrawerChange) onDrawerChange(next);
+  };
+
   const [hasUnseen, setHasUnseen] = useState(true);
-  const [messages, setMessages] = useState([
-    {
-      id: 'welcome',
-      sender: 'ale',
-      text: '¡Buenas! Espero que te resulte interesante mi contenido y estemos en contacto. ¿Qué te gustaría saber al respecto?'
-    }
-  ]);
+  const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
 
   const drawerRef = useRef(null);
   const messagesEndRef = useRef(null);
 
+  const welcomeMessage = tx(
+    '¡Buenas! Espero que te resulte interesante mi contenido y estemos en contacto. ¿Qué te gustaría saber al respecto?',
+    'Hi there! I hope you find my work interesting and that we stay in touch. What would you like to know about it?',
+    lang
+  );
+
   useEffect(() => {
-    if (onDrawerChange) onDrawerChange(drawerOpen);
-  }, [drawerOpen, onDrawerChange]);
+    if (!drawerOpen) return;
+    setHasUnseen(false);
+    const handleKey = (e) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation();
+        setDrawerOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [drawerOpen]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -151,7 +283,7 @@ export default function IdentityBadge({
     setInputValue('');
     setIsTyping(true);
 
-    const replyText = await askScopedGeminiFlash(trimmed);
+    const replyText = await askScopedAssistant(trimmed, lang);
 
     setIsTyping(false);
     setMessages((prev) => [
@@ -164,6 +296,8 @@ export default function IdentityBadge({
     e.preventDefault();
     handleSendQuestion(inputValue);
   };
+
+  const allMessages = [{ id: 'welcome', sender: 'ale', text: welcomeMessage }, ...messages];
 
   return (
     <div
@@ -211,7 +345,7 @@ export default function IdentityBadge({
           <span
             className={`unseen-status-dot ${hasUnseen ? 'is-unseen' : 'is-seen'} expand-on-hover`}
           >
-            <span className="dot-hover-text">open chat</span>
+            <span className="dot-hover-text">{tx('abrir chat', 'open chat', lang)}</span>
           </span>
         </div>
 
@@ -230,14 +364,14 @@ export default function IdentityBadge({
           <button
             className="vdrawer-floating-close"
             onClick={() => setDrawerOpen(false)}
-            title="Cerrar chat"
-            aria-label="Cerrar chat"
+            title={tx('Cerrar chat', 'Close chat', lang)}
+            aria-label={tx('Cerrar chat', 'Close chat', lang)}
           >
             ✕
           </button>
 
           <div className="vdrawer-messages-list">
-            {messages.map((m) => (
+            {allMessages.map((m) => (
               <div
                 key={m.id}
                 className={`vchat-bubble-row ${m.sender === 'user' ? 'from-user' : 'from-ale'}`}
@@ -265,7 +399,7 @@ export default function IdentityBadge({
           <div className="vdrawer-bottom-area">
             {socialsInChat && (
               <div className="vdrawer-integrated-socials">
-                <span>Contacto directo:</span>
+                <span>{tx('Contacto directo:', 'Direct contact:', lang)}</span>
                 <div className="vdrawer-social-links">
                   <a
                     href="https://github.com/ale-camer/personal_website"
@@ -290,7 +424,7 @@ export default function IdentityBadge({
               <input
                 type="text"
                 className="vdrawer-input"
-                placeholder="Escribí tu mensaje..."
+                placeholder={tx('Escribí tu mensaje...', 'Type your message...', lang)}
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 maxLength={180}
@@ -300,8 +434,8 @@ export default function IdentityBadge({
                 type="submit"
                 className="vdrawer-send-btn"
                 disabled={!inputValue.trim() || isTyping}
-                aria-label="Enviar mensaje"
-                title="Enviar"
+                aria-label={tx('Enviar mensaje', 'Send message', lang)}
+                title={tx('Enviar', 'Send', lang)}
               >
                 <svg
                   viewBox="0 0 24 24"

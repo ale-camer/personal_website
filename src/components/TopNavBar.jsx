@@ -1,19 +1,28 @@
 import React from 'react';
+import { tx, useSiteLocale } from '../i18n/localeService';
 
 export const NAV_ITEMS = [
-  { id: 'flagship', label: 'QuantLambda' },
-  { id: 'research', label: 'Análisis' },
-  { id: 'playground', label: 'Proyectos' },
-  { id: 'timeline', label: 'Recorrido' }
+  { id: 'playground', labelEs: 'Proyectos', labelEn: 'Projects' },
+  { id: 'research', labelEs: 'Análisis', labelEn: 'Research' },
+  { id: 'timeline', labelEs: 'Mi CV', labelEn: 'My CV' }
 ];
+
+export function getNavLabel(id, lang = 'ES') {
+  const item = NAV_ITEMS.find((it) => it.id === id);
+  if (!item) return '';
+  return tx(item.labelEs, item.labelEn, lang);
+}
 
 export default function TopNavBar({
   activeId = null,
   onSelect,
+  lang = 'ES',
   navStyle = 'capsule',
   navFont = 'orbitron',
   accentHex = '#25D366'
 }) {
+  useSiteLocale(lang);
+
   return (
     <nav
       className={`top-nav-container nav-style-${navStyle} nav-font-${navFont}`}
@@ -28,7 +37,7 @@ export default function TopNavBar({
             className={`nav-item-btn ${isActive ? 'is-active' : ''}`}
             onClick={() => onSelect && onSelect(isActive ? null : item.id)}
           >
-            <span className="nav-item-label">{item.label}</span>
+            <span className="nav-item-label">{tx(item.labelEs, item.labelEn, lang)}</span>
           </button>
         );
       })}

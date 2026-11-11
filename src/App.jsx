@@ -1,46 +1,49 @@
 import React, { useState, useEffect, useRef } from 'react';
 import IntangibleCanvasBackground from './components/IntangibleCanvasBackground';
 import IdentityBadge from './components/IdentityBadge';
-import TopNavBar, { NAV_ITEMS } from './components/TopNavBar';
+import TopNavBar, { getNavLabel } from './components/TopNavBar';
 import SectionView from './components/SectionView';
-
-const LANGUAGES = [
-  { code: 'ES', flag: '/images/flags/es.svg', label: 'Español' },
-  { code: 'EN', flag: '/images/flags/en.svg', label: 'English' },
-  { code: 'PT', flag: '/images/flags/pt.svg', label: 'Português' },
-  { code: 'DE', flag: '/images/flags/de.svg', label: 'Deutsch' },
-  { code: 'FR', flag: '/images/flags/fr.svg', label: 'Français' },
-  { code: 'IT', flag: '/images/flags/it.svg', label: 'Italiano' },
-  { code: 'ZH', flag: '/images/flags/cn.svg', label: '中文' },
-  { code: 'JA', flag: '/images/flags/jp.svg', label: '日本語' },
-  { code: 'KO', flag: '/images/flags/kr.svg', label: '한국어' },
-  { code: 'NL', flag: '/images/flags/nl.svg', label: 'Nederlands' },
-  { code: 'RU', flag: '/images/flags/ru.svg', label: 'Русский' },
-  { code: 'SV', flag: '/images/flags/se.svg', label: 'Svenska' },
-  { code: 'DA', flag: '/images/flags/dk.svg', label: 'Dansk' },
-  { code: 'FI', flag: '/images/flags/fi.svg', label: 'Suomi' },
-  { code: 'EL', flag: '/images/flags/gr.svg', label: 'Ελληνικά' },
-  { code: 'TR', flag: '/images/flags/tr.svg', label: 'Türkçe' },
-  { code: 'AR', flag: '/images/flags/sa.svg', label: 'العربية' }
-];
+import HomeCenterShowcase from './components/HomeCenterShowcase';
+import LanguageModal from './components/LanguageModal';
+import { LANGUAGES, FlagBadge } from './i18n/languages';
+import { tx, useSiteLocale } from './i18n/localeService';
 
 // id interno de sección -> slug visible en la URL
 const SECTION_SLUGS = {
-  flagship: 'quantlambda',
-  research: 'analisis',
   playground: 'proyectos',
-  timeline: 'recorrido'
+  research: 'analisis',
+  timeline: 'mi-cv'
 };
 
 function readSectionFromHash() {
+  if (window.location.hostname.toLowerCase().startsWith('macro.')) {
+    return 'research';
+  }
   const slug = window.location.hash.replace('#', '').split('/')[0].toLowerCase();
+  if (slug === 'quantlambda' || slug === 'flagship') return 'playground';
+  if (slug === 'recorrido' || slug === 'cv') return 'timeline';
   const match = Object.entries(SECTION_SLUGS).find(([, s]) => s === slug);
   return match ? match[0] : null;
 }
 
-function OriginalSocialLinks() {
+function readInitialLang() {
+  try {
+    const saved = window.localStorage.getItem('ac_site_lang');
+    if (saved && LANGUAGES.some((l) => l.code === saved)) {
+      return saved;
+    }
+  } catch {
+    // ignore storage errors
+  }
+  return 'ES';
+}
+
+function OriginalSocialLinks({ lang }) {
   return (
-    <div className="social-original-links" aria-label="Redes y contacto directo">
+    <div
+      className="social-original-links"
+      aria-label={tx('Redes y contacto directo', 'Social networks and direct contact', lang)}
+    >
       {/* GitHub */}
       <a
         href="https://github.com/ale-camer/"
@@ -110,90 +113,68 @@ function OriginalSocialLinks() {
   );
 }
 
-function LanguageDropdown({ lang, setLang, openDirection = 'up' }) {
-  const [open, setOpen] = useState(false);
-  const wrapRef = useRef(null);
-
+function LanguageTriggerButton({ lang, open, setOpen }) {
   const selected = LANGUAGES.find((l) => l.code === lang) || LANGUAGES[0];
-  const otherOptions = LANGUAGES.filter((l) => l.code !== selected.code);
-
-  useEffect(() => {
-    if (!open) return;
-    const handleOutside = (e) => {
-      if (wrapRef.current && !wrapRef.current.contains(e.target)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleOutside);
-    return () => document.removeEventListener('mousedown', handleOutside);
-  }, [open]);
-
   return (
-    <div className="lang-dropdown-root" ref={wrapRef}>
+    <div className="lang-dropdown-root">
       <button
         type="button"
         className={`lang-single-trigger ${open ? 'is-open' : ''}`}
         onClick={() => setOpen((o) => !o)}
-        title={`Idioma actual: ${selected.label}`}
+        title={`${tx('Seleccionar idioma (56 idiomas • Tecla L)', 'Select language (56 languages • Key L)', lang)} — ${selected.nativeName}`}
       >
-        <img src={selected.flag} alt={selected.code} className="lang-flag-img" />
+        <FlagBadge lang={selected} width={18} height={12} />
         <span className="lang-flag-code">{selected.code}</span>
         <span className="lang-chevron">▾</span>
       </button>
-
-      {open && (
-        <div className={`lang-options-menu dir-${openDirection}`}>
-          {otherOptions.map((item) => (
-            <button
-              key={item.code}
-              type="button"
-              className="lang-option-item"
-              onClick={() => {
-                setLang(item.code);
-                setOpen(false);
-              }}
-              title={item.label}
-            >
-              <img src={item.flag} alt={item.code} className="lang-flag-img" />
-              <span className="lang-flag-code">{item.code}</span>
-            </button>
-          ))}
-        </div>
-      )}
     </div>
   );
 }
 
-function ThemeToggleBtn({ colorMode, setColorMode }) {
+function ThemeToggleBtn({ colorMode, setColorMode, lang }) {
   return (
     <button
       type="button"
       className="utility-theme-btn"
       onClick={() => setColorMode((m) => (m === 'dark' ? 'light' : 'dark'))}
-      title="Cambiar modo Claro / Oscuro"
+      title={tx(
+        'Cambiar modo Claro / Oscuro (Tecla T)',
+        'Toggle Light / Dark mode (Key T)',
+        lang
+      )}
     >
       {colorMode === 'dark' ? '☀️' : '🌙'}
     </button>
   );
 }
 
-function UtilitiesCluster({ lang, setLang, colorMode, setColorMode, openDirection = 'up' }) {
+function UtilitiesCluster({
+  lang,
+  langOpen,
+  setLangOpen,
+  colorMode,
+  setColorMode
+}) {
   return (
     <div className="utility-pill-group">
-      <LanguageDropdown lang={lang} setLang={setLang} openDirection={openDirection} />
+      <LanguageTriggerButton lang={lang} open={langOpen} setOpen={setLangOpen} />
       <span className="utility-divider" />
-      <ThemeToggleBtn colorMode={colorMode} setColorMode={setColorMode} />
+      <ThemeToggleBtn colorMode={colorMode} setColorMode={setColorMode} lang={lang} />
     </div>
   );
 }
 
 export default function App() {
   const [colorMode, setColorMode] = useState('dark');
-  const [lang, setLang] = useState('ES');
+  const [lang, setLang] = useState(readInitialLang);
+  const [langOpen, setLangOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
   const [activeSection, setActiveSection] = useState(readSectionFromHash);
+  const keyBufferRef = useRef({ char: '', time: 0 });
 
-  // Sincroniza la sección activa con la URL (#quantlambda, #analisis, ...)
-  // para poder compartir links y usar el botón "atrás" del navegador.
+  useSiteLocale(lang);
+
+  // Sincroniza la sección activa con la URL (#proyectos, #analisis, #mi-cv)
   useEffect(() => {
     const handleHashChange = () => setActiveSection(readSectionFromHash());
     window.addEventListener('hashchange', handleHashChange);
@@ -210,6 +191,93 @@ export default function App() {
     }
   };
 
+  const toggleTheme = () => setColorMode((m) => (m === 'dark' ? 'light' : 'dark'));
+  const toggleChat = () => setChatOpen((o) => !o);
+  const toggleLang = () => setLangOpen((o) => !o);
+
+  const openExternalChannel = (channel) => {
+    if (channel === 'gh') {
+      window.open('https://github.com/ale-camer/', '_blank', 'noopener,noreferrer');
+    } else if (channel === 'li') {
+      window.open(
+        'https://www.linkedin.com/in/alejandro-camerlengo-1ab3981b/',
+        '_blank',
+        'noopener,noreferrer'
+      );
+    } else if (channel === 'gm') {
+      window.location.href = 'mailto:alejandrocamerlengo@gmail.com';
+    }
+  };
+
+  // Atajos globales de teclado cuando el usuario no está tipeando texto libre en un input
+  useEffect(() => {
+    const handleGlobalKey = (e) => {
+      if (langOpen) return;
+      const activeEl = document.activeElement;
+      const tag = activeEl?.tagName?.toLowerCase();
+      const isHomeCmdInput = activeEl?.classList?.contains('hc-term-b-input');
+      const hasTypedText = isHomeCmdInput && activeEl.value.trim().length > 0;
+
+      // Si está escribiendo en el chat u otro input (o ya tipeó letras en el prompt), no pisar
+      if ((tag === 'input' || tag === 'textarea') && (!isHomeCmdInput || hasTypedText)) {
+        return;
+      }
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+      const k = e.key.toLowerCase();
+      const now = Date.now();
+      const prev = keyBufferRef.current;
+
+      // Secuencias de 2 teclas rápidas: gh (GitHub), li (LinkedIn), gm (Gmail)
+      if (now - prev.time < 650) {
+        const pair = prev.char + k;
+        if (pair === 'gh' || pair === 'li' || pair === 'gm') {
+          e.preventDefault();
+          keyBufferRef.current = { char: '', time: 0 };
+          openExternalChannel(pair);
+          return;
+        }
+      }
+
+      if (k === 'g' || k === 'l') {
+        keyBufferRef.current = { char: k, time: now };
+        if (k === 'g') {
+          e.preventDefault();
+          return;
+        }
+      }
+
+      if (k === '1') {
+        e.preventDefault();
+        selectSection('playground');
+      } else if (k === '2') {
+        e.preventDefault();
+        selectSection('research');
+      } else if (k === '3') {
+        e.preventDefault();
+        selectSection('timeline');
+      } else if (k === 'c') {
+        e.preventDefault();
+        toggleChat();
+      } else if (k === 't') {
+        e.preventDefault();
+        toggleTheme();
+      } else if (k === 'l') {
+        e.preventDefault();
+        // Pequeña espera de 240ms por si la segunda tecla es "i" (li -> LinkedIn)
+        setTimeout(() => {
+          if (keyBufferRef.current.char === 'l') {
+            keyBufferRef.current = { char: '', time: 0 };
+            setLangOpen((o) => !o);
+          }
+        }, 240);
+      }
+    };
+
+    window.addEventListener('keydown', handleGlobalKey);
+    return () => window.removeEventListener('keydown', handleGlobalKey);
+  }, [langOpen]);
+
   return (
     <div className={`canvas-shell mode-${colorMode}`}>
       {/* ELEMENTO 1: FONDO MULTICAPA DE RED */}
@@ -221,37 +289,50 @@ export default function App() {
           accentHex="#25D366"
           accentTextColor="#06140c"
           colorMode={colorMode}
+          lang={lang}
+          externalOpen={chatOpen}
+          onDrawerChange={setChatOpen}
         />
         <TopNavBar
           activeId={activeSection}
           onSelect={selectSection}
+          lang={lang}
           navStyle="capsule"
           navFont="orbitron"
           accentHex="#10b981"
         />
       </header>
 
-      {/* PROPUESTA CENTRAL — PLACEHOLDER (texto definitivo pendiente, ver docs/MASTER_BLUEPRINT.md §4) */}
+      {/* TERMINAL CENTRAL DEL HOME */}
       {!activeSection && (
-        <div className="hero-tagline-slot" aria-hidden="true">
-          <p className="hero-tagline-placeholder">[ Propuesta central — texto pendiente ]</p>
-        </div>
+        <HomeCenterShowcase
+          lang={lang}
+          onSelectSection={selectSection}
+          onToggleChat={toggleChat}
+          onToggleTheme={toggleTheme}
+          onToggleLang={toggleLang}
+          onOpenExternal={openExternalChannel}
+        />
       )}
 
       {/* SECCIÓN ACTIVA — PANEL CENTRAL */}
       {activeSection && (
         <SectionView
           sectionId={activeSection}
-          label={NAV_ITEMS.find((item) => item.id === activeSection)?.label}
+          label={getNavLabel(activeSection, lang)}
           colorMode={colorMode}
+          lang={lang}
           onClose={() => selectSection(null)}
         />
       )}
 
+      {/* MODAL CENTRADO DE SELECCIÓN DE IDIOMA (56 IDIOMAS CON BUSCADOR Y BANDERAS SVG) */}
+      <LanguageModal lang={lang} setLang={setLang} open={langOpen} setOpen={setLangOpen} />
+
       {/* REDES DE CONTACTO ABAJO A LA IZQUIERDA */}
       <div className="l-pos-bottom-left">
         <div className="utility-pill-group social-pill-group">
-          <OriginalSocialLinks />
+          <OriginalSocialLinks lang={lang} />
         </div>
       </div>
 
@@ -259,10 +340,10 @@ export default function App() {
       <div className="l-pos-bottom-right">
         <UtilitiesCluster
           lang={lang}
-          setLang={setLang}
+          langOpen={langOpen}
+          setLangOpen={setLangOpen}
           colorMode={colorMode}
           setColorMode={setColorMode}
-          openDirection="up"
         />
       </div>
     </div>

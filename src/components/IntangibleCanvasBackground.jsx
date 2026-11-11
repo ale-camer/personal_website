@@ -90,8 +90,17 @@ export default function IntangibleCanvasBackground({ colorMode = 'dark' }) {
     const ctx = canvas.getContext('2d');
 
     let animationFrameId;
-    let width = (canvas.width = window.innerWidth);
-    let height = (canvas.height = window.innerHeight);
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    const applyCanvasSize = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    applyCanvasSize();
 
     mouseRef.current.x = width * 0.5;
     mouseRef.current.y = height * 0.5;
@@ -147,8 +156,7 @@ export default function IntangibleCanvasBackground({ colorMode = 'dark' }) {
 
     const handleResize = () => {
       if (!canvas) return;
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
+      applyCanvasSize();
     };
 
     const handleMouseMove = (e) => {

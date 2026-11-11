@@ -1,108 +1,383 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import {
+  MacroVisual1,
+  MacroVisual2,
+  MacroVisual3,
+  MacroVisual4Table,
+  MacroVisual5
+} from './MacroCharts';
+import { getMacroText } from './macroI18n';
+import { tx as txStr, useSiteLocale } from '../../i18n/localeService';
+
+const GITHUB_RAW_BASE =
+  'https://raw.githubusercontent.com/ale-camer/argentina-macro-pipeline/main/outputs';
+const LOCAL_FALLBACK_BASE = '/data/macro';
 
 export const RESEARCH_STUDIES = [
   {
     id: 'macro-argentina',
-    num: '01',
-    hash: 'f81a3d',
-    branch: 'research/macro-empleo-arg',
-    title: 'Macroeconomía, Gasto Público y Degradación del Empleo en Argentina',
-    oneLiner:
-      'Radiografía empírica en 4 ejes (1961–Presente): inflación, gasto público/PBI, estancamiento privado y caída del salario real.',
-    domain: 'Macroeconomía & Mercado Laboral',
     colorAccent: '#f59e0b',
-    colorRgb: '245, 158, 11',
-    thesis:
-      'El estancamiento del PBI desde 2011 y el salto del gasto público/PBI financiando déficits con emisión no solo erosionaron el salario real, sino que ocultaron el freno del empleo asalariado privado detrás de un crecimiento artificial de modalidades precarizadas (Monotributo Social +160%) y empleo público (+30%).',
-    metrics: [
-      { label: 'Monotributo Social (2012→2022)', value: '+160%', accent: '#f43f5e', note: 'Mayor expansión relativa del padrón' },
-      { label: 'Empleo Público (2012→2022)', value: '+30%', accent: '#f59e0b', note: 'Crecimiento por encima de la población' },
-      { label: 'Participación Privada Formal', value: '55.9% → 48.2%', accent: '#38bdf8', note: 'Pérdida de peso en el total registrado' },
-      { label: 'Correlación PBI vs. Empleo Privado', value: 'r > 0.85', accent: '#10b981', note: 'Sin crecimiento del PBI no hay empleo privado' }
-    ],
-    barsTitle: 'VARIACIÓN ACUMULADA Y COMPOSICIÓN POR MODALIDAD LABORAL (SIPA / MTEySS)',
-    bars: [
-      { name: 'Monotributo Social (Subsidiado)', share2012: '1.5%', share2022: '3.4%', delta: '+160%', pctWidth: 100, color: '#f43f5e' },
-      { name: 'Monotributo Estándar', share2012: '12.0%', share2022: '14.8%', delta: '+45%', pctWidth: 48, color: '#f59e0b' },
-      { name: 'Empleo Sector Público', share2012: '23.3%', share2022: '26.1%', delta: '+30%', pctWidth: 36, color: '#a855f7' },
-      { name: 'Asalariados Sector Privado', share2012: '55.9%', share2022: '48.2%', delta: '+1.8%', pctWidth: 10, color: '#10b981' },
-      { name: 'Trabajadores Autónomos', share2012: '3.8%', share2022: '3.1%', delta: '-4.2%', pctWidth: 8, color: '#38bdf8' }
-    ],
-    bullets: [
-      'Eje 1 (Políticas, Gasto e Inflación desde 1961): Tres regímenes macroeconómicos marcados por la duplicación del gasto público/PBI en los 2000s sin contraparte sostenible de producto.',
-      'Eje 2 y 3 (Cantidad y Calidad del Empleo): El empleo privado registrado quedó virtualmente congelado desde 2012 mientras la población activa creció ~18%.',
-      'Eje 4 (Precio / Salario Real desde 2001): Aceleración inflacionaria que licúa sistemáticamente el poder adquisitivo tanto del sector privado como del público.'
-    ],
-    tags: ['Macroeconomía Argentina', 'Series de Tiempo', 'SIPA / INDEC', 'Política Fiscal', 'Mercado Laboral']
-  },
-  {
-    id: 'quant-sp500-clustering',
-    num: '02',
-    hash: '9c4e12',
-    branch: 'research/sp500-kmeans-backtest',
-    title: 'Segmentación Cuantitativa y Backtesting Algorítmico sobre el S&P 500',
-    oneLiner:
-      'Comparativa de clustering (K-Means, Equiprobable y Equidistante) por ratios de riesgo/retorno para rotación sistemática de carteras.',
-    domain: 'Quant Finance • UCEMA',
-    colorAccent: '#10b981',
-    colorRgb: '16, 185, 129',
-    thesis:
-      'Desarrollado en el programa ejecutivo de Finanzas Cuantitativas (UCEMA): evaluar si la segmentación periódica de acciones del S&P 500 mediante K-Means y cuantiles estadísticos permite aislar clústeres con mejor relación retorno/varianza que el índice bajo una estrategia sistemática.',
-    metrics: [
-      { label: 'Universo Analizado', value: 'S&P 500', accent: '#10b981', note: 'Series históricas de precios ajustados' },
-      { label: 'Métodos de Segmentación', value: '3 Motores', accent: '#38bdf8', note: 'K-Means, Equiprobable y Equidistante' },
-      { label: 'Métricas de Selección', value: '6 Ratios', accent: '#a855f7', note: 'Return, Risk, Sharpe, Sortino, Calmar, IR' },
-      { label: 'Mejor Consistencia', value: 'K-Means + IR', accent: '#f59e0b', note: 'Alto rendimiento con baja varianza transversal' }
-    ],
-    barsTitle: 'DESEMPEÑO RELATIVO Y ESTABILIDAD POR MÉTODO DE SEGMENTACIÓN Y MÉTRICA',
-    bars: [
-      { name: 'K-Means • Information Ratio & Risk', share2012: 'Baja Var.', share2022: 'Alta Consistencia', delta: 'Óptimo', pctWidth: 92, color: '#10b981' },
-      { name: 'Equiprobable • Sortino & Calmar Ratio', share2012: 'Baja Var.', share2022: 'Buen Downside', delta: 'Sólido', pctWidth: 78, color: '#38bdf8' },
-      { name: 'Equidistante • Concentración en Outliers', share2012: 'Alta Var.', share2022: 'Pocos Tickers', delta: 'Volátil', pctWidth: 46, color: '#f43f5e' }
-    ],
-    bullets: [
-      'Las métricas de Riesgo e Information Ratio combinadas con K-Means mostraron el mayor rendimiento medio con la menor varianza entre regímenes.',
-      'El método Equiprobable destacó al seleccionar por Sortino y Calmar Ratio (penalización de volatilidad negativa y máximo drawdown).',
-      'La segmentación Equidistante exhibió retornos nominales extremos pero alta inestabilidad por concentrar la cartera en muy pocos activos.'
-    ],
-    tags: ['Quant Finance', 'S&P 500', 'K-Means Clustering', 'Sharpe / Sortino / Calmar', 'Backtesting', 'UCEMA']
-  },
-  {
-    id: 'nlp-ds-labour-market',
-    num: '03',
-    hash: '3b70e9',
-    branch: 'research/nlp-labour-clustering',
-    title: 'Radiografía NLP y Clustering del Mercado Laboral en Data Science & Engineering',
-    oneLiner:
-      'Scraping, distribución de seniority/remoto y clustering K-Means + N-Grams sobre ofertas reales de Data Science y Data Engineering.',
-    domain: 'NLP & People Analytics',
-    colorAccent: '#a855f7',
-    colorRgb: '168, 85, 247',
-    thesis:
-      'Más allá del discurso general sobre la demanda en ciencia de datos, el análisis NLP de avisos reales muestra un mercado fuertemente sesgado hacia perfiles Senior/Mid con trabajo remoto consolidado y dividido en 3 clústeres técnicos bien diferenciados.',
-    metrics: [
-      { label: 'Modalidad 100% Remota', value: '74%', accent: '#10b981', note: '+22% en esquema híbrido' },
-      { label: 'Vacantes Entry-Level', value: 'Solo 2%', accent: '#f43f5e', note: 'Fuerte barrera de entrada sin experiencia' },
-      { label: 'Clústeres Detectados (K-Means)', value: '3 Perfiles', accent: '#a855f7', note: 'Cloud/DE, Core ML+SQL y BI/Analytics' },
-      { label: 'Requisito de Viaje', value: '20%', accent: '#38bdf8', note: 'Concentrado en consultoría y liderazgo' }
-    ],
-    barsTitle: 'DISTRIBUCIÓN ESTRUCTURAL DE LAS OFERTAS ANALIZADAS (NLP & CLUSTERING)',
-    bars: [
-      { name: 'Trabajo 100% Remoto', share2012: 'Modalidad', share2022: 'Predominante', delta: '74%', pctWidth: 74, color: '#10b981' },
-      { name: 'Esquema Híbrido', share2012: 'Modalidad', share2022: 'Flexible', delta: '22%', pctWidth: 22, color: '#38bdf8' },
-      { name: 'Posiciones Entry-Level / Junior', share2012: 'Seniority', share2022: 'Cuello de botella', delta: '2%', pctWidth: 6, color: '#f43f5e' }
-    ],
-    bullets: [
-      'Taxonomía automática de títulos en 3 ejes: Rol (Engineer, Scientist, Analyst, Architect), Nivel (Senior, Lead, Manager) y Dominio.',
-      'Extracción de unigramas y bigramas sobre descripciones completas para aislar las combinaciones de herramientas que co-ocurren en producción.',
-      'Clustering K-Means que separa claramente el perfil Cloud/Data Engineering (Azure/Pipelines) del perfil de Modelado Estadístico + SQL.'
-    ],
-    tags: ['NLP', 'K-Means Clustering', 'Web Scraping', 'N-Grams / TF-IDF', 'Data Market Trends']
+    colorRgb: '245, 158, 11'
   }
 ];
 
-export default function ResearchSection() {
+const OFFICIAL_SOURCES = [
+  {
+    id: 'wb_inflation',
+    num: '01',
+    nameEs: 'Banco Mundial — Inflación (Deflactor del PBI % anual)',
+    nameEn: 'World Bank — Inflation (GDP Deflator annual %)',
+    url: 'https://data.worldbank.org/indicator/NY.GDP.DEFL.KD.ZG?locations=AR'
+  },
+  {
+    id: 'wb_gdp_growth',
+    num: '02',
+    nameEs: 'Banco Mundial — Crecimiento del PBI Real (% anual)',
+    nameEn: 'World Bank — Real GDP Growth (annual %)',
+    url: 'https://data.worldbank.org/indicator/NY.GDP.MKTP.KD.ZG?locations=AR'
+  },
+  {
+    id: 'gasto_publico',
+    num: '03',
+    nameEs: 'Ministerio de Economía — Gasto Público Consolidado (% del PBI)',
+    nameEn: 'Ministry of Economy — Consolidated Public Spending (% of GDP)',
+    url: 'https://www.argentina.gob.ar/economia/politicaeconomica/macroeconomica/gastopublicoconsolidado'
+  },
+  {
+    id: 'sipa_modalidades',
+    num: '04',
+    nameEs: 'SIPA / Secretaría de Trabajo — Situación y Evolución del Trabajo Registrado',
+    nameEn: 'SIPA / Ministry of Labor — Registered Employment Evolution',
+    url: 'https://www.argentina.gob.ar/trabajo/estadisticas'
+  },
+  {
+    id: 'indec_salarios_vigente',
+    num: '05',
+    nameEs: 'INDEC — Índice de Salarios (empalme serie oct-2001 y base abr-2012=100)',
+    nameEn: 'INDEC — Wage Index (linked Oct-2001 and Apr-2012=100 series)',
+    url: 'https://www.indec.gob.ar/indec/web/Nivel4-Tema-4-31-61'
+  },
+  {
+    id: 'indec_emae',
+    num: '06',
+    nameEs: 'INDEC — Estimador Mensual de Actividad Económica (EMAE base 2004=100)',
+    nameEn: 'INDEC — Monthly Economic Activity Estimator (EMAE base 2004=100)',
+    url: 'https://www.indec.gob.ar/indec/web/Nivel4-Tema-3-9-48'
+  }
+];
+
+export default function ResearchSection({ lang = 'ES', onHudChange }) {
+  useSiteLocale(lang);
   const [openId, setOpenId] = useState('macro-argentina');
+  const [readingEssay, setReadingEssay] = useState(() => {
+    const hash = window.location.hash.toLowerCase();
+    const host = window.location.hostname.toLowerCase();
+    return hash.includes('macro-argentina') || host.startsWith('macro.');
+  });
+  const [macroData, setMacroData] = useState(null);
+  const [expandedChart, setExpandedChart] = useState(null);
+
+  const tx = getMacroText(lang);
+
+  const openFullEssay = () => {
+    setReadingEssay(true);
+    window.history.replaceState(null, '', '#analisis/macro-argentina');
+  };
+
+  // Navegación por teclado dentro de Análisis (Enter abre ensayo, Esc vuelve al resumen, ↑/↓ hace scroll)
+  useEffect(() => {
+    const handleKey = (e) => {
+      const tag = document.activeElement?.tagName?.toLowerCase();
+      if (tag === 'input' || tag === 'textarea') return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+      if (!readingEssay && e.key === 'Enter') {
+        e.preventDefault();
+        openFullEssay();
+      } else if (readingEssay && e.key === 'Escape') {
+        e.preventDefault();
+        e.stopPropagation();
+        if (expandedChart !== null) {
+          setExpandedChart(null);
+        } else {
+          setReadingEssay(false);
+          window.history.replaceState(null, '', '#analisis');
+        }
+      } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        const scroller = document.querySelector('.sv-a-scroll');
+        if (scroller) {
+          e.preventDefault();
+          scroller.scrollBy({ top: e.key === 'ArrowDown' ? 140 : -140, behavior: 'smooth' });
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKey, true);
+    return () => window.removeEventListener('keydown', handleKey, true);
+  }, [readingEssay, expandedChart]);
+
+  useEffect(() => {
+    if (!onHudChange) return;
+    if (readingEssay) {
+      onHudChange({
+        onBack: () => {
+          setReadingEssay(false);
+          window.history.replaceState(null, '', '#analisis');
+        },
+        backLabel: tx.backBtn,
+        repoHref: 'https://github.com/ale-camer/argentina-macro-pipeline',
+        repoLabel: tx.repoLink
+      });
+    } else {
+      onHudChange(null);
+    }
+    return () => onHudChange(null);
+  }, [readingEssay, tx.backBtn, tx.repoLink, onHudChange]);
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadPipelineData() {
+      try {
+        const dataRes = await fetch(`${GITHUB_RAW_BASE}/macro_argentina_latest.json`);
+        if (!dataRes.ok) throw new Error('Fallback to local macro JSON');
+        const d = await dataRes.json();
+        if (active) setMacroData(d);
+      } catch {
+        try {
+          const localData = await fetch(
+            `${LOCAL_FALLBACK_BASE}/macro_argentina_latest.json`
+          ).then((r) => r.json());
+          if (active) setMacroData(localData);
+        } catch {
+          // Static defaults remain active if both fail
+        }
+      }
+    }
+
+    loadPipelineData();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const hm = macroData?.headline_metrics;
+  const cutoffs = macroData?.sources_cutoff || {};
+  const series = macroData?.series || {};
+  const forecasts = macroData?.forecasts_6m_sarimax;
+
+  if (readingEssay) {
+    return (
+      <div className="rs-root rs-essay-mode">
+        {/* CABECERA DIRECTA DEL ESTUDIO */}
+        <header className="rs-essay-hero">
+          <h1 className="rs-essay-main-title">{tx.essayMainTitle}</h1>
+          <p className="rs-essay-subtitle">{tx.essaySubtitle}</p>
+        </header>
+
+        {/* SECCIÓN 1: POLÍTICA ECONÓMICA Y CRECIMIENTO */}
+        <article className="rs-essay-section">
+          <div className="rs-essay-sec-header">
+            <h2 className="rs-essay-sec-title">01. {tx.sec1Title}</h2>
+          </div>
+
+          <div className="rs-essay-prose">
+            <p>{tx.sec1P1}</p>
+            <p>{tx.sec1P2}</p>
+            <p>{tx.sec1P3}</p>
+          </div>
+
+          <MacroVisual1
+            series={series.visual_1_annual_macro}
+            lang={lang}
+            onExpand={() => setExpandedChart('v1')}
+          />
+        </article>
+
+        {/* SECCIÓN 2: EMPLEO (CANTIDAD) */}
+        <article className="rs-essay-section">
+          <div className="rs-essay-sec-header">
+            <h2 className="rs-essay-sec-title">02. {tx.sec2Title}</h2>
+          </div>
+
+          <div className="rs-essay-prose">
+            <p>{tx.sec2P1}</p>
+            <p>
+              {tx.sec2P2(
+                hm ? `${hm.correlation_jobs_emae_tc_pct}%` : '82.3%',
+                hm ? hm.elasticity_employment_gdp_beta.toFixed(2) : '0.44'
+              )}
+            </p>
+          </div>
+
+          <MacroVisual2
+            series={series.visual_2_monthly_activity_jobs}
+            forecasts={forecasts}
+            lang={lang}
+            onExpand={() => setExpandedChart('v2')}
+          />
+        </article>
+
+        {/* SECCIÓN 3: CALIDAD Y COMPOSICIÓN DEL EMPLEO */}
+        <article className="rs-essay-section">
+          <div className="rs-essay-sec-header">
+            <h2 className="rs-essay-sec-title">03. {tx.sec3Title}</h2>
+          </div>
+
+          <div className="rs-essay-prose">
+            <p>{tx.sec3P1}</p>
+            <ul className="rs-essay-list">
+              <li>{tx.sec3Li1(hm ? `${hm.demographic_gap_private_jobs_pp} pp` : '-22.5 pp')}</li>
+              <li>{tx.sec3Li2}</li>
+              <li>{tx.sec3Li3}</li>
+            </ul>
+            <p>{tx.sec3P2}</p>
+          </div>
+
+          <MacroVisual3
+            series={series.visual_3_modalities_cumulative_pct}
+            lang={lang}
+            onExpand={() => setExpandedChart('v3')}
+          />
+
+          <MacroVisual4Table rows={series.visual_4_structural_shift_summary} lang={lang} />
+        </article>
+
+        {/* SECCIÓN 4: EMPLEO (PRECIO / SALARIO REAL) */}
+        <article className="rs-essay-section">
+          <div className="rs-essay-sec-header">
+            <h2 className="rs-essay-sec-title">04. {tx.sec4Title}</h2>
+          </div>
+
+          <div className="rs-essay-prose">
+            <p>{tx.sec4P1}</p>
+            <p>{tx.sec4P2(hm ? hm.real_wage_index_2012_base100_latest : '75.39')}</p>
+          </div>
+
+          <MacroVisual5
+            series={series.visual_5_real_wages_annual}
+            lang={lang}
+            onExpand={() => setExpandedChart('v5')}
+          />
+        </article>
+
+        {/* SECCIÓN 5: PROYECCIÓN CUANTITATIVA SARIMAX (6 MESES) & FUENTES */}
+        <article className="rs-essay-section rs-forecast-section">
+          <div className="rs-essay-sec-header">
+            <h2 className="rs-essay-sec-title">05. {tx.sec5Title}</h2>
+          </div>
+
+          {forecasts && (
+            <div className="rs-forecast-grid">
+              <div className="rs-forecast-card">
+                <div className="rs-forecast-card-title">{tx.fcCard1}</div>
+                <table className="rs-forecast-table">
+                  <thead>
+                    <tr>
+                      <th>{tx.fcColPeriod}</th>
+                      <th>{tx.fcColPoint}</th>
+                      <th>{tx.fcColCi}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {forecasts.emae_des_idx_base2009?.map((row) => (
+                      <tr key={row.period}>
+                        <td>{row.period.slice(0, 7)}</td>
+                        <td className="rs-fc-point">{row.point_forecast.toFixed(2)}</td>
+                        <td className="rs-fc-ci">
+                          [{row.ci95_low.toFixed(1)} – {row.ci95_high.toFixed(1)}]
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="rs-forecast-card">
+                <div className="rs-forecast-card-title">{tx.fcCard2}</div>
+                <table className="rs-forecast-table">
+                  <thead>
+                    <tr>
+                      <th>{tx.fcColPeriod}</th>
+                      <th>{tx.fcColPoint}</th>
+                      <th>{tx.fcColCi}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {forecasts.private_jobs_idx_base2009?.map((row) => (
+                      <tr key={row.period}>
+                        <td>{row.period.slice(0, 7)}</td>
+                        <td className="rs-fc-point">{row.point_forecast.toFixed(2)}</td>
+                        <td className="rs-fc-ci">
+                          [{row.ci95_low.toFixed(1)} – {row.ci95_high.toFixed(1)}]
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          <div className="rs-sources-box">
+            <div className="rs-telemetry-title">{tx.sourcesTitle}</div>
+            <div className="rs-sources-list">
+              {OFFICIAL_SOURCES.map((s) => (
+                <a
+                  key={s.id}
+                  href={s.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="rs-source-item"
+                >
+                  <span className="rs-source-num">{s.num}</span>
+                  <span className="rs-source-name">{txStr(s.nameEs, s.nameEn, lang)}</span>
+                  <span className="rs-source-cutoff">
+                    {tx.cutoffLabel}: {cutoffs[s.id] || '2026'} ↗
+                  </span>
+                </a>
+              ))}
+            </div>
+          </div>
+        </article>
+
+        {/* MODAL PANTALLA COMPLETA PARA GRÁFICOS NATIVOS */}
+        {expandedChart && (
+          <div className="rs-lightbox-backdrop" onClick={() => setExpandedChart(null)}>
+            <div className="rs-lightbox-content" onClick={(e) => e.stopPropagation()}>
+              <div className="rs-lightbox-header">
+                <span>{tx.expandedHeader}</span>
+                <button
+                  type="button"
+                  className="rs-lightbox-close"
+                  onClick={() => setExpandedChart(null)}
+                >
+                  {tx.closeBtn}
+                </button>
+              </div>
+              <div className="mc-expanded-body">
+                {expandedChart === 'v1' && (
+                  <MacroVisual1 series={series.visual_1_annual_macro} lang={lang} />
+                )}
+                {expandedChart === 'v2' && (
+                  <MacroVisual2
+                    series={series.visual_2_monthly_activity_jobs}
+                    forecasts={forecasts}
+                    lang={lang}
+                  />
+                )}
+                {expandedChart === 'v3' && (
+                  <MacroVisual3 series={series.visual_3_modalities_cumulative_pct} lang={lang} />
+                )}
+                {expandedChart === 'v5' && (
+                  <MacroVisual5 series={series.visual_5_real_wages_annual} lang={lang} />
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   const toggleStudy = (id) => {
     setOpenId((prev) => (prev === id ? null : id));
@@ -112,18 +387,11 @@ export default function ResearchSection() {
     <div className="rs-root">
       {/* CABECERA CON EL PROPÓSITO DE ANÁLISIS / INVESTIGACIONES */}
       <div className="pj-purpose-header">
-        <div className="tl-eyebrow">SYS.RESEARCH // ANÁLISIS AD-HOC CON DATOS Y TESIS PROPIA</div>
-        <h2 className="tl-main-title">
-          Investigaciones cuantitativas y económicas construidas desde datos primarios
-        </h2>
-        <p className="pj-purpose-lead">
-          Estudios realizados a pulmón cruzando series oficiales, mercados financieros y lenguaje
-          natural para responder preguntas concretas con <strong>criterio de dominio</strong>. Hacé
-          click en cada investigación para desplegar su tesis, métricas clave y hallazgos.
-        </p>
+        <h2 className="tl-main-title">{tx.hubTitle}</h2>
+        <p className="pj-purpose-lead">{tx.hubLead}</p>
       </div>
 
-      {/* LISTA EXPANDIBLE ESTILO GIT MINIMAL */}
+      {/* LISTA LIMPIA Y DIRECTA AL ENSAYO */}
       <div className="pj-acc-list mode-git">
         {RESEARCH_STUDIES.map((study) => {
           const isOpen = openId === study.id;
@@ -137,7 +405,7 @@ export default function ResearchSection() {
                 '--item-rgb': study.colorRgb
               }}
             >
-              {/* FILA CABECERA CLICKEABLE */}
+              {/* FILA CABECERA CLICKEABLE SIN ETIQUETAS */}
               <button
                 type="button"
                 className="pj-acc-trigger"
@@ -146,98 +414,57 @@ export default function ResearchSection() {
               >
                 <div className="pj-acc-trigger-left">
                   <span className="pj-git-node-dot" aria-hidden="true" />
-                  <span className="pj-acc-code">study {study.hash}</span>
                   <div className="pj-acc-titles">
                     <div className="pj-acc-title-row">
-                      <span className="pj-acc-title">{study.title}</span>
-                      <span className="pj-git-branch-pill">{study.branch}</span>
+                      <span className="pj-acc-title">{tx.studyTitle}</span>
                     </div>
-                    <span className="pj-acc-oneliner">{study.oneLiner}</span>
+                    <span className="pj-acc-oneliner">{tx.studyOneLiner}</span>
                   </div>
                 </div>
 
                 <div className="pj-acc-trigger-right">
-                  <div className="pj-acc-preview-tags">
-                    {study.tags.slice(0, 3).map((t) => (
-                      <span key={t} className="tl-tag-pill">
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-
                   <span className={`pj-acc-chevron ${isOpen ? 'is-open' : ''}`} aria-hidden="true">
                     {isOpen ? '−' : '+'}
                   </span>
                 </div>
               </button>
 
-              {/* PANEL DESPLEGABLE DEL ESTUDIO */}
+              {/* PANEL DESPLEGABLE LIMPIO: SOLO TESIS + BULLETS UNIFICADOS + BOTÓN */}
               {isOpen && (
                 <div className="pj-acc-body">
-                  {/* TESIS CENTRAL DEL ESTUDIO */}
                   <div className="pj-objective-banner">
-                    <span className="pj-objective-tag">TESIS CENTRAL & HALLAZGO ESTRUCTURAL</span>
-                    <p className="pj-objective-text">{study.thesis}</p>
+                    <p className="pj-objective-text">{tx.thesisText}</p>
                   </div>
 
-                  {/* 4 KPIs / MÉTRICAS RÁPIDAS */}
-                  <div className="rs-metrics-grid">
-                    {study.metrics.map((m) => (
-                      <div key={m.label} className="rs-metric-card">
-                        <span className="rs-metric-value" style={{ color: m.accent }}>
-                          {m.value}
-                        </span>
-                        <span className="rs-metric-label">{m.label}</span>
-                        <span className="rs-metric-note">{m.note}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* VISUALIZACIÓN COMPACTA DE BARRAS TELEMÉTRICAS */}
-                  <div className="rs-telemetry-box">
-                    <div className="rs-telemetry-title">{study.barsTitle}</div>
-                    <div className="rs-bars-list">
-                      {study.bars.map((b) => (
-                        <div key={b.name} className="rs-bar-row">
-                          <div className="rs-bar-meta">
-                            <span className="rs-bar-name">{b.name}</span>
-                            <span className="rs-bar-shares">
-                              {b.share2012} → {b.share2022}
-                            </span>
-                            <span className="rs-bar-delta" style={{ color: b.color }}>
-                              {b.delta}
-                            </span>
-                          </div>
-                          <div className="rs-bar-track">
-                            <div
-                              className="rs-bar-fill"
-                              style={{
-                                width: `${b.pctWidth}%`,
-                                background: b.color
-                              }}
-                            />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* 3 CONCLUSIONES PUNTUALES + TAGS */}
                   <div className="pj-body-main-row">
                     <ul className="pj-clean-bullets">
-                      {study.bullets.map((b) => (
-                        <li key={b}>{b}</li>
-                      ))}
+                      {tx.bullets.map((b) => {
+                        const colonIdx = b.indexOf(':');
+                        if (colonIdx > 0 && colonIdx < 60) {
+                          const lead = b.slice(0, colonIdx + 1).trim();
+                          const rest = b.slice(colonIdx + 1).trim();
+                          return (
+                            <li key={b}>
+                              <strong className="tl-bullet-lead">{lead}</strong> {rest}
+                            </li>
+                          );
+                        }
+                        return <li key={b}>{b}</li>;
+                      })}
                     </ul>
 
                     <div className="pj-body-side-actions">
-                      <div className="pj-all-tags">
-                        {study.tags.map((t) => (
-                          <span key={t} className="tl-tag-pill">
-                            {t}
-                          </span>
-                        ))}
-                      </div>
+                      <button
+                        type="button"
+                        onClick={openFullEssay}
+                        className="pj-repo-cta rs-open-essay-btn"
+                        style={{
+                          '--insp-accent': study.colorAccent,
+                          '--insp-rgb': study.colorRgb
+                        }}
+                      >
+                        <span>{tx.readCta}</span>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -249,4 +476,3 @@ export default function ResearchSection() {
     </div>
   );
 }
-

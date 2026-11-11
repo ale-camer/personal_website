@@ -1,113 +1,166 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { tx, txList, useSiteLocale } from '../../i18n/localeService';
 
 export const WORK_ITEMS = [
   {
     id: 'tongo',
     role: 'Data Engineer',
-    company: 'Tongo (Fintech Startup)',
-    scope: 'Estados Unidos (Remoto)',
-    start: 2025.8,
-    end: 2026.8,
-    period: '12/2025 – Presente',
+    company: 'Tongo',
+    scopeEs: 'Fintech Startup • Estados Unidos (Remoto - Contractor)',
+    scopeEn: 'Fintech Startup • United States (Remote - Contractor)',
+    start: 2025.92,
+    end: 2026.85,
+    periodEs: '12/2025 – Presente',
+    periodEn: '12/2025 – Present',
     colorAccent: '#f43f5e',
     colorRgb: '244, 63, 94',
-    bullets: [
-      'Arquitectura y escalado de la plataforma de datos fintech usando Snowflake (SQL avanzado) y Airflow, integrando Fivetran, Airbyte y HubSpot.',
-      'Implementación de automatizaciones impulsadas por IA (Make) y soluciones de BI en Superset como primer profesional de datos de la compañía.',
-      'Optimización extrema del flujo hacia CRM y BI, reduciendo el volumen diario de registros procesados de cientos de miles a menos de 100 para la operativa diaria.'
+    bulletsEs: [
+      'Flujos de Datos & Reverse ETL: Orquestación end-to-end entre S3, bases OLTP/OLAP y apps de negocio (HubSpot, Slack) vía scrapers, APIs, Airbyte y Fivetran, rediseñando claves primarias para eliminar duplicados y reducir el volumen sincronizado a <1%.',
+      'Arquitectura Core & Optimización: Diseño de pipelines críticos en AWS EC2, dbt (Airflow y GitHub Actions) y Snowflake nativo, reemplazando vistas anidadas por procedimientos materializados para bajar la complejidad de exponencial a logarítmica y los tiempos de horas a segundos.',
+      'BI-as-Code & Apps Operativas: Desarrollo de tableros con resúmenes contextuales de IA en Superset, aplicaciones interactivas en Streamlit y frameworks cuantitativos de reconciliación y benchmarking para toda la compañía.'
+    ],
+    bulletsEn: [
+      'Data Flows & Reverse ETL: End-to-end orchestration across S3, OLTP/OLAP databases, and business apps (HubSpot, Slack) via scrapers, APIs, Airbyte, and Fivetran, redesigning primary keys to eliminate duplicates and cut synced volume to <1%.',
+      'Core Architecture & Optimization: Engineered mission-critical pipelines in AWS EC2, dbt (Airflow & GitHub Actions), and native Snowflake, replacing nested views with materialized procedures to reduce complexity from exponential to logarithmic and runtime from hours to seconds.',
+      'BI-as-Code & Operational Apps: Built AI-summarized dashboards in Superset, interactive Streamlit applications, and quantitative reconciliation and benchmarking frameworks across the company.'
     ]
   },
   {
     id: 'siemens',
     role: 'Data Engineer (Consulting)',
     company: 'Siemens Advanta',
-    scope: 'España (Remoto)',
-    start: 2024.9,
-    end: 2025.8,
-    period: '02/2025 – 11/2025',
+    scopeEs: 'Consultoría Global • Palma de Mallorca, España (Remoto - Contractor)',
+    scopeEn: 'Global Consulting • Palma de Mallorca, Spain (Remote - Contractor)',
+    start: 2025.08,
+    end: 2025.92,
+    periodEs: '02/2025 – 11/2025',
+    periodEn: '02/2025 – 11/2025',
     colorAccent: '#f43f5e',
     colorRgb: '244, 63, 94',
-    bullets: [
-      'Ingeniería de pipelines ETL en Databricks procesando miles de millones de registros en segundos con Apache Spark, Python y SQL, optimizando DAGs mediante particionado y estrategias incrementales.',
-      'Construcción y mantenimiento de flujos productivos integrados con Azure Data Factory y Azure Blob Storage para automatizar procesos a gran escala entre entornos.',
-      'Desarrollo de más de 30 reportes financieros en Power BI sobre modelos estrella (Star Schema) y medidas DAX para clientes Fortune 500 de consumo masivo.'
+    bulletsEs: [
+      'Ingeniería de Pipelines en Azure: Mantenimiento, optimización y depuración de flujos productivos distribuidos con Apache Spark (PySpark), Python y SQL sobre Azure Databricks, Data Factory (ADF) y Blob Storage.',
+      'Procesamiento a Gran Escala: Orquestación de cargas incrementales y particionado sobre miles de millones de registros transaccionales y financieros bajo flujos CI/CD en Azure DevOps.',
+      'Modelado Dimensional & BI: Diseño de arquitecturas Snowflake/Star Schema y desarrollo de más de 30 reportes financieros corporativos en Power BI (DAX avanzado y Power Query) para clientes Fortune 500.'
+    ],
+    bulletsEn: [
+      'Azure Pipeline Engineering: Maintained, optimized, and debugged distributed production data flows using Apache Spark (PySpark), Python, and SQL on Azure Databricks, Data Factory (ADF), and Blob Storage.',
+      'Large-Scale Processing: Orchestrated incremental loads and partitioning over billions of transactional and financial records under CI/CD workflows in Azure DevOps.',
+      'Dimensional Modeling & BI: Designed Snowflake/Star Schema architectures and delivered 30+ corporate financial reports in Power BI (advanced DAX & Power Query) for Fortune 500 clients.'
     ]
   },
   {
     id: 'abinbev',
     role: 'Data Scientist (Fraud & Pricing)',
     company: 'AB InBev',
-    scope: 'Bruselas, Bélgica (Remoto)',
-    start: 2023.2,
-    end: 2024.9,
-    period: '08/2023 – 01/2025',
+    scopeEs: 'Consumo Masivo Global • Bruselas, Bélgica (Remoto - Contractor)',
+    scopeEn: 'Global FMCG • Brussels, Belgium (Remote - Contractor)',
+    start: 2023.58,
+    end: 2025.08,
+    periodEs: '08/2023 – 01/2025',
+    periodEn: '08/2023 – 01/2025',
     colorAccent: '#a855f7',
     colorRgb: '168, 85, 247',
-    bullets: [
-      'Responsable de la infraestructura de datos de fraude en LATAM, construyendo más de 25 pipelines productivos en Databricks y Snowflake para procesar millones de transacciones semanales y reducir tiempos de horas a segundos.',
-      'Desarrollo de modelos de detección de fraude (Isolation Forest) que incrementaron la precisión y mejoraron la rentabilidad hasta un 3% en los mercados más críticos.',
-      'Diseño y ejecución de experimentos de optimización de precios (A/B testing y RCTs), impulsando el volumen de ventas hasta un 0.5% en mercados principales, junto a dashboards ejecutivos para el C-suite.'
+    bulletsEs: [
+      'Infraestructura de Datos de Fraude: Gobierno de más de 25 pipelines productivos en Spark/Python y SQL sobre Databricks y Snowflake para LATAM, reduciendo la latencia de horas a segundos para reporting ejecutivo del C-Suite.',
+      'Detección de Anomalías (ML): Entrenamiento y despliegue de modelos no supervisados y supervisados de prevención de fraude (Python, Scikit-learn, Isolation Forest), mejorando la rentabilidad un 3% en mercados clave.',
+      'Inferencia Causal & Pricing: Diseño y evaluación estadística de experimentos de elasticidad y optimización de precios (A/B Testing y RCTs), incrementando el volumen de ventas un 0.5% en mercados principales.'
+    ],
+    bulletsEn: [
+      'Fraud Data Infrastructure: Governed 25+ production Spark/Python and SQL pipelines on Databricks and Snowflake across LATAM, cutting latency from hours to seconds for C-Suite executive reporting.',
+      'Anomaly Detection (ML): Trained and deployed unsupervised and supervised fraud prevention models (Python, Scikit-learn, Isolation Forest), improving profitability by 3% in key markets.',
+      'Causal Inference & Pricing: Designed and statistically evaluated price elasticity and optimization experiments (A/B Testing & RCTs), lifting sales volume by 0.5% in core markets.'
     ]
   },
   {
     id: 'lumen',
     role: 'Data Scientist (Corporate Finance)',
     company: 'Lumen Technologies',
-    scope: 'Buenos Aires, Argentina (Híbrido)',
-    start: 2021.8,
-    end: 2023.2,
-    period: '11/2021 – 07/2023',
+    scopeEs: 'Telecomunicaciones • Buenos Aires, Argentina (Híbrido)',
+    scopeEn: 'Telecommunications • Buenos Aires, Argentina (Hybrid)',
+    start: 2021.83,
+    end: 2023.58,
+    periodEs: '11/2021 – 07/2023',
+    periodEn: '11/2021 – 07/2023',
     colorAccent: '#a855f7',
     colorRgb: '168, 85, 247',
-    bullets: [
-      'Construcción de más de 10 pipelines ETL con Talend, Python y SQL para alimentar y automatizar tableros en Power BI utilizados por más de 50 stakeholders de finanzas y liderazgo.',
-      'Proyección de pagos y estimación de riesgo de default mediante Random Forests; modelado de flujo de caja con técnicas de regresión para planificación financiera.',
-      'Aplicación de NLP sobre encuestas de salida con NLTK y spaCy para identificar causas de rotación, permitiendo a RR.HH. diseñar políticas de retención más allá de incentivos monetarios.'
+    bulletsEs: [
+      'Automatización ETL & Reporting: Construcción de más de 10 pipelines ETL productivos (Python, SQL y Talend) que automatizaron el ecosistema de tableros en Power BI para más de 50 stakeholders financieros y de liderazgo.',
+      'Forecasting & Riesgo Crediticio: Desarrollo de modelos predictivos de comportamiento de pago, riesgo de mora y proyección de flujo de caja (Random Forests y regresiones) para planificación financiera regional.',
+      'People Analytics & NLP: Aplicación de procesamiento de lenguaje natural sobre encuestas de clima y salida (NLTK, spaCy) para detectar drivers de rotación y guiar políticas de retención en RR.HH.'
+    ],
+    bulletsEn: [
+      'ETL & Reporting Automation: Built 10+ production ETL pipelines (Python, SQL, Talend) automating the Power BI dashboard ecosystem for 50+ finance and leadership stakeholders.',
+      'Forecasting & Credit Risk: Developed predictive models for payment behavior, default risk, and cash-flow forecasting (Random Forests & regressions) for regional financial planning.',
+      'People Analytics & NLP: Applied natural language processing on climate and exit surveys (NLTK, spaCy) to uncover turnover drivers and guide HR retention policies.'
     ]
   },
   {
     id: 'balanz',
     role: 'Quantitative Analyst (Algorithmic Trading)',
     company: 'Balanz Capital',
-    scope: 'Buenos Aires, Argentina (Híbrido)',
-    start: 2021.0,
-    end: 2021.8,
-    period: '02/2021 – 10/2021',
+    scopeEs: 'Mercado de Capitales • Buenos Aires, Argentina (Híbrido)',
+    scopeEn: 'Capital Markets • Buenos Aires, Argentina (Hybrid)',
+    start: 2021.08,
+    end: 2021.83,
+    periodEs: '02/2021 – 10/2021',
+    periodEn: '02/2021 – 10/2021',
     colorAccent: '#10b981',
     colorRgb: '16, 185, 129',
-    bullets: [
-      'Desarrollo y backtesting de estrategias de trading algorítmico utilizando Python y redes neuronales LSTM para los mercados de Argentina y Estados Unidos.',
-      'Construcción de visualizaciones cuantitativas avanzadas (superficies y sonrisas de volatilidad) con Plotly y Seaborn para la toma de decisiones de la mesa de trading.'
+    bulletsEs: [
+      'Estrategias de Trading Algorítmico: Investigación, desarrollo y backtesting de estrategias sistemáticas direccionales y de arbitraje con Python y redes neuronales recurrentes (LSTM) para activos de Argentina y EE.UU.',
+      'Modelado de Derivados & Volatilidad: Construcción de herramientas de análisis cuantitativo para curvas de tasas, superficies y sonrisas de volatilidad implícita orientadas a la operatoria de la mesa.',
+      'Visualización Cuantitativa Interactiva: Desarrollo de monitores dinámicos de mercado en Python (Plotly, Seaborn) para seguimiento de señales, ejecución y riesgo en tiempo real.'
+    ],
+    bulletsEn: [
+      'Algorithmic Trading Strategies: Researched, developed, and backtested systematic directional and arbitrage strategies using Python and recurrent neural networks (LSTM) for Argentine and US assets.',
+      'Derivatives & Volatility Modeling: Built quantitative analytics tools for yield curves, implied volatility surfaces, and option smiles tailored for trading desk execution.',
+      'Interactive Quantitative Visualization: Created dynamic market monitors in Python (Plotly, Seaborn) for real-time signal, execution, and risk tracking.'
     ]
   },
   {
     id: 'portfolio-manager-indep',
-    role: 'Independent Portfolio Manager',
-    company: 'Independiente',
-    scope: 'Mercado de Capitales • Asset Management',
-    start: 2018.1,
-    end: 2021.0,
-    period: '2018 – 2021',
+    role: 'Portfolio Manager',
+    company: 'Independent',
+    scopeEs: 'Mercado de Capitales • Asset Management',
+    scopeEn: 'Capital Markets • Asset Management',
+    start: 2018.08,
+    end: 2021.08,
+    periodEs: '02/2018 – 01/2021',
+    periodEn: '02/2018 – 01/2021',
     colorAccent: '#10b981',
     colorRgb: '16, 185, 129',
-    bullets: [
-      'Gestión y administración independiente de carteras de inversión, asignación estratégica y táctica de activos en renta fija, renta variable y derivados.',
-      'Diseño de estrategias cuantitativas de cobertura cambiaria y de tasas, control de drawdown y seguimiento sistemático de retornos ajustados por riesgo.'
+    bulletsEs: [
+      'Profiling & Propuestas de Inversión: Perfilamiento integral de inversores evaluando aversión al riesgo, horizonte temporal y liquidez para estructurar propuestas a medida (Strategic & Tactical Asset Allocation).',
+      'Rebalanceo & Control de Riesgo: Ejecución sistemática de rebalanceos en carteras multimoneda (renta fija, equity y derivados), optimizando el ratio retorno/riesgo y acotando el drawdown ante cambios de régimen.',
+      'Reporting & Performance Attribution: Elaboración de reportes ejecutivos de rendimiento, atribución de resultados y seguimiento patrimonial periódico frente a benchmarks de referencia.'
+    ],
+    bulletsEn: [
+      'Investor Profiling & Proposals: Comprehensive investor profiling assessing risk aversion, time horizon, and liquidity to structure tailored portfolios (Strategic & Tactical Asset Allocation).',
+      'Rebalancing & Risk Control: Systematic rebalancing across multi-currency portfolios (fixed income, equities, and derivatives), optimizing risk-adjusted return and limiting drawdown across regime shifts.',
+      'Reporting & Performance Attribution: Executive performance reporting, return attribution, and periodic wealth tracking against market benchmarks.'
     ]
   },
   {
     id: 'bestday',
     role: 'Semi Senior Treasury Analyst (South America)',
     company: 'Best Day Travel Group',
-    scope: 'Sudamérica • Finanzas Corporativas',
-    start: 2015.3,
-    end: 2018.1,
-    period: '2015 – 2018',
+    scopeEs: 'Finanzas Corporativas • Sudamérica',
+    scopeEn: 'Corporate Finance • South America',
+    start: 2015.5,
+    end: 2018.08,
+    periodEs: '07/2015 – 01/2018',
+    periodEn: '07/2015 – 01/2018',
     colorAccent: '#f59e0b',
     colorRgb: '245, 158, 11',
-    bullets: [
-      'Gestión de tesorería regional, flujo de caja multimoneda y exposición cambiaria (FX) para las operaciones de Sudamérica.',
-      'Automatización de conciliaciones bancarias, reportes de liquidez y planificación financiera operativa.'
+    bulletsEs: [
+      'Treasury & Liquidity Management: Administración integral de liquidez y tesorería regional para Sudamérica, optimizando el flujo de caja operativo, el capital de trabajo y la posición financiera diaria.',
+      'Corporate Finance & FX Reporting: Elaboración de reportes ejecutivos de finanzas corporativas, gestión de cuentas por cobrar y por pagar (AR/AP) y seguimiento de exposición cambiaria multimoneda.',
+      'Automatización Contable (Excel VBA): Desarrollo de macros avanzadas en Microsoft Excel para automatizar cierres contables, conciliaciones bancarias masivas y controles operativos.'
+    ],
+    bulletsEn: [
+      'Treasury & Liquidity Management: Regional liquidity and treasury management across South America, optimizing operating cash flow, working capital, and daily financial positions.',
+      'Corporate Finance & FX Reporting: Executive corporate finance reporting, accounts receivable/payable (AR/AP) management, and multi-currency FX exposure tracking.',
+      'Accounting Automation (Excel VBA): Built advanced Microsoft Excel macros to automate accounting closes, high-volume bank reconciliations, and operational controls.'
     ]
   }
 ];
@@ -117,59 +170,92 @@ export const EDU_ITEMS = [
     id: 'ucema',
     degree: 'Executive Program in Quantitative Finance',
     school: 'Universidad del CEMA (UCEMA)',
-    scope: 'Posgrado en Finanzas Cuantitativas',
-    start: 2022.2,
-    end: 2023.0,
-    period: '2022',
+    scopeEs: 'Posgrado en Finanzas Cuantitativas (Programa QUANt)',
+    scopeEn: 'Postgraduate Program in Quantitative Finance (QUANt)',
+    start: 2022.17,
+    end: 2022.95,
+    periodEs: '03/2022 – 12/2022',
+    periodEn: '03/2022 – 12/2022',
     colorAccent: '#10b981',
     colorRgb: '16, 185, 129',
-    bullets: [
-      'Cálculo estocástico, valoración de derivados, estructura temporal de tasas de interés y modelos cuantitativos de riesgo.',
-      'Investigación aplicada en segmentación cuantitativa (K-Means) y backtesting algorítmico sobre activos del S&P 500.'
+    bulletsEs: [
+      'Mercado de Capitales & Derivados: Teoría moderna de portafolios, optimización cuantitativa de carteras, instrumentos de Renta Fija, Equity y exóticos, pricing y cobertura de derivados financieros y trading algorítmico.',
+      'Matemática, Estadística & Computación: Cálculo estocástico, ecuaciones diferenciales, álgebra lineal numérica y simulación de Montecarlo; econometría de series de tiempo y Machine Learning financiero en Python.',
+      'Investigación Aplicada: Segmentación cuantitativa multivariada (K-Means) sobre factores fundamentales y técnicos y backtesting algorítmico sobre activos del S&P 500.'
+    ],
+    bulletsEn: [
+      'Capital Markets & Derivatives: Modern portfolio theory, quantitative portfolio optimization, Fixed Income, Equity & exotic instruments, derivatives pricing & hedging, and algorithmic trading.',
+      'Mathematics, Statistics & Computing: Stochastic calculus, differential equations, numerical linear algebra, and Monte Carlo simulation; time-series econometrics and financial Machine Learning in Python.',
+      'Applied Research: Multivariate quantitative segmentation (K-Means) across fundamental and technical factors and algorithmic backtesting on S&P 500 equities.'
     ]
   },
   {
     id: 'uba-ds',
     degree: 'Master’s Degree in Data Science (MSc)',
     school: 'Universidad de Buenos Aires (UBA)',
-    scope: 'Maestría en Ciencia de Datos',
-    start: 2020.2,
-    end: 2022.1,
-    period: '2020 – 2021',
+    scopeEs: 'Maestría en Explotación de Datos y Descubrimiento del Conocimiento (FIUBA / FCEN)',
+    scopeEn: 'MSc in Data Mining & Knowledge Discovery (FIUBA / FCEN)',
+    start: 2020.17,
+    end: 2021.95,
+    periodEs: '03/2020 – 12/2021',
+    periodEn: '03/2020 – 12/2021',
     colorAccent: '#a855f7',
     colorRgb: '168, 85, 247',
-    bullets: [
-      'Aprendizaje estadístico, Machine Learning, procesamiento de lenguaje natural (NLP), series de tiempo y minería de grandes volúmenes de datos.',
-      'Álgebra lineal computacional, optimización y arquitectura de modelos predictivos.'
+    bulletsEs: [
+      'Ciclo Troncal: Aprendizaje Automático (Machine Learning), Análisis Inteligente de Datos, Data Mining, Enfoque Estadístico del Aprendizaje y Knowledge Discovery en Economía, Finanzas y Ciencia.',
+      'Modelado Avanzado & Especialización: Redes Neuronales y Deep Learning, Data Mining en Series Temporales, Tópicos Avanzados de Text & Web Mining (NLP) y Metaheurísticas de optimización.',
+      'Ingeniería & Arquitectura de Datos: Data Warehousing, Sistemas de Información Geográfica (GIS), Recuperación de Información, Visualización de la Información y Arquitecturas de Big Data.'
+    ],
+    bulletsEn: [
+      'Core Curriculum: Machine Learning, Intelligent Data Analysis, Data Mining, Statistical Learning, and Knowledge Discovery across Economics, Finance, and Science.',
+      'Advanced Modeling & Specialization: Neural Networks & Deep Learning, Time-Series Data Mining, Advanced Text & Web Mining (NLP), and Optimization Metaheuristics.',
+      'Data Engineering & Architecture: Data Warehousing, Geographic Information Systems (GIS), Information Retrieval, Information Visualization, and Big Data Architectures.'
     ]
   },
   {
     id: 'uba-fin',
     degree: 'Master’s Degree in Finance (Corporate Finance)',
     school: 'Universidad de Buenos Aires (UBA)',
-    scope: 'Maestría en Finanzas Corporativas',
-    start: 2018.2,
-    end: 2020.1,
-    period: '2018 – 2019',
-    colorAccent: '#f59e0b',
-    colorRgb: '245, 158, 11',
-    bullets: [
-      'Valuación de empresas, mercado de capitales, estructura de capital, fusiones y adquisiciones (M&A) y evaluación de proyectos de inversión.',
-      'Modelado financiero avanzado, análisis de riesgo crediticio y gestión de portafolios corporativos.'
+    scopeEs: 'Maestría en Finanzas — Orientación Finanzas Corporativas (FCE)',
+    scopeEn: 'MSc in Finance — Corporate Finance Track (FCE)',
+    start: 2017.67,
+    end: 2019.75,
+    periodEs: '09/2017 – 09/2019',
+    periodEn: '09/2017 – 09/2019',
+    colorAccent: '#10b981',
+    colorRgb: '16, 185, 129',
+    bulletsEs: [
+      'Ciclo Común & Mercados: Análisis cuantitativo para decisiones financieras, Entorno macroeconómico y elaboración de escenarios, Diagnóstico financiero e Instrumentos de Renta Fija, Renta Variable y Derivados.',
+      'Finanzas Corporativas & Valuación: Estructura y costo de capital (WACC), Valuación de empresas, Fusiones y Adquisiciones (M&A), Evaluación de proyectos de inversión y Gestión estratégica de tesorería.',
+      'Riesgo & Gobierno Corporativo: Gestión integral de riesgos financieros y operativos del negocio, regulación de mercados, control de gestión estratégica y gobierno corporativo.'
+    ],
+    bulletsEn: [
+      'Core & Markets: Quantitative analysis for financial decisions, Macroeconomic environment & scenario planning, Financial diagnosis, and Fixed Income, Equity & Derivatives instruments.',
+      'Corporate Finance & Valuation: Capital structure & cost of capital (WACC), Corporate valuation, Mergers & Acquisitions (M&A), Investment project evaluation, and Strategic treasury management.',
+      'Risk & Corporate Governance: Enterprise financial and operational risk management, market regulation, strategic management control, and corporate governance.'
     ]
   },
   {
     id: 'unlz',
     degree: 'Bachelor’s Degree in Business Administration (BSc)',
     school: 'Universidad Nacional de Lomas de Zamora (UNLZ)',
-    scope: 'Licenciatura en Administración',
+    scopeEs: 'Licenciatura en Administración (Facultad de Ciencias Económicas)',
+    scopeEn: 'BSc in Business Administration (School of Economics)',
     start: 2011.0,
-    end: 2017.6,
-    period: '2011 – 2017',
+    end: 2017.58,
+    periodEs: '01/2011 – 07/2017',
+    periodEn: '01/2011 – 07/2017',
     colorAccent: '#f59e0b',
     colorRgb: '245, 158, 11',
-    bullets: [
-      'Formación de grado en administración, economía, estadística, matemática financiera, contabilidad gerencial y dirección estratégica.'
+    bulletsEs: [
+      'Métodos Cuantitativos & Finanzas: Matemática I y II, Matemática Financiera, Estadística, Investigación Operativa, Administración Financiera y Seminario de Planeamiento y Evaluación de Proyectos.',
+      'Economía & Coyuntura: Microeconomía, Macroeconomía, Finanzas Públicas, Historia Económica y análisis de Coyuntura Económica aplicada a la toma de decisiones empresariales.',
+      'Contabilidad & Dirección Estratégica: Contabilidad Básica, Técnicas de Valuación, Sistemas de Costos, Costos para la Toma de Decisiones, Sistemas Administrativos, Planeamiento y Dirección General.'
+    ],
+    bulletsEn: [
+      'Quantitative Methods & Finance: Mathematics I & II, Financial Mathematics, Statistics, Operations Research, Financial Management, and Project Planning & Evaluation.',
+      'Economics & Macro Analysis: Microeconomics, Macroeconomics, Public Finance, Economic History, and Applied Macroeconomic Analysis for business decision-making.',
+      'Accounting & Strategic Management: Financial Accounting, Valuation Techniques, Cost Systems, Decision-Making Costs, Administrative Systems, Planning, and General Management.'
     ]
   }
 ];
@@ -215,8 +301,8 @@ function computeDeoverlappedPcts(items, minGapPct = 12.6, topBound = 6, bottomBo
   return positions;
 }
 
-const WORK_CLEAN_PCTS = computeDeoverlappedPcts(WORK_ITEMS, 12.8, 6.0, 92.5);
-const EDU_CLEAN_PCTS = computeDeoverlappedPcts(EDU_ITEMS, 17.5, 19.0, 82.0);
+const WORK_CLEAN_PCTS = computeDeoverlappedPcts(WORK_ITEMS, 13.4, 5.5, 93.0);
+const EDU_CLEAN_PCTS = computeDeoverlappedPcts(EDU_ITEMS, 18.0, 20.0, 82.0);
 
 function buildDagConnectorPath(side, labelY, midPct) {
   const isLeft = side === 'left';
@@ -227,23 +313,75 @@ function buildDagConnectorPath(side, labelY, midPct) {
   return `M ${xStart} ${labelY} C ${c1} ${labelY}, ${c2} ${midPct}, ${xEnd} ${midPct}`;
 }
 
-export default function TimelineSection() {
+export default function TimelineSection({ colorMode = 'dark', lang = 'ES' }) {
+  useSiteLocale(lang);
   const [selectedId, setSelectedId] = useState('tongo');
 
   const selectedItem = ALL_ITEMS.find((it) => it.id === selectedId) || ALL_ITEMS[0];
   const activeSpanTop = getTopPct(selectedItem.end);
   const activeSpanHeight = getHeightPct(selectedItem.start, selectedItem.end);
 
+  // Navegación por teclado en el grafo DAG de Mi CV (↑/↓ dentro de la columna, ←/→ entre Experiencia y Educación, D para PDF)
+  useEffect(() => {
+    const handleKey = (e) => {
+      const tag = document.activeElement?.tagName?.toLowerCase();
+      if (tag === 'input' || tag === 'textarea') return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+      const isWork = WORK_ITEMS.some((w) => w.id === selectedId);
+      const currentList = isWork ? WORK_ITEMS : EDU_ITEMS;
+      const idx = currentList.findIndex((it) => it.id === selectedId);
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        const nextIdx = (idx + 1) % currentList.length;
+        setSelectedId(currentList[nextIdx].id);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        const prevIdx = (idx - 1 + currentList.length) % currentList.length;
+        setSelectedId(currentList[prevIdx].id);
+      } else if (e.key === 'ArrowRight' && isWork) {
+        e.preventDefault();
+        setSelectedId(EDU_ITEMS[0].id);
+      } else if (e.key === 'ArrowLeft' && !isWork) {
+        e.preventDefault();
+        setSelectedId(WORK_ITEMS[0].id);
+      } else if (e.key.toLowerCase() === 'd') {
+        e.preventDefault();
+        const link = document.createElement('a');
+        link.href = '/Alejandro_Camerlengo_Data_Engineer.pdf';
+        link.download = 'Alejandro_Camerlengo_CV.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [selectedId]);
+
+  const selectedScope = tx(selectedItem.scopeEs, selectedItem.scopeEn, lang);
+  const selectedPeriod = tx(selectedItem.periodEs, selectedItem.periodEn, lang);
+  const selectedBullets = txList(selectedItem.bulletsEs, selectedItem.bulletsEn, lang);
+
   return (
     <div className="tl-root">
-      {/* CABECERA DE RECORRIDO */}
-      <div className="tl-header-bar">
-        <div className="tl-header-copy">
-          <div className="tl-eyebrow">2011 – 2026 • TRAYECTORIA PROFESIONAL Y ACADÉMICA</div>
-          <h2 className="tl-main-title">
-            Negocios & Finanzas → Data Science → Data & AI Engineering
-          </h2>
-        </div>
+      {/* CABECERA UNIFICADA DE MI CV */}
+      <div className="pj-purpose-header">
+        <h2 className="tl-main-title">
+          {tx(
+            'Negocios & Finanzas → Data Science → Data Engineering',
+            'Business & Finance → Data Science → Data Engineering',
+            lang
+          )}
+        </h2>
+        <p className="pj-purpose-lead">
+          {tx(
+            'Línea de tiempo proporcional (2011–2026): hacé clic en cualquier etapa laboral o académica para ver en detalle su alcance y responsabilidades.',
+            'Proportional timeline (2011–2026): click any work or academic stage to inspect its scope and key deliverables in detail.',
+            lang
+          )}
+        </p>
       </div>
 
       {/* ESCENARIO DAG DE DOBLE EJE */}
@@ -254,9 +392,9 @@ export default function TimelineSection() {
         <span className="tl-hud-corner tl-corner-br" aria-hidden="true" />
 
         <div className="tl-d1-col-headers">
-          <span className="tl-col-pill">EXPERIENCIA LABORAL</span>
-          <span className="tl-col-axis-label">2026 ↓ 2011</span>
-          <span className="tl-col-pill">EDUCACIÓN</span>
+          <span className="tl-col-pill">{tx('EXPERIENCIA', 'EXPERIENCE', lang)}</span>
+          <span aria-hidden="true" />
+          <span className="tl-col-pill">{tx('EDUCACIÓN', 'EDUCATION', lang)}</span>
         </div>
 
         <div className="tl-dual-canvas">
@@ -302,7 +440,7 @@ export default function TimelineSection() {
                       <path
                         d={pathD}
                         className="tl-trace-pulse"
-                        stroke="#ffffff"
+                        stroke={colorMode === 'light' ? item.colorAccent : '#ffffff'}
                         strokeWidth="2"
                         fill="none"
                         vectorEffect="non-scaling-stroke"
@@ -325,7 +463,9 @@ export default function TimelineSection() {
                         <span className="tl-node-role">{item.role}</span>
                         <span className="tl-node-org">{item.company}</span>
                       </div>
-                      <span className="tl-node-period-badge">{item.period}</span>
+                      <span className="tl-node-period-badge">
+                        {tx(item.periodEs, item.periodEn, lang)}
+                      </span>
                     </div>
 
                     <span className="tl-port-dot port-right" aria-hidden="true" />
@@ -406,7 +546,7 @@ export default function TimelineSection() {
                       <path
                         d={pathD}
                         className="tl-trace-pulse"
-                        stroke="#ffffff"
+                        stroke={colorMode === 'light' ? item.colorAccent : '#ffffff'}
                         strokeWidth="2"
                         fill="none"
                         vectorEffect="non-scaling-stroke"
@@ -429,7 +569,9 @@ export default function TimelineSection() {
                         <span className="tl-node-role">{item.degree}</span>
                         <span className="tl-node-org">{item.school}</span>
                       </div>
-                      <span className="tl-node-period-badge">{item.period}</span>
+                      <span className="tl-node-period-badge">
+                        {tx(item.periodEs, item.periodEn, lang)}
+                      </span>
                     </div>
 
                     <span className="tl-port-dot port-left" aria-hidden="true" />
@@ -453,16 +595,26 @@ export default function TimelineSection() {
           <div className="tl-bottom-insp-title-wrap">
             <h3 className="tl-bottom-insp-title">{selectedItem.title}</h3>
             <span className="tl-bottom-insp-org">
-              • {selectedItem.subtitle} ({selectedItem.scope})
+              • {selectedItem.subtitle} ({selectedScope})
             </span>
           </div>
-          <span className="tl-insp-period">{selectedItem.period}</span>
+          <span className="tl-insp-period">{selectedPeriod}</span>
         </div>
 
         <ul className="pj-clean-bullets">
-          {selectedItem.bullets.map((b) => (
-            <li key={b}>{b}</li>
-          ))}
+          {selectedBullets.map((b) => {
+            const colonIdx = b.indexOf(':');
+            if (colonIdx > 0 && colonIdx < 54) {
+              const lead = b.slice(0, colonIdx + 1).trim();
+              const rest = b.slice(colonIdx + 1).trim();
+              return (
+                <li key={b}>
+                  <strong className="tl-bullet-lead">{lead}</strong> {rest}
+                </li>
+              );
+            }
+            return <li key={b}>{b}</li>;
+          })}
         </ul>
       </footer>
     </div>
