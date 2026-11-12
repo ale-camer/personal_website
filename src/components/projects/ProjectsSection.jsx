@@ -113,22 +113,29 @@ export default function ProjectsSection({ colorMode = 'dark', lang = 'ES' }) {
   const [openId, setOpenId] = useState(null);
   // 0 = QuantLambda, 1..3 = los 3 proyectos exploratorios
   const [kbdIdx, setKbdIdx] = useState(0);
+  const [explorerHref, setExplorerHref] = useState('https://explorer.alejandrocamerlengo.com');
 
   const toggleProject = (id) => {
     setOpenId((prev) => (prev === id ? null : id));
   };
 
-  // Pre-calienta los servicios al abrir la sección Proyectos por si el contenedor entró en reposo
+  // Pre-calienta los servicios al abrir la sección Proyectos y verifica resolución DNS de explorer
   useEffect(() => {
     const urls = [
       'https://worldmap.alejandrocamerlengo.com/api/countries',
-      'https://explorer.alejandrocamerlengo.com/',
-      'https://qol-api-service-450135571603.us-central1.run.app/api/v1/metadata',
+      'https://qol-frontend-450135571603.us-central1.run.app/',
+      'https://qol-api-service-450135571603.us-central1.run.app/api/v1/metadata/indicators',
       'https://spark.alejandrocamerlengo.com/'
     ];
     urls.forEach((u) => {
       fetch(u, { mode: 'no-cors', cache: 'no-store' }).catch(() => {});
     });
+
+    fetch('https://explorer.alejandrocamerlengo.com/', { mode: 'no-cors', cache: 'no-store' }).catch(
+      () => {
+        setExplorerHref('https://qol-frontend-450135571603.us-central1.run.app');
+      }
+    );
   }, []);
 
   useEffect(() => {
@@ -193,6 +200,7 @@ export default function ProjectsSection({ colorMode = 'dark', lang = 'ES' }) {
             const objective = tx(proj.objectiveEs, proj.objectiveEn, lang);
             const appLabel = tx(proj.appLabelEs, proj.appLabelEn, lang);
             const bullets = txList(proj.bulletsEs, proj.bulletsEn, lang);
+            const resolvedUrl = proj.id === 'world-bank-qol' ? explorerHref : proj.appUrl;
 
             return (
               <div
@@ -245,7 +253,7 @@ export default function ProjectsSection({ colorMode = 'dark', lang = 'ES' }) {
                           <span />
                         </div>
                         <a
-                          href={proj.appUrl}
+                          href={resolvedUrl}
                           target="_blank"
                           rel="noreferrer"
                           className="ql-browser-url"
@@ -257,7 +265,7 @@ export default function ProjectsSection({ colorMode = 'dark', lang = 'ES' }) {
                       </div>
 
                       <a
-                        href={proj.appUrl}
+                        href={resolvedUrl}
                         target="_blank"
                         rel="noreferrer"
                         className="pj-preview-stage"
@@ -280,7 +288,7 @@ export default function ProjectsSection({ colorMode = 'dark', lang = 'ES' }) {
 
                       <div className="pj-body-side-actions">
                         <a
-                          href={proj.appUrl}
+                          href={resolvedUrl}
                           target="_blank"
                           rel="noreferrer"
                           className="pj-repo-cta"

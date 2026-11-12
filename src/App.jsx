@@ -188,7 +188,8 @@ export default function App() {
       const warmupTargets = [
         'https://worldmap.alejandrocamerlengo.com/api/countries',
         'https://explorer.alejandrocamerlengo.com/',
-        'https://qol-api-service-450135571603.us-central1.run.app/api/v1/metadata',
+        'https://qol-frontend-450135571603.us-central1.run.app/',
+        'https://qol-api-service-450135571603.us-central1.run.app/api/v1/metadata/indicators',
         'https://spark.alejandrocamerlengo.com/'
       ];
       warmupTargets.forEach((url) => {
