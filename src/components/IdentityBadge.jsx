@@ -510,6 +510,7 @@ export default function IdentityBadge({
 
   const drawerRef = useRef(null);
   const messagesEndRef = useRef(null);
+  const inputRef = useRef(null);
 
   const quickPrompts = [
     {
@@ -574,10 +575,31 @@ export default function IdentityBadge({
   useEffect(() => {
     if (!drawerOpen) return;
     setHasUnseen(false);
+
+    if (typeof window !== 'undefined' && window.innerWidth > 680) {
+      const raf = requestAnimationFrame(() => {
+        inputRef.current?.focus();
+      });
+      return () => cancelAnimationFrame(raf);
+    }
+  }, [drawerOpen]);
+
+  useEffect(() => {
+    if (!drawerOpen) return;
     const handleKey = (e) => {
       if (e.key === 'Escape') {
         e.stopPropagation();
         setDrawerOpen(false);
+        return;
+      }
+      if (
+        e.key.length === 1 &&
+        !e.metaKey &&
+        !e.ctrlKey &&
+        !e.altKey &&
+        document.activeElement !== inputRef.current
+      ) {
+        inputRef.current?.focus();
       }
     };
     window.addEventListener('keydown', handleKey);
@@ -846,14 +868,23 @@ export default function IdentityBadge({
               </div>
             )}
 
-            <form className="vdrawer-input-form" onSubmit={handleSubmitForm}>
+            <form
+              className="vdrawer-input-form"
+              onSubmit={handleSubmitForm}
+              onClick={() => inputRef.current?.focus()}
+            >
+              <span className="vdrawer-input-prompt" aria-hidden="true">
+                ›
+              </span>
               <input
+                ref={inputRef}
                 type="text"
                 className="vdrawer-input"
-                placeholder={tx('Escribí tu pregunta o tocá un tema...', 'Type a question or tap a topic...', lang)}
+                placeholder={tx('Escribí tu mensaje acá...', 'Type your message here...', lang)}
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 maxLength={180}
+                enterKeyHint="send"
               />
               <button
                 type="submit"

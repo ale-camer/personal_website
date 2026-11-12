@@ -1,13 +1,12 @@
-import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import IntangibleCanvasBackground from './components/IntangibleCanvasBackground';
 import IdentityBadge from './components/IdentityBadge';
 import TopNavBar, { getNavLabel } from './components/TopNavBar';
 import HomeCenterShowcase from './components/HomeCenterShowcase';
+import SectionView from './components/SectionView';
+import LanguageModal from './components/LanguageModal';
 import { LANGUAGES, FlagBadge } from './i18n/languages';
 import { tx, useSiteLocale } from './i18n/localeService';
-
-const SectionView = lazy(() => import('./components/SectionView'));
-const LanguageModal = lazy(() => import('./components/LanguageModal'));
 
 // id interno de sección -> slug visible en la URL
 const SECTION_SLUGS = {
@@ -230,7 +229,7 @@ export default function App() {
   // Atajos globales de teclado cuando el usuario no está tipeando texto libre en un input
   useEffect(() => {
     const handleGlobalKey = (e) => {
-      if (langOpen) return;
+      if (langOpen || chatOpen) return;
       const activeEl = document.activeElement;
       const tag = activeEl?.tagName?.toLowerCase();
       const isHomeCmdInput = activeEl?.classList?.contains('hc-term-b-input');
@@ -294,7 +293,7 @@ export default function App() {
 
     window.addEventListener('keydown', handleGlobalKey);
     return () => window.removeEventListener('keydown', handleGlobalKey);
-  }, [langOpen]);
+  }, [langOpen, chatOpen]);
 
   return (
     <div className={`canvas-shell mode-${colorMode}`}>
@@ -336,22 +335,18 @@ export default function App() {
 
       {/* SECCIÓN ACTIVA — PANEL CENTRAL */}
       {activeSection && (
-        <Suspense fallback={null}>
-          <SectionView
-            sectionId={activeSection}
-            label={getNavLabel(activeSection, lang)}
-            colorMode={colorMode}
-            lang={lang}
-            onClose={() => selectSection(null)}
-          />
-        </Suspense>
+        <SectionView
+          sectionId={activeSection}
+          label={getNavLabel(activeSection, lang)}
+          colorMode={colorMode}
+          lang={lang}
+          onClose={() => selectSection(null)}
+        />
       )}
 
       {/* MODAL CENTRADO DE SELECCIÓN DE IDIOMA (56 IDIOMAS CON BUSCADOR Y BANDERAS SVG) */}
       {langOpen && (
-        <Suspense fallback={null}>
-          <LanguageModal lang={lang} setLang={setLang} open={langOpen} setOpen={setLangOpen} />
-        </Suspense>
+        <LanguageModal lang={lang} setLang={setLang} open={langOpen} setOpen={setLangOpen} />
       )}
 
       {/* REDES DE CONTACTO ABAJO A LA IZQUIERDA */}

@@ -1,9 +1,8 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
+import React, { useState, useEffect } from 'react';
 import { tx, useSiteLocale } from '../i18n/localeService';
-
-const TimelineSection = lazy(() => import('./timeline/TimelineSection'));
-const ProjectsSection = lazy(() => import('./projects/ProjectsSection'));
-const ResearchSection = lazy(() => import('./research/ResearchSection'));
+import TimelineSection from './timeline/TimelineSection';
+import ProjectsSection from './projects/ProjectsSection';
+import ResearchSection from './research/ResearchSection';
 
 /**
  * Panel central HUD con barra superior propia fija y scroll interno.
@@ -87,19 +86,17 @@ export default function SectionView({ sectionId, label, colorMode = 'dark', lang
         </header>
 
         <div className="sv-a-scroll">
-          <Suspense fallback={null}>
-            {sectionId === 'timeline' ? (
-              <TimelineSection colorMode={colorMode} lang={lang} />
-            ) : sectionId === 'playground' ? (
-              <ProjectsSection colorMode={colorMode} lang={lang} />
-            ) : (
-              <ResearchSection
-                colorMode={colorMode}
-                lang={lang}
-                onHudChange={setHudOverride}
-              />
-            )}
-          </Suspense>
+          {sectionId === 'timeline' ? (
+            <TimelineSection colorMode={colorMode} lang={lang} />
+          ) : sectionId === 'playground' ? (
+            <ProjectsSection colorMode={colorMode} lang={lang} />
+          ) : (
+            <ResearchSection
+              colorMode={colorMode}
+              lang={lang}
+              onHudChange={setHudOverride}
+            />
+          )}
         </div>
       </section>
     </div>

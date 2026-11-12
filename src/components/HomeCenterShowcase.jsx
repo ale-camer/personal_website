@@ -72,6 +72,24 @@ export const TERMINAL_BULLETS = [
 
 let hasPlayedInitialBoot = false;
 
+function shouldPlayInitialBoot() {
+  if (hasPlayedInitialBoot) return false;
+  if (typeof window === 'undefined') return false;
+  if (window.location.hash && window.location.hash.length > 1) {
+    hasPlayedInitialBoot = true;
+    return false;
+  }
+  try {
+    if (window.sessionStorage.getItem('ac_boot_done') === '1') {
+      hasPlayedInitialBoot = true;
+      return false;
+    }
+  } catch {
+    // Ignore storage restrictions
+  }
+  return true;
+}
+
 export default function HomeCenterShowcase({
   lang = 'ES',
   onSelectSection,
@@ -81,20 +99,25 @@ export default function HomeCenterShowcase({
   onOpenExternal
 }) {
   useSiteLocale(lang);
-  const [isBooting, setIsBooting] = useState(() => !hasPlayedInitialBoot);
+  const [isBooting, setIsBooting] = useState(() => shouldPlayInitialBoot());
   const [isCommandsOpen, setIsCommandsOpen] = useState(false);
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [cmdInput, setCmdInput] = useState('');
   const [feedbackMsg, setFeedbackMsg] = useState(null);
   const inputRef = useRef(null);
 
-  // Duración del telón de apertura "> Welcome" (~1.35s)
+  // Telón de apertura ágil "> Welcome" (~420ms solo en la primera visita limpia)
   useEffect(() => {
     if (!isBooting) return;
     const t = setTimeout(() => {
       hasPlayedInitialBoot = true;
+      try {
+        window.sessionStorage.setItem('ac_boot_done', '1');
+      } catch {
+        // Ignore storage restrictions
+      }
       setIsBooting(false);
-    }, 1350);
+    }, 420);
     return () => clearTimeout(t);
   }, [isBooting]);
 
