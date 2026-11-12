@@ -250,13 +250,8 @@ export default function ProjectsSection({
             >
               {tx('Abrir App ↗', 'Open App ↗', lang)}
             </a>
-            <span className={`pj-toggle-pill ${isQlOpen ? 'is-open' : ''}`}>
-              <span>
-                {isQlOpen
-                  ? tx('Ocultar detalle', 'Hide details', lang)
-                  : tx('Ver detalle', 'View details', lang)}
-              </span>
-              <i aria-hidden="true">{isQlOpen ? '▴' : '▾'}</i>
+            <span className={`pj-row-chevron ${isQlOpen ? 'is-open' : ''}`} aria-hidden="true">
+              {isQlOpen ? '▴' : '▾'}
             </span>
           </div>
         </div>
@@ -328,13 +323,8 @@ export default function ProjectsSection({
                   >
                     {tx('Abrir ↗', 'Open ↗', lang)}
                   </a>
-                  <span className={`pj-toggle-pill ${isOpen ? 'is-open' : ''}`}>
-                    <span>
-                      {isOpen
-                        ? tx('Cerrar', 'Close', lang)
-                        : tx('Ver detalles', 'View details', lang)}
-                    </span>
-                    <i aria-hidden="true">{isOpen ? '▴' : '▾'}</i>
+                  <span className={`pj-row-chevron ${isOpen ? 'is-open' : ''}`} aria-hidden="true">
+                    {isOpen ? '▴' : '▾'}
                   </span>
                 </div>
               </div>
@@ -380,26 +370,9 @@ export default function ProjectsSection({
                     </a>
                   </div>
 
-                  <div className="pj-body-main-row">
-                    <ul className="pj-clean-bullets">
-                      {bullets.map(renderBulletWithBoldLead)}
-                    </ul>
-
-                    <div className="pj-body-side-actions">
-                      <a
-                        href={resolvedUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="pj-repo-cta"
-                        style={{
-                          '--insp-accent': proj.colorAccent,
-                          '--insp-rgb': proj.colorRgb
-                        }}
-                      >
-                        <span>{appLabel}</span>
-                      </a>
-                    </div>
-                  </div>
+                  <ul className="pj-clean-bullets">
+                    {bullets.map(renderBulletWithBoldLead)}
+                  </ul>
                 </div>
               )}
             </div>

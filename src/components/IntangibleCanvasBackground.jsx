@@ -77,13 +77,17 @@ export default function IntangibleCanvasBackground({ colorMode = 'dark', isPause
   const mouseRef = useRef({ x: -1000, y: -1000, targetX: -1000, targetY: -1000 });
   const colorModeRef = useRef(colorMode);
   const isPausedRef = useRef(isPaused);
+  const needsRedrawRef = useRef(true);
+  const lastDrawnModeRef = useRef(null);
 
   useEffect(() => {
     colorModeRef.current = colorMode;
+    needsRedrawRef.current = true;
   }, [colorMode]);
 
   useEffect(() => {
     isPausedRef.current = isPaused;
+    needsRedrawRef.current = true;
   }, [isPaused]);
 
   useEffect(() => {
@@ -205,6 +209,13 @@ export default function IntangibleCanvasBackground({ colorMode = 'dark', isPause
     const handleResize = () => {
       if (!canvas) return;
       applyCanvasSize();
+      needsRedrawRef.current = true;
+    };
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        needsRedrawRef.current = true;
+      }
     };
 
     const handleMouseMove = (e) => {
@@ -214,6 +225,7 @@ export default function IntangibleCanvasBackground({ colorMode = 'dark', isPause
 
     window.addEventListener('resize', handleResize, { passive: true });
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     let time = 0;
     let lastFrameTime = 0;
@@ -242,18 +254,34 @@ export default function IntangibleCanvasBackground({ colorMode = 'dark', isPause
     };
 
     const render = (now = 0) => {
-      if (document.hidden || isPausedRef.current) {
+      if (lastDrawnModeRef.current !== colorModeRef.current) {
+        needsRedrawRef.current = true;
+      }
+
+      const forceDraw = needsRedrawRef.current;
+
+      if (document.hidden && !forceDraw) {
         animationFrameId = requestAnimationFrame(render);
         return;
       }
 
-      if (hw.frameIntervalMs > 0 && now - lastFrameTime < hw.frameIntervalMs) {
+      if (isPausedRef.current && !forceDraw) {
+        animationFrameId = requestAnimationFrame(render);
+        return;
+      }
+
+      if (!forceDraw && hw.frameIntervalMs > 0 && now - lastFrameTime < hw.frameIntervalMs) {
         animationFrameId = requestAnimationFrame(render);
         return;
       }
       lastFrameTime = now;
+      needsRedrawRef.current = false;
+      lastDrawnModeRef.current = colorModeRef.current;
 
-      time += hw.frameIntervalMs > 0 ? 0.014 : 0.008;
+      const shouldAdvance = !isPausedRef.current;
+      if (shouldAdvance) {
+        time += hw.frameIntervalMs > 0 ? 0.014 : 0.008;
+      }
       const isDark = colorModeRef.current === 'dark';
       const palette = DOMAIN_COLORS[isDark ? 'dark' : 'light'];
 
@@ -293,28 +321,30 @@ export default function IntangibleCanvasBackground({ colorMode = 'dark', isPause
           n.renderX = rx;
           n.renderY = ry;
 
-          if (maxTrail > 0) {
-            n.trail.push({ x: rx, y: ry });
-            if (n.trail.length > maxTrail) n.trail.shift();
-          }
+          if (shouldAdvance) {
+            if (maxTrail > 0) {
+              n.trail.push({ x: rx, y: ry });
+              if (n.trail.length > maxTrail) n.trail.shift();
+            }
 
-          n.x += n.vx;
-          n.y += n.vy;
+            n.x += n.vx;
+            n.y += n.vy;
 
-          const pad = 24;
-          if (n.x < pad) {
-            n.x = pad;
-            n.vx = Math.abs(n.vx);
-          } else if (n.x > width - pad) {
-            n.x = width - pad;
-            n.vx = -Math.abs(n.vx);
-          }
-          if (n.y < pad) {
-            n.y = pad;
-            n.vy = Math.abs(n.vy);
-          } else if (n.y > height - pad) {
-            n.y = height - pad;
-            n.vy = -Math.abs(n.vy);
+            const pad = 24;
+            if (n.x < pad) {
+              n.x = pad;
+              n.vx = Math.abs(n.vx);
+            } else if (n.x > width - pad) {
+              n.x = width - pad;
+              n.vx = -Math.abs(n.vx);
+            }
+            if (n.y < pad) {
+              n.y = pad;
+              n.vy = Math.abs(n.vy);
+            } else if (n.y > height - pad) {
+              n.y = height - pad;
+              n.vy = -Math.abs(n.vy);
+            }
           }
         }
 
@@ -426,6 +456,7 @@ export default function IntangibleCanvasBackground({ colorMode = 'dark', isPause
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);
 
@@ -437,6 +468,7 @@ export default function IntangibleCanvasBackground({ colorMode = 'dark', isPause
         inset: 0,
         width: '100vw',
         height: '100vh',
+        backgroundColor: colorMode === 'dark' ? '#09090c' : '#f6f4ef',
         pointerEvents: 'none',
         zIndex: 0
       }}

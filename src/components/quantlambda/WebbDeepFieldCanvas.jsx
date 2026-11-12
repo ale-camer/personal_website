@@ -149,17 +149,21 @@ export default function WebbDeepFieldCanvas({
   const morphOverrideRef = useRef(morphOverride);
   const onActiveSceneChangeRef = useRef(onActiveSceneChange);
   const lastReportedIdxRef = useRef(activePairIdx);
+  const forceDrawRef = useRef(true);
 
   useEffect(() => {
     isPausedRef.current = isPaused;
+    forceDrawRef.current = true;
   }, [isPaused]);
 
   useEffect(() => {
     lightModeRef.current = lightMode;
+    forceDrawRef.current = true;
   }, [lightMode]);
 
   useEffect(() => {
     selectedSceneRef.current = selectedScene;
+    forceDrawRef.current = true;
     if (selectedScene !== null) {
       const idx = Number(selectedScene) % 4;
       lastReportedIdxRef.current = idx;
@@ -368,7 +372,8 @@ export default function WebbDeepFieldCanvas({
       const dt = Math.min(0.1, Math.max(0, rawDeltaMs * 0.001));
       lastTime = now;
 
-      if (!isPausedRef.current) {
+      if (!isPausedRef.current || forceDrawRef.current) {
+        forceDrawRef.current = false;
         if (!didAutoScaleDown && rawDeltaMs > 0 && rawDeltaMs < 250) {
           sampleFrames += 1;
           sampleTimeAccum += rawDeltaMs;

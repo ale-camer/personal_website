@@ -241,18 +241,6 @@ export default function QuantLambdaSection({
           >
             {tx('Ver arquitectura y sistema en vivo ↗', 'View live architecture & system ↗', lang)}
           </a>
-          <a
-            href="https://quantlambda.dev"
-            target="_blank"
-            rel="noreferrer"
-            className="pj-repo-cta"
-            style={{
-              '--insp-accent': '#10b981',
-              '--insp-rgb': '16, 185, 129'
-            }}
-          >
-            <span>{tx('Abrir QuantLambda ↗', 'Open QuantLambda ↗', lang)}</span>
-          </a>
         </div>
       </footer>
     </div>

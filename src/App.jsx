@@ -174,6 +174,12 @@ export default function App() {
 
   useSiteLocale(lang);
 
+  useEffect(() => {
+    const bg = colorMode === 'dark' ? '#09090c' : '#f6f4ef';
+    document.body.style.backgroundColor = bg;
+    document.documentElement.style.colorScheme = colorMode;
+  }, [colorMode]);
+
   // Sincroniza la sección activa con la URL (#proyectos, #analisis, #mi-cv)
   useEffect(() => {
     const handleHashChange = () => setActiveSection(readSectionFromHash());
