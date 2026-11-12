@@ -49,50 +49,56 @@ const KEY_BULLETS = [
   }
 ];
 
-export default function QuantLambdaSection({ colorMode = 'dark', lang = 'ES' }) {
+export default function QuantLambdaSection({
+  colorMode = 'dark',
+  lang = 'ES',
+  hideTopBanner = false
+}) {
   useSiteLocale(lang);
   const [sceneIdx, setSceneIdx] = useState(null);
   const isLight = colorMode === 'light';
 
   return (
     <div className="ql-showcase">
-      {/* 1. CABECERA UNIFICADA: PROYECTO INSIGNIA */}
-      <div className="ql-top-banner">
-        <div className="ql-top-banner-main">
-          <h2 className="tl-main-title">QuantLambda</h2>
-          <p className="pj-purpose-lead">
-            <strong>{tx('Mi proyecto insignia:', 'My flagship project:', lang)}</strong>{' '}
-            {tx(
-              'una plataforma para seguir mercados globales en vivo, analizar cada activo a fondo y poner a prueba carteras de inversión.',
-              'a live platform to track global markets, analyze individual assets in depth, and stress-test investment portfolios.',
-              lang
-            )}
-          </p>
-        </div>
+      {/* 1. CABECERA UNIFICADA: PROYECTO INSIGNIA (opcional cuando se usa dentro del acordeón compacto Opción C) */}
+      {!hideTopBanner && (
+        <div className="ql-top-banner">
+          <div className="ql-top-banner-main">
+            <h2 className="tl-main-title">QuantLambda</h2>
+            <p className="pj-purpose-lead">
+              <strong>{tx('Mi proyecto insignia:', 'My flagship project:', lang)}</strong>{' '}
+              {tx(
+                'una plataforma para seguir mercados globales en vivo, analizar cada activo a fondo y poner a prueba carteras de inversión.',
+                'a live platform to track global markets, analyze individual assets in depth, and stress-test investment portfolios.',
+                lang
+              )}
+            </p>
+          </div>
 
-        <div className="ql-cta-row">
-          <a
-            href="https://quantlambda.dev"
-            target="_blank"
-            rel="noreferrer"
-            className="pj-repo-cta"
-            style={{
-              '--insp-accent': '#10b981',
-              '--insp-rgb': '16, 185, 129'
-            }}
-          >
-            <span>{tx('Abrir QuantLambda ↗', 'Open QuantLambda ↗', lang)}</span>
-          </a>
-          <a
-            href="https://quantlambda.dev/?view=guide"
-            target="_blank"
-            rel="noreferrer"
-            className="ql-btn-secondary"
-          >
-            {tx('Guía Interactiva ↗', 'Interactive Guide ↗', lang)}
-          </a>
+          <div className="ql-cta-row">
+            <a
+              href="https://quantlambda.dev"
+              target="_blank"
+              rel="noreferrer"
+              className="pj-repo-cta"
+              style={{
+                '--insp-accent': '#10b981',
+                '--insp-rgb': '16, 185, 129'
+              }}
+            >
+              <span>{tx('Abrir QuantLambda ↗', 'Open QuantLambda ↗', lang)}</span>
+            </a>
+            <a
+              href="https://quantlambda.dev/?view=guide"
+              target="_blank"
+              rel="noreferrer"
+              className="ql-btn-secondary"
+            >
+              {tx('Guía Interactiva ↗', 'Interactive Guide ↗', lang)}
+            </a>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* 2. VENTANA DEL HOME ANIMADO A ANCHO COMPLETO */}
       <div className="ql-preview-frame">
@@ -226,14 +232,28 @@ export default function QuantLambdaSection({ colorMode = 'dark', lang = 'ES' }) 
             )}
           </p>
         </div>
-        <a
-          href="https://quantlambda.dev/?view=observability"
-          target="_blank"
-          rel="noreferrer"
-          className="ql-arch-link"
-        >
-          {tx('Ver arquitectura y sistema en vivo ↗', 'View live architecture & system ↗', lang)}
-        </a>
+        <div className="ql-arch-actions">
+          <a
+            href="https://quantlambda.dev/?view=observability"
+            target="_blank"
+            rel="noreferrer"
+            className="ql-arch-link"
+          >
+            {tx('Ver arquitectura y sistema en vivo ↗', 'View live architecture & system ↗', lang)}
+          </a>
+          <a
+            href="https://quantlambda.dev"
+            target="_blank"
+            rel="noreferrer"
+            className="pj-repo-cta"
+            style={{
+              '--insp-accent': '#10b981',
+              '--insp-rgb': '16, 185, 129'
+            }}
+          >
+            <span>{tx('Abrir QuantLambda ↗', 'Open QuantLambda ↗', lang)}</span>
+          </a>
+        </div>
       </footer>
     </div>
   );

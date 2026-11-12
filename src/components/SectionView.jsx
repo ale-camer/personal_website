@@ -51,6 +51,15 @@ export default function SectionView({ sectionId, label, colorMode = 'dark', lang
           </div>
 
           <div className="sv-hud-topbar-right">
+            {hudOverride?.onCollapseAll && (
+              <button
+                type="button"
+                className="sv-hud-action-link sv-hud-collapse-btn"
+                onClick={hudOverride.onCollapseAll}
+              >
+                {hudOverride.collapseLabel}
+              </button>
+            )}
             {sectionId === 'timeline' && (
               <a
                 href="/Alejandro_Camerlengo_Data_Engineer.pdf"
@@ -89,7 +98,11 @@ export default function SectionView({ sectionId, label, colorMode = 'dark', lang
           {sectionId === 'timeline' ? (
             <TimelineSection colorMode={colorMode} lang={lang} />
           ) : sectionId === 'playground' ? (
-            <ProjectsSection colorMode={colorMode} lang={lang} />
+            <ProjectsSection
+              colorMode={colorMode}
+              lang={lang}
+              onHudChange={setHudOverride}
+            />
           ) : (
             <ResearchSection
               colorMode={colorMode}

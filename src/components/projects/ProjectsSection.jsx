@@ -108,8 +108,13 @@ function renderBulletWithBoldLead(b) {
   return <li key={b}>{b}</li>;
 }
 
-export default function ProjectsSection({ colorMode = 'dark', lang = 'ES' }) {
+export default function ProjectsSection({
+  colorMode = 'dark',
+  lang = 'ES',
+  onHudChange
+}) {
   useSiteLocale(lang);
+  // Opción C: 4 filas ejecutivas compactas por defecto; clic o Enter despliega bajo demanda
   const [openId, setOpenId] = useState(null);
   // 0 = QuantLambda, 1..3 = los 3 proyectos exploratorios
   const [kbdIdx, setKbdIdx] = useState(0);
@@ -118,6 +123,19 @@ export default function ProjectsSection({ colorMode = 'dark', lang = 'ES' }) {
   const toggleProject = (id) => {
     setOpenId((prev) => (prev === id ? null : id));
   };
+
+  useEffect(() => {
+    if (!onHudChange) return;
+    if (openId) {
+      onHudChange({
+        onCollapseAll: () => setOpenId(null),
+        collapseLabel: tx('Contraer todos ▴', 'Collapse all ▴', lang)
+      });
+    } else {
+      onHudChange(null);
+    }
+    return () => onHudChange(null);
+  }, [openId, lang, onHudChange]);
 
   // Pre-calienta los servicios al abrir la sección Proyectos y verifica resolución DNS de explorer
   useEffect(() => {
@@ -154,7 +172,7 @@ export default function ProjectsSection({ colorMode = 'dark', lang = 'ES' }) {
       } else if (e.key === 'Enter') {
         e.preventDefault();
         if (kbdIdx === 0) {
-          window.open('https://quantlambda.dev', '_blank', 'noopener,noreferrer');
+          toggleProject('quantlambda');
         } else {
           const proj = PLAYGROUND_PROJECTS[kbdIdx - 1];
           if (proj) toggleProject(proj.id);
@@ -165,148 +183,228 @@ export default function ProjectsSection({ colorMode = 'dark', lang = 'ES' }) {
     return () => window.removeEventListener('keydown', handleKey);
   }, [kbdIdx]);
 
+  const isQlOpen = openId === 'quantlambda';
+
   return (
-    <div className="pj-root">
-      {/* 1. PROYECTO INSIGNIA DESTACADO ARRIBA: QUANTLAMBDA */}
-      <div className={`pj-flagship-wrap ${kbdIdx === 0 ? 'is-kbd-active' : ''}`}>
-        <QuantLambdaSection colorMode={colorMode} lang={lang} />
+    <div className="pj-root pj-mode-compact-c">
+      {/* SUBTÍTULO GUÍA EJECUTIVO */}
+      <div className="pj-compact-intro">
+        <p className="pj-purpose-lead">
+          {tx(
+            'Tocá cualquier proyecto para desplegar su vista previa interactiva y detalles acá mismo, o abrí cada aplicación en vivo:',
+            'Tap any project to expand its interactive preview and details right here, or launch each live application directly:',
+            lang
+          )}
+        </p>
       </div>
 
-      {/* 2. BLOQUE SECUNDARIO: PROYECTOS DE EXPLORACIÓN / PRÁCTICA */}
-      <div className="pj-sandbox-block">
-        <div className="pj-purpose-header">
-          <h3 className="tl-main-title">
-            {tx(
-              'Otros desarrollos y exploraciones interactivas',
-              'Other interactive builds & explorations',
-              lang
-            )}
-          </h3>
-          <p className="pj-purpose-lead">
-            {tx(
-              'Aplicaciones más acotadas y experimentales, creadas por curiosidad para explorar datos públicos, mapas y conceptos visuales jugando:',
-              'Focused experimental applications built out of curiosity to explore public datasets, maps, and visual concepts hands-on:',
-              lang
-            )}
-          </p>
+      {/* 1. FILA EJECUTIVA INSIGNIA: QUANTLAMBDA (COLAPSABLE BAJO DEMANDA) */}
+      <div
+        className={`pj-acc-item mode-v2 pj-flagship-acc ${isQlOpen ? 'is-open' : ''} ${kbdIdx === 0 ? 'is-kbd-focus' : ''}`}
+        style={{
+          '--item-accent': '#10b981',
+          '--item-rgb': '16, 185, 129'
+        }}
+      >
+        <div
+          role="button"
+          tabIndex={0}
+          className="pj-acc-trigger pj-flagship-trigger"
+          onMouseEnter={() => setKbdIdx(0)}
+          onClick={() => toggleProject('quantlambda')}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              toggleProject('quantlambda');
+            }
+          }}
+          aria-expanded={isQlOpen}
+        >
+          <div className="pj-acc-trigger-left">
+            <div className="pj-acc-titles">
+              <div className="pj-acc-title-row">
+                <span className="pj-flagship-badge">
+                  <i className="pj-flagship-dot" aria-hidden="true" />
+                  {tx('PROYECTO INSIGNIA', 'FLAGSHIP PROJECT', lang)}
+                </span>
+                <span className="pj-acc-title">QuantLambda</span>
+                <span className="pj-domain-tag">quantlambda.dev</span>
+              </div>
+              <span className="pj-acc-oneliner">
+                {tx(
+                  'Plataforma en vivo para seguir 213 activos globales, analizar opciones y tasas en 3D y simular el riesgo de carteras.',
+                  'Live platform to track 213 global assets, inspect 3D options & yield curves, and stress-test portfolio risk.',
+                  lang
+                )}
+              </span>
+            </div>
+          </div>
+
+          <div className="pj-acc-trigger-right">
+            <a
+              href="https://quantlambda.dev"
+              target="_blank"
+              rel="noreferrer"
+              className="pj-quick-launch-pill is-flagship"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {tx('Abrir App ↗', 'Open App ↗', lang)}
+            </a>
+            <span className={`pj-toggle-pill ${isQlOpen ? 'is-open' : ''}`}>
+              <span>
+                {isQlOpen
+                  ? tx('Ocultar detalle', 'Hide details', lang)
+                  : tx('Ver detalle', 'View details', lang)}
+              </span>
+              <i aria-hidden="true">{isQlOpen ? '▴' : '▾'}</i>
+            </span>
+          </div>
         </div>
 
-        {/* LISTA DESPLEGABLE ESTILO GIT LIMPIA */}
-        <div className="pj-acc-list mode-git">
-          {PLAYGROUND_PROJECTS.map((proj, idx) => {
-            const isOpen = openId === proj.id;
-            const isKbdFocused = kbdIdx === idx + 1;
-            const oneLiner = tx(proj.oneLinerEs, proj.oneLinerEn, lang);
-            const objective = tx(proj.objectiveEs, proj.objectiveEn, lang);
-            const appLabel = tx(proj.appLabelEs, proj.appLabelEn, lang);
-            const bullets = txList(proj.bulletsEs, proj.bulletsEn, lang);
-            const resolvedUrl = proj.id === 'world-bank-qol' ? explorerHref : proj.appUrl;
+        {isQlOpen && (
+          <div className="pj-acc-body pj-flagship-body">
+            <QuantLambdaSection
+              colorMode={colorMode}
+              lang={lang}
+              hideTopBanner={true}
+            />
+          </div>
+        )}
+      </div>
 
-            return (
+      {/* 2. LAS 3 APLICACIONES INTERACTIVAS COMPACTAS */}
+      <div className="pj-acc-list mode-compact-list">
+        {PLAYGROUND_PROJECTS.map((proj, idx) => {
+          const isOpen = openId === proj.id;
+          const isKbdFocused = kbdIdx === idx + 1;
+          const oneLiner = tx(proj.oneLinerEs, proj.oneLinerEn, lang);
+          const objective = tx(proj.objectiveEs, proj.objectiveEn, lang);
+          const appLabel = tx(proj.appLabelEs, proj.appLabelEn, lang);
+          const bullets = txList(proj.bulletsEs, proj.bulletsEn, lang);
+          const resolvedUrl = proj.id === 'world-bank-qol' ? explorerHref : proj.appUrl;
+          const cleanDomain = proj.displayUrl.replace(/^https?:\/\//, '');
+
+          return (
+            <div
+              key={proj.id}
+              className={`pj-acc-item mode-v2 ${isOpen ? 'is-open' : ''} ${isKbdFocused ? 'is-kbd-focus' : ''}`}
+              style={{
+                '--item-accent': proj.colorAccent,
+                '--item-rgb': proj.colorRgb
+              }}
+            >
               <div
-                key={proj.id}
-                className={`pj-acc-item mode-v2 ${isOpen ? 'is-open' : ''} ${isKbdFocused ? 'is-kbd-focus' : ''}`}
-                style={{
-                  '--item-accent': proj.colorAccent,
-                  '--item-rgb': proj.colorRgb
+                role="button"
+                tabIndex={0}
+                className="pj-acc-trigger"
+                onMouseEnter={() => setKbdIdx(idx + 1)}
+                onClick={() => toggleProject(proj.id)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    toggleProject(proj.id);
+                  }
                 }}
+                aria-expanded={isOpen}
               >
-                {/* FILA CABECERA CLICKEABLE SIN RUIDO */}
-                <button
-                  type="button"
-                  className="pj-acc-trigger"
-                  onMouseEnter={() => setKbdIdx(idx + 1)}
-                  onClick={() => toggleProject(proj.id)}
-                  aria-expanded={isOpen}
-                >
-                  <div className="pj-acc-trigger-left">
-                    <span className="pj-git-node-dot" aria-hidden="true" />
-                    <div className="pj-acc-titles">
-                      <div className="pj-acc-title-row">
-                        <span className="pj-acc-title">{proj.title}</span>
-                      </div>
-                      <span className="pj-acc-oneliner">{oneLiner}</span>
+                <div className="pj-acc-trigger-left">
+                  <span className="pj-git-node-dot" aria-hidden="true" />
+                  <div className="pj-acc-titles">
+                    <div className="pj-acc-title-row">
+                      <span className="pj-acc-title">{proj.title}</span>
+                      <span className="pj-domain-tag">{cleanDomain}</span>
                     </div>
+                    <span className="pj-acc-oneliner">{oneLiner}</span>
                   </div>
+                </div>
 
-                  <div className="pj-acc-trigger-right">
-                    <span className={`pj-acc-chevron ${isOpen ? 'is-open' : ''}`} aria-hidden="true">
-                      {isOpen ? '−' : '+'}
+                <div className="pj-acc-trigger-right">
+                  <a
+                    href={resolvedUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="pj-quick-launch-pill"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {tx('Abrir ↗', 'Open ↗', lang)}
+                  </a>
+                  <span className={`pj-toggle-pill ${isOpen ? 'is-open' : ''}`}>
+                    <span>
+                      {isOpen
+                        ? tx('Cerrar', 'Close', lang)
+                        : tx('Ver detalles', 'View details', lang)}
                     </span>
+                    <i aria-hidden="true">{isOpen ? '▴' : '▾'}</i>
+                  </span>
+                </div>
+              </div>
+
+              {isOpen && (
+                <div className="pj-acc-body">
+                  <div className="pj-objective-banner">
+                    <p className="pj-objective-text">{objective}</p>
                   </div>
-                </button>
 
-                {/* PANEL DESPLEGABLE UNIFICADO */}
-                {isOpen && (
-                  <div className="pj-acc-body">
-                    {/* 1. PÁRRAFO DE PROPÓSITO CON BORDE LATERAL (SIN ETIQUETA) */}
-                    <div className="pj-objective-banner">
-                      <p className="pj-objective-text">{objective}</p>
-                    </div>
-
-                    {/* 2. VENTANA CON IMAGEN INICIAL DE LA APP (ESTILO QUANTLAMBDA) */}
-                    <div className="ql-preview-frame pj-preview-frame">
-                      <div className="ql-browser-bar">
-                        <div className="ql-browser-dots">
-                          <span />
-                          <span />
-                          <span />
-                        </div>
-                        <a
-                          href={resolvedUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="ql-browser-url"
-                          title={appLabel}
-                        >
-                          {proj.displayUrl}
-                        </a>
-                        <span className="pj-browser-spacer" />
+                  <div className="ql-preview-frame pj-preview-frame">
+                    <div className="ql-browser-bar">
+                      <div className="ql-browser-dots">
+                        <span />
+                        <span />
+                        <span />
                       </div>
-
                       <a
                         href={resolvedUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="pj-preview-stage"
+                        className="ql-browser-url"
                         title={appLabel}
                       >
-                        <img
-                          src={proj.previewImg}
-                          alt={proj.title}
-                          className={`pj-preview-img ${proj.previewAlign === 'top' ? 'align-top' : ''}`}
-                          loading="lazy"
-                        />
+                        {proj.displayUrl}
+                      </a>
+                      <span className="pj-browser-spacer" />
+                    </div>
+
+                    <a
+                      href={resolvedUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="pj-preview-stage"
+                      title={appLabel}
+                    >
+                      <img
+                        src={proj.previewImg}
+                        alt={proj.title}
+                        className={`pj-preview-img ${proj.previewAlign === 'top' ? 'align-top' : ''}`}
+                        loading="lazy"
+                      />
+                    </a>
+                  </div>
+
+                  <div className="pj-body-main-row">
+                    <ul className="pj-clean-bullets">
+                      {bullets.map(renderBulletWithBoldLead)}
+                    </ul>
+
+                    <div className="pj-body-side-actions">
+                      <a
+                        href={resolvedUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="pj-repo-cta"
+                        style={{
+                          '--insp-accent': proj.colorAccent,
+                          '--insp-rgb': proj.colorRgb
+                        }}
+                      >
+                        <span>{appLabel}</span>
                       </a>
                     </div>
-
-                    {/* 3. BULLETS UNIFICADOS + BOTÓN CTA ÚNICO */}
-                    <div className="pj-body-main-row">
-                      <ul className="pj-clean-bullets">
-                        {bullets.map(renderBulletWithBoldLead)}
-                      </ul>
-
-                      <div className="pj-body-side-actions">
-                        <a
-                          href={resolvedUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="pj-repo-cta"
-                          style={{
-                            '--insp-accent': proj.colorAccent,
-                            '--insp-rgb': proj.colorRgb
-                          }}
-                        >
-                          <span>{appLabel}</span>
-                        </a>
-                      </div>
-                    </div>
                   </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
